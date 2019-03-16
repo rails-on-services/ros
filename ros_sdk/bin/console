@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+require 'bundler/setup'
+require 'ros_sdk'
+require 'ros_sdk/console'
+
+# Start the console
+Pry.config.should_load_plugins = false
+Pry.start
