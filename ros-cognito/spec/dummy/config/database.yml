@@ -1,0 +1,22 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch('RAILS_DATABASE_HOST') { 'localhost' } %>
+  username: <%= ENV.fetch('RAILS_DATABASE_USER') { 'admin' } %>
+  password: <%= ENV.fetch('RAILS_DATABASE_PASSWORD') { 'admin' } %>
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
+  port: 5432
+  timeout: 5000
+
+development:
+  <<: *default
+  database: cognito_development
+
+test:
+  <<: *default
+  database: cognito_test
+
+production:
+  <<: *default
+  database: cognito_production
