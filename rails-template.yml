@@ -1,0 +1,103 @@
+---
+# application profile to configure
+configure: service # plugin
+
+# values common to all application profiles
+common: &common
+  gemfile:
+    remove_comments: true
+    blacklist:
+      - tzinfo-data
+    whitelist:
+      - pry-rails
+      - awesome_print
+
+# 'microservice' application profile
+# TODO:
+# Add sentry, update circleci config to revised config from Circle engineer
+# Add rack-fluentd, prometheus_exporter
+# Add overcommit gem
+# Test that this template can be applied to an existing project
+service:
+  <<: *common
+  ros:
+    seeds: true
+  gemspec:
+    dependency:
+    development_dependency:
+  whitelist:
+    - ros
+    - rspec
+    - rubocop
+    - postgres
+  blacklist:
+    - defaults
+    - iam
+    - apartment
+    - grpc
+    - jsonapi
+    - sidekiq
+    - circleci
+    - docker
+    - fluentd
+    - git
+    - guard
+    - postgres
+    - prometheus
+    - cors
+    - rufus-scheduler
+    - devise
+    - exception_notification
+    - slack-notifier
+    - trailblazer
+iam:
+  <<: *common
+  gemspec:
+    dependency:
+    development_dependency:
+  whitelist:
+    - defaults
+    - rspec
+    - rubocop
+  blacklist:
+    - iam
+    - apartment
+    - grpc
+    - jsonapi
+    - sidekiq
+    - circleci
+    - docker
+    - fluentd
+    - git
+    - guard
+    - postgres
+    - prometheus
+    - cors
+    - rufus-scheduler
+    - devise
+    - exception_notification
+    - slack-notifier
+    - trailblazer
+microservice:
+  <<: *common
+  whitelist:
+    - rspec
+    - circleci
+    - defaults
+    - grpc
+    - jsonapi
+    - rubocop
+    - sidekiq
+  blacklist:
+    - docker
+    - fluentd
+    - git
+    - guard
+    - postgres
+    - prometheus
+    - cors
+    - rufus-scheduler
+    - devise
+    - exception_notification
+    - slack-notifier
+    - trailblazer

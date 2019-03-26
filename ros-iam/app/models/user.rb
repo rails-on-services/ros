@@ -38,8 +38,9 @@ class User < Iam::ApplicationRecord
       authentication_keys: [:username]
   #    jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
+  # TODO: Set scope to the user's policies
   def jwt_payload
-    { iss: "#{Ros::Sdk.service_endpoints['iam']}", urn: to_urn }
+    { iss: "#{Ros::Sdk.service_endpoints['iam']}", sub: to_urn, scope: '*' }
   end
 
   # NOTE: Credential is in the public schema

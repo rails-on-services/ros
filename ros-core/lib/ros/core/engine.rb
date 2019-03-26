@@ -22,6 +22,14 @@ module Ros
         Settings.reload!
       end
 
+      initializer :platform_hosts do |app|
+        # if Settings.config.hosts.is_a? Array
+        #   app.config.hosts + Setting.config.hosts
+        # else
+          # app.config.hosts << Settings.config.hosts'whistler-api.perxtech.org'
+          app.config.hosts << 'whistler-api.perxtech.org'
+      end # if Settings.dig(:config, :hosts)
+
       initializer :apartment do |app|
         Apartment.configure do |config|
           # Provide list of schemas to be migrated when rails db:migrate is invoked
@@ -82,14 +90,26 @@ module Ros
 
       initializer :documentation do |app|
         require 'open_api'
-        OpenApi::Config.tap do |c|
-          c.instance_eval do
+        OpenApi::Config.tap do |config|
+          config.instance_eval do
             open_api 'ros-api', base_doc_classes: [ApplicationDoc]
             info version: '0.0.1', title: 'APIs', description: 'API documentation.'
             server 'http://localhost:3000', desc: 'Main (production) server'
             bearer_auth :Authorization
           end
-          c.file_output_path = '.docs'
+          config.file_output_path = '.docs'
+        end
+      end
+
+      initializer :rack_cors do |app|
+        # First, get settings.yml working from spec/dummy and application so app controls CORS
+        # if Settings.dig(:cors)
+        require 'rack/cors'
+        app.config.middleware.insert_before 0, Rack::Cors do
+          allow do
+            origins '*'
+            resource '*', headers: :any, methods: [:get, :post, :delete, :put, :patch, :options, :head]
+          end
         end
       end
 

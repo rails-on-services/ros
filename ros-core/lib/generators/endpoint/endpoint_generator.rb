@@ -21,7 +21,8 @@ class EndpointGenerator < Rails::Generators::NamedBase
 # frozen_string_literal: true
 
 class #{name.classify}Resource < #{parent_module}ApplicationResource
-  attributes #{args.map { |e| ':' + e.split(':').first }.join(', ')}
+  attributes #{args.reject { |a| a.split(':').last.in? %w(references belongs_to) }.map { |e| ':' + e.split(':').first }.join(', ')}
+  has_one #{args.select { |a| a.split(':').last.in? %w(references belongs_to) }.map { |e| ':' + e.split(':').first }.join(', ')}
 end
     FILE
 

@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 after 'development:tenants' do
+
+# TODO: This is not at all DRY
+fs = SeedFS.new(
+  Settings.service.partition_name,
+  "tmp/#{Settings.service.partition_name}",
+  "tmp/#{Settings.service.partition_name}/postman",
+  "tmp/#{Settings.service.partition_name}/credentials"
+)
+
   Tenant.all.each do |tenant|
     next if tenant.id.eql? 1
     tenant.switch do
@@ -12,11 +21,13 @@ after 'development:tenants' do
       end
       next if User.count.positive?
       user = User.create(username: "Admin_#{tenant.id}", password: 'asdfjkl;', console: true, api: true, time_zone: 'Asia/Singapore')
+      User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
       credential = user.credentials.create
-      WriteUser.new(owner: user, tenant: tenant, credential: credential)
-      # show_login('username', user.username, user.password, tenant.account_id)
-      # write_credentials(credential, tenant.account_id, user.username)
+      wu = WriteUser.new(owner: user, tenant: tenant, credential: credential, fs: fs)
+      wu.login
+      wu.credentials
+      wu.postman
 
       # Create a Group
       group_admin = Group.create(name: 'Administrators')

@@ -14,14 +14,9 @@ namespace :ros do
     #   FileUtils.touch('spec/dummy/db/seeds.rb')
     # end
 
-    desc 'Clean a database (removes all existing data in all schemas)'
+    desc 'Clean a database (removes all tenants)'
     task clean: [:environment] do
-      DatabaseCleaner.strategy = :truncation, { cache_tables: false }
-      (Tenant.all.pluck(:schema_name) << 'public').each do |schema_name|
-        Apartment::Tenant.switch!(schema_name)
-        DatabaseCleaner.clean
-      end
-      Rake::Task["#{ros_task_prefix}db:environment:set"].invoke
+      Tenant.all.each { |tenant| tenant.destroy }
     end
 
     namespace :clean do
@@ -39,6 +34,7 @@ namespace :ros do
     namespace :reset do
       desc 'Reset a database and seed it'
       task seed: ["#{ros_task_prefix}ros:db:reset"] do
+# binding.pry
         Rake::Task["#{ros_task_prefix}db:seed"].invoke
       end
     end

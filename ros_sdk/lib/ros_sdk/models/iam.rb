@@ -10,7 +10,8 @@ module Ros
     class Credential < Base; end
     class User < Base
       def self.find_by_urn(username); where(username: username).first end
-      # TODO: Return a JWT and capture it in the middleware
+      # app.post '/users/sign_in', { user: { username: 'email@test1.com', password: 'abcd1234' }}
+      # Ros::IAM::User.sign_in(user: { username: 'Fred', password: 'abcd1234' }, account_id: '806470858')
       # custom_endpoint :sign_in, on: :collection, request_method: :post
     end
 

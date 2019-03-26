@@ -31,21 +31,61 @@ module Ros
     def config; @config ||= Ros::Configuration.new end
   end
 
+
+  # TODO: Authorize method
+  # TODO: scope value is the subject's policies; What if the subject's policies change after token issued?
+  # It could be that every token expires in 10 minutes or something which means that the auth strategy
+  # would check and then re-issue a token as long as the user is still valid; this would update permissions at that point
+  # or it would need to check if the user has been updated since the token was issued
+  # def self.issue(iss: Ros::Sdk.service_endpoints['iam'], sub:, scope:)
+  #   issued_at = Time.now.to_i
+  #   token = { iss: iss, aud: ['this_domain'], sub: sub, scope: scope, iat: issued_at }
+  #   token.merge!(exp: issued_at + expires_in) if expires_in = Settings.dig(:jwt, :token_expires_in_seconds)
+  #   token
+  # end
   class Jwt
-    def self.encode(payload)
-      # TODO: This is called twice by IAM on basic auth
-      JWT.encode(payload, Settings.credentials.jwt_encryption_key, Settings.jwt.alg)
+    attr_reader :claims, :token
+
+    def initialize(payload)
+      if payload.is_a? Hash # From IAM::User, IAM::Root
+        @claims = payload.merge(default_payload)
+      else # From a bearer token
+        @token = payload.gsub('Bearer ', '')
+        decode
+      end
     end
 
-    def self.decode(payload)
-      JWT.decode(payload, Settings.credentials.jwt_encryption_key, Settings.jwt.alg)
+    def default_payload
+      issued_at = Time.now.to_i
+      token = (expires_in = Settings.dig(:jwt, :token_expires_in_seconds)) ? { exp: issued_at + expires_in } : {}
+      token.merge({ aud: aud, iat: issued_at })
     end
+
+    def add_claims(claims)
+      claims.each_pair { |k, v| @claims[k] = v if k.in? Settings.dig(:jwt, :valid_claims) || [] }
+      self
+    end
+
+    # TODO: Set audience from the issuer's domain name
+    def aud; [Settings.jwt.aud || 'undefined'] end
+
+    def encode
+      @token = JWT.encode(claims, encryption_key, alg)
+    end
+
+    def decode
+      @claims = JWT.decode(token, encryption_key, alg).first
+    end
+
+    def alg; Settings.jwt.alg end
+
+    def encryption_key; Settings.credentials.jwt_encryption_key end
   end
 
   Urn = Struct.new(:txt, :partition_name, :service_name, :region, :account_id, :resource) do
     def self.from_jwt(token)
-      jwt = Jwt.decode(token)
-      return unless urn_string = jwt[0]['urn']
+      jwt = Jwt.new(token)
+      return unless urn_string = jwt.decode['sub']
       urn_array = urn_string.split(':')
       new(*urn_array)
     # NOTE: Intentionally swallow decode error and return nil

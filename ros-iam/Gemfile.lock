@@ -1,15 +1,4 @@
 PATH
-  remote: ../ros-client
-  specs:
-    ros_sdk (0.1.0)
-      config (= 1.7.1)
-      globalid (= 0.4.2)
-      inifile (= 3.0.0)
-      json_api_client (= 1.9.0)
-      jwt (= 2.1.0)
-      pry (= 0.12.2)
-
-PATH
   remote: ../ros-core
   specs:
     ros-core (0.1.0)
@@ -22,6 +11,7 @@ PATH
       jwt (= 2.1.0)
       prometheus_exporter (= 0.4.5)
       pry-rails (= 0.3.9)
+      rack-cors
       rails (~> 6.0.0.beta1)
       seedbank (= 0.5.0)
       sentry-raven (= 2.9.0)
@@ -29,6 +19,17 @@ PATH
       sneakers (= 2.11.0)
       warden (= 1.2.8)
       zero-rails_openapi (= 2.1.0)
+
+PATH
+  remote: ../ros_sdk
+  specs:
+    ros_sdk (0.1.0)
+      config (= 1.7.1)
+      globalid (= 0.4.2)
+      inifile (= 3.0.0)
+      json_api_client (= 1.9.0)
+      jwt (= 2.1.0)
+      pry (= 0.12.2)
 
 PATH
   remote: .
@@ -176,6 +177,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
+    ffi (1.10.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     google-protobuf (3.7.0-x86_64-linux)
@@ -201,6 +203,10 @@ GEM
       concurrent-ruby
       railties (>= 4.1)
     jwt (2.1.0)
+    listen (3.1.5)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
+      ruby_dep (~> 1.2)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -236,6 +242,7 @@ GEM
     pundit (2.0.1)
       activesupport (>= 3.0.0)
     rack (2.0.6)
+    rack-cors (1.0.2)
     rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
@@ -267,6 +274,9 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.20.3, < 2.0)
     rake (12.3.2)
+    rb-fsevent (0.10.3)
+    rb-inotify (0.10.0)
+      ffi (~> 1.0)
     redis (4.1.0)
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
@@ -288,6 +298,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
+    ruby_dep (1.5.0)
     seedbank (0.5.0)
       rake (>= 10.0)
     sentry-raven (2.9.0)
@@ -310,6 +321,9 @@ GEM
       activesupport (>= 4.2)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
+    spring-watcher-listen (2.0.1)
+      listen (>= 2.7, < 4.0)
+      spring (>= 1.2, < 3.0)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -317,7 +331,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.0)
     thor (0.20.3)
     thread_safe (0.3.6)
     tzinfo (1.2.5)
@@ -342,6 +355,7 @@ DEPENDENCIES
   database_cleaner
   factory_bot_rails
   faker
+  listen (>= 3.0.5, < 3.2)
   pg
   pry-byebug
   pry-rails
@@ -350,8 +364,9 @@ DEPENDENCIES
   ros-iam!
   ros_sdk!
   rspec-rails
+  spring
   spring-commands-rspec
-  sqlite3
+  spring-watcher-listen (~> 2.0.0)
 
 BUNDLED WITH
    2.0.1

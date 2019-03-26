@@ -1,10 +1,10 @@
 $:.push File.expand_path("lib", __dir__)
 
-require 'ros/core/version'
+# require 'ros/core/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'ros-core'
-  spec.version     = Ros::Core::VERSION
+  spec.version     = '0.1.0' # Ros::Core::VERSION
   spec.authors     = ['Robert Roach']
   spec.email       = ['rjayroach@gmail.com']
   spec.homepage    = 'https://github.com/rails-on-services'
@@ -30,7 +30,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'attr_encrypted', '~> 3.1.0'
   spec.add_dependency 'zero-rails_openapi', '2.1.0'
   spec.add_dependency 'config', '1.7.1'
+  spec.add_dependency 'rack-cors'
   # spec.add_dependency 'ros_sdk', '~> 0.1.0'
 
-  spec.add_development_dependency 'sqlite3', '~> 1.3'
+  # spec.add_development_dependency 'sqlite3', '~> 1.3'
 end

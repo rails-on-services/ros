@@ -52,3 +52,24 @@ AlexaForBusinessDeviceSetup
     ]
 }
 ```
+
+### Other Notes
+
+[]User, Root and Robot have a policies and actions jsonb column
+[]anytime an action or policy changes it calls its users, roles and robots which triggers them to update their properties and actions hashes
+
+
+Authenticate to get token:
+Root email and password
+User username and password
+Root access_key_id secret_access_key
+User same as above
+
+Make requests with JWT
+If the token is present:
+Is it authentic? Is it valid?
+If yes then select the tenant
+Then get the user from the JWT
+Perhaps there should be User and Root objects available to the services. Or use the client based objects 
+
+

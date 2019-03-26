@@ -15,7 +15,7 @@ class Root < Iam::ApplicationRecord
  #         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
   def jwt_payload
-    { iss: "#{Ros::Sdk.service_endpoints['iam']}", urn: to_urn }
+    { iss: "#{Ros::Sdk.service_endpoints['iam']}", sub: to_urn, scope: '*' }
   end
 
   def current_tenant

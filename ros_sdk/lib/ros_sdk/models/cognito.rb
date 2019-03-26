@@ -7,5 +7,8 @@ module Ros
 
     class Tenant < Base; end
     class Endpoint < Base; end
+    class Pool < Base; end
+    class User < Base; end
+    class Identifier < Base; end
   end
 end

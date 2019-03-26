@@ -1,4 +1,10 @@
 # This service's specific configuration; calculate URNs, etc
+config:
+  hosts: test
+  urn:
+    partition_name: ros
+    service_name: test
+
 service:
   # name is set by the service
   # name:
@@ -7,14 +13,18 @@ service:
   partition_name: ros
   region: ''
   auth_type: Internal
+connection_type: port
+external_connection_type: path
 # The options for configuring internal connections to services
+# TODO: Change ot service_connection_types
 services:
   connection:
     type: port
     # 'host' is the default. Each service runs on port 3000 and is uniquely
     # addressed by it's host name which is taken from the module name of the Client
     # Can override values here with an ENV. For example, to use https instead of http:
-    # export PLATFORM_SERVICES_CONNECTION_HOST_SCHEME=https
+    # export PLATFORM__SERVICES__CONNECTION__TYPE=host
+    # export PLATFORM__SERVICES__CONNECTION__HOST__SCHEME=https
     host:
       scheme: http
       port: 3000
@@ -23,7 +33,7 @@ services:
     # The port to service mapping is in alphabetical order by the service name
     # e.g. 'comm' is a lower port number than 'iam'
     # To use this connection type:
-    # export PLATFORM_SERVICES_CONNECTION_TYPE=port
+    # export PLATFORM__SERVICES__CONNECTION__TYPE=port
     port:
       scheme: http
       host: localhost
@@ -31,3 +41,4 @@ services:
 jwt:
   iss: ros
   alg: HS256
+  valid_claims: ['sub_cognito']

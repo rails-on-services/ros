@@ -99,6 +99,8 @@ module Ros
     #
 
     def check_action(action)
+      # Rails.logger.debug("in action with #{action}")
+      # binding.pry
       return true if user.class.name.eql? 'Root'
       (user.attached_policies.keys & accepted_policies(action)).any? ||
         (user.attached_actions.keys & accepted_actions(action)).any?

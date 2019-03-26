@@ -28,17 +28,17 @@ module Ros
 
       def authenticate_it!
         return unless @current_user = request.env['warden'].authenticate!(:api_token)
-        set_jwt if request.env['HTTP_AUTHORIZATION'].starts_with?('Basic')
+        return unless request.env['HTTP_AUTHORIZATION'].starts_with?('Basic')
+        @current_jwt = Jwt.new(current_user.jwt_payload)
+        response.set_header('AUTHORIZATION', "Bearer #{@current_jwt.encode}")
         # throw(:abort) unless @current_user
       end
 
-      def set_jwt; response.set_header('AUTHORIZATION', "Bearer #{jwt}") end
-
-      def jwt; Jwt.encode(current_user.jwt_payload) end
-
       def current_user;  @current_user end
 
-      # Next method is for Pundit
+      def current_jwt;  @current_jwt ||= Jwt.new(request.env['HTTP_AUTHORIZATION']) end
+
+      # Next method is for Pundit; inside JSONAPI resources can reference user with context[:user]
       def context; { user: current_user } end
 
       # This method is invoked on 404s from application's routes.rb if it extends
