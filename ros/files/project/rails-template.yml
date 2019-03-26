@@ -1,0 +1,93 @@
+---
+# application profile to configure
+# NOTE: these will mostly always be a service
+configure: service # e.g. survey, reward, etc
+# configure: plugin # e.g. perx-core
+
+# values common to all application profiles
+common: &common
+  gemfile:
+    remove_comments: true
+    blacklist:
+      - tzinfo-data
+    whitelist:
+      - pry-rails
+      - awesome_print
+
+plugin:
+  <<: *common
+  ros:
+    seeds: false
+    application_classes: false
+    tenant: false
+    gems_path: ~/rails-on-services/gems
+    require_gems: false
+    migrations: false
+    service: false
+  gemspec:
+    dependency:
+    development_dependency:
+  whitelist:
+    - ros
+    - rspec
+    - rubocop
+    - postgres
+  blacklist:
+    - defaults
+    - iam
+    - apartment
+    - grpc
+    - jsonapi
+    - sidekiq
+    - circleci
+    - docker
+    - fluentd
+    - git
+    - guard
+    - postgres
+    - prometheus
+    - cors
+    - rufus-scheduler
+    - devise
+    - exception_notification
+    - slack-notifier
+    - trailblazer
+
+service:
+  <<: *common
+  ros:
+    seeds: true # false for perx-core
+    application_classes: true # false for perx-core
+    tenant: true # false for perx-core
+    gems_path: ~/rails-on-services/gems
+    migrations: false
+    require_gems: true
+    service: true
+  gemspec:
+    dependency:
+    development_dependency:
+  whitelist:
+    - ros
+    - rspec
+    - rubocop
+    - postgres
+  blacklist:
+    - defaults
+    - iam
+    - apartment
+    - grpc
+    - jsonapi
+    - sidekiq
+    - circleci
+    - docker
+    - fluentd
+    - git
+    - guard
+    - postgres
+    - prometheus
+    - cors
+    - rufus-scheduler
+    - devise
+    - exception_notification
+    - slack-notifier
+    - trailblazer

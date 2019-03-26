@@ -1,0 +1,7 @@
+version: '3'
+services:
+  nginx:
+    volumes:
+      - ./nginx-services.conf:/etc/nginx/conf.d/services/project.conf
+    depends_on:
+      - survey

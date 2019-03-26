@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'ros'
+
+require 'pry'
+require 'ros/cli/options_parser'
+
+
+cli_options = OpenStruct.new(Ros::Cli::OptionsParser.new.parse)
+if action = ARGV.shift
+  action = :generate if action[0].eql? 'a'
+  Ros::Generator.send(action)
+else
+  Pry.start
+end
