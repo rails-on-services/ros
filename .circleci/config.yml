@@ -4,11 +4,11 @@ commands:
     description: Enable docker experimental feature and setup buildkit environment
     steps:
       - run:
-          name: Enable docker engine experimental feature
+          name: Enable docker experimental feature
           command: |
             # Restart Docker with experimental features on.
-            sudo sh -c 'echo '\''{"experimental": true}'\'' > /etc/docker/daemon.json'
-            sudo service docker restart
+            sudo sh -c 'echo '\''{"experimental":true}'\'' > /etc/docker/daemon.json'
+            sudo systemctl restart docker
       - run:
           name: Setup buildkit environment variable
           command: |
@@ -34,15 +34,11 @@ jobs:
           command: |
             # use short commit hash as docker tag
             echo "Docker Tag: ${CIRCLE_SHA1:0:7}"
-            docker build -t railsonservices/ros-iam:${CIRCLE_SHA1:0:7} --build-arg project=ros-iam . \
-            & docker build -t railsonservices/ros-comm:${CIRCLE_SHA1:0:7} --build-arg project=ros-comm . \
-            & docker build -t railsonservices/ros-cognito:${CIRCLE_SHA1:0:7} --build-arg project=ros-cognito .
+            make -j DOCKER_TAG=${CIRCLE_SHA1:0:7} build
       - run:
           name: Push docker images
           command: |
-            docker push railsonservices/ros-iam:${CIRCLE_SHA1:0:7} \
-            & docker push railsonservices/ros-comm:${CIRCLE_SHA1:0:7} \
-            & docker push railsonservices/ros-cognito:${CIRCLE_SHA1:0:7}
+            make -j DOCKER_TAG=${CIRCLE_SHA1:0:7} push
 workflows:
   build_docker_image:
     jobs:
