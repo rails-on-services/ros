@@ -1,0 +1,49 @@
+version: 2.1
+commands:
+  setup_buildkitd:
+    description: Enable docker experimental feature and setup buildkit environment
+    steps:
+      - run:
+          name: Enable docker engine experimental feature
+          command: |
+            # Restart Docker with experimental features on.
+            sudo sh -c 'echo '\''{"experimental": true}'\'' > /etc/docker/daemon.json'
+            sudo service docker restart
+      - run:
+          name: Setup buildkit environment variable
+          command: |
+            echo 'export DOCKER_BUILDKIT=1' >> $BASH_ENV
+  docker_login:
+    description: Login to dockerhub
+    steps:
+      - run:
+          name: Login to dockerhub
+          command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
+jobs:
+  build_docker_image:
+    working_directory: ~/project
+    machine:
+      image: circleci/classic:201808-01
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - setup_buildkitd
+      - docker_login
+      - run: 
+          name: Build docker images
+          command: |
+            # use short commit hash as docker tag
+            echo "Docker Tag: ${CIRCLE_SHA1:0:7}"
+            docker build -t railsonservices/ros-iam:${CIRCLE_SHA1:0:7} --build-arg project=ros-iam . \
+            & docker build -t railsonservices/ros-comm:${CIRCLE_SHA1:0:7} --build-arg project=ros-comm . \
+            & docker build -t railsonservices/ros-cognito:${CIRCLE_SHA1:0:7} --build-arg project=ros-cognito .
+      - run:
+          name: Push docker images
+          command: |
+            docker push railsonservices/ros-iam:${CIRCLE_SHA1:0:7} \
+            & docker push railsonservices/ros-comm:${CIRCLE_SHA1:0:7} \
+            & docker push railsonservices/ros-cognito:${CIRCLE_SHA1:0:7}
+workflows:
+  build_docker_image:
+    jobs:
+      - build_docker_image
