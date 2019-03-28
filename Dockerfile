@@ -65,6 +65,9 @@ COPY --chown=rails:rails ${project}/. ./
 COPY --chown=rails:rails ros-core/. ../ros-core/
 COPY --chown=rails:rails ros_sdk/. ../ros_sdk/
 
+# workaround for buildkit not setting correct permissions
+RUN chown rails: /home/rails/ros-core && chown rails: /home/rails/ros_sdk
+
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes
 EXPOSE 3000
