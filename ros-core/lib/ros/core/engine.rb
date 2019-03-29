@@ -23,12 +23,8 @@ module Ros
       end
 
       initializer :platform_hosts do |app|
-        # if Settings.config.hosts.is_a? Array
-        #   app.config.hosts + Setting.config.hosts
-        # else
-          # app.config.hosts << Settings.config.hosts'whistler-api.perxtech.org'
-          app.config.hosts << 'whistler-api.perxtech.org'
-      end # if Settings.dig(:config, :hosts)
+        app.config.hosts = app.config.hosts | Settings.dig(:config, :hosts).split(',') if Settings.dig(:config, :hosts)
+      end
 
       initializer :apartment do |app|
         Apartment.configure do |config|
