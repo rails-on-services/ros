@@ -11,7 +11,10 @@ build_production: $(addprefix build_production_,$(PROJECTS))
 
 build_development_%:
 	@echo "Building development docker image of $*"
-	docker build -t $(DOCKER_ORG)/$*:development-$(DOCKER_TAG) --build-arg project=$* --build-arg bundle_string=--with="development test" .
+	docker build -t $(DOCKER_ORG)/$*:development-$(DOCKER_TAG) --build-arg project=$* \
+			--build-arg bundle_string=--with="development test" \
+			--build-arg rails_env=development \
+			--build-arg os_packages="libpq5 git sudo vim less tcpdump net-tools iputils-ping" .
 
 build_development: $(addprefix build_development_,$(PROJECTS))
 
