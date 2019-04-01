@@ -93,7 +93,9 @@ module Ros
             server 'http://localhost:3000', desc: 'Main (production) server'
             bearer_auth :Authorization
           end
-          config.file_output_path = '.docs'
+          config.rails_routes_file = 'config/routes.txt'
+          config.doc_location = ['./doc/**/*_doc.rb']
+          config.file_output_path = 'tmp/docs'
         end
       end
 
