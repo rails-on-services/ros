@@ -11,11 +11,6 @@ module Ros
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
       end
 
-      # def self.load_seed
-      #   binding.pry
-      #   super
-      # end
-
       # Adds this gem's db/migrations path to the enclosing application's migraations_path array
       # if the gem has been included in an application, i.e. it is not running in the dummy app
       # https://github.com/rails/rails/issues/22261
@@ -42,8 +37,8 @@ module Ros
       end
 
       config.after_initialize do
-        Settings.service['name'] = 'iam'
-        Settings.service['policy_name'] = 'Iam'
+        Settings.service.name = 'iam'
+        Settings.service.policy_name = 'Iam'
       end
     end
   end
