@@ -12,7 +12,7 @@ class EndpointResource < Cognito::ApplicationResource
 
   def target_uri(uri)
     service, model = @model.target_type.underscore.split('/')
-    case Settings.external_connection_type
+    case Settings.external_connection.type
     when 'service'
       uri.host = uri.host.gsub(Settings.service.name, service)
       uri.path = ['', model, @model.target_id].join('/')
