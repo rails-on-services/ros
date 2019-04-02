@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
-class UserResourceDoc < ApplicationDoc
-  route_base 'users'
+class CredentialResourceDoc < ApplicationDoc
+  route_base 'credentials'
   # route_base '/users'
   # route_base 'resources/user_resource'
   # route_base '/credentials'
   # api_dry :all do
   #   auth :Authorization
   # end
+
+  # japi_dry %i[ index update destroy roles permissions roles_modify ] do
+  # j  auth :Authorization
+  # jend
 
   api_dry %i[ index ] do
     query 'page[number]', Integer  #, range: { ge: 1 }, default: 1
@@ -16,7 +20,7 @@ class UserResourceDoc < ApplicationDoc
     query :sort, String #, range: { ge: 1 }, default: 1  end
   end
 
-  api :index, 'GET list of users' do #, builder: :index#, use: [:page, :rows]
+  api :index, 'GET list of credentials' do #, builder: :index#, use: [:page, :rows]
     dry
     response 200, :success, 'application/vnd.api+json', data: { data: [{id: 1}] }
     response 401, :unauthorized, 'application/vnd.api+json', data: { data: [{id: 1}] }
@@ -24,8 +28,9 @@ class UserResourceDoc < ApplicationDoc
 
 #   api :show, 'GET the specified user' do #, builder: :show#, use: id
 #     query 'id', Integer  #, range: { ge: 1 }, default: 1
-#     response 200, :success, 'application/vnd.api+json', data: { data: [{id: 1}] }
+#     response 200, :success, 'application/vnd.api+json', data: { data: [{id: 1}] }    
 #   end
+
 #   api :create, 'POST user register' do
 #     form! data: {
 #       username!: String,
@@ -46,3 +51,4 @@ class UserResourceDoc < ApplicationDoc
 
 
 end
+
