@@ -3,9 +3,15 @@
 namespace :ros do
   desc 'Create OpenAPI V 3.0 docuementation'
   task doc: :environment do
+    # NOTE: The order of configuration here seems a bit strange, but it is the only way we could get it to work
     require 'open_api'
-    require Ros::Core::Engine.root.join('doc/application_doc').to_s
+    FileUtils.touch('tmp/routes.txt')
     OpenApi::Config.tap do |config|
+      config.doc_location = ['./doc/**/*_doc.rb']
+      config.file_output_path = 'tmp/docs'
+      # TODO Remove after PR merge
+      config.rails_routes_file = 'tmp/routes.txt'
+      require Ros::Core::Engine.root.join('doc/application_doc').to_s
       config.instance_eval do
         sa = Settings.api_docs
         open_api sa.main, base_doc_classes: [ApplicationDoc]
@@ -13,10 +19,6 @@ namespace :ros do
         server sa.server.main, desc: sa.server.desc
         bearer_auth :Authorization
       end
-      config.doc_location = ['./doc/**/*_doc.rb']
-      config.file_output_path = 'tmp/docs'
-      # TODO Remove after PR merge
-      config.rails_routes_file = 'tmp/routes.txt'
     end
     # TODO Remove after PR merge
     require 'open3'
