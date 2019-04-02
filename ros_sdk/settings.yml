@@ -1,36 +1,35 @@
 # The options for configuring internal connections to services
-service:
-  partition_name: ros
-  auth_type: Basic
-services:
-  connection:
-    type: service
-    # This is the default. Connections are on https
-    # export PLATFORM__SERVICES__CONNECTION__SERVICE__DOMAIN=api.example.com
-    service:
-      domain: rails-on-services.io
-    # Each service runs on port 3000 and is uniquely
-    # addressed by it's host name which is taken from the module name of the Client
-    # Can override values here with an ENV. For example, to use https instead of http:
-    # export PLATFORM__SERVICES__CONNECTION__HOST__SCHEME=https
-    host:
-      scheme: http
-      port: 3000
-    # port based means that each configured service has its own port on localhost
-    # port number starts at value of 'port' and increments by 1 for each additional service
-    # The port to service mapping is in alphabetical order by the service name
-    # e.g. 'comm' is a lower port number than 'iam'
-    # To use this connection type:
-    # export PLATFORM__SERVICES__CONNECTION__TYPE=port
-    port:
-      scheme: http
-      host: localhost
-      port: 3000
-    # For external connections to services behind and nginx reverse proxy that uses path names
-    # to proxy to services running on differnet ports
-    # export PLATFORM__SERVICES__CONNECTION__TYPE=path
-    # export PLATFORM__SERVICES__CONNECTION__PATH__PORT=3000
-    path:
-      scheme: http
-      host: localhost
-      force_path_style: true
+partition_name: ros
+auth_type: Basic
+
+connection:
+  type: service
+  # This is the default. Connections are on https
+  # export PLATFORM__CONNECTION__SERVICE__DOMAIN=api.example.com
+  service:
+    domain: api.rails-on-services.org
+  # Each service runs on port 3000 and is uniquely
+  # addressed by it's host name which is taken from the module name of the Client
+  # Can override values here with an ENV. For example, to use https instead of http:
+  # export PLATFORM__SERVICES__CONNECTION__HOST__SCHEME=https
+  host:
+    scheme: http
+    port: 3000
+  # port based means that each configured service has its own port on localhost
+  # port number starts at value of 'port' and increments by 1 for each additional service
+  # The port to service mapping is in alphabetical order by the service name
+  # e.g. 'comm' is a lower port number than 'iam'
+  # To use this connection type:
+  # export PLATFORM__SERVICES__CONNECTION__TYPE=port
+  port:
+    scheme: http
+    host: localhost
+    port: 3000
+  # For external connections to services behind and nginx reverse proxy that uses path names
+  # to proxy to services running on differnet ports
+  # export PLATFORM__SERVICES__CONNECTION__TYPE=path
+  # export PLATFORM__SERVICES__CONNECTION__PATH__PORT=3000
+  path:
+    scheme: http
+    host: localhost
+    force_path_style: true

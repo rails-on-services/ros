@@ -43,11 +43,11 @@ module Ros
         end
 
         def partition
-          @partition ||= Settings.service.partition_name
+          @partition ||= Settings.partition_name
         end
 
         def authorization
-          @authorization ||= "#{Settings.service.auth_type} #{access_key_id}:#{secret_access_key}"
+          @authorization ||= "#{Settings.auth_type} #{access_key_id}:#{secret_access_key}"
         end
       end
     end
@@ -56,7 +56,7 @@ module Ros
       class << self
         attr_accessor :scheme, :host, :domain, :port, :force_path_style, :service
 
-        def configure(scheme: 'https', host: nil, domain: nil, port: nil, force_path_style: false, service: nil, connection_type: 'host')
+        def configure(scheme: 'https', host: nil, domain: nil, port: nil, force_path_style: false, service: nil, connection_type: 'host', prefix: nil, postfix: nil)
           if descendants.any?
             descendants.map(&:to_s).sort.each do |client|
               client.constantize.configure(scheme: scheme, host: host, domain: domain, port: port, force_path_style: force_path_style, service: service)
