@@ -25,11 +25,19 @@ module Ros
     def initialize; @model_paths = []; @factory_paths = [] end
   end
 
+  # NOTE: Experimental
+  class Application
+    def self.config; Settings end
+  end
+
   class << self
     attr_accessor :config
 
     def config; @config ||= Ros::Configuration.new end
+    def version; '0.1.0' end
+    def application; Application end
   end
+  # NOTE: End Experimental
 
 
   # TODO: Authorize method

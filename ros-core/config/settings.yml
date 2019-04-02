@@ -1,44 +1,66 @@
 # This service's specific configuration; calculate URNs, etc
-config:
-  hosts: test
-  urn:
-    partition_name: ros
-    service_name: test
+# Referenced from Settings or Ros.application.config
+# Values set here can be overridden using ENVs
+
+# Sets the base values for all URNs
+# See app/models/concerns/ros/application_record_concern and lib/ros/core.rb Urn class
+partition_name: ros
+region: ''
+auth_type: Basic # Internal # used by SDK to compose Authentication header
 
 service:
-  # name is set by the service
-  # name:
-  # policy_name is set by the service
-  # policy_name:
-  partition_name: ros
-  region: ''
-  auth_type: Internal
-connection_type: port
-external_connection_type: path
+  name: # set by the service
+  policy_name: # set by the service
+
+# PLATFORM__EXTERNAL_CONNECTION__TYPE=host
+external_connection:
+  type: path
+
 # The options for configuring internal connections to services
-# TODO: Change ot service_connection_types
-services:
-  connection:
-    type: port
-    # 'host' is the default. Each service runs on port 3000 and is uniquely
-    # addressed by it's host name which is taken from the module name of the Client
-    # Can override values here with an ENV. For example, to use https instead of http:
-    # export PLATFORM__SERVICES__CONNECTION__TYPE=host
-    # export PLATFORM__SERVICES__CONNECTION__HOST__SCHEME=https
-    host:
-      scheme: http
-      port: 3000
-    # port based means that each configured service has its own port on localhost
-    # port number starts at value of 'port' and increments by 1 for each additional service
-    # The port to service mapping is in alphabetical order by the service name
-    # e.g. 'comm' is a lower port number than 'iam'
-    # To use this connection type:
-    # export PLATFORM__SERVICES__CONNECTION__TYPE=port
-    port:
-      scheme: http
-      host: localhost
-      port: 3000
+connection:
+  type: port  # 'port' is the default connection type
+
+  # port based means that each configured service has its own port on localhost
+  # port number starts at value of 'port' and increments by 1 for each additional service
+  # The port to service mapping is in alphabetical order by the service name
+  # e.g. 'comm' is a lower port number than 'iam'
+  port:
+    scheme: http
+    host: localhost
+    port: 3000
+
+  # Each service runs on port 3000 and is uniquely addressed by it's
+  # host name which is taken from the module name of the Client
+  # To use this connection type:
+  # export PLATFORM__CONNECTION__TYPE=host
+  # export PLATFORM__CONNECTION__HOST__SCHEME=https
+  host:
+    scheme: http
+    port: 3000
+    prefix: ''  # 'prefix' is prepended to each service name
+    postfix: '' # 'postfix' is appended to each service name
+
 jwt:
+  # export PLATFORM__JWT__ISS=perx
   iss: ros
   alg: HS256
   valid_claims: ['sub_cognito']
+
+# The host names to which this service responsds
+# See lib/ros/core/engine.rb#platform_hosts initializer
+hosts:
+
+# TODO: get settings.yml working from spec/dummy and application so app controls CORS
+cors:
+  origins: '*'
+  resource: '*'
+
+api_docs:
+  main: 'ros-api'
+  info:
+    version: '0.1.0'
+    title: 'APIs'
+    description: 'API documentation'
+  server:
+    main: 'http://localhost:3000'
+    desc: 'Development server'

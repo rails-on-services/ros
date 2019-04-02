@@ -23,7 +23,7 @@ module Ros
       end
 
       initializer :platform_hosts do |app|
-        app.config.hosts = app.config.hosts | Settings.dig(:config, :hosts).split(',') if Settings.dig(:config, :hosts)
+        app.config.hosts = app.config.hosts | Settings.hosts.split(',') if Settings.hosts
       end
 
       initializer :apartment do |app|
@@ -58,8 +58,8 @@ module Ros
       end
 
       initializer :platform_services_connections do |app|
-        connection_type = Settings.dig(:services, :connection, :type)
-        client_config = Settings.dig(:services, :connection, connection_type).to_h
+        connection_type = Settings.dig(:connection, :type)
+        client_config = Settings.dig(:connection, connection_type).to_h
         Ros::Platform::Client.configure(client_config.merge(connection_type: connection_type))
       end
 
@@ -84,29 +84,14 @@ module Ros
         end
       end
 
-      initializer :documentation do |app|
-        require 'open_api'
-        OpenApi::Config.tap do |config|
-          config.instance_eval do
-            open_api 'ros-api', base_doc_classes: [ApplicationDoc]
-            info version: '0.0.1', title: 'APIs', description: 'API documentation.'
-            server 'http://localhost:3000', desc: 'Main (production) server'
-            bearer_auth :Authorization
-          end
-          config.rails_routes_file = 'config/routes.txt'
-          config.doc_location = ['./doc/**/*_doc.rb']
-          config.file_output_path = 'tmp/docs'
-        end
-      end
-
       initializer :rack_cors do |app|
-        # First, get settings.yml working from spec/dummy and application so app controls CORS
-        # if Settings.dig(:cors)
-        require 'rack/cors'
-        app.config.middleware.insert_before 0, Rack::Cors do
-          allow do
-            origins '*'
-            resource '*', headers: :any, methods: [:get, :post, :delete, :put, :patch, :options, :head]
+        if Settings.dig(:cors)
+          require 'rack/cors'
+          app.config.middleware.insert_before 0, Rack::Cors do
+            allow do
+              origins Settings.cors.origins
+              resource Settings.cors.resource, headers: :any, methods: [:get, :post, :delete, :put, :patch, :options, :head]
+            end
           end
         end
       end

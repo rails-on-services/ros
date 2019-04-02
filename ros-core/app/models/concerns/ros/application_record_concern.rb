@@ -16,7 +16,7 @@ module Ros
 
       # Universal Resource Name (URNs) and Service Namespaces
       # urn:partition:service:region
-      def urn_base; "urn:#{Settings.service.partition_name}:#{Settings.service.name}:#{Settings.service.region}" end
+      def urn_base; "urn:#{Settings.partition_name}:#{Settings.service.name}:#{Settings.region}" end
 
       def find_by_urn(value); find_by(urn_id => value) end
 

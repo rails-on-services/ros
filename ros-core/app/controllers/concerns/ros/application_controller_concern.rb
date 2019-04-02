@@ -6,7 +6,6 @@ module Ros
 
     included do
       include JSONAPI::ActsAsResourceController
-      include OpenApi::DSL
 
       # Return JSONAPI Error objects on common errors
       # https://jsonapi.org/examples/#error-objects-basics
@@ -34,7 +33,7 @@ module Ros
         # throw(:abort) unless @current_user
       end
 
-      def current_user;  @current_user end
+      def current_user; @current_user end
 
       def current_jwt;  @current_jwt ||= Jwt.new(request.env['HTTP_AUTHORIZATION']) end
 
