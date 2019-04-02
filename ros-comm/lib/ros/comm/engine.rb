@@ -27,11 +27,8 @@ module Ros
       end if Rails.env.development?
 
       config.after_initialize do
-        Settings.service['name'] = 'comm'
-        Settings.service['policy_name'] = 'Comm'
-        OpenApi::Config.class_eval do
-          info version: '1.0.0', title: 'Communication APIs'
-        end
+        Settings.service.name = 'comm'
+        Settings.service.policy_name = 'Comm'
       end
     end
   end

@@ -7,24 +7,28 @@ module Providers
     def self.services; %w(sms) end
 
     def client
-      @client ||= Aws::SNS::Client.new()
+      @client ||= ::Aws::SNS::Client.new(
+        region: 'ap-southeast-1',
+        access_key_id: access_key_id,
+        secret_access_key: secret_access_key)
     end
 
-    def account_sid
-      credentials_hash['AWS_ACCESS_KEY_ID'] || current_tenant.platform_twilio_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
+    def access_key_id
+      credentials_hash['AWS_ACCESS_KEY_ID'] || current_tenant.platform_twilio_enabled ? ENV['AWS_ACCESS_KEY_ID'] : nil
     end
 
-    def auth_token
-      credentials_hash['AWS_ACCESS_KEY_ID'] || current_tenant.platform_twilio_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
+    def secret_access_key
+      credentials_hash['AWS_SECRET_ACCESS_KEY'] || current_tenant.platform_twilio_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
     end
 
     # TODO: Get from provider
-    def from; '+12565308753' end
+    def from; 'Prudential' end
 
+    # TODO: toggle sending on and off
     def sms(message)
-      # TODO: toggle sending on and off
-      # res = client.messages.create(from: from, to: message.to, body: message.body)
-      # p res
+      message.update(from: from)
+      client.set_sms_attributes({ attributes: { 'DefaultSenderID' => from } })
+      res = client.publish(phone_number: message.to, message: message.body)
       p message
     # rescue
       # Rails.logger.warn('No Twilio client configured for tenant.account_id') and return if tenant.twilio_client.nil?
