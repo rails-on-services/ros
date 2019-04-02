@@ -1,21 +1,31 @@
+# frozen_string_literal: true
+
+require 'thor/group'
 
 module Ros
-  module Generator
-    class Env
-      attr_accessor :name, :args, :options, :keys
+  module Generators
+    class Env < Thor::Group
+      include Thor::Actions
+      attr_accessor :name, :options
+      desc 'Generate a new Ros service'
 
-      def initialize(args, options)
-        self.name = args.shift
-        self.args = args
-        self.options = options
-        self.keys = OpenStruct.new
+      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files').to_s end
+
+      def keys; @keys ||= OpenStruct.new end
+
+      def generate
+        # TODO Thor seems to not allow attributes to be set on an instance of this class
+        self.name = File.basename(Dir.pwd)
+        generate_secrets
+        in_root do
+          File.open('.env', 'a') { |file| file.puts(env_content) }
+          File.open('app.env', 'a') { |file| file.puts(app_env_content) }
+          File.open('app-compose.env', 'a') { |file| file.puts(app_compose_env_content) }
+        end
       end
 
-      def execute
-        generate_secrets
-        File.open('.env', 'a') { |file| file.puts(env_content) }
-        File.open('app.env', 'a') { |file| file.puts(app_env_content) }
-        File.open('app-compose.env', 'a') { |file| file.puts(app_compose_env_content) }
+      def finish_message
+        say "\nCreated envs at #{destination_root}"
       end
 
       def generate_secrets
@@ -33,15 +43,14 @@ module Ros
 
 # Compose Variables
 COMPOSE_PROJECT_NAME=#{name}
-ROS_DIR=./ros
 
-COMPOSE_FILE=docker-compose.yml:$ROS_DIR/docker-compose.yml
+COMPOSE_FILE=docker-compose.yml:ros/docker-compose.yml
 
 # mount host's source for dev:
-# COMPOSE_FILE=$COMPOSE_FILE:docker-compose-dev.yml
+# COMPOSE_FILE=docker-compose.yml:docker-compose-dev.yml:ros/docker-compose.yml
 
 # mount host's ros source for dev:
-# COMPOSE_FILE=$COMPOSE_FILE:$ROS_DIR/docker-compose-dev.yml
+# COMPOSE_FILE=docker-compose.yml:docker-compose-dev.yml:ros/docker-compose.yml:ros/docker-compose-dev.yml
         HEREDOC
       end
 
