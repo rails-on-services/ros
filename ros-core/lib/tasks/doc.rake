@@ -5,7 +5,11 @@ namespace :ros do
   task doc: :environment do
     # NOTE: The order of configuration here seems a bit strange, but it is the only way we could get it to work
     require 'open_api'
+    Dir.mkdir('tmp') unless Dir.exist?('tmp')
     FileUtils.touch('tmp/routes.txt')
+    require 'open3'
+    stdin, stdout, stderr = Open3::popen3("rails #{ros_task_prefix}routes")
+    File.open('tmp/routes.txt', 'w') { |f| f.write(stdout.read); f.close() }
     OpenApi::Config.tap do |config|
       config.doc_location = ['./doc/**/*_doc.rb']
       config.file_output_path = 'tmp/docs'
@@ -20,10 +24,7 @@ namespace :ros do
         bearer_auth :Authorization
       end
     end
-    # TODO Remove after PR merge
-    require 'open3'
-    stdin, stdout, stderr = Open3::popen3("rails #{ros_task_prefix}routes")
-    File.open('tmp/routes.txt', 'w') { |f| f.write(stdout.read) }
+    # # TODO Remove after PR merge
     OpenApi.write_docs
   end
 end
