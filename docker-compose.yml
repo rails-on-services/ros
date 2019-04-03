@@ -27,7 +27,7 @@ services:
       POSTGRES_DB: postgres
   iam:
     image:
-      "rails-on-services/ros-iam:${rails_env:-development}-${image_tag:-undefined}"
+      "railsonservices/ros-iam:${image_tag:-undefined}"
     build:
       context: "${ros_dir:-.}"
       args:
@@ -45,7 +45,7 @@ services:
       - "3000"
   cognito:
     image:
-      "rails-on-services/ros-cognito:${rails_env:-development}-${image_tag:-undefined}"
+      "railsonservices/ros-cognito:${image_tag:-undefined}"
     build:
       context: "${ros_dir:-.}"
       args:
@@ -63,7 +63,7 @@ services:
       - "3000"
   comm:
     image:
-      "rails-on-services/ros-comm:${rails_env:-development}-${image_tag:-undefined}"
+      "railsonservices/ros-comm:${image_tag:-undefined}"
     build:
       context: "${ros_dir:-.}"
       args:
