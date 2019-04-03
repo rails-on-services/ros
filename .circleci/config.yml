@@ -23,6 +23,43 @@ commands:
       - run:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
+  publish_openapi_postman:
+    description: Publish the generated openapi docs to postman collections
+    steps:
+      - run:
+          name: Install OpenAPI 3.0 to Postman Collection Converter
+          command: npm install -g openapi-to-postmanv2
+      - run:
+          name: Convert OpenAPI 3.0 docs to Postman Collection
+          command: |
+            mkdir -p "<< parameters.output_folder >>"
+            find "<< parameters.openapi_doc_folder >>" -type f -exec bash -c \
+              'openapi2postmanv2 -s "{}" -o "<< parameters.output_folder >>/$(basename {})" -p' \;
+      - run:
+          name: Publish to postman workspace
+          command: |
+            set -x
+            # query existing collections
+            collections=$(curl -L "https://api.getpostman.com/collections" --header "X-Api-Key: ${<< parameters.postman_api_key >>}")
+            for f in << parameters.output_folder >>/*; do
+              filename=$(basename "$f")
+              collection_name="${filename%.*}"
+              # find the collection uid
+              uid=$(echo $collections | jq -r --arg name "${collection_name}" '.collections[] | select(.name == $name) | .uid')
+              echo "Updating collection ${collection_name}, uid: ${uid}"
+              # update the collection
+              curl -L -X PUT "https://api.getpostman.com/collections/${uid}" -H "Content-Type: application/json" \
+                -H "X-Api-Key: ${<< parameters.postman_api_key >>}" \
+                --data "$(jq -c -r --arg name $collection_name '.info.name = $name | {collection: .}' $f)"
+            done
+    parameters:
+      openapi_doc_folder:
+        type: string
+      output_folder:
+        type: string
+      postman_api_key:
+        type: env_var_name
+        default: POSTMAN_API_KEY
 jobs:
   build_docker_image:
     executor: ubuntu
@@ -79,6 +116,16 @@ jobs:
           root: /tmp/workspace
           paths:
             - openapi_docs
+  publish_postman_collections:
+    executor: ubuntu
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - publish_openapi_postman:
+          openapi_doc_folder: /tmp/workspace/openapi_docs
+          output_folder: /tmp/workspace/postman_collections
+      - store_artifacts:
+          path: /tmp/workspace/postman_collections
 workflows:
   build:
     jobs:
@@ -86,7 +133,11 @@ workflows:
       - generate_openapi_doc:
           requires:
             - build_docker_image
+      - publish_postman_collections:
+          requires:
+            - generate_openapi_doc
           # filters:
           #   branches:
           #     only:
           #       - master
+      
