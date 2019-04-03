@@ -136,8 +136,7 @@ workflows:
       - publish_postman_collections:
           requires:
             - generate_openapi_doc
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
-      
+          filters:
+            branches:
+              only:
+                - master
