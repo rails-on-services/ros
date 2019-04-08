@@ -6,7 +6,7 @@ module Ros
   module Generators
     class Env < Thor::Group
       include Thor::Actions
-      attr_accessor :name, :options
+      attr_accessor :name, :options, :project
       desc 'Generate a new Ros service'
 
       def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files').to_s end

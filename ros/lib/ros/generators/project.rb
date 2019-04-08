@@ -11,16 +11,22 @@ module Ros
 
       def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files/project').to_s end
 
+      def clone_rails_templates
+        clone_dir = Pathname(File.dirname(__FILE__)).join('../../../files').to_s
+        return if Dir.exists? "#{clone_dir}/rails-templates"
+        Dir.chdir(clone_dir) { %x(git clone https://github.com/rjayroach/rails-templates.git) }
+      end
+
       def clone_repositories
         in_root do
           %x(git clone https://github.com/rails-on-services/ros.git) if options.dev
-          # %x(git clone https://github.com/rjayroach/rails-templates.git)
-          # %x(git clone git@github.com:rails-on-services/devops.git)
+          %x(git clone https://github.com/rails-on-services/devops.git)
         end
       end
 
       def copy_project_files
         directory('.')
+        create_file 'nginx-services.conf'
         gsub_file('Dockerfile', 'service', name)
       end
 

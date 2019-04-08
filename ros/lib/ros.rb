@@ -50,10 +50,12 @@ module Ros
     end
 
     desc 'generate TYPE NAME', 'Generate a new service or environment variables'
-    option :force, type: :boolean, default: false, aliases: '-f'
     map %w(g) => :generate
+    option :force, type: :boolean, default: false, aliases: '-f'
     def generate(artifact, name = nil)
-      raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: service, env", :red) unless %w(service env).include? artifact
+      raise Error, set_color("ERROR: Not a Ros project", :red) unless File.exists?('app.env')
+      valid_artifacts = %w(service env sdk core)
+      raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
       raise Error, set_color("ERROR: must supply a name for service", :red) if artifact.eql?('service') and name.nil?
       Thing.new(artifact, name, options)
     end
@@ -83,7 +85,9 @@ module Ros
       generator.destination_root = name if artifact.eql?('service')
       generator.options = options
       generator.name = name
-      generator.invoke(:generate, :finish_message)
+      generator.project = File.basename(Dir.pwd)
+      generator.invoke_all #(:generate)
+      # generator.invoke(:finish_message)
     end
   end
 end
