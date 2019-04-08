@@ -43,6 +43,7 @@ services:
       - wait
     ports:
       - "3000"
+    # command: ["tail", "-F", "log/development.log"] # don't start the server
   cognito:
     image:
       "rails-on-services/ros-cognito:${rails_env:-development}-${image_tag:-undefined}"

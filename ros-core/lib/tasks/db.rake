@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def ros_task_prefix
- @ros_task_prefix ||=  Dir['lib/**/engine.rb'].any? ? 'app:' : ''
+ @ros_task_prefix ||= Dir['lib/**/engine.rb'].any? ? 'app:' : ''
 end
 
 namespace :ros do
@@ -34,7 +34,6 @@ namespace :ros do
     namespace :reset do
       desc 'Reset a database and seed it'
       task seed: ["#{ros_task_prefix}ros:db:reset"] do
-# binding.pry
         Rake::Task["#{ros_task_prefix}db:seed"].invoke
       end
     end

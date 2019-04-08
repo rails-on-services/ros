@@ -9,9 +9,9 @@ services:
       - "${ros_dir:-.}/ros-iam:/home/rails/app"
       - "${ros_dir:-.}/ros-core:/home/rails/ros-core"
       - "${ros_dir:-.}/ros_sdk:/home/rails/ros_sdk"
-    ports: # https://docs.docker.com/compose/compose-file/#ports
-      # - '1234:1234'
-      # - '9394:9394'
+    # ports: # https://docs.docker.com/compose/compose-file/#ports
+    #   - '1234:1234'
+    #   - '9394:9394'
   cognito:
     # command: ["tail", "-F", "log/development.log"] # don't start the server
     volumes:

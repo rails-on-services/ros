@@ -55,12 +55,10 @@ cors:
   origins: '*'
   resource: '*'
 
+postman:
+  workspace: 'Rails on Services'
+
 api_docs:
-  main: 'ros-api'
-  info:
-    version: '0.1.0'
-    title: 'APIs'
-    description: 'API documentation'
+  name: ros-api
   server:
-    main: 'http://localhost:3000'
-    desc: 'Development server'
+    host: http://localhost:3000

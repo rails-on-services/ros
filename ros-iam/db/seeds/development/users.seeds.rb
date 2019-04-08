@@ -4,10 +4,10 @@ after 'development:tenants' do
 
 # TODO: This is not at all DRY
 fs = SeedFS.new(
-  Settings.service.partition_name,
-  "tmp/#{Settings.service.partition_name}",
-  "tmp/#{Settings.service.partition_name}/postman",
-  "tmp/#{Settings.service.partition_name}/credentials"
+  Settings.partition_name,
+  "tmp/#{Settings.partition_name}",
+  "tmp/#{Settings.partition_name}/postman",
+  "tmp/#{Settings.partition_name}/credentials"
 )
 
   Tenant.all.each do |tenant|

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-class TenantsDoc < ApplicationDoc
+class TenantResourceDoc < ApplicationDoc
   route_base 'tenants'
+  # doc_tag name: 'ExampleTagName', description: "ExamplesController's APIs"
 
-  api :index, 'GET list of tenants' do
-    query! :schema_name, String
-    resp 200, 'success', :json, data: { name: 'test' }
-  end
+  api :index, 'All Tenants'
+  api :show, 'Single Tenant'
+  api :create, 'Create Tenant'
+  api :update, 'Update Tenant'
 end

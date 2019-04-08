@@ -10,6 +10,8 @@ class CreateTenants < ActiveRecord::Migration[6.0]
       t.string :alias, null: true, index: { unique: true }
       t.string :name
       t.string :state
+
+      t.timestamps null: false
     end
     # https://stackoverflow.com/questions/3170634/how-to-solve-cannot-add-a-not-null-column-with-default-value-null-in-sqlite3
   end

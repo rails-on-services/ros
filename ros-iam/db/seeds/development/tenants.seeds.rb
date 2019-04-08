@@ -36,8 +36,7 @@ class WriteUser
     {
       name: "#{fs.part_name}-#{name}",
       values: [
-        { key: "#{fs.part_name}_access_key_id", value: credential.access_key_id },
-        { key: "#{fs.part_name}_secret_access_key", value: credential.secret_access_key },
+        { key: :authorization, value: "Basic #{credential.access_key_id }:#{credential.secret_access_key}" },
         { key: type, value: uid },
         { key: :password, value: owner.password }
       ]
@@ -47,10 +46,10 @@ end
 
 SeedFS = Struct.new(:part_name, :part_dir, :postman_dir, :creds_file)
 fs = SeedFS.new(
-  Settings.service.partition_name,
-  "tmp/#{Settings.service.partition_name}",
-  "tmp/#{Settings.service.partition_name}/postman",
-  "tmp/#{Settings.service.partition_name}/credentials"
+  Settings.partition_name,
+  "tmp/#{Settings.partition_name}",
+  "tmp/#{Settings.partition_name}/postman",
+  "tmp/#{Settings.partition_name}/credentials"
 )
 
 # if 'platform owner' account does not exist then create it and initialize credentials file
