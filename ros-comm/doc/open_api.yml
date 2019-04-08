@@ -1,0 +1,7 @@
+---
+api_docs:
+  info:
+    description: 'Comm Service provides sms, email and other communication services'
+    version: '0.1.0'
+  server:
+    description: 'server description'

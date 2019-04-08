@@ -1,0 +1,7 @@
+---
+api_docs:
+  info:
+    description: 'IAM Service provides User, Group and Roles with Policies and Actions for permissions'
+    version: '0.1.0'
+  server:
+    description: 'server description'

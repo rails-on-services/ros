@@ -1,0 +1,7 @@
+---
+api_docs:
+  info:
+    description: 'Cognito Service provides application level Users and Pools'
+    version: '0.1.0'
+  server:
+    description: 'server description'
