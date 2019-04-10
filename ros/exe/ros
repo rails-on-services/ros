@@ -1,7 +1,16 @@
 #!/usr/bin/env ruby
 
-require "ros"
-# frozen_string_literal: true
+if ARGV.size > 0
+  if ARGV[0].eql? '-T'
+    system "rake -T"
+    return
+  elsif ARGV[0].include? ':'
+    require 'rake'
+    Rake.load_rakefile 'Rakefile'
+    Rake::Task[ARGV.shift].invoke(ARGV)
+    return
+  end
+end
 
 require 'pry'
 

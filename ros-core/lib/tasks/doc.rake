@@ -66,7 +66,7 @@ namespace :ros do
 
       # Invoke service's publish task if it exists
       service_task = "#{ros_task_prefix}ros:#{Settings.service.name}:apidoc:publish"
-      # Rake::Task[service_task].invoke if Rake::Task.task_defined? service_task
+      Rake::Task[service_task].invoke if Rake::Task.task_defined? service_task
     end
   end
 end

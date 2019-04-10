@@ -24,12 +24,6 @@ module Ros
         end
       end
 
-      def copy_project_files
-        directory('.')
-        create_file 'nginx-services.conf'
-        gsub_file('Dockerfile', 'service', name)
-      end
-
       def create_git_files
         # copy_file 'gitignore', '.gitignore'
         # copy_file 'dockerignore', '.dockerignore'

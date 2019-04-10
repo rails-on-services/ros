@@ -27,6 +27,7 @@ class Event < Comm::ApplicationRecord
   end
 
   def provider_channel
+    return unless provider
     return if channel.in? provider.class.services
     errors.add(:channel, "must be one of: #{provider.class.services.join(' ')}")
   end

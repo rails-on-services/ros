@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# https://perx-tech.postman.co/integrations/services/pm_pro_api/configured?workspace=3e6ef171-dccd-4164-ae0d-cc3abbb43bad
 module Postman
   class Workspace
     attr_accessor :id, :name, :comm
@@ -46,8 +45,13 @@ module Postman
       if name
         payload = comm.index
         json = JSON.parse(payload.body)['workspaces']
-        result = json.each.select { |c| c['name'].eql?(name) }.first
-        self.id = result['id']
+        if result = json.each.select { |c| c['name'].eql?(name) }.first
+          self.id = result['id']
+        else
+          response = comm.conn.post(comm.endpoint_url, { workspace: { name: name, type: 'team' } }.to_json)
+          json = JSON.parse(response.body)['workspace']
+          self.id = json['id']
+        end
       end
       payload = comm.show(id)
       ws = JSON.parse(payload.body)['workspace']

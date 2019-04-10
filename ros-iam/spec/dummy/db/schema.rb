@@ -104,6 +104,8 @@ ActiveRecord::Schema.define(version: 2019_02_15_214421) do
     t.string "alias"
     t.string "name"
     t.string "state"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["alias"], name: "index_tenants_on_alias", unique: true
     t.index ["root_id"], name: "index_tenants_on_root_id", unique: true
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true

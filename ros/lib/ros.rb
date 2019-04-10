@@ -32,32 +32,26 @@ module Ros
       generator.invoke_all
     end
 
-    # Initialize all service databases: drop/create/migrate/seed
-    desc 'db init', 'Create, migrate and seed databases for all services'
-    option :skip, aliases: '-s'
-    # TODO Test that migrations work and that skip works to skip certain services
-    def db(action)
-      raise Error, set_color("ERROR: invalid action #{action}. valid actions are: init", :red) unless %w(init).include? action
-      return unless File.exists?('docker-compose.yml')
-      Dir["./**/config/application.rb"].each do |path|
-        apath = path.split('/')
-        service = apath[1].eql?('ros') ? apath[2].gsub('ros-', '') : apath[1]
-        next if %w(sdk core).include? service
-        # binding.pry
-        prefix = path.include?('dummy') ? 'app:' : ''
-        %x(docker-compose exec #{service} bundle exec rails #{prefix}ros:db:reset #{prefix}ros:#{service}:db:seed)
-      end
-    end
-
     desc 'generate TYPE NAME', 'Generate a new service or environment variables'
     map %w(g) => :generate
     option :force, type: :boolean, default: false, aliases: '-f'
     def generate(artifact, name = nil)
       raise Error, set_color("ERROR: Not a Ros project", :red) unless File.exists?('app.env')
-      valid_artifacts = %w(service env sdk core)
+      valid_artifacts = %w(service sdk core)
       raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
       raise Error, set_color("ERROR: must supply a name for service", :red) if artifact.eql?('service') and name.nil?
       Thing.new(artifact, name, options)
+    end
+
+    desc 'init', 'Initialize the project with default settings'
+    def init(host = nil, name = File.basename(Dir.pwd))
+      require_relative 'ros/generators/env.rb'
+      generator = Ros::Generators::Env.new
+      # generator.destination_root = name if artifact.eql?('service')
+      generator.options = options.merge(uri: URI(host))
+      generator.name = name
+      generator.project = File.basename(Dir.pwd)
+      generator.invoke_all
     end
 
     # TODO Handle show and edit as well
@@ -86,8 +80,7 @@ module Ros
       generator.options = options
       generator.name = name
       generator.project = File.basename(Dir.pwd)
-      generator.invoke_all #(:generate)
-      # generator.invoke(:finish_message)
+      generator.invoke_all
     end
   end
 end

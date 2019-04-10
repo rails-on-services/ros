@@ -1,0 +1,83 @@
+namespace :apidoc do
+  desc 'Generate, convert and publish'
+  task :all do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+
+  desc 'Create OpenAPI V 3.0 docuementation'
+  task :generate do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+
+  desc 'Convert OpenAPI V 3.0 docuementation to Postman'
+  task :convert do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+
+  desc 'Publish docs to Postman'
+  task :publish do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+end
+
+namespace :db do
+  desc 'Clean a database (removes all tenants)'
+  task :clean do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+
+  namespace :clean do
+    desc 'Clean a database and seed it'
+    task :seed do |task|
+      Ros::Exec.new.execute(task.name)
+    end
+
+    desc 'Reset a database (drop, create and run migrations)'
+    task :reset do |task|
+      Ros::Exec.new.execute(task.name)
+    end
+  end
+
+  namespace :reset do
+    desc 'Reset a database and seed it'
+    task :seed do |task|
+      Ros::Exec.new.execute(task.name)
+    end
+  end
+end
+
+module Ros
+  class Exec
+    def execute(task)
+      services.each do |service, values|
+        string = exec_string(values, task)
+        prefix = docker? ? "docker-compose exec #{values[:name]} " : ''
+        full_string = "#{prefix}bundle exec rails #{string}"
+        STDOUT.puts "Running #{full_string} on #{values[:name]}"
+        if docker?
+          system(full_string)
+        else
+          Dir.chdir(values[:path]) { system(full_string) }
+        end
+      end
+    end
+
+    def docker?; ARGV[0].eql?('-d') end
+
+    def services
+      Dir["./**/config/application.rb"].each_with_object({}) do |path, hash|
+        engine = path.include?('dummy')
+        apath = path.split('/')
+        apath = apath[0..apath.length - (engine ? 5 : 3)].join('/')
+        svc = apath.split('/').last
+        name = svc.gsub('ros-', '')
+        next if %w(sdk core).include? name
+        hash[svc] = { name: name, path: apath, prefix: engine ? 'app:' : '' }
+      end
+    end
+
+    def exec_string(values, task)
+      "#{values[:prefix]}ros:#{task}" #" #{values[:prefix]}ros:#{values[:name]}:db:seed"
+    end
+  end
+end

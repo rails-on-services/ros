@@ -39,6 +39,7 @@ services:
         PGID: "${pgid:-1000}"
     env_file:
       - ./app.env
+      - ./docker-compose.env
     depends_on:
       - wait
     ports:
@@ -58,6 +59,7 @@ services:
         PGID: "${pgid:-1000}"
     env_file:
       - ./app.env
+      - ./docker-compose.env
     depends_on:
       - wait
     ports:
@@ -76,6 +78,7 @@ services:
         PGID: "${pgid:-1000}"
     env_file:
       - ./app.env
+      - ./docker-compose.env
     depends_on:
       - wait
     ports:
