@@ -44,13 +44,12 @@ module Ros
     end
 
     desc 'init', 'Initialize the project with default settings'
-    def init(host = nil, name = File.basename(Dir.pwd))
+    def init(name = File.basename(Dir.pwd), host = 'http://localhost:3000')
       require_relative 'ros/generators/env.rb'
       generator = Ros::Generators::Env.new
       # generator.destination_root = name if artifact.eql?('service')
       generator.options = options.merge(uri: URI(host))
       generator.name = name
-      generator.project = File.basename(Dir.pwd)
       generator.invoke_all
     end
 

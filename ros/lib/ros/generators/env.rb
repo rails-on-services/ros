@@ -6,7 +6,7 @@ module Ros
   module Generators
     class Env < Thor::Group
       include Thor::Actions
-      attr_accessor :name, :options, :project
+      attr_accessor :name, :options
       desc 'Generate a new Ros service'
 
       def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files/project').to_s end
@@ -15,10 +15,10 @@ module Ros
 
       def generate
         # TODO Thor seems to not allow attributes to be set on an instance of this class
-        self.name = File.basename(Dir.pwd)
         in_root do
           directory('.')
-          create_file 'nginx-services.conf'
+          create_file 'services/.keep'
+          create_file 'containers/nginx/services.conf'
           gsub_file('Dockerfile', 'service', name)
         end
       end
