@@ -25,26 +25,6 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: postgres
-  iam:
-    image:
-      "${image_repository}/iam:${rails_env:-development}-${image_tag:-undefined}"
-    build:
-      context: "${ros_dir:-.}"
-      args:
-        bundle_string: "${bundle_string:---with=development test}"
-        rails_env: "${rails_env:-development}"
-        os_packages: "${os_packages:-libpq5 git sudo vim less tcpdump net-tools iputils-ping}"
-        project: iam
-        PUID: "${puid:-1000}"
-        PGID: "${pgid:-1000}"
-    env_file:
-      - "${env_dir:-.}/app.env"
-      - "${env_dir:-.}/docker-compose.env"
-    depends_on:
-      - wait
-    ports:
-      - "3000"
-    # command: ["tail", "-F", "log/development.log"] # don't start the server
   cognito:
     image:
       "${image_repository}/cognito:${rails_env:-development}-${image_tag:-undefined}"
@@ -83,3 +63,23 @@ services:
       - wait
     ports:
       - "3000"
+  iam:
+    image:
+      "${image_repository}/iam:${rails_env:-development}-${image_tag:-undefined}"
+    build:
+      context: "${ros_dir:-.}"
+      args:
+        bundle_string: "${bundle_string:---with=development test}"
+        rails_env: "${rails_env:-development}"
+        os_packages: "${os_packages:-libpq5 git sudo vim less tcpdump net-tools iputils-ping}"
+        project: iam
+        PUID: "${puid:-1000}"
+        PGID: "${pgid:-1000}"
+    env_file:
+      - "${env_dir:-.}/app.env"
+      - "${env_dir:-.}/docker-compose.env"
+    depends_on:
+      - wait
+    ports:
+      - "3000"
+    # command: ["tail", "-F", "log/development.log"] # don't start the server

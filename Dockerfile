@@ -17,11 +17,11 @@ RUN gem install \
     eventmachine:1.2.7
 
 ARG project=user
-COPY ${project}/Gemfile* ./
-COPY ${project}/ros-${project}.gemspec ./
+COPY services/${project}/Gemfile* ./
+COPY services/${project}/ros-${project}.gemspec ./
 # NOTE: Dependent gems need to be copied in so that their dependencies are also installed
-COPY core/. ../core/
-COPY sdk/. ../sdk/
+COPY services/core/. ../core/
+COPY services/sdk/. ../sdk/
 
 # Remove reference to gems loaded from a path so bundle doesn't blow up
 # RUN sed -i '/path/d' Gemfile
@@ -61,9 +61,9 @@ COPY --chown=rails:rails --from=base /usr/local/bundle /usr/local/bundle
 WORKDIR /home/rails/app
 
 ARG project=user
-COPY --chown=rails:rails ${project}/. ./
-COPY --chown=rails:rails core/. ../core/
-COPY --chown=rails:rails sdk/. ../sdk/
+COPY --chown=rails:rails services/${project}/. ./
+COPY --chown=rails:rails services/core/. ../core/
+COPY --chown=rails:rails services/sdk/. ../sdk/
 
 # workaround for buildkit not setting correct permissions
 RUN chown rails: /home/rails/core && chown rails: /home/rails/sdk
