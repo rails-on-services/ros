@@ -7,7 +7,7 @@ WORKDIR /home/rails/app
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
     bundler:2.0.1 \
-    nokogiri:1.10.1 \
+    nokogiri:1.10.2 \
     ffi:1.10.0 \
     mini_portile2:2.3.0 \
     msgpack:1.2.6 \
@@ -18,10 +18,10 @@ RUN gem install \
 
 ARG project=user
 COPY ${project}/Gemfile* ./
-COPY ${project}/${project}.gemspec ./
+COPY ${project}/ros-${project}.gemspec ./
 # NOTE: Dependent gems need to be copied in so that their dependencies are also installed
-COPY ros-core/. ../ros-core/
-COPY ros_sdk/. ../ros_sdk/
+COPY core/. ../core/
+COPY sdk/. ../sdk/
 
 # Remove reference to gems loaded from a path so bundle doesn't blow up
 # RUN sed -i '/path/d' Gemfile
@@ -62,11 +62,11 @@ WORKDIR /home/rails/app
 
 ARG project=user
 COPY --chown=rails:rails ${project}/. ./
-COPY --chown=rails:rails ros-core/. ../ros-core/
-COPY --chown=rails:rails ros_sdk/. ../ros_sdk/
+COPY --chown=rails:rails core/. ../core/
+COPY --chown=rails:rails sdk/. ../sdk/
 
 # workaround for buildkit not setting correct permissions
-RUN chown rails: /home/rails/ros-core && chown rails: /home/rails/ros_sdk
+RUN chown rails: /home/rails/core && chown rails: /home/rails/sdk
 
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes

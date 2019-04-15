@@ -6,21 +6,21 @@ services:
     # disabling tail command will start webrick automatically; will also shutdown container quicker in case of multiple restarts
     # command: ["tail", "-F", "log/development.log"] # don't start the server
     volumes:
-      - "${ros_dir:-.}/ros-iam:/home/rails/app"
-      - "${ros_dir:-.}/ros-core:/home/rails/ros-core"
-      - "${ros_dir:-.}/ros_sdk:/home/rails/ros_sdk"
+      - "${ros_dir:-.}/iam:/home/rails/app"
+      - "${ros_dir:-.}/core:/home/rails/core"
+      - "${ros_dir:-.}/sdk:/home/rails/sdk"
     # ports: # https://docs.docker.com/compose/compose-file/#ports
     #   - '1234:1234'
     #   - '9394:9394'
   cognito:
     # command: ["tail", "-F", "log/development.log"] # don't start the server
     volumes:
-      - "${ros_dir:-.}/ros-cognito:/home/rails/app"
-      - "${ros_dir:-.}/ros-core:/home/rails/ros-core"
-      - "${ros_dir:-.}/ros_sdk:/home/rails/ros_sdk"
+      - "${ros_dir:-.}/cognito:/home/rails/app"
+      - "${ros_dir:-.}/core:/home/rails/core"
+      - "${ros_dir:-.}/sdk:/home/rails/sdk"
   comm:
     # command: ["tail", "-F", "log/development.log"] # don't start the server
     volumes:
-      - "${ros_dir:-.}/ros-comm:/home/rails/app"
-      - "${ros_dir:-.}/ros-core:/home/rails/ros-core"
-      - "${ros_dir:-.}/ros_sdk:/home/rails/ros_sdk"
+      - "${ros_dir:-.}/comm:/home/rails/app"
+      - "${ros_dir:-.}/core:/home/rails/core"
+      - "${ros_dir:-.}/sdk:/home/rails/sdk"
