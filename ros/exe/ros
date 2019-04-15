@@ -6,7 +6,7 @@ if ARGV.size > 0
     return
   elsif ARGV[0].include? ':'
     require 'rake'
-    Rake.load_rakefile 'Rakefile'
+    Rake.load_rakefile 'Rakefile' if File.exists? 'Rakefile'
     Rake::Task[ARGV.shift].invoke(ARGV)
     return
   end

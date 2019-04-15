@@ -1,8 +1,8 @@
 ---
 # application profile to configure
 # NOTE: these will mostly always be a service
-configure: service # e.g. survey, reward, etc
-# configure: plugin # e.g. perx-core
+# configure: service # e.g. survey, reward, etc
+configure: plugin # e.g. perx-core
 
 # values common to all application profiles
 common: &common
@@ -20,7 +20,7 @@ plugin:
     seeds: false
     application_classes: false
     tenant: false
-    gems_path: ~/rails-on-services/gems
+    gems_path: ..
     require_gems: false
     migrations: false
     service: false
@@ -28,11 +28,11 @@ plugin:
     dependency:
     development_dependency:
   whitelist:
-    - ros
     - rspec
     - rubocop
-    - postgres
   blacklist:
+    - ros
+    - postgres
     - defaults
     - iam
     - apartment
@@ -59,7 +59,7 @@ service:
     seeds: true # false for perx-core
     application_classes: true # false for perx-core
     tenant: true # false for perx-core
-    gems_path: ~/rails-on-services/gems
+    gems_path: ..
     migrations: false
     require_gems: true
     service: true

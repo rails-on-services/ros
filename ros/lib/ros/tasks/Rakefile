@@ -51,7 +51,7 @@ module Ros
     def execute(task)
       services.each do |service, values|
         string = exec_string(values, task)
-        prefix = docker? ? "docker-compose exec #{values[:name]} " : ''
+        prefix = docker? ? "docker-compose #{docker_string} #{values[:name]} " : ''
         full_string = "#{prefix}bundle exec rails #{string}"
         STDOUT.puts "Running #{full_string} on #{values[:name]}"
         if docker?
@@ -62,7 +62,8 @@ module Ros
       end
     end
 
-    def docker?; ARGV[0].eql?('-d') end
+    def docker?; ARGV.include?('-d') end
+    def docker_string; ARGV.include?('-r') ? 'run' : 'exec' end
 
     def services
       Dir["./**/config/application.rb"].each_with_object({}) do |path, hash|

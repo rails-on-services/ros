@@ -20,10 +20,10 @@ ARG project=user
 ARG ros_dir=ros
 COPY ${project}/Gemfile* ./
 # NOTE: Dependent gems need to be copied in so that their dependencies are also installed
-COPY ${ros_dir}/ros-core/. ../${ros_dir}/ros-core/
-COPY ${ros_dir}/ros_sdk/. ../${ros_dir}/ros_sdk/
-COPY service-core/. ../service-core/
-COPY service_sdk/. ../service_sdk/
+COPY ${ros_dir}/core/. ../${ros_dir}/core/
+COPY ${ros_dir}/sdk/. ../${ros_dir}/sdk/
+COPY core/. ../core/
+COPY sdk/. ../sdk/
 
 # Remove reference to gems loaded from a path so bundle doesn't blow up
 # RUN sed -i '/path/d' Gemfile
@@ -64,10 +64,10 @@ WORKDIR /home/rails/app
 
 ARG project=user
 COPY --chown=rails:rails ${project}/. ./
-COPY --chown=rails:rails ${ros_dir}/ros-core/. ../${ros_dir}/ros-core/
-COPY --chown=rails:rails ${ros_dir}/ros_sdk/. ../${ros_dir}/ros_sdk/
-COPY --chown=rails:rails service-core/. ../service-core/
-COPY --chown=rails:rails service_sdk/. ../service_sdk/
+COPY --chown=rails:rails ${ros_dir}/core/. ../${ros_dir}/core/
+COPY --chown=rails:rails ${ros_dir}/sdk/. ../${ros_dir}/sdk/
+COPY --chown=rails:rails core/. ../core/
+COPY --chown=rails:rails sdk/. ../sdk/
 
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes

@@ -17,37 +17,46 @@ module Ros
 
     desc 'new PATH', 'Create a new Ros project at PATH'
     option :force, type: :boolean, default: false, aliases: '-f'
-    option :dev, type: :boolean, default: false, aliases: '-d'
-    # option :javascript_engine, :default => 'babeljs', :aliases => '-j'
-    # option :file, :type => :array, :aliases => :files
-    # option :database, :required => true
-    def new(path)
-      FileUtils.rm_rf(path) if Dir.exists?(path) and options.force
-      raise Error, set_color("ERROR: #{path} already exists. Use -f to force", :red) if File.exist?(path)
+    option :dev, type: :boolean, default: false, aliases: '-d' #, required: true
+    def new(name, host = nil)
+      FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
+      raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if File.exist?(name)
       require_relative 'ros/generators/project.rb'
       generator = Ros::Generators::Project.new
-      generator.destination_root = path
+      generator.destination_root = name
       generator.options = options
-      generator.name = path
+      generator.name = name
+      FileUtils.mkdir_p(generator.destination_root)
+      Dir.chdir(name) { init(nil, host) }
       generator.invoke_all
+      Dir.chdir(name) { generate('sdk', name) }
+      Dir.chdir(name) { generate('core', name) }
     end
 
-    desc 'generate TYPE NAME', 'Generate a new service or environment variables'
+    desc 'generate TYPE NAME', 'Generate a new service, sdk or core gem'
     map %w(g) => :generate
     option :force, type: :boolean, default: false, aliases: '-f'
     def generate(artifact, name = nil)
+      FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
       raise Error, set_color("ERROR: Not a Ros project", :red) unless File.exists?('app.env')
       valid_artifacts = %w(service sdk core)
       raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
       raise Error, set_color("ERROR: must supply a name for service", :red) if artifact.eql?('service') and name.nil?
-      Thing.new(artifact, name, options)
+      require_relative "ros/generators/#{artifact}.rb"
+      generator = Object.const_get("Ros::Generators::#{artifact.capitalize}").new
+      generator.destination_root = artifact.eql?('service') ? name : "#{name}#{artifact.eql?('sdk') ? '_' : '-'}#{artifact}"
+      generator.options = options
+      generator.name = name
+      generator.project = File.basename(Dir.pwd)
+      generator.invoke_all
     end
 
     desc 'init', 'Initialize the project with default settings'
-    def init(name = File.basename(Dir.pwd), host = 'http://localhost:3000')
+    def init(name = nil, host = nil)
+      name ||= File.basename(Dir.pwd)
+      host ||= 'http://localhost:3000'
       require_relative 'ros/generators/env.rb'
       generator = Ros::Generators::Env.new
-      # generator.destination_root = name if artifact.eql?('service')
       generator.options = options.merge(uri: URI(host))
       generator.name = name
       generator.invoke_all
@@ -68,18 +77,6 @@ module Ros
     desc 'server ACTION', 'Create or destroy a cloud server running Ros core services'
     def server(action)
       raise Error, set_color("ERROR: invalid action #{action}. valid actions are: create, destroy", :red) unless %w(create destroy).include? action
-    end
-  end
-
-  class Thing
-    def initialize(artifact, name, options)
-      require_relative "ros/generators/#{artifact}.rb"
-      generator = Object.const_get("Ros::Generators::#{artifact.capitalize}").new
-      generator.destination_root = name if artifact.eql?('service')
-      generator.options = options
-      generator.name = name
-      generator.project = File.basename(Dir.pwd)
-      generator.invoke_all
     end
   end
 end

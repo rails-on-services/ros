@@ -9,35 +9,23 @@ module Ros
       attr_accessor :name, :options
       desc 'Generate a new Ros project'
 
-      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files/project').to_s end
-
-      def clone_rails_templates
-        clone_dir = Pathname(File.dirname(__FILE__)).join('../../../files').to_s
-        return if Dir.exists? "#{clone_dir}/rails-templates"
-        Dir.chdir(clone_dir) { %x(git clone https://github.com/rjayroach/rails-templates.git) }
-      end
+      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files').to_s end
 
       def clone_repositories
+        base_url = options.dev ? 'git@github.com:' : 'https://github.com/'
+        unless Dir.exists? "#{self.class.source_root}/rails-templates"
+          Dir.chdir(self.class.source_root) { %x(git clone #{base_url}rjayroach/rails-templates.git) }
+        end
         in_root do
-          %x(git clone https://github.com/rails-on-services/ros.git) if options.dev
-          %x(git clone https://github.com/rails-on-services/devops.git)
+          %x(git clone git@github.com:rails-on-services/ros.git) if options.dev
+          %x(git clone #{base_url}rails-on-services/devops.git)
+          system 'bundle install'
         end
       end
 
-      def create_git_files
-        # copy_file 'gitignore', '.gitignore'
-        # copy_file 'dockerignore', '.dockerignore'
-        # create_file 'images/.gitkeep'
-        # create_file 'text/.gitkeep'
-      end
-
-      def create_output_directory
-        in_root do
-          Ros::Thing.new('env', name, options)
-        end
-        # TODO Test lpass integration on project setup
-        # Ros::Generator.lpass(options) if options.lpass
-        # empty_directory 'output'
+      def create_ros_services
+        return if options.dev
+        # TODO for each ros service gem, generate a rails application that includes that gem
       end
 
       def finish_message

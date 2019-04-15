@@ -14,11 +14,23 @@ module Ros
       def generate
         template_dir = Pathname(File.dirname(__FILE__)).join('../../../files/rails-templates').to_s
         rails_options = '--full --api --dummy-path=spec/dummy -S -J -C -T -M'
-        %x(rails plugin new #{rails_options} -m #{template_dir}/6-api.rb #{name})
+        system "rails plugin new #{rails_options} -m #{template_dir}/6-api.rb #{name}-core"
+      end
+
+      # NOTE: This could be in the rails template
+      def gemspec_content
+        gemspec = "#{name}-core.gemspec"
+        klass = "#{name}-core".split('-').collect(&:capitalize).join('::')
+        in_root do
+          comment_lines gemspec, 'require '
+          gsub_file gemspec, "#{klass}::VERSION", "'0.1.0'"
+          gsub_file gemspec, 'TODO: ', ''
+        end
       end
 
       def finish_message
-        say "\nCreated Ros service at #{destination_root}"
+        FileUtils.mv "#{name}-core", 'core'
+        say "\nCreated Core gem at #{destination_root}"
       end
     end
   end
