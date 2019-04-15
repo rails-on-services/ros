@@ -5,8 +5,8 @@ gemspec
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'pg'
-gem 'ros-core', path: '../ros-core'
-gem 'ros_sdk', path: '../ros_sdk'
+gem 'ros-core', path: '../core'
+gem 'ros_sdk', path: '../sdk'
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'

@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.string "owner_type"
     t.bigint "owner_id"
     t.integer "cognito_endpoint_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["owner_type", "owner_id"], name: "index_campaigns_on_owner_type_and_owner_id"
   end
 
@@ -29,8 +29,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.string "key"
     t.string "encrypted_secret"
     t.string "encrypted_secret_iv"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["provider_id", "key"], name: "index_credentials_on_provider_id_and_key", unique: true
     t.index ["provider_id"], name: "index_credentials_on_provider_id"
   end
@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.string "status", null: false
     t.string "channel"
     t.datetime "send_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["campaign_id"], name: "index_events_on_campaign_id"
     t.index ["provider_id"], name: "index_events_on_provider_id"
     t.index ["target_type", "target_id"], name: "index_events_on_target_type_and_target_id"
@@ -60,8 +60,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.string "from"
     t.string "to"
     t.string "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["owner_type", "owner_id"], name: "index_messages_on_owner_type_and_owner_id"
     t.index ["provider_id"], name: "index_messages_on_provider_id"
   end
@@ -69,16 +69,16 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
   create_table "providers", force: :cascade do |t|
     t.string "name"
     t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "templates", force: :cascade do |t|
     t.bigint "campaign_id"
     t.text "content"
     t.string "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["campaign_id"], name: "index_templates_on_campaign_id"
   end
 
@@ -86,8 +86,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.string "schema_name", null: false
     t.jsonb "properties", default: {}, null: false
     t.jsonb "platform_properties", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end
 
@@ -103,8 +103,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.string "account_sid"
     t.string "from"
     t.string "api_version"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   add_foreign_key "credentials", "providers"
