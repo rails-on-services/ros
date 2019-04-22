@@ -20,7 +20,7 @@ plugin:
     seeds: false
     application_classes: false
     tenant: false
-    gems_path: ..
+    gems_path: ../..
     require_gems: false
     migrations: false
     service: false
@@ -59,7 +59,7 @@ service:
     seeds: true # false for perx-core
     application_classes: true # false for perx-core
     tenant: true # false for perx-core
-    gems_path: ..
+    gems_path: ../..
     migrations: false
     require_gems: true
     service: true

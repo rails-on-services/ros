@@ -1,3 +1,45 @@
+namespace :compose do
+  task :env do
+    require 'ros/compose'
+    Ros::Compose.new.write_envs
+  end
+
+  desc 'Setup services - Create, migrate and seed all service databases'
+  task setup: :env do |task|
+    ARGV.unshift('-d').unshift('-r')
+    Ros::Exec.new.execute('db:reset:seed')
+  end
+
+  desc 'Start all services (in background)'
+  task up: :env do |task|
+    system("docker-compose #{task.name} -d")
+  end
+
+  desc 'Build images for all services'
+  task build: :env do |task|
+    system('docker-compose build')
+  end
+end
+
+namespace :bump do
+  task :env do
+    require 'bump'
+    Bump.replace_in_default = Dir['services/**/*.gemspec']
+  end
+
+  desc 'Display current version'
+  task current: :env do; STDOUT.puts Bump::Bump.current end
+
+  desc 'Bump MAJOR level for all gems'
+  task major: :env do; Bump::Bump.run('major') end
+
+  desc 'Bump MINOR level for all gems'
+  task minor: :env do; Bump::Bump.run('minor') end
+
+  desc 'Bump PATCH level for all gems'
+  task patch: :env do; Bump::Bump.run('patch') end
+end
+
 namespace :apidoc do
   desc 'Generate, convert and publish'
   task :all do |task|
@@ -42,43 +84,6 @@ namespace :db do
     desc 'Reset a database and seed it'
     task :seed do |task|
       Ros::Exec.new.execute(task.name)
-    end
-  end
-end
-
-module Ros
-  class Exec
-    def execute(task)
-      services.each do |service, values|
-        string = exec_string(values, task)
-        prefix = docker? ? "docker-compose #{docker_string} #{values[:name]} " : ''
-        full_string = "#{prefix}bundle exec rails #{string}"
-        STDOUT.puts "Running #{full_string} on #{values[:name]}"
-        if docker?
-          system(full_string)
-        else
-          Dir.chdir(values[:path]) { system(full_string) }
-        end
-      end
-    end
-
-    def docker?; ARGV.include?('-d') end
-    def docker_string; ARGV.include?('-r') ? 'run' : 'exec' end
-
-    def services
-      Dir["./**/config/application.rb"].each_with_object({}) do |path, hash|
-        engine = path.include?('dummy')
-        apath = path.split('/')
-        apath = apath[0..apath.length - (engine ? 5 : 3)].join('/')
-        svc = apath.split('/').last
-        name = svc.gsub('ros-', '')
-        next if %w(sdk core).include? name
-        hash[svc] = { name: name, path: apath, prefix: engine ? 'app:' : '' }
-      end
-    end
-
-    def exec_string(values, task)
-      "#{values[:prefix]}ros:#{task}" #" #{values[:prefix]}ros:#{values[:name]}:db:seed"
     end
   end
 end

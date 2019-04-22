@@ -19,13 +19,12 @@ module Ros
         in_root do
           %x(git clone git@github.com:rails-on-services/ros.git) if options.dev
           %x(git clone #{base_url}rails-on-services/devops.git)
-          system 'bundle install'
         end
       end
 
       def create_ros_services
         return if options.dev
-        # TODO for each ros service gem, generate a rails application that includes that gem
+        # TODO for each ros service gem, generate a rails application in ./services that includes that gem
       end
 
       def finish_message

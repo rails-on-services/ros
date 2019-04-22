@@ -19,71 +19,41 @@ Link to the IAM README.md
 
 ## Getting Started
 
-### Run the services
+## Developing
+
+### Create a development project
 
 ```bash
-docker-compose up
+ros new -f my_project https://api.ros.rails-on-services.org --dev
+cd my_project/ros
+mkdir services/iam/spec/dummy/tmp services/cognito/spec/dummy/tmp services/comm/spec/dummy/tmp
+docker-compose up -d db
+ros db:reset:seed -d -r
+docker-compose up -d
 ```
+
+### Publish APIs to Postman
+
+First add your postman credential key to config/env
+
+```bash
+ros apidoc:all
+```
+
+### Create a development project for Services
+
+```bash
+ros new -f my_project https://api.ros.rails-on-services.org --dev
+```
+
+### Run the services
+
 
 ### Create the database and seed with sample data
 
 ```bash
-source app.env
-./init
-```
-
-### Make a postman request
-
-```bash
-cat ros/ros-iam/tmp/ros/postman/222_222_222-Admin_2.json
-```
-
-Import the output of the above command into Postman
-Set a global variable `host` to the server name or IP running the service, e.g. `localhost:3000`
-
-Set headers:
-`Authorization` to `Basic {{ros_access_key_id}}:{{ros_secret_access_key}}`
-`Content-Type` to `application/vnd.api+json`
-
-Create and endpoint by making a POST to `{{host}}/cognito/endpoints` with the following `raw` payload:
-
-```json
-{ 
-  "data": {
-    "type": "endpoints",
-    "attributes": {
-      "url": "https://surveys.example.com/hello",
-      "target_id": 1,
-      "target_type": "Survey::Group"
-    }
-  }
-}
-```
-
-Retrieve the endpoint by making a GET to `{{host}}/cognito/endpoints?filter[url]=https://surveys.example.com/hello`
-
-```
-{
-    "data": [
-        {
-            "id": "22",
-            "type": "endpoints",
-            "links": {
-                "target": "http://13.229.71.66:3000/cognito/group/1",
-                "self": "http://13.229.71.66:3000/endpoints/22"
-            },
-            "attributes": {
-                "urn": "urn:ros:cognito::222222222:endpoint/22",
-                "url": "https://surveys.example.com/hello",
-                "properties": null,
-                "target_type": "Cognito::Group",
-                "target_id": 1
-            }
-        }
-    ]
-}
-
-The target URL is found at data[0]['links']['target']
+source config/env
+ros db:reset:seed
 ```
 
 

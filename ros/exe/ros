@@ -1,20 +1,15 @@
 #!/usr/bin/env ruby
 
-if ARGV.size > 0
-  if ARGV[0].eql? '-T'
-    system "rake -T"
-    return
-  elsif ARGV[0].include? ':'
-    require 'rake'
-    Rake.load_rakefile 'Rakefile' if File.exists? 'Rakefile'
-    Rake::Task[ARGV.shift].invoke(ARGV)
-    return
-  end
+if ARGV[0]&.eql? '-T'
+  res = %x(rake -T)
+  STDOUT.puts res.gsub(/^rake/, 'ros').gsub("\nrake", "\nros")
+elsif ARGV[0]&.include? ':'
+  require 'rake'
+  Rake.load_rakefile 'Rakefile' if File.exists? 'Rakefile'
+  Rake::Task[ARGV.shift].invoke(ARGV)
+else
+  require 'bundler/setup'
+  require 'ros'
+  require 'ros/cli'
+  Ros::Cli.start
 end
-
-require 'pry'
-
-require 'bundler/setup'
-require 'ros'
-
-Ros::Cli.start

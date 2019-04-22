@@ -12,9 +12,11 @@ module Ros
       def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files').to_s end
 
       def generate
-        template_dir = Pathname(File.dirname(__FILE__)).join('../../../files/rails-templates').to_s
+        template_file = "#{self.class.source_root}/rails-templates/6-api.rb"
         rails_options = '--full --api --dummy-path=spec/dummy -S -J -C -T -M'
-        system "rails plugin new #{rails_options} -m #{template_dir}/6-api.rb #{name}-core"
+        exec_system = "rails plugin new #{rails_options} -m #{template_file} #{name}-core"
+        puts exec_system
+        Dir.chdir('services') { system exec_system }
       end
 
       # NOTE: This could be in the rails template
@@ -29,8 +31,11 @@ module Ros
       end
 
       def finish_message
-        FileUtils.mv "#{name}-core", 'core'
-        say "\nCreated Core gem at #{destination_root}"
+        Dir.chdir('services') do
+          FileUtils.mv "#{name}-core", 'core'
+        end
+        action = self.behavior.eql?(:invoke) ? 'Created' : 'Destroyed'
+        say "\n#{action} core gem at #{destination_root}"
       end
     end
   end

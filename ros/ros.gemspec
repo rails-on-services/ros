@@ -38,7 +38,12 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'pry'
   spec.add_dependency 'thor'
+  spec.add_dependency 'bump'
+  spec.add_dependency 'dotenv'
+  # Add gems that are required to execute ros commands, e.g. rails, rake, etc
+  spec.add_dependency 'rake', '~> 12.0'
+
   spec.add_development_dependency 'bundler', '~> 2.0'
-  spec.add_development_dependency 'rake', '~> 12.0'
+  # spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rspec', '~> 3.8'
 end

@@ -1,82 +1,93 @@
 # frozen_string_literal: true
-# https://nandovieira.com/creating-generators-and-executables-with-thor
+require 'dotenv'
 
 require 'ros/version'
-require 'thor'
+require 'ostruct'
 
 module Ros
-  class Cli < Thor
-    def self.exit_on_failure?; true end
-
-    check_unknown_options!
-    class_option :verbose, type: :boolean, default: false
-
-    desc 'version', 'Display version'
-    map %w(-v --version) => :version
-    def version; say "Ros #{VERSION}" end
-
-    desc 'new PATH', 'Create a new Ros project at PATH'
-    option :force, type: :boolean, default: false, aliases: '-f'
-    option :dev, type: :boolean, default: false, aliases: '-d' #, required: true
-    def new(name, host = nil)
-      FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
-      raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if File.exist?(name)
-      require_relative 'ros/generators/project.rb'
-      generator = Ros::Generators::Project.new
-      generator.destination_root = name
-      generator.options = options
-      generator.name = name
-      FileUtils.mkdir_p(generator.destination_root)
-      Dir.chdir(name) { init(nil, host) }
-      generator.invoke_all
-      Dir.chdir(name) { generate('sdk', name) }
-      Dir.chdir(name) { generate('core', name) }
-    end
-
-    desc 'generate TYPE NAME', 'Generate a new service, sdk or core gem'
-    map %w(g) => :generate
-    option :force, type: :boolean, default: false, aliases: '-f'
-    def generate(artifact, name = nil)
-      FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
-      raise Error, set_color("ERROR: Not a Ros project", :red) unless File.exists?('app.env')
-      valid_artifacts = %w(service sdk core)
-      raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
-      raise Error, set_color("ERROR: must supply a name for service", :red) if artifact.eql?('service') and name.nil?
-      require_relative "ros/generators/#{artifact}.rb"
-      generator = Object.const_get("Ros::Generators::#{artifact.capitalize}").new
-      generator.destination_root = artifact.eql?('service') ? name : "#{name}#{artifact.eql?('sdk') ? '_' : '-'}#{artifact}"
-      generator.options = options
-      generator.name = name
-      generator.project = File.basename(Dir.pwd)
-      generator.invoke_all
-    end
-
-    desc 'init', 'Initialize the project with default settings'
-    def init(name = nil, host = nil)
-      name ||= File.basename(Dir.pwd)
-      host ||= 'http://localhost:3000'
-      require_relative 'ros/generators/env.rb'
-      generator = Ros::Generators::Env.new
-      generator.options = options.merge(uri: URI(host))
-      generator.name = name
-      generator.invoke_all
-    end
-
-    # TODO Handle show and edit as well
-    desc 'lpass ACTION', 'Transfer the contents of app.env to/from a Lastpass account'
-    option :username, aliases: '-u'
-    def lpass(action)
-      raise Error, set_color("ERROR: invalid action #{action}. valid actions are: add, show, edit", :red) unless %w(add show edit).include? action
-      raise Error, set_color("ERROR: Not a Ros project", :red) unless File.exists?('app.env')
-      lpass_name = "#{File.basename(Dir.pwd)}/development"
-      %x(lpass login #{options.username}) if options.username
-      %x(lpass add --non-interactive --notes #{lpass_name} < app.env)
-    end
-
-    # TODO Invoke TF code to launch a server
-    desc 'server ACTION', 'Create or destroy a cloud server running Ros core services'
-    def server(action)
-      raise Error, set_color("ERROR: invalid action #{action}. valid actions are: create, destroy", :red) unless %w(create destroy).include? action
+  # Copied from ActiveSupport::StringInquirer
+  class StringInquirer < String
+    def method_missing(method_name, *arguments)
+      if method_name[-1] == '?'
+        self == method_name[0..-2]
+      else
+        super
+      end
     end
   end
+
+  class Platform
+    class << self
+      def descendants
+        ObjectSpace.each_object(Class).select { |klass| klass < self }
+      end
+
+      def config
+        return @config if @config
+        @config = OpenStruct.new(
+          compose_files: [],
+          root: Ros.root,
+          env: Ros.env
+          )
+      end
+
+      def configure
+        yield self.config
+      end
+    end
+  end
+
+  class << self
+    def platform
+      @platform ||= Ros::Platform.descendants.first
+    end
+
+    def env
+      @env ||= StringInquirer.new(ENV['ROS_ENV'] || 'development')
+    end
+
+    def root
+      @root ||= (cwd = Dir.pwd
+        while not cwd.eql?('/')
+          break Pathname.new(cwd) if File.exists?("#{cwd}/config/platform.rb")
+          cwd = File.expand_path('..', cwd)
+        end)
+    end
+
+    def name
+      docker_env['COMPOSE_PROJECT_NAME']
+    end
+
+    def docker_env
+      require 'ros/compose'
+      Ros::Compose.new.envs
+    end
+
+    def platform_env; Dotenv.parse(root.join('app.env')) end
+
+    def service_names; services.keys.sort end
+
+    def services
+      projects.reject{ |p| projects[p].name.eql? 'core' }
+    end
+
+    def project_names; projects.keys.sort end
+
+    def projects
+      @projects ||= (Dir["#{root}/**/config/application.rb"].each_with_object({}) do |path, hash|
+        key = path.to_s.gsub("#{root}/", '')
+        ros = key.start_with? 'ros/services'
+        key = key.split('/').shift(ros ? 3 : 2).join('/')
+        engine = path.include?('dummy')
+        apath = root.join(key)
+        name = key.split('/').pop
+        hash[key] = OpenStruct.new(engine: engine, name: name, root: apath, ros: ros)
+      end)
+    end
+  end
+end
+
+unless Ros.root.nil?
+  require Ros.root.join('config/platform')
+  require Ros.root.join("config/environments/#{Ros.env}")
 end

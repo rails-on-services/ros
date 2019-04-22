@@ -1,0 +1,45 @@
+version: '3'
+services:
+  wait:
+    depends_on:
+      # - rabbitmq
+      # - redis
+      # - fluentd
+      # - localstack
+    environment:
+      # TARGETS: 'db:5432,rabbitmq:5672,elasticsearch:9200,redis:6379,fluentd:24224,localstack:4572'
+      # TARGETS: 'db:5432,rabbitmq:5672,redis:6379'
+
+  # localstack:
+  #   image: localstack/localstack
+  #   environment:
+  #     DEBUG: s3
+  #     SERVICES: s3:4572
+  #     HOSTNAME: localstack
+  #     HOSTNAME_EXTERNAL: localstack
+  #   ports:
+  #     - '4572:4572'
+  # fluentd:
+  #   image: fluent/fluentd:v1.3.2-debian
+  #   ports:
+  #     - '24224:24224'
+  #     - '24224:24224/udp'
+  #   volumes:
+  #     - './fluentd/log:/fluentd/log'
+  #     - './fluentd:/fluentd/etc'
+  #   environment:
+  #     FLUENTD_CONF: rails.conf
+  # rabbitmq:
+  #   image: rabbitmq:3.6-management-alpine
+  #   ports:
+  #     - '5672:5672'
+  #     - '15672:15672'
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: guest
+  #     RABBITMQ_DEFAULT_PASS: guest
+  # redis:
+  #   image: redis:3.2-alpine
+  #   container_name: redis
+  #   ports:
+  #     - '6379:6379'
+  # wait for all dependencies to accept connection

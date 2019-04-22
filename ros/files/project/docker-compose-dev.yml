@@ -1,3 +1,0 @@
-# mount project source directories so changes to source are immediately reflected in the services
-version: '3'
-services:

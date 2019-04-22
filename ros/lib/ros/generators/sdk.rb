@@ -13,16 +13,18 @@ module Ros
 
       def generate
         gem_options = '--exe --no-coc --no-mit'
-        system "bundle gem #{gem_options} #{name}_sdk"
-        FileUtils.rm_rf "#{name}_sdk/.git"
+        Dir.chdir('services') do
+          system "bundle gem #{gem_options} #{name}_sdk"
+          FileUtils.rm_rf "#{name}_sdk/.git"
+        end
       end
 
-      def Gemfile
+      def gemfile
         # TODO: If options.dev do this; If not then declare ros_sdk as a dependency in the gemspec
         in_root do
           append_to_file 'Gemfile', after: "source \"https://rubygems.org\"\n" do <<~HEREDOC
 
-          gem 'ros_sdk', path: '../ros/sdk'
+          gem 'ros_sdk', path: '../../ros/services/sdk'
           gem 'pry'
           gem 'awesome_print'
           HEREDOC
@@ -33,7 +35,7 @@ module Ros
       def bin_console_content
         # TODO: If options.dev do this; If not then declare ros_sdk as a dependency in the gemspec
         in_root do
-          create_file 'bin/console' do <<~HEREDOC
+          create_file 'bin/console', <<~HEREDOC
             #!/usr/bin/env ruby
 
             require 'bundler/setup'
@@ -45,8 +47,7 @@ module Ros
 
             Pry.config.should_load_plugins = false
             Pry.start
-            HEREDOC
-          end
+          HEREDOC
         end
       end
 
@@ -71,7 +72,7 @@ module Ros
           gsub_file gemspec, '~> 10.0', '~> 12.0'
           comment_lines gemspec, /spec\.homepage/
           comment_lines gemspec, /spec\.metadata/
-          comment_lines gemspec, "sepc\.files"
+          comment_lines gemspec, /spec\.files/
           comment_lines gemspec, "`git"
           # append_to_file gemspec, after: "when it is released.\n  " do <<~HEREDOC
           append_to_file gemspec, after: "s)/}) }\n" do <<~HEREDOC
@@ -82,8 +83,11 @@ module Ros
       end
 
       def finish_message
-        FileUtils.mv "#{name}_sdk", 'sdk'
-        say "\nCreated SDK gem at #{destination_root.gsub("#{name}_sdk", 'sdk')}"
+        Dir.chdir('services') do
+          FileUtils.mv "#{name}_sdk", 'sdk'
+        end
+        action = self.behavior.eql?(:invoke) ? 'Created' : 'Destroyed'
+        say "\n#{action} SDK gem at #{destination_root.gsub("#{name}_sdk", 'sdk')}"
       end
     end
   end
