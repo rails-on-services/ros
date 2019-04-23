@@ -7,7 +7,7 @@ WORKDIR /home/rails/app
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
     bundler:2.0.1 \
-    nokogiri:1.10.2 \
+    nokogiri:1.10.3 \
     ffi:1.10.0 \
     mini_portile2:2.3.0 \
     msgpack:1.2.6 \

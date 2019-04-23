@@ -2,9 +2,11 @@ version: '3'
 services:
   cognito:
     image:
-      "${IMAGE_REPOSITORY}/cognito:${RAILS_ENV:-development}-${IMAGE_TAG:-undefined}"
+      "${IMAGE_REPOSITORY}/cognito:${RAILS_ENV:-development}-${IMAGE_TAG:-latest}"
     build:
-      context: "${ROS_DIR:-.}"
+      # .. works when building in the project/ros dir
+      # ../ros works when building in the project dir
+      context: "${CONTEXT_DIR:-..}"
       args:
         bundle_string: "${BUNDLE_STRING:---with=development test}"
         rails_env: "${RAILS_ENV:-development}"
@@ -13,17 +15,18 @@ services:
         PUID: "${PUID:-1000}"
         PGID: "${PGID:-1000}"
     env_file:
-      - "${env_dir:-.}/../config/env"
-      - "${env_dir:-.}/env"
+      - ../config/env
+      - ./env
     depends_on:
       - wait
     ports:
       - "3000"
+
   comm:
     image:
-      "${IMAGE_REPOSITORY}/comm:${RAILS_ENV:-development}-${IMAGE_TAG:-undefined}"
+      "${IMAGE_REPOSITORY}/comm:${RAILS_ENV:-development}-${IMAGE_TAG:-latest}"
     build:
-      context: "${ROS_DIR:-.}"
+      context: "${CONTEXT_DIR:-..}"
       args:
         bundle_string: "${BUNDLE_STRING:---with=development test}"
         rails_env: "${RAILS_ENV:-development}"
@@ -32,17 +35,18 @@ services:
         PUID: "${PUID:-1000}"
         PGID: "${PGID:-1000}"
     env_file:
-      - "${env_dir:-.}/../config/env"
-      - "${env_dir:-.}/env"
+      - ../config/env
+      - ./env
     depends_on:
       - wait
     ports:
       - "3000"
+
   iam:
     image:
-      "${IMAGE_REPOSITORY}/iam:${RAILS_ENV:-development}-${IMAGE_TAG:-undefined}"
+      "${IMAGE_REPOSITORY}/iam:${RAILS_ENV:-development}-${IMAGE_TAG:-latest}"
     build:
-      context: "${ROS_DIR:-.}"
+      context: "${CONTEXT_DIR:-..}"
       args:
         bundle_string: "${BUNDLE_STRING:---with=development test}"
         rails_env: "${RAILS_ENV:-development}"
@@ -51,8 +55,8 @@ services:
         PUID: "${PUID:-1000}"
         PGID: "${PGID:-1000}"
     env_file:
-      - "${env_dir:-.}/../config/env"
-      - "${env_dir:-.}/env"
+      - ../config/env
+      - ./env
     depends_on:
       - wait
     ports:
