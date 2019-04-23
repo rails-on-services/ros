@@ -7,7 +7,7 @@ WORKDIR /home/rails/app
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
     bundler:2.0.1 \
-    nokogiri:1.10.2 \
+    nokogiri:1.10.3 \
     ffi:1.10.0 \
     mini_portile2:2.3.0 \
     msgpack:1.2.9 \
@@ -17,11 +17,11 @@ RUN gem install \
     eventmachine:1.2.7
 
 ARG project=user
-ARG ros_dir=ros
+ARG ROS_DIR=./ros
 COPY services/${project}/Gemfile* ./
 # NOTE: Dependent gems need to be copied in so that their dependencies are also installed
-COPY ${ros_dir}/services/core/. ../../${ros_dir}/services/core/
-COPY ${ros_dir}/services/sdk/. ../../${ros_dir}/services/sdk/
+COPY ${ROS_DIR}/services/core/. ../../${ROS_DIR}/services/core/
+COPY ${ROS_DIR}/services/sdk/. ../../${ROS_DIR}/services/sdk/
 COPY services/core/. ../core/
 COPY services/sdk/. ../sdk/
 
@@ -63,9 +63,10 @@ COPY --chown=rails:rails --from=base /usr/local/bundle /usr/local/bundle
 WORKDIR /home/rails/app
 
 ARG project=user
+ARG ROS_DIR=./ros
 COPY --chown=rails:rails services/${project}/. ./
-COPY --chown=rails:rails ${ros_dir}/services/core/. ../../${ros_dir}/services/core/
-COPY --chown=rails:rails ${ros_dir}/services/sdk/. ../../${ros_dir}/services/sdk/
+COPY --chown=rails:rails ${ROS_DIR}/services/core/. ../../${ROS_DIR}/services/core/
+COPY --chown=rails:rails ${ROS_DIR}/services/sdk/. ../../${ROS_DIR}/services/sdk/
 COPY --chown=rails:rails services/core/. ../core/
 COPY --chown=rails:rails services/sdk/. ../sdk/
 

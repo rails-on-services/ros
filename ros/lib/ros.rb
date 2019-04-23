@@ -54,16 +54,14 @@ module Ros
         end)
     end
 
-    def name
-      docker_env['COMPOSE_PROJECT_NAME']
-    end
+    def ros_root; root.join('ros') end
 
-    def docker_env
-      require 'ros/compose'
-      Ros::Compose.new.envs
-    end
+    def has_ros?; not is_ros? and Dir.exists?(ros_root) end
 
-    def platform_env; Dotenv.parse(root.join('app.env')) end
+    # TODO: This is a hack in order to differentiate for purpose of templating files
+    def is_ros?
+      platform.config.image_repository.eql?('rails-on-services') and platform.config.compose_project_name.eql?('ros')
+    end
 
     def service_names; services.keys.sort end
 

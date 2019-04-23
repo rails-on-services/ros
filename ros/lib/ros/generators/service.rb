@@ -34,14 +34,15 @@ module Ros
       end
 
       # TODO: Project name goes into .env and then just reference the variable name in this compose content
+      # TODO: If this is a new Ros services then context is "${CONTEXT_DIR:-..}" otherwise it is simply '..'
       def compose_services_content
         return unless File.exists? "#{Ros.root}/compose/services.yml"
         append_to_file "#{Ros.root}/compose/services.yml", <<-HEREDOC
   #{name}:
     image:
-      "${IMAGE_REPOSITORY}/#{name}:${RAILS_ENV:-development}-${IMAGE_TAG:-undefined}"
+      "${IMAGE_REPOSITORY}/#{name}:${RAILS_ENV:-development}-${IMAGE_TAG:-latest}"
     build:
-      context: ..
+     context: #{Ros.is_ros? ? '"${CONTEXT_DIR:-..}"' : '..'}
       args:
         bundle_string: "${BUNDLE_STRING:---with=development test}"
         rails_env: "${RAILS_ENV:-development}"
@@ -86,10 +87,10 @@ module Ros
 
       def compose_mounts_content_ros
         append_to_file "#{Ros.root}/compose/mounts.yml", <<-HEREDOC
-      - ../ros/services/core:/home/ros/services/core
-      - ../ros/services/sdk:/home/ros/services/sdk
+      - "${CONTEXT_DIR}/services/core:/home/ros/services/core"
+      - "${CONTEXT_DIR}/services/sdk:/home/ros/services/sdk"
         HEREDOC
-      end if Dir.exists?(Ros.platform.config.ros_root.to_s)
+      end if Ros.has_ros?
 
       def nginx_file
         return unless one_service?

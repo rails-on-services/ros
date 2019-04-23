@@ -44,7 +44,6 @@ module Ros
             class Platform < Ros::Platform
               config.compose_project_name = '#{name}'
               config.image_repository = '#{name}'
-              config.ros_root = Ros.root.join('ros')
             end
           end
         HEREDOC
@@ -52,9 +51,9 @@ module Ros
 
       def config_platform_content
         append_to_file "#{Ros.root}/compose/base.yml", <<-HEREDOC
-      - "${ROS_DIR}/containers/nginx/services.conf:/etc/nginx/conf.d/services/ros.conf"
+      - "${ROS_DIR}/compose/containers/nginx/services.conf:/etc/nginx/conf.d/services/ros.conf"
         HEREDOC
-      end if Dir.exists?(Ros.platform.config.ros_root.to_s)
+      end if Ros.has_ros?
 
       def app_env_content
         create_file 'config/env', <<~HEREDOC
