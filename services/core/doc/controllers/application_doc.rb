@@ -21,10 +21,10 @@ module AutoGenDoc
           query 'page[number]', Integer #, false, range: { ge: 1 } #, default: 1
           query 'page[size]', Integer # , range: { ge: 1 }, default: 1
           query :sort, String
-          (subclass.resource.filters.keys - %i(id)).each do |field|
-            query "filter[#{field}]", String, desc: subclass.resource.descriptions[field] || nil
+          (subclass.resource_class.filters.keys - %i(id)).each do |field|
+            query "filter[#{field}]", String, desc: subclass.resource_class.descriptions[field] || nil
           end
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource).
+          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class).
             serialize_to_hash(subclass.resources).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
@@ -38,8 +38,8 @@ module AutoGenDoc
 
         api_dry :show do
           header :Authorization, String
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource).
-            serialize_to_hash(subclass.resource_instance).to_json
+          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class).
+            serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
                 {
@@ -52,16 +52,16 @@ module AutoGenDoc
 
         api_dry :create do
           header :Authorization, String #, 'Basic access_key_id:secret_access_key'
-          attributes = subclass.resource._attributes.except(:id, :urn, :created_at, :updated_at)
+          attributes = subclass.resource_class._attributes.except(:id, :urn, :created_at, :updated_at)
           attributes.each_key { |k| attributes[k] = String }
           body 'application/vnd.api+json', data: {
             data: {
-              xyz_type: subclass.model.name.underscore.pluralize,
+              xyz_type: subclass.model_name.underscore.pluralize,
               attributes: attributes
             }
           }
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource).
-            serialize_to_hash(subclass.resource_instance).to_json
+          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class).
+            serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
                 {
@@ -75,16 +75,16 @@ module AutoGenDoc
         api_dry :update do
           header :Authorization, String
           # path :id, Integer
-          attributes = subclass.resource._attributes.except(:id, :urn, :created_at, :updated_at)
+          attributes = subclass.resource_class._attributes.except(:id, :urn, :created_at, :updated_at)
           attributes.each_key { |k| attributes[k] = String }
           body 'application/vnd.api+json', data: {
             data: {
-              xyz_type: subclass.model.name.underscore.pluralize,
+              xyz_type: subclass.model_name.underscore.pluralize,
               attributes: attributes
             }
           }
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource).
-            serialize_to_hash(subclass.resource_instance).to_json
+          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class).
+            serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
                 {
@@ -104,10 +104,20 @@ class ApplicationDoc
   include AutoGenDoc
   class << self
     # TODO: Provide various contexts rather than default to nil; maybe
-    def resources; Tenant.find_by(schema_name: '222_222_222').switch { model.all.limit(2).map { |record| resource.new(record, nil) } } end
-    def resource; name.remove('Doc').constantize end
-    def resource_instance; Tenant.find_by(schema_name: '222_222_222').switch { resource.new(model.first, nil) } end
-    def model; name.remove('ResourceDoc').constantize end
+    def resource
+      model = model_class.first || FactoryBot.create(model_name.underscore.to_sym)
+      resource_class.new(model, nil)
+    end
+
+    def resources
+      2.times { FactoryBot.create(model_name.underscore.to_sym) } if model_class.count.zero?
+      model_class.all.limit(2).map { |record| resource_class.new(record, nil) }
+    end
+
+    def resource_class; resource_name.constantize end
+    def resource_name; name.remove('Doc') end
+    def model_class; model_name.constantize end
+    def model_name; name.remove('ResourceDoc') end
   end
 end
 

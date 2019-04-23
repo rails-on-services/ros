@@ -23,7 +23,11 @@ namespace :ros do
     desc 'Create OpenAPI V 3.0 docuementation'
     task generate: :environment do
       require Ros::Core::Engine.root.join('doc/open_api').to_s
-      OpenApi.write_docs
+      ActiveRecord::Base.connection.begin_transaction(joinable: false)
+      Tenant.create(schema_name: rand(100_000_000..999_999_999).to_s.scan(/.{3}/).join('_')).switch do
+        OpenApi.write_docs
+      end
+      ActiveRecord::Base.connection.rollback_transaction
     end
 
     desc 'Convert OpenAPI V 3.0 docuementation to Postman'
