@@ -27,9 +27,9 @@ end
 module Ros
   module Console
     module Methods
-      def fbc(type)
+      def fbc(type, *options)
         try_count ||= 0
-        FactoryBot.create(type)
+        FactoryBot.create(type, options)
       rescue KeyError
         try_count += 1
         Ros::Console::Methods.factories.each { |f| require f }
@@ -50,17 +50,37 @@ module Ros
         end unless Ros::Console::Methods.methods.include? :models
 
         def init
+          es = Set.new
           models.each do |model|
-            next if model.include? '/concerns/'
-            name = File.basename(model).gsub('.rb', '')
-            next if name.eql?('application_record') || name.ends_with?('join')
-            id = name.split('_').map{ |m| m[0] }.join
-            define_method("#{id}a") { name.classify.constantize.all }
-            define_method("#{id}c") { fbc(name) }
-            define_method("#{id}f") { Rails.configuration.x.memoized_shortcuts["#{id}f"] ||= name.classify.constantize.first }
-            define_method("#{id}l") { Rails.configuration.x.memoized_shortcuts["#{id}l"] ||= name.classify.constantize.last }
-            define_method("#{id}p") { |column| name.classify.constantize.pluck(column) }
+            idx = model.index('/app/models/') + 12
+            name = model[idx..-1].gsub('.rb', '')
+            next if name.starts_with? 'concerns'
+            klass = "#{name.classify}#{name.ends_with?('s') ? 's' : ''}".constantize
+            next unless klass.is_a? Class
+            next if klass.abstract_class?
+            next unless klass.new.is_a? ApplicationRecord
+            name.gsub('_', '').split('').each_with_object([]) do |char, ary|
+              ary << char
+              id = ary.join
+              if es.add?(id)
+                es.add("#{id}a")
+                es.add("#{id}cr")
+                es.add("#{id}f")
+                es.add("#{id}l")
+                es.add("#{id}p")
+                define_method("#{id}a") { klass.all }
+                # TODO: just using "#{id}c" causes an error. Find out why
+                define_method("#{id}cr") { fbc(name) }
+                define_method("#{id}f") { Rails.configuration.x.memoized_shortcuts["#{id}f"] ||= klass.first }
+                define_method("#{id}l") { Rails.configuration.x.memoized_shortcuts["#{id}l"] ||= klass.last }
+                define_method("#{id}p") { |*columns| klass.pluck(columns) }
+                break
+              end
+            end
           end
+        rescue ActiveRecord::NoDatabaseError => e
+          # If the database doesn't exist then just fail silently
+        rescue ActiveRecord::StatementInvalid => e
         end
       end
 
