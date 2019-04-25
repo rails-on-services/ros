@@ -92,6 +92,7 @@ module Ros
 
     desc 'server', 'Start all services defined in the ./compose directory (short-cut alias: "s")'
     option :port, type: :string, default: '3000', aliases: '-p'
+    option :daemon, type: :boolean, aliases: '-d'
     map %w(s) => :server
     def server(env = 'development')
       require 'pry'
@@ -101,7 +102,8 @@ module Ros
         'RAILS_ENV' => env
       }
       Ros::Compose.write_env_file
-      system('docker-compose up')
+      compose_options = options.daemon ? '-d' : ''
+      system("docker-compose up #{compose_options}")
     end
 
     desc 'console', 'Start the Ros console (short-cut alias: "c")'

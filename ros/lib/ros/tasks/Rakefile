@@ -1,3 +1,6 @@
+require 'ros'
+require 'ros/exec'
+
 namespace :compose do
   task :env do
     require 'ros/compose'
