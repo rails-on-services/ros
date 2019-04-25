@@ -26,6 +26,7 @@ module Providers
 
     # TODO: toggle sending on and off
     def sms(message)
+      return unless Settings.active
       message.update(from: from)
       client.set_sms_attributes({ attributes: { 'DefaultSenderID' => from } })
       res = client.publish(phone_number: message.to, message: message.body)

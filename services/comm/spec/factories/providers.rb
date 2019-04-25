@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
-  factory :provider do
-    name { "MyString" }
-    type { "" }
+  factory :provider_aws, class: 'Providers::Aws' do
+    name { 'MyString' }
+    type { 'Providers::Aws' }
   end
 end

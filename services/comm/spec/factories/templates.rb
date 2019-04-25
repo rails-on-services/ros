@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :template do
-    campaign { nil }
+    campaign
     content { "MyText" }
     status { "MyString" }
   end

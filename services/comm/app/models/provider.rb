@@ -7,6 +7,8 @@ class Provider < Comm::ApplicationRecord
 
   validates :type, presence: true
 
+  def self.services; [] end
+
   def sms; raise NotImplementedError end
 
   def credentials_hash
