@@ -8,4 +8,6 @@ Ros::Iam::Engine.routes.draw do
   jsonapi_resources :roots
   jsonapi_resources :users
   jsonapi_resources :credentials
+  jsonapi_resources :groups
+  jsonapi_resources :policies
 end
