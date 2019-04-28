@@ -1,0 +1,51 @@
+#!/usr/bin/env ansible-playbook
+---
+- hosts: instance
+  tasks:
+    - name: Install and setup Docker
+      import_role:
+        name: prepd/docker
+      vars: {}
+
+    - name: Install and setup Postgres
+      import_role:
+        name: prepd/postgres
+      vars:
+        role_spec:
+          users:
+            first:
+              name: '{{ ansible_env.USER }}'
+              password: '{{ ansible_env.USER }}'
+
+    - name: Install ruby
+      import_role:
+        name: prepd/ruby
+      vars: {}
+
+    - name: Install node and postman package
+      import_role:
+        name: prepd/nodejs
+      vars:
+        role_spec:
+          packages: [openapi-to-postmanv2]
+
+    - name: Clone the projects
+      import_role:
+        name: prepd/git
+      vars:
+        role_spec:
+          project_dir: '{{ ansible_env.HOME }}/project'
+          repositories:
+            ros:
+              url: https://github.com/rails-on-services/ros.git
+            devops:
+              url: https://github.com/rails-on-services/devops.git
+            guides:
+              url: https://github.com/rails-on-services/guides.git
+      when: false
+
+    - name: Configure instance
+      import_role:
+        name: instance
+      vars:
+        project_dir: '{{ ansible_env.HOME }}/project'

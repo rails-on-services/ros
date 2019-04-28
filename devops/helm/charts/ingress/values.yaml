@@ -1,0 +1,15 @@
+# Default values for ingress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+nameOverride: ""
+fullnameOverride: ""
+
+# External DNS hostnames
+hosts: []
+
+iamServiceName: iam
+iamServicePort: 80
+cognitoServiceName: cognito
+cognitoServicePort: 80
+commServiceName: comm
+commServicePort: 80
