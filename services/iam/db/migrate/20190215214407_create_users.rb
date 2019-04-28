@@ -10,8 +10,8 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.jsonb :attached_actions, null: false, default: {}
 
       ## Database authenticatable
-      t.string :username, null: false, default: '', index: { unique: true }
-      t.string :encrypted_password, null: false, default: ''
+      t.string :username, null: false, index: { unique: true }
+      t.string :encrypted_password, null: false
 
       ## Recoverable
       t.string   :reset_password_token, index: { unique: true }

@@ -17,6 +17,7 @@ class User < Iam::ApplicationRecord
   has_many :role_policies, through: :roles, source: :policies
   has_many :role_actions, through: :roles, source: :actions
 
+  validates :username, presence: true
   # store_accessor :permissions, :authorized_policies, :authorized_actions
 
   # TODO: validate locales inclusion in list and time_zone in available time zones

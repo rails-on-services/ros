@@ -21,6 +21,7 @@ module AutoGenDoc
           query 'page[number]', Integer #, false, range: { ge: 1 } #, default: 1
           query 'page[size]', Integer # , range: { ge: 1 }, default: 1
           query :sort, String
+          query :include, String
           (subclass.resource_class.filters.keys - %i(id)).each do |field|
             query "filter[#{field}]", String, desc: subclass.resource_class.descriptions[field] || nil
           end
@@ -28,10 +29,10 @@ module AutoGenDoc
             serialize_to_hash(subclass.resources).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
-                {
-                    'status': '401',
-                    'title': 'Unauthorized'
-                }
+              {
+                'status': '401',
+                'title': 'Unauthorized'
+              }
             ]
           }
         end
@@ -42,10 +43,10 @@ module AutoGenDoc
             serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
-                {
-                    'status': '401',
-                    'title': 'Unauthorized'
-                }
+              {
+                'status': '401',
+                'title': 'Unauthorized'
+              }
             ]
           }
         end
@@ -64,10 +65,10 @@ module AutoGenDoc
             serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
-                {
-                    'status': '401',
-                    'title': 'Unauthorized'
-                }
+              {
+                'status': '401',
+                'title': 'Unauthorized'
+              }
             ]
           }
         end
@@ -87,10 +88,10 @@ module AutoGenDoc
             serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
-                {
-                    'status': '401',
-                    'title': 'Unauthorized'
-                }
+              {
+                'status': '401',
+                'title': 'Unauthorized'
+              }
             ]
           }
         end

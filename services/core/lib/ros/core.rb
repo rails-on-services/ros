@@ -91,11 +91,15 @@ module Ros
   end
 
   Urn = Struct.new(:txt, :partition_name, :service_name, :region, :account_id, :resource) do
+    def self.from_urn(urn_string)
+      urn_array = urn_string.split(':')
+      new(*urn_array)
+    end
+
     def self.from_jwt(token)
       jwt = Jwt.new(token)
       return unless urn_string = jwt.decode['sub']
-      urn_array = urn_string.split(':')
-      new(*urn_array)
+      from_urn(urn_string)
     # NOTE: Intentionally swallow decode error and return nil
     rescue JWT::DecodeError
     end
