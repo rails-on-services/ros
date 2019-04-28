@@ -1,0 +1,8 @@
+# Configuration values defined here override any values defined in platform.yml
+---
+devops:
+  deployments:
+    - name: cluster
+      provider: aws
+      deploy_to: kubernetes
+      remote_state: s3

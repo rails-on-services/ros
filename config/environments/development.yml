@@ -1,0 +1,53 @@
+# Configuration values defined here override any values defined in platform.yml
+---
+compose:
+  os_packages: ['vim', 'tree', 'etc']
+  # project_name: 'hello'
+  files: ['compose/base.yml', 'compose/services.yml', 'compose/nginx.yml', 'compose/mounts.yml']
+  # TODO: no conditionals: all required files are in the project's compose directory including ros ones
+  # files += %w(ros/compose/services.yml ros/compose/nginx.yml ros/compose/mounts.yml) if Ros.has_ros?
+
+# TODO: Ros needs to write out values to tfvars somewhere
+# Duan will provide the var names, values and file location
+devops:
+  cicd:
+    provider: circleci
+    push_on_new_tag: true
+  deployments:
+    - name: server
+      provider: aws
+      type: instance
+      instance_type: t3.large
+      ami_distro: debian
+      # remote_state: s3
+      dns:
+        domain: rails-on-services.org
+        subdomain: ros
+        hostnames: ['api', 'sftp']
+    - name: cluster
+      provider: aws
+      type: kubernetes
+      # remote_state: s3
+      dns:
+        domain: rails-on-services.org
+        subdomain: ros
+
+# NOTEs:
+# each service listed here corresponds to a file in the compose directory
+services:
+  storage:
+    # requires localstack running s3 or and S3 bucket, SFTP container, Rails Storage service
+    # if enabled then either the ALB or the SG needs to permit the SFTP port
+    # If localstack include that in COMPIOSE_FILE in .env
+    # If S3 then when calling ros infra:provision it writes a value to tfvars that has TF create the S3 bucket
+    enabled: true
+    type: localstack # :s3
+    mount: yes
+    command: ["rails", "this"]
+  billing:
+    enabled: false
+  monitoring: # prom + grafana
+    enabled: false
+  logging: # flucentd
+    enabled: false
+    type: localstack # :s3
