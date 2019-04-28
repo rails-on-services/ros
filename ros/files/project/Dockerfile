@@ -53,7 +53,7 @@ RUN addgroup --gid ${PGID} rails \
  && useradd -ms /bin/bash -d /home/rails --uid ${PUID} --gid ${PGID} rails \
  && mkdir -p /home/rails/app \
  && echo 'set editing-mode vi' > /home/rails/.inputrc \
- && echo "alias rspec='spring rspec $@'\nalias ss='spring stop'\nalias rs='spring rails server -b 0.0.0.0'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
+ && echo "alias rspec='spring rspec $@'\nalias src='ss; rc'\nalias ss='spring stop'\nalias rs='rails server -b 0.0.0.0'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
  && chown rails:rails /home/rails -R \
  && echo 'rails ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 

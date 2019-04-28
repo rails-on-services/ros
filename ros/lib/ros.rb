@@ -1,8 +1,8 @@
 # frozen_string_literal: true
-require 'dotenv'
+require 'pry'
+require 'config'
 
 require 'ros/version'
-require 'ostruct'
 
 module Ros
   # Copied from ActiveSupport::StringInquirer
@@ -22,7 +22,8 @@ module Ros
         ObjectSpace.each_object(Class).select { |klass| klass < self }
       end
 
-      def config
+      def config; @config ||= Settings end
+      def xconfig
         return @config if @config
         @config = OpenStruct.new(
           compose_files: [],
@@ -53,6 +54,10 @@ module Ros
           cwd = File.expand_path('..', cwd)
         end)
     end
+
+    def tf_root; root.join('devops/terraform') end
+    def ansible_root; root.join('devops/ansible') end
+    def helm_root; root.join('devops/helm') end
 
     def ros_root; root.join('ros') end
 
@@ -86,6 +91,6 @@ module Ros
 end
 
 unless Ros.root.nil?
+  Config.load_and_set_settings('./config/platform.yml', "./config/environments/#{Ros.env}.yml")
   require Ros.root.join('config/platform')
-  require Ros.root.join("config/environments/#{Ros.env}")
 end

@@ -1,6 +1,41 @@
 require 'ros'
 require 'ros/exec'
+require 'ros/devops'
 
+namespace :devops do
+  namespace :provision do
+    Settings.devops.deployments.each do |deployment|
+      name = deployment.name.split(':').last
+      desc "Apply terraform to #{Ros.env} #{name}"
+      task name do |task|
+        config = Settings.devops.deployments.collect.select{|d| d.name.eql?(name) }.first
+        Ros::Devops.new(config).send("provision_#{config.type}")
+      end
+    end
+  end
+
+  namespace :deploy do
+    Settings.devops.deployments.each do |deployment|
+      name = deployment.name.split(':').last
+      desc "Deploy platform to #{Ros.env} #{name}"
+      task name do |task|
+        config = Settings.devops.deployments.collect.select{|d| d.name.eql?(name) }.first
+        Ros::Devops.new(config).send("deploy_#{config.type}")
+        # Ros::Devops.new.send(name, :deploy)
+        # Ros::Devops.new(name).send("#{name}_deploy")
+      end
+    end
+  end
+end
+
+namespace :erd do
+  desc 'Generate ERD'
+  task :generate  do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+end
+
+=begin
 namespace :compose do
   task :env do
     require 'ros/compose'
@@ -23,6 +58,7 @@ namespace :compose do
     system('docker-compose build')
   end
 end
+=end
 
 namespace :bump do
   task :env do

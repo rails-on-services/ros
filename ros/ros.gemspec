@@ -36,12 +36,12 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'pry'
+  # spec.add_dependency 'dotenv'
   spec.add_dependency 'thor'
-  spec.add_dependency 'bump'
-  spec.add_dependency 'dotenv'
-  # Add gems that are required to execute ros commands, e.g. rails, rake, etc
+  spec.add_dependency 'pry'
   spec.add_dependency 'rake', '~> 12.0'
+  spec.add_dependency 'bump'
+  spec.add_dependency 'config', '1.7.1'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   # spec.add_development_dependency 'rake', '~> 12.0'

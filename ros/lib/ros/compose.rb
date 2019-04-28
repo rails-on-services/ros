@@ -19,19 +19,19 @@ module Ros
 
       def envs
         {
-          'COMPOSE_PROJECT_NAME' => Ros.platform.config.compose_project_name,
+          'COMPOSE_PROJECT_NAME' => Ros.platform.config.compose.project_name,
           'COMPOSE_FILE' => compose_files,
           # TODO: Only set IMAGE_TAG upon build, not just up; so tag defaults to 'latest'
           'IMAGE_TAG' => [version, branch, sha].compact.join('-'),
-          'IMAGE_REPOSITORY' => Ros.platform.config.image_repository,
-          'RAILS_ENV' => Ros.env,
+          'IMAGE_REPOSITORY' => Ros.platform.config.compose.image_repository,
+          'RAILS_ENV' => Ros.platform.config.compose.rails_env,
           # NOTE: When running in 'ros' dir then CONTEXT_DIR is not set or is ..
           'CONTEXT_DIR' => Ros.is_ros? ? '..' : '../ros'
         }.merge(user_envs || {})
       end
 
       def compose_files
-        Ros.platform.config.compose_files.each_with_object([]) do |cfile, ary|
+        Ros.platform.config.compose.files.each_with_object([]) do |cfile, ary|
           ary << cfile if File.exists?(cfile)
         end.join(':') 
       end
