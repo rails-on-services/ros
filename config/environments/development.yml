@@ -18,11 +18,22 @@ devops:
       provider: aws
       type: instance
       instance_type: t3.large
+      aws_region: ap-southeast-1
+      ec2_key_pair: ''
+      lambda_filename: ''
+      ec2_tags:
+        managed_by: terraform
       ami_distro: debian
-      # remote_state: s3
+      tf_state:
+        type: local
+        # can be remote tf state
+        # type: s3
+        # bucket: org-rails-on-services-terraform-state
+        # key: ros-develop-ec2
+        # dynamodb_table: org-rails-on-services-terraform-lock
       dns:
         domain: rails-on-services.org
-        subdomain: ros
+        subdomain: duan
         hostnames: ['api', 'sftp']
     - name: cluster
       provider: aws

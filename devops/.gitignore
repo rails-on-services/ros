@@ -14,3 +14,4 @@ Thumbs.db
 terraform.tfvars
 terraform.tfstate
 terraform.tfstate.backup
+state.tf.json
