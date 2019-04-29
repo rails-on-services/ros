@@ -11,6 +11,14 @@ variable "tags" {
   default = {}
 }
 
+variable "route53_zone_main_name" {
+  # default = "rails-on-services.org"
+}
+
+variable "route53_zone_this_name" {
+  # default = "ros"
+}
+
 variable "vpc_cidr_prefix" {
   type        = "string"
   default     = "10.0"
