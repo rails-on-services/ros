@@ -137,7 +137,7 @@ EOS
 }
 
 resource "helm_release" "istio" {
-  depends_on = ["helm_release.istio-init"]
+  depends_on = ["null_resource.wait-istio-init"]
   name       = "istio"
   repository = "istio"
   chart      = "istio"

@@ -38,7 +38,15 @@ devops:
     - name: cluster
       provider: aws
       type: kubernetes
-      # remote_state: s3
+      aws_region: ap-southeast-1
+      clustername: ros-develop
+      tf_state:
+        type: local
+        # can be remote tf state
+        # type: s3
+        # bucket: org-rails-on-services-terraform-state
+        # key: ros-develop-kubernetes
+        # dynamodb_table: org-rails-on-services-terraform-lock
       dns:
         domain: rails-on-services.org
         subdomain: ros

@@ -32,9 +32,11 @@ module "eks" {
   subnets         = ["${concat(module.vpc.public_subnets, module.vpc.private_subnets)}"]
   vpc_id          = "${module.vpc.vpc_id}"
 
-  cluster_create_security_group = "false"
-  cluster_security_group_id     = "${aws_security_group.eks-cluster.id}"
-  worker_ami_name_filter        = "${var.eks_worker_ami_name_filter}"
+  cluster_create_security_group   = "false"
+  cluster_endpoint_private_access = "true"
+  cluster_endpoint_public_access  = "true"
+  cluster_security_group_id       = "${aws_security_group.eks-cluster.id}"
+  worker_ami_name_filter          = "${var.eks_worker_ami_name_filter}"
 
   manage_aws_auth    = "true"
   write_kubeconfig   = "true"
