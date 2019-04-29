@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "admin" {
-  source                 = "./modules/admin"
+  source                 = "../../modules/admin"
   route53_zone_main_name = "${var.route53_zone_main_name}"
   route53_zone_this_name = "${var.route53_zone_this_name}"
   ec2_tags               = "${var.ec2_tags}"
