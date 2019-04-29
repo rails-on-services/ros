@@ -23,14 +23,6 @@ module Ros
       end
 
       def config; @config ||= Settings end
-      def xconfig
-        return @config if @config
-        @config = OpenStruct.new(
-          compose_files: [],
-          root: Ros.root,
-          env: Ros.env
-          )
-      end
 
       def configure
         yield self.config
@@ -65,7 +57,7 @@ module Ros
 
     # TODO: This is a hack in order to differentiate for purpose of templating files
     def is_ros?
-      platform.config.image_repository.eql?('rails-on-services') and platform.config.compose_project_name.eql?('ros')
+      platform.config.compose.image_repository.eql?('rails-on-services') and platform.config.compose.project_name.eql?('ros')
     end
 
     def service_names; services.keys.sort end
