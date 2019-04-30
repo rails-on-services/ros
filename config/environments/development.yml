@@ -35,11 +35,13 @@ devops:
         domain: rails-on-services.org
         subdomain: duan
         hostnames: ['api', 'sftp']
-    - name: cluster
+    - name: cluster-devops
       provider: aws
       type: kubernetes
+      namespace: default
+      # namespace:
+      #   ref: branch
       aws_region: ap-southeast-1
-      clustername: ros-develop
       tf_state:
         type: local
         # can be remote tf state
@@ -49,7 +51,7 @@ devops:
         # dynamodb_table: org-rails-on-services-terraform-lock
       dns:
         domain: rails-on-services.org
-        subdomain: ros
+        subdomain: devops
 
 # NOTEs:
 # each service listed here corresponds to a file in the compose directory

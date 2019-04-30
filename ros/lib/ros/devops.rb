@@ -23,8 +23,8 @@ module Ros
       Dir.chdir("#{Ros.tf_root}/#{config.provider}/provision/#{config.type}") do
         File.open('state.tf.json', 'w') { |f| f.puts(JSON.pretty_generate(tf_state)) }
         File.open('terraform.tfvars', 'w') { |f| f.puts(JSON.pretty_generate(tf_vars)) }
-        # system('terraform init')
-        # system('terraform apply')
+        system('terraform init')
+        system('terraform apply')
       end
     end
 
@@ -46,7 +46,7 @@ module Ros
           aws_region: config.aws_region,
           route53_zone_main_name: config.dns.domain,
           route53_zone_this_name: config.dns.subdomain,
-          name: config.clustername
+          name: config.name
         }
       elsif config.provider.eql? 'gcp'
       elsif config.provider.eql? 'azure'
