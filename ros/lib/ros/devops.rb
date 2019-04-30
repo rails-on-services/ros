@@ -83,14 +83,57 @@ module Ros
 
     def deploy_kubernetes
       puts "Deploy platform config '#{config.name}' of type #{config.type} in #{Ros.env} environment"
-      puts "Work dir: #{Ros.helm_root}"
+      # terraform code will generate the kubeconfig file
+      kubeconfig = "#{Ros.tf_root}/#{config.provider}/provision/kubernetes/kubeconfig_#{config.name}"
+      
+      abort "Kubeconfig not found at #{kubeconfig}" unless File.file?(kubeconfig)
 
-      Dir.chdir(Ros.helm_root) do
-        cmd = 'helm apply'
-        puts cmd
-        # system(cmd)
-        puts 'TODO: Apply helm charts'
+      puts "Kubeconfig file: #{kubeconfig}"
+
+      if Ros.env.eql? 'development'
+        shell_env = {"KUBECONFIG" => kubeconfig, "TILLER_NAMESPACE" => config.namespace}
+        Dir.chdir(Ros.k8s_root) do
+          system(shell_env, "kubectl create ns #{config.namespace} || true")
+          system(shell_env, "kubectl label namespace #{config.namespace} istio-injection=enabled --overwrite")
+          puts "Initialize helm and tiller"
+          system(shell_env, "kubectl apply -n #{config.namespace} -f tiller-rbac")
+          system(shell_env, "helm init --upgrade --wait --service-account tiller")
+        end
+        Dir.chdir("#{Ros.k8s_root}/basic-components") do
+          system(shell_env, "kubectl apply -n #{config.namespace} -f manifests")
+          system(shell_env, "skaffold deploy -n #{config.namespace}")
+        end
+        # create kubernetes secret if not exist
+        if File.file?("#{Ros.root}/config/env")
+          unless system(shell_env, "kubectl -n #{config.namespace} get secret ros-common")
+            system(shell_env, "kubectl -n #{config.namespace} create secret generic ros-common --from-env-file #{Ros.root}/config/env")
+          end
+        end
+
+        # for each service, run skaffold deploy
+        Ros.services.collect {|x| x[1]}.each do |service|
+          if File.file?("#{service.root}/skaffold.yaml")
+            Dir.chdir("#{service.root}") do
+              puts "Deploying #{service.name}"
+              system(shell_env, "skaffold deploy -n #{config.namespace}")
+            end
+          end
+        end
+
+        # create ingress
+        Dir.chdir("#{Ros.helm_root}") do
+          service_names = Ros.services.collect {|x| x[1]}.collect {|x| x.name }
+          helm_value_services = service_names.collect.with_index {|x,i| "services[#{i}].name=#{x},services[#{i}].port=80,services[#{i}].prefix=#{x}"}.join(',')
+          system(shell_env, "helm upgrade --install --namespace #{config.namespace} --set #{helm_value_services} --set hosts={api.#{config.dns.subdomain}.#{config.dns.domain}} ingress ./charts/ingress")
+        end
+        
       end
+      # Dir.chdir(Ros.helm_root) do
+      #   cmd = 'helm apply'
+      #   puts cmd
+      #   # system(cmd)
+      #   puts 'TODO: Apply helm charts'
+      # end
     end
   end
 end

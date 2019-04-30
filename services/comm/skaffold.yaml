@@ -1,0 +1,33 @@
+apiVersion: skaffold/v1beta9
+kind: Config
+build:
+  artifacts:
+  - image: railsonservices/comm
+    context: ../..
+    docker:
+      dockerfile: ../../Dockerfile
+      buildArgs:
+        project: comm
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+  local:
+    useBuildkit: true
+deploy:
+  helm:
+    releases:
+    - name: comm
+      chartPath: ../../devops/helm/charts/service
+      values:
+        image: railsonservices/comm
+      imageStrategy:
+        helm: {}
+      wait: false
+      setValues:
+        nameOverride: comm
+        bootstrap.enabled: true
+        bootstrap.command: '{"bundle","exec","rails","app:ros:db:reset","app:ros:comm:db:seed"}'
+        resources.limits.cpu: 1
+        resources.limits.memory: 2Gi
+        resources.requests.cpu: 0.5
+        resources.requests.memory: 1.5Gi

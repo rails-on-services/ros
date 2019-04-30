@@ -51,4 +51,4 @@ coverage/
 ./config
 ./devops
 ./ros
-VERSION
+skaffold.yaml

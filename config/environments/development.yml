@@ -33,7 +33,7 @@ devops:
         # dynamodb_table: org-rails-on-services-terraform-lock
       dns:
         domain: rails-on-services.org
-        subdomain: duan
+        subdomain: ros
         hostnames: ['api', 'sftp']
     - name: cluster-devops
       provider: aws

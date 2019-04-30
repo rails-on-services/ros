@@ -7,9 +7,7 @@ fullnameOverride: ""
 # External DNS hostnames
 hosts: []
 
-iamServiceName: iam
-iamServicePort: 80
-cognitoServiceName: cognito
-cognitoServicePort: 80
-commServiceName: comm
-commServicePort: 80
+services: []
+  # - name: iam
+  #   port: 80
+  #   prefix: /iam

@@ -48,9 +48,9 @@ data "external" "istio-alb-ingress-dns" {
   program    = ["bash", "-c", "echo \"${module.eks.kubeconfig}\" > kube_config.yaml; kubectl --kubeconfig kube_config.yaml -n istio-system get ing istio-alb-ingressgateway -o go-template='{\"hostname\":\"{{(index .status.loadBalancer.ingress 0).hostname}}\"}'"]
 }
 
-resource "aws_route53_record" "api" {
+resource "aws_route53_record" "wildcard" {
   zone_id = "${module.admin.aws_route53_zone_this_zone_id}"
-  name    = "api.${module.admin.aws_route53_record_this_fqdn}"
+  name    = "*.${module.admin.aws_route53_record_this_fqdn}"
   type    = "CNAME"
   ttl     = "300"
   records = ["${lookup(data.external.istio-alb-ingress-dns.result, "hostname")}"]

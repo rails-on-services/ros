@@ -50,6 +50,7 @@ module Ros
     def tf_root; root.join('devops/terraform') end
     def ansible_root; root.join('devops/ansible') end
     def helm_root; root.join('devops/helm') end
+    def k8s_root; root.join('devops/k8s') end
 
     def ros_root; root.join('ros') end
 
