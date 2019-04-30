@@ -2,10 +2,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "iam.fullname" . }}-bootstrap
+  name: {{ template "service.fullname" . }}-bootstrap
   labels:
-    app.kubernetes.io/name: {{ include "iam.name" . }}
-    helm.sh/chart: {{ include "iam.chart" . }}
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    helm.sh/chart: {{ include "service.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "iam.name" . }}
+        app.kubernetes.io/name: {{ include "service.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
         sidecar.istio.io/inject: "false"
@@ -28,13 +28,6 @@ spec:
           command: 
             {{- toYaml . | trim | nindent 12 }}
           {{- end }}
-          {{- with .Values.app.env }}
-          env:
-            {{- range $name, $value := . }}
-            - name: {{ $name | quote }}
-              value: {{ $value | quote }}
-            {{- end }}
-          {{- end }}
           {{- if or (.Values.app.envFromSecrets) (.Values.app.envFromConfigMaps) }}
           envFrom:
             {{- range .Values.app.envFromConfigMaps }}
@@ -44,6 +37,13 @@ spec:
             {{- range .Values.app.envFromSecrets }}
             - secretRef:
                 name: {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.app.env }}
+          env:
+            {{- range $name, $value := . }}
+            - name: {{ $name | quote }}
+              value: {{ $value | quote }}
             {{- end }}
           {{- end }}
           resources:
