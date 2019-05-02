@@ -24,7 +24,7 @@ deploy:
         helm: {}
       wait: false
       overrides:
-        nameOverride: cognito
+        nameOverride: comm
         app:
           envFromSecrets:
             - ros-common

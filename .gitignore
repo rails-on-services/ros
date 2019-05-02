@@ -9,3 +9,4 @@
 **/tmp/
 config/env
 .env
+skaffold-overrides.yaml

@@ -81,7 +81,7 @@ module Ros
 
     def deploy_kubernetes
       puts "Deploy platform config '#{config.name}' of type #{config.type} in #{Ros.env} environment"
-      send("delploy_kubernetes_#{ENV['ROS_ENV']}")
+      send("deploy_kubernetes_#{Ros.env}")
     end
 
     def deploy_kubernetes_production
@@ -95,20 +95,20 @@ module Ros
     end
 
     def deploy_kubernetes_development
-      # NOTE: terraform code generates the kubeconfig file
       abort "Kubeconfig not found at #{kubeconfig}" unless File.file?(kubeconfig)
       puts "Using kubeconfig file: #{kubeconfig}"
       prepare_cluster
       deploy_infrastructure
       set_kubernetes_secret
+      deploy_services
     end
 
     def prepare_cluster
       Dir.chdir(Ros.k8s_root) do
-        system(shell_env, "kubectl create ns #{config.namespace} || true")
-        system(shell_env, "kubectl label namespace #{config.namespace} istio-injection=enabled --overwrite")
+        system(shell_env, "kubectl create ns #{k8s_namespace} || true")
+        system(shell_env, "kubectl label namespace #{k8s_namespace} istio-injection=enabled --overwrite")
         puts 'Initialize helm and tiller'
-        system(shell_env, "kubectl apply -n #{config.namespace} -f tiller-rbac")
+        system(shell_env, "kubectl apply -n #{k8s_namespace} -f tiller-rbac")
         system(shell_env, 'helm init --upgrade --wait --service-account tiller')
       end
     end
@@ -116,16 +116,16 @@ module Ros
     def deploy_infrastructure
       # Deploy supporting infrastructure: PG, Redis, etc
       Dir.chdir("#{Ros.k8s_root}/basic-components") do
-        system(shell_env, "kubectl apply -n #{config.namespace} -f manifests")
-        system(shell_env, "skaffold deploy -n #{config.namespace}")
+        system(shell_env, "kubectl apply -n #{k8s_namespace} -f manifests")
+        system(shell_env, "skaffold deploy -n #{k8s_namespace}")
       end
       # Create ingress rules
       Dir.chdir("#{Ros.helm_root}") do
         service_names =  Ros.services.values.map{ |s| s.name }
         helm_value_services = service_names.collect.with_index{ |x, i|
-          "services[#{i}].name=#{x},services[#{i}].port=80,services[#{i}].prefix=#{x}"
+          "services[#{i}].name=#{x},services[#{i}].port=80,services[#{i}].prefix=/#{x}"
         }.join(',')
-        cmd = "helm upgrade --install --namespace #{config.namespace} --set #{helm_value_services} " \
+        cmd = "helm upgrade --install --namespace #{k8s_namespace} --set #{helm_value_services} " \
           "--set hosts={api.#{config.dns.subdomain}.#{config.dns.domain}} ingress ./charts/ingress"
         puts "running #{cmd}"
         system(shell_env, cmd)
@@ -135,8 +135,8 @@ module Ros
     # Create kubernetes secret if not exist
     def set_kubernetes_secret
       return unless File.file?("#{Ros.root}/config/env")
-      return if system(shell_env, "kubectl -n #{config.namespace} get secret ros-common")
-      cmd = "kubectl -n #{config.namespace} create secret generic ros-common --from-env-file #{Ros.root}/config/env"
+      return if system(shell_env, "kubectl -n #{k8s_namespace} get secret ros-common")
+      cmd = "kubectl -n #{k8s_namespace} create secret generic ros-common --from-env-file #{Ros.root}/config/env"
       puts "running #{cmd}"
       system(shell_env, cmd)
     end
@@ -146,7 +146,7 @@ module Ros
       Ros.services.collect{ |x| x[1] }.each do |service|
         next unless File.file?("#{service.root}/skaffold.yaml")
         Dir.chdir("#{service.root}") do
-          cmd = "skaffold deploy -n #{config.namespace}"
+          cmd = "skaffold deploy -n #{k8s_namespace}"
           puts "Deploying #{service.name} with #{cmd}"
           system(shell_env, cmd)
         end
@@ -154,11 +154,22 @@ module Ros
     end
 
     def shell_env
-      @shell_env ||= { 'KUBECONFIG' => kubeconfig, 'TILLER_NAMESPACE' => config.namespace }
+      @shell_env ||= { 'KUBECONFIG' => kubeconfig, 'TILLER_NAMESPACE' => k8s_namespace }
     end
 
     def kubeconfig
-      @kubeconfig ||= "#{Ros.tf_root}/#{config.provider}/provision/kubernetes/kubeconfig_#{config.name}"
+      @kubeconfig ||= File.expand_path(config.kubeconfig || "#{Ros.tf_root}/#{config.provider}/provision/kubernetes/kubeconfig_#{config.name}")
+    end
+
+    def k8s_namespace
+      @k8s_namespace ||=
+        if config.namespace.is_a?(String)
+          config.namespace
+        elsif config.namespace.ref.eql? 'branch'
+          %x(git rev-parse --abbrev-ref HEAD).strip().gsub(/[^A-Za-z0-9-]/, '-')
+        else
+          'default'
+        end
     end
   end
 end

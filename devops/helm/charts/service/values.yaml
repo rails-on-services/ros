@@ -9,6 +9,8 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+imagePullSecrets: []
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -62,3 +64,14 @@ bootstrap:
   restartPolicy: OnFailure
   # Need to specify
   # command: ["bundle", "exec", "rails", "app:ros:db:reset", "app:ros:iam:db:seed"]
+
+hook:
+  # whether to do migration when upgrade the release
+  upgradeMigration:
+    enabled: true
+    restartPolicy: OnFailure
+    command: ["bundle", "exec", "rails", "db:migrate"]
+    resources:
+      requests:
+        cpu: 300m
+        memory: 500Mi

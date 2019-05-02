@@ -74,9 +74,12 @@ devops:
     - name: cluster-devops
       provider: aws
       type: kubernetes
-      namespace: default
-      # namespace:
-      #   ref: branch
+      # Leave kubeconfig unspecified to use kubeconfig produced by ros provision task
+      # kubeconfig: ~/.kube/config
+      # namespace: default
+      namespace:
+        # currently the value of the ref can only be branch
+        ref: branch
       aws_region: ap-southeast-1
       tf_state:
         type: local

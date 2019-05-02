@@ -27,7 +27,7 @@ spec:
       {{- end }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ include "service.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -80,6 +80,10 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | trim | nindent 8}}
       {{- end }}
       {{- if .Values.secretMounts }}
       volumes:
