@@ -8,16 +8,7 @@ module Ros
       self.config = config
     end
 
-    def provision_instance
-      provision_common
-      puts "TODO: After terraform apply, write instance IP to devops/ansible/inventory/#{config.type}"
-    end
-
-    def provision_kubernetes
-      provision_common
-    end
-
-    def provision_common
+    def provision
       puts "Provision platform config '#{config.name}' of type #{config.type} in #{Ros.env} environment"
       puts "Work dir: #{Ros.tf_root}/#{config.provider}/provision/#{config.type}"
       Dir.chdir("#{Ros.tf_root}/#{config.provider}/provision/#{config.type}") do
@@ -26,7 +17,14 @@ module Ros
         system('terraform init')
         system('terraform apply')
       end
+      send("provision_#{config.type}")
     end
+
+    def provision_instance
+      puts "TODO: After terraform apply, write instance IP to devops/ansible/inventory/#{config.type}"
+    end
+
+    def provision_kubernetes; end
 
     def tf_state
       {
@@ -83,57 +81,84 @@ module Ros
 
     def deploy_kubernetes
       puts "Deploy platform config '#{config.name}' of type #{config.type} in #{Ros.env} environment"
-      # terraform code will generate the kubeconfig file
-      kubeconfig = "#{Ros.tf_root}/#{config.provider}/provision/kubernetes/kubeconfig_#{config.name}"
-      
-      abort "Kubeconfig not found at #{kubeconfig}" unless File.file?(kubeconfig)
+      send("delploy_kubernetes_#{ENV['ROS_ENV']}")
+    end
 
-      puts "Kubeconfig file: #{kubeconfig}"
-
-      if Ros.env.eql? 'development'
-        shell_env = {"KUBECONFIG" => kubeconfig, "TILLER_NAMESPACE" => config.namespace}
-        Dir.chdir(Ros.k8s_root) do
-          system(shell_env, "kubectl create ns #{config.namespace} || true")
-          system(shell_env, "kubectl label namespace #{config.namespace} istio-injection=enabled --overwrite")
-          puts "Initialize helm and tiller"
-          system(shell_env, "kubectl apply -n #{config.namespace} -f tiller-rbac")
-          system(shell_env, "helm init --upgrade --wait --service-account tiller")
-        end
-        Dir.chdir("#{Ros.k8s_root}/basic-components") do
-          system(shell_env, "kubectl apply -n #{config.namespace} -f manifests")
-          system(shell_env, "skaffold deploy -n #{config.namespace}")
-        end
-        # create kubernetes secret if not exist
-        if File.file?("#{Ros.root}/config/env")
-          unless system(shell_env, "kubectl -n #{config.namespace} get secret ros-common")
-            system(shell_env, "kubectl -n #{config.namespace} create secret generic ros-common --from-env-file #{Ros.root}/config/env")
-          end
-        end
-
-        # for each service, run skaffold deploy
-        Ros.services.collect {|x| x[1]}.each do |service|
-          if File.file?("#{service.root}/skaffold.yaml")
-            Dir.chdir("#{service.root}") do
-              puts "Deploying #{service.name}"
-              system(shell_env, "skaffold deploy -n #{config.namespace}")
-            end
-          end
-        end
-
-        # create ingress
-        Dir.chdir("#{Ros.helm_root}") do
-          service_names = Ros.services.collect {|x| x[1]}.collect {|x| x.name }
-          helm_value_services = service_names.collect.with_index {|x,i| "services[#{i}].name=#{x},services[#{i}].port=80,services[#{i}].prefix=#{x}"}.join(',')
-          system(shell_env, "helm upgrade --install --namespace #{config.namespace} --set #{helm_value_services} --set hosts={api.#{config.dns.subdomain}.#{config.dns.domain}} ingress ./charts/ingress")
-        end
-        
-      end
+    def deploy_kubernetes_production
+      raise NotImplementedError
       # Dir.chdir(Ros.helm_root) do
       #   cmd = 'helm apply'
       #   puts cmd
       #   # system(cmd)
       #   puts 'TODO: Apply helm charts'
       # end
+    end
+
+    def deploy_kubernetes_development
+      # NOTE: terraform code generates the kubeconfig file
+      abort "Kubeconfig not found at #{kubeconfig}" unless File.file?(kubeconfig)
+      puts "Using kubeconfig file: #{kubeconfig}"
+      prepare_cluster
+      deploy_infrastructure
+      set_kubernetes_secret
+    end
+
+    def prepare_cluster
+      Dir.chdir(Ros.k8s_root) do
+        system(shell_env, "kubectl create ns #{config.namespace} || true")
+        system(shell_env, "kubectl label namespace #{config.namespace} istio-injection=enabled --overwrite")
+        puts 'Initialize helm and tiller'
+        system(shell_env, "kubectl apply -n #{config.namespace} -f tiller-rbac")
+        system(shell_env, 'helm init --upgrade --wait --service-account tiller')
+      end
+    end
+
+    def deploy_infrastructure
+      # Deploy supporting infrastructure: PG, Redis, etc
+      Dir.chdir("#{Ros.k8s_root}/basic-components") do
+        system(shell_env, "kubectl apply -n #{config.namespace} -f manifests")
+        system(shell_env, "skaffold deploy -n #{config.namespace}")
+      end
+      # Create ingress rules
+      Dir.chdir("#{Ros.helm_root}") do
+        service_names =  Ros.services.values.map{ |s| s.name }
+        helm_value_services = service_names.collect.with_index{ |x, i|
+          "services[#{i}].name=#{x},services[#{i}].port=80,services[#{i}].prefix=#{x}"
+        }.join(',')
+        cmd = "helm upgrade --install --namespace #{config.namespace} --set #{helm_value_services} " \
+          "--set hosts={api.#{config.dns.subdomain}.#{config.dns.domain}} ingress ./charts/ingress"
+        puts "running #{cmd}"
+        system(shell_env, cmd)
+      end
+    end
+
+    # Create kubernetes secret if not exist
+    def set_kubernetes_secret
+      return unless File.file?("#{Ros.root}/config/env")
+      return if system(shell_env, "kubectl -n #{config.namespace} get secret ros-common")
+      cmd = "kubectl -n #{config.namespace} create secret generic ros-common --from-env-file #{Ros.root}/config/env"
+      puts "running #{cmd}"
+      system(shell_env, cmd)
+    end
+
+    # Run skaffold deploy for each service
+    def deploy_services
+      Ros.services.collect{ |x| x[1] }.each do |service|
+        next unless File.file?("#{service.root}/skaffold.yaml")
+        Dir.chdir("#{service.root}") do
+          cmd = "skaffold deploy -n #{config.namespace}"
+          puts "Deploying #{service.name} with #{cmd}"
+          system(shell_env, cmd)
+        end
+      end
+    end
+
+    def shell_env
+      @shell_env ||= { 'KUBECONFIG' => kubeconfig, 'TILLER_NAMESPACE' => config.namespace }
+    end
+
+    def kubeconfig
+      @kubeconfig ||= "#{Ros.tf_root}/#{config.provider}/provision/kubernetes/kubeconfig_#{config.name}"
     end
   end
 end

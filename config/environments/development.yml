@@ -1,11 +1,47 @@
 # Configuration values defined here override any values defined in platform.yml
 ---
 compose:
-  os_packages: ['vim', 'tree', 'etc']
-  # project_name: 'hello'
-  files: ['compose/base.yml', 'compose/services.yml', 'compose/nginx.yml', 'compose/mounts.yml']
-  # TODO: no conditionals: all required files are in the project's compose directory including ros ones
-  # files += %w(ros/compose/services.yml ros/compose/nginx.yml ros/compose/mounts.yml) if Ros.has_ros?
+  images: # profiles:
+    - name: development
+      rails_env: development
+      os_packages: ['libpq5', 'git', 'sudo', 'vim', 'less', 'tcpdump', 'net-tools', 'iputils-ping']
+
+  profiles: # deployments:
+    - name: realtime
+      description: Run services and workers with localstack and host source mounted
+      groups: ['services', 'workers', 'mounted', 'localstack'] # Add storage
+    - name: realtime-ops
+      groups: ['services', 'workers', 'mounted', 'localstack', 'ops'] # Add storage
+      description: Run services, workers, fluentd, prometheus and grafana with localstack and host source mounted
+    - name: static
+      description: Run services and workers with localstack
+      groups: ['services', 'workers', 'localstack'] # Add storage
+    - name: static-ops
+      groups: ['services', 'workers', 'localstack', 'ops'] # Add storage
+      description: Run services, workers, fluentd, prometheus and grafana with localstack
+
+  deployments: # groups:
+    - name: services
+      files: ['compose/base.yml', 'compose/services.yml', 'compose/nginx.yml']
+    - name: workers
+      files: ['compose/workers.yml']
+      config:
+        workers:
+          enabled: yes
+          provider: sidekiq
+    - name: mounted
+      files: ['compose/mounts.yml']
+    - name: ops
+      files: ['compose/fluentd.yml', 'compose/monitoring.yml']
+      config:
+        request_logging:
+          enabled: yes
+        system_logging:
+          enabled: yes
+    - name: localstack
+      files: ['compose/localstack.yml', 'compose/sftp-localstack.yml']
+    - name: storage
+      files: ['compose/sftp.yml']
 
 # TODO: Ros needs to write out values to tfvars somewhere
 # Duan will provide the var names, values and file location
