@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: railsonservices/iam
+  repository:
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -18,6 +18,7 @@ containerPort: 3000
 readinessProbePath: /healthz
 
 service:
+  enabled: true
   type: ClusterIP
   port: 80
 
@@ -51,7 +52,13 @@ app:
   # existing k8s configMaps for environment variables
   envFromConfigMaps: []
 
+secretMounts: []
+# existing secrets to be mounted into the pod
+# - secretName: super-secret
+#   mountPath: /secrets
+
 bootstrap:
   enabled: false
   restartPolicy: OnFailure
-  command: ["bundle", "exec", "rails", "app:ros:db:reset", "app:ros:iam:db:seed"]
+  # Need to specify
+  # command: ["bundle", "exec", "rails", "app:ros:db:reset", "app:ros:iam:db:seed"]

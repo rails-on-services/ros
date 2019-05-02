@@ -1,10 +1,11 @@
+{{- if .Values.service.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "cognito.fullname" . }}
+  name: {{ include "service.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "cognito.name" . }}
-    helm.sh/chart: {{ include "cognito.chart" . }}
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    helm.sh/chart: {{ include "service.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
@@ -15,5 +16,6 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: {{ include "cognito.name" . }}
+    app.kubernetes.io/name: {{ include "service.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}

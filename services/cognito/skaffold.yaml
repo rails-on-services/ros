@@ -1,0 +1,33 @@
+apiVersion: skaffold/v1beta9
+kind: Config
+build:
+  artifacts:
+  - image: railsonservices/cognito
+    context: ../..
+    docker:
+      dockerfile: ../../Dockerfile
+      buildArgs:
+        project: cognito
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+  local:
+    useBuildkit: true
+deploy:
+  helm:
+    releases:
+    - name: cognito
+      chartPath: ../../devops/helm/charts/service
+      values:
+        image: railsonservices/cognito
+      imageStrategy:
+        helm: {}
+      wait: false
+      setValues:
+        nameOverride: cognito
+        bootstrap.enabled: true
+        bootstrap.command: '{"bundle","exec","rails","app:ros:db:reset","app:ros:cognito:db:seed"}'
+        resources.limits.cpu: 1
+        resources.limits.memory: 2Gi
+        resources.requests.cpu: 0.5
+        resources.requests.memory: 1.5Gi

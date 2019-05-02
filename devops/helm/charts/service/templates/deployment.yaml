@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "comm.fullname" . }}
+  name: {{ include "service.fullname" . }}
   labels:
-    app: {{ include "comm.name" . }}
-    app.kubernetes.io/name: {{ include "comm.name" . }}
-    helm.sh/chart: {{ include "comm.chart" . }}
+    app: {{ include "service.name" . }}
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    helm.sh/chart: {{ include "service.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "comm.name" . }}
-      app.kubernetes.io/name: {{ include "comm.name" . }}
+      app: {{ include "service.name" . }}
+      app.kubernetes.io/name: {{ include "service.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "comm.name" . }}
-        app.kubernetes.io/name: {{ include "comm.name" . }}
+        app: {{ include "service.name" . }}
+        app.kubernetes.io/name: {{ include "service.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
       {{- with .Values.podAnnotations }}
       annotations:
@@ -60,6 +60,13 @@ spec:
                 name: {{ . | quote }}
             {{- end }}
           {{- end }}
+          {{- if .Values.secretMounts }}
+          volumeMounts:
+            {{- range $index, $secretMount := .Values.secretMounts }}
+            - name: secret-volume-{{ $index }}
+              mountPath: {{ $secretMount.mountPath }}
+            {{- end }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -73,4 +80,12 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.secretMounts }}
+      volumes:
+        {{- range $index, $secretMount := .Values.secretMounts }}
+        - name: secret-volume-{{ $index }}
+          secret:
+            secretName: {{ $secretMount.secretName }}
+        {{- end }}
       {{- end }}
