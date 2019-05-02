@@ -126,7 +126,7 @@ module Ros
           "services[#{i}].name=#{x},services[#{i}].port=80,services[#{i}].prefix=/#{x}"
         }.join(',')
         cmd = "helm upgrade --install --namespace #{k8s_namespace} --set #{helm_value_services} " \
-          "--set hosts={api.#{config.dns.subdomain}.#{config.dns.domain}} ingress ./charts/ingress"
+          "--set hosts={#{api_hostname}} ingress ./charts/ingress"
         puts "running #{cmd}"
         system(shell_env, cmd)
       end
@@ -170,6 +170,14 @@ module Ros
         else
           'default'
         end
+    end
+
+    def api_hostname
+      if k8s_namespace.eql? 'master'
+        "api.#{config.dns.subdomain}.#{config.dns.domain}"
+      else
+        "#{k8s_namespace}-api.#{config.dns.subdomain}.#{config.dns.domain}"
+      end
     end
   end
 end

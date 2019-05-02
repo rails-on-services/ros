@@ -76,6 +76,7 @@ devops:
       type: kubernetes
       # Leave kubeconfig unspecified to use kubeconfig produced by ros provision task
       # kubeconfig: ~/.kube/config
+      # namespace except "master" will have dns name with the namespace as prefix
       # namespace: default
       namespace:
         # currently the value of the ref can only be branch
