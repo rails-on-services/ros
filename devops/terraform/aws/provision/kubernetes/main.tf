@@ -36,6 +36,17 @@ rm kube_config.yaml
 EOS
   }
 
+  provisioner "local-exec" {
+    when=  "destroy"
+    working_dir = "${path.module}"
+
+    command = <<EOS
+echo "${module.eks.kubeconfig}" > kube_config.yaml
+kubectl --kubeconfig kube_config.yaml -n istio-system delete ingress istio-alb-ingressgateway
+rm kube_config.yaml
+EOS
+  }
+
   triggers {
     kube_config_rendered = "${module.eks.kubeconfig}"
     manifest_rendered    = "${data.template_file.istio-alb-ingress-gateway-manifest.rendered}"
