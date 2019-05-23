@@ -7,6 +7,7 @@ services:
     depends_on:
       - wait
     volumes:
+      - "./sshx:/etc/sshx"
       - "./users.conf:/etc/sftp/users.conf:ro"
     privileged: true
     ports:
