@@ -1,8 +1,35 @@
 version: '3'
 services:
-  # TODO: Add storage service rails app
   sftp:
-    image:
-      "${IMAGE_REPOSITORY}/sftp:${IMAGE_TAG:-latest}"
+    image: "${IMAGE_REPOSITORY}/sftp:${IMAGE_TAG:-latest}"
     build:
       context: .
+    depends_on:
+      - wait
+    volumes:
+      - "./users.conf:/etc/sftp/users.conf:ro"
+    privileged: true
+    ports:
+      - "2222:22"
+    cap_add:
+      - SYS_MODULE
+    environment:
+      AWS_ACCESS_KEY_ID: localstack_does_not_authenticate
+      AWS_SECRET_ACCESS_KEY: so_valid_credentials_are_not_necessary
+      BUCKET_ENDPOINT_URL: http://localstack:4572
+      BUCKET_NAME: sftp
+  wait:
+    image: waisbrot/wait
+    depends_on:
+      - localstack
+    environment:
+      TARGETS: "localstack:4572"
+  localstack:
+    image: localstack/localstack
+    environment:
+      SERVICES: s3:4572
+      DEBUG: s3
+      HOSTNAME: localstack
+      HOSTNAME_EXTERNAL: localstack
+    ports:
+      - "4572"
