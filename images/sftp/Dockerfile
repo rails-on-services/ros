@@ -20,3 +20,4 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends
 
 ENV MOUNT_DIR=/home
 COPY entrypoint entrypoint
+COPY sshd_config /etc/ssh/sshd_config

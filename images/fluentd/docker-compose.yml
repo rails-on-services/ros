@@ -1,0 +1,28 @@
+version: '3'
+services:
+  fluentd:
+    image: "${IMAGE_REPOSITORY}/fluentd:${IMAGE_TAG:-latest}"
+    build:
+      context: .
+    depends_on:
+      - wait
+    environment:
+      AWS_ACCESS_KEY_ID: localstack_does_not_authenticate
+      AWS_SECRET_ACCESS_KEY: so_valid_credentials_are_not_necessary
+      BUCKET_ENDPOINT_URL: http://localstack:4572
+      BUCKET_NAME: sftp
+  wait:
+    image: waisbrot/wait
+    depends_on:
+      - localstack
+    environment:
+      TARGETS: "localstack:4572"
+  localstack:
+    image: localstack/localstack
+    environment:
+      SERVICES: s3:4572
+      DEBUG: s3
+      HOSTNAME: localstack
+      HOSTNAME_EXTERNAL: localstack
+    ports:
+      - "4572"
