@@ -1,0 +1,8 @@
+version: '3'
+services:
+  # TODO: Add storage service rails app
+  sftp:
+    image:
+      "${IMAGE_REPOSITORY}/sftp:${IMAGE_TAG:-latest}"
+    build:
+      context: .
