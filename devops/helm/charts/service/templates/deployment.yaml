@@ -38,6 +38,9 @@ spec:
             httpGet:
               path: {{ .Values.readinessProbePath | quote }}
               port: http
+              httpHeaders:
+              - name: Host
+                value: localhost
           {{- with .Values.app.command }}
           command: 
             {{- toYaml . | trim | nindent 12 }}

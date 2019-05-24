@@ -46,8 +46,7 @@ app:
   command: []
   # environment variables, not a list of objects with keys name and value
   # but directly an object of key and value
-  env:
-    RAILS_ENV: "production"
+  env: {}
   
   # existing k8s secrets for environment varialbes
   envFromSecrets: []

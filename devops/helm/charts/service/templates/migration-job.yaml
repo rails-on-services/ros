@@ -27,6 +27,7 @@ spec:
       containers:
         - name: {{ include "service.name" . }}-migration
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: 
             {{- toYaml .Values.hook.upgradeMigration.command | trim | nindent 12 }}
           {{- with .Values.app.env }}

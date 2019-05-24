@@ -17,6 +17,8 @@ spec:
     - match:
       - uri:
           prefix: {{ .prefix }}
+      rewrite:
+        uri: /
       route:
       - destination:
           port:
