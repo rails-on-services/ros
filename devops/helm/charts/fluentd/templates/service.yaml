@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fluentd-tcp.fullname" . }}
+  name: {{ include "fluentd.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "fluentd-tcp.name" . }}
-    helm.sh/chart: {{ include "fluentd-tcp.chart" . }}
+    app.kubernetes.io/name: {{ include "fluentd.name" . }}
+    helm.sh/chart: {{ include "fluentd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   {{- with .Values.service.annotations }}
@@ -19,5 +19,5 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app.kubernetes.io/name: {{ include "fluentd-tcp.name" . }}
+    app.kubernetes.io/name: {{ include "fluentd.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
