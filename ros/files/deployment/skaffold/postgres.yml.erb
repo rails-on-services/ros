@@ -1,0 +1,31 @@
+---
+apiVersion: skaffold/v1beta10
+kind: Config
+deploy:
+  helm:
+    releases:
+      - name: postgres
+        chartPath: stable/postgresql
+        skipBuildDependencies: true
+        overrides:
+          image:
+            repository: mdillon/postgis
+            tag: 10
+          fullnameOverride: db
+          postgresqlDataDir: /data/pgdata
+          postgresqlDatabase: postgres
+          postgresqlUsername: admin
+          postgresqlPassword: admin
+          persistence:
+            enabled: true
+            mountPath: /data/
+            size: 10Gi
+          securityContext:
+            enabled: false
+          resources: 
+            limits:
+              cpu: 1
+              memory: 2Gi
+            requests:
+              cpu: 0.5
+              memory: 1.5Gi

@@ -1,0 +1,22 @@
+  <%= name %>:
+    image: "${IMAGE_REPOSITORY}/<%= name %>:${IMAGE_TAG}"
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "--pid", "/tmp/server.pid"]
+    env_file:
+      - ./platform.env<% if has_envs %><%= "\n      - ../services/#{name}.env" %><% end %>
+    depends_on:
+      - wait
+    ports:
+      - "3000"<% if mount %>
+    volumes:
+      - "${<%= context_dir %>}/services/<%= name %>:/home/rails/app"
+      - "${<%= context_dir %>}/services/core:/home/rails/core"
+      - "${<%= context_dir %>}/services/sdk:/home/rails/sdk"<% if mount_ros %>
+      - "${ROS_CONTEXT_DIR}/services/core:/home/ros/services/core"
+      - "${ROS_CONTEXT_DIR}/services/sdk:/home/ros/services/sdk"<% end %><% end %>
+    build:
+      context: "${<%= context_dir %>}"
+      args:<% image.build_args.each_pair do |name, value| %>
+        <%= name %>: <%= value.is_a?(Array) ? value.join(' ') : value %><% end %>
+        project: <%= name %>
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"

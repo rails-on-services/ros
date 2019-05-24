@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 # https://nandovieira.com/creating-generators-and-executables-with-thor
 require 'thor'
-require 'pry'
+
+# TODO: move new, generate and destroy to ros/generators
+# NOTE: it should be possible to invoke any operation from any of rake task, cli or console
 
 module Ros
   class Cli < Thor
@@ -20,7 +22,6 @@ module Ros
     option :dev, type: :boolean, default: false, aliases: '-d' #, required: true
     def new(name, host = nil)
       FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
-      require 'pry'
       raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if File.exist?(name)
       require_relative 'generators/project.rb'
       generator = Ros::Generators::Project.new
@@ -90,33 +91,63 @@ module Ros
       %x(lpass add --non-interactive --notes #{lpass_name} < app.env)
     end
 
-    desc 'server', 'Start all services defined in the ./compose directory (short-cut alias: "s")'
-    option :port, type: :string, default: '3000', aliases: '-p'
-    option :daemon, type: :boolean, aliases: '-d'
-    map %w(s) => :server
-    def server(env = 'development')
-      require 'pry'
-      require 'ros/compose'
-      Ros::Compose.user_envs = {
-        'NGINX_HOST_PORT' => options.port,
-        'RAILS_ENV' => env
-      }
-      Ros::Compose.write_env_file
-      compose_options = options.daemon ? '-d' : ''
-      system("docker-compose up #{compose_options}")
-    end
-
+    # option :port, type: :string, aliases: '-p'
+    # option :profiles, type: :boolean
+    # option :daemon, type: :boolean, aliases: '-d'
     desc 'console', 'Start the Ros console (short-cut alias: "c")'
+    option :environment, type: :string, alias: '-e'
+    option :image, type: :string, alias: '-i'
+    option :platform, type: :string, alias: '-p'
+    option :deployment, type: :string, alias: '-d'
     map %w(c) => :console
     def console(env = 'development')
-      require 'pry'
+      # binding.pry
       Pry.start
     end
 
-    # TODO Invoke TF code to launch a server
-    desc 'infra ACTION', 'Create or destroy a cloud server running Ros core services'
-    def infra(action)
-      raise Error, set_color("ERROR: invalid action #{action}. valid actions are: create, destroy", :red) unless %w(create destroy).include? action
+    desc 'list', 'List things'
+    def list(what = 'platforms')
+      STDOUT.puts "#{what}\n\n#{Settings.send(what).keys.join("\n")}"
     end
+
+    # option :environment, type: :string, alias: '-e', default: 'development'
+    # option :port, type: :string, aliases: '-p'
+    desc 'server PROFILE', 'Start all services defined in PROFILE (short-cut alias: "s")'
+    option :environment, type: :string, aliases: '-e', default: 'local'
+    option :daemon, type: :boolean, aliases: '-d'
+    option :noop, type: :boolean, aliases: '-n'
+    map %w(s) => :server
+    def server # (profile = nil)
+      # options.merge!(Settings.compose.profiles.select{ |d| d.name.eql?(profile) }.first.to_h) if profile
+      # require 'ros/compose'
+      # Ros::Compose.new(options.merge(profile: profile)).server
+      Config.load_and_set_settings('./config/platform.yml', "./config/environments/#{options.environment}.yml")
+      require Ros.root.join('config/platform')
+      require "ros/ops/#{Settings.infra.type}"
+      type = :service
+      action = :provision
+      obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new
+      obj.options = options
+      obj.send(action)
+    end
+
+    # TODO Invoke TF code to launch a server
+    desc 'build SERVICE', 'Build an image for all services or a specific service'
+    option :force, type: :boolean, default: false, aliases: '-f'
+    option :profile, type: :string, aliases: '-p'
+    def build(service = nil)
+      options.merge!(Settings.compose.images.select{ |d| d.name.eql?(options.profile) }.first.to_h) if options.profile
+      config = options.merge({
+        service: service
+      })
+      require 'ros/compose'
+      Ros::Compose.new(config).build
+    end
+    # NOTE: Perhpas could use this code:
+    # def initialize(config)
+    #   self.config = Thor::CoreExt::HashWithIndifferentAccess.new(
+    #     port: '3000'
+    #   ).merge(config)
+
   end
 end

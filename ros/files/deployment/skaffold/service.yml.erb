@@ -1,0 +1,17 @@
+---
+apiVersion: skaffold/v1beta10
+kind: Config
+build:
+  artifacts:
+  - image: <%= name %>
+    context: <%= context_path %>
+    docker:
+      dockerfile: <%= dockerfile_path %><% if image.build_args %>
+      buildArgs:<% image.build_args.each_pair do |name, value| %>
+        <%= name %>: <%= value.is_a?(Array) ? value.join(' ') : value %><% end; end %>
+  tagPolicy:
+    envTemplate:
+      template: "{{.IMAGE_NAME}}:{{.IMAGE_TAG}}"
+  local:
+    useBuildkit: true
+profiles:

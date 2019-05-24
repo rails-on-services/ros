@@ -1,0 +1,14 @@
+server {
+  server_name _;
+
+  location /healthz {
+    return 200 'no content';
+  }<% service_names.each do |name| %>
+
+  location /<%= name %>/ {
+    add_header Access-Control-Expose-Headers 'Authorization';
+    proxy_set_header X-Forwarded-Host $http_host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://<%= name %>:3000/;
+  }<% end %>
+}

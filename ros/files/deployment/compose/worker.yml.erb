@@ -1,0 +1,15 @@
+  <%= name %>_worker:
+    image: "${IMAGE_REPOSITORY}/<%= name %>:${IMAGE_TAG}"
+    command: ["cd", "spec/dummy", "&&", "bundle", "exec", "sidekiq"] # , "-q", "cognito_platform_consumer_events"]
+    env_file:
+      - ./platform.env<% if has_envs %><%= "\n      - ../services/#{name}.env" %><% end %>
+    depends_on:
+      - wait
+    ports:
+      - "3000"<% if mount %>
+    volumes:
+      - "${<%= context_dir %>}/services/<%= name %>:/home/rails/app"
+      - "${<%= context_dir %>}/services/core:/home/rails/core"
+      - "${<%= context_dir %>}/services/sdk:/home/rails/sdk"<% if mount_ros %>
+      - "${ROS_CONTEXT_DIR}/services/core:/home/ros/services/core"
+      - "${ROS_CONTEXT_DIR}/services/sdk:/home/ros/services/sdk"<% end %><% end %>

@@ -1,0 +1,37 @@
+# request logging is a platform concern
+# ETL of records is based on format of logs as configured in rack-fluentd configuration in core lib
+<%= header %>
+    <filter <%= log_tag %>>
+      @type record_modifier
+      # write a temporary field _unix_time
+      <record>
+        _unix_time ${Time.parse(record['request']['time']).to_i}
+      </record>
+    </filter>
+
+    <filter <%= log_tag %>>
+      @type record_transformer
+      enable_ruby true
+      renew_time_key _unix_time
+      remove_keys _unix_time
+    </filter>
+
+    <match <%= log_tag %>><% if provider.eql? 'aws' %>
+      @type s3
+      <instance_profile_credentials>
+      </instance_profile_credentials>
+      s3_bucket <%= config[:bucket] %>
+      s3_region <%= config[:region] %>
+      store_as json
+      s3_object_key_format "<%= log_tag %>/dt=%Y-%m-%d-%H-%M/%{index}.%{file_extension}"<% end %>
+      <buffer tag,time>
+        @type file
+        path /var/log/fluent/s3
+        timekey 5m
+        timekey_wait 5m
+        timekey_use_utc true
+      </buffer>
+      <format>
+        @type json
+      </format>
+    </match>

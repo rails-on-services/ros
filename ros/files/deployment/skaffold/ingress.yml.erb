@@ -1,0 +1,15 @@
+---
+apiVersion: skaffold/v1beta10
+kind: Config
+deploy:
+  helm:
+    releases:
+      - name: ingress
+        chartPath: <%= chart_path %>
+        overrides:
+          hosts:
+            - <%= api_hostname %>
+          services:<% service_names.each do |service| %>
+            - name: <%= service %>
+              port: 80
+              prefix: /<%= service %><% end %>

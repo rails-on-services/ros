@@ -1,8 +1,21 @@
 # frozen_string_literal: true
 require 'pry'
 require 'config'
+Config.setup do |config|
+  config.use_env = true
+  config.env_prefix = 'PLATFORM'
+  config.env_separator = '__'
+end
 
 require 'ros/version'
+require 'ros/deployment'
+
+require 'ros/ops/infra'
+require 'ros/ops/platform'
+require 'ros/ops/service'
+require 'ros/ops/kubernetes'
+require 'ros/ops/compose'
+require 'ros/config'
 
 module Ros
   # Copied from ActiveSupport::StringInquirer
@@ -22,10 +35,11 @@ module Ros
         ObjectSpace.each_object(Class).select { |klass| klass < self }
       end
 
-      def config; @config ||= Settings end
+      def config; @config ||= Ros::Config.new end
 
       def configure
         yield self.config
+        self
       end
     end
   end
@@ -58,7 +72,7 @@ module Ros
 
     # TODO: This is a hack in order to differentiate for purpose of templating files
     def is_ros?
-      platform.config.compose.image_repository.eql?('rails-on-services') and platform.config.compose.project_name.eql?('ros')
+      Settings.devops.registry.eql?('railsonservices') and Settings.platform.environment.partition_name.start_with?('ros')
     end
 
     def service_names; services.keys.sort end

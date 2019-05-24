@@ -1,0 +1,17 @@
+version: '3'
+services:
+  sftp:
+    image: railsonservices/sftp
+    volumes:
+      # NOTE: sshd_config looks for host keys in /etc/sshx
+      - "./sftp/host-config:/etc/sshx"
+      - "./sftp/users.conf:/etc/sftp/users.conf:ro"<% if basic_service_names.include? :localstack %>
+    depends_on:
+      - localstack<% end %>
+    env_file:
+      - ./sftp.env
+    privileged: true
+    ports:
+      - '2222:22'
+    cap_add:
+      - SYS_MODULE

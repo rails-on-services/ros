@@ -1,64 +1,74 @@
 require 'ros'
 require 'ros/exec'
-require 'ros/devops'
 
-namespace :devops do
-  namespace :provision do
-    Settings.devops.deployments.each do |deployment|
-      name = deployment.name.split(':').last
-      desc "Apply terraform to #{Ros.env} #{name}"
-      task name do |task|
-        config = Settings.devops.deployments.collect.select{|d| d.name.eql?(name) }.first
-        Ros::Devops.new(config).send("provision_#{config.type}")
+# Ros.env = the env file to load which includes the infra, platform, services
+# branch name or 'default' = the namnespace (k8s) or nginx port number (compose) for the platform
+# deployment/kubernetes/infra.rb
+namespace :ops do
+  %i(configure provision rollback).each do |action|
+    desc "#{action.capitalize} all"
+    task action do |task, args|
+      require "ros/ops/#{Settings.infra.type}"
+      %i(infra platform service).each do |type|
+        obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new
+        obj.send(action)
       end
     end
-  end
 
-  namespace :deploy do
-    Settings.devops.deployments.each do |deployment|
-      name = deployment.name.split(':').last
-      desc "Deploy platform to #{Ros.env} #{name}"
-      task name do |task|
-        config = Settings.devops.deployments.collect.select{|d| d.name.eql?(name) }.first
-        Ros::Devops.new(config).send("deploy_#{config.type}")
-        # Ros::Devops.new.send(name, :deploy)
-        # Ros::Devops.new(name).send("#{name}_deploy")
+    namespace action do
+      %i(infra platform service).each do |namespace|
+        desc "#{action.capitalize} #{namespace}"
+        task namespace do |task, args|
+          ns, action, type = task.name.split(':')
+          require "ros/ops/#{Settings.infra.type}"
+          obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new
+          obj.send(action)
+        end
       end
     end
   end
 end
 
-namespace :erd do
-  desc 'Generate ERD'
-  task :generate  do |task|
-    Ros::Exec.new.execute(task.name)
-  end
-end
-
-=begin
 namespace :compose do
-  task :env do
-    require 'ros/compose'
-    Ros::Compose.new.write_envs
-  end
+  # desc 'Setup services - Create, migrate and seed all service databases'
+  # task setup: :env do |task|
+  #   ARGV.unshift('-d').unshift('-r')
+  #   Ros::Exec.new.execute('db:reset:seed')
+  # end
 
-  desc 'Setup services - Create, migrate and seed all service databases'
-  task setup: :env do |task|
-    ARGV.unshift('-d').unshift('-r')
-    Ros::Exec.new.execute('db:reset:seed')
-  end
+  # desc 'Start all services (in background)'
+  # task deploy do |task|
+  #   system("docker-compose #{task.name} -d")
+  # end
 
-  desc 'Start all services (in background)'
-  task up: :env do |task|
-    system("docker-compose #{task.name} -d")
-  end
+  # desc 'Build images for all services'
+  # task build: :env do |task|
+  #   system('docker-compose build')
+  # end
 
-  desc 'Build images for all services'
-  task build: :env do |task|
-    system('docker-compose build')
-  end
+  # namespace :build do
+  #   Settings.compose.environments.each do |env|
+  #     desc "Build #{env.name} images"
+  #     task env.name do |task|
+  #       config = Settings.compose.environments.collect.select{ |d| d.name.eql?(env.name) }.first
+  #       Ros::Compose.new(config).build
+  #     end
+  #   end
+  # end
+
+  # namespace :deploy do
+  #   Settings.compose.profiles.each do |profile|
+  #     Settings.compose.environments.each do |env|
+  #       desc profile.description
+  #       task "#{profile.name}:#{env.name}" do |task|
+  #         profile_config = Settings.compose.profiles.collect.select{ |d| d.name.eql?(profile.name) }.first
+  #         env_config = Settings.compose.environments.collect.select{ |d| d.name.eql?(env.name) }.first
+  #         Ros::Compose.new({ profile: profile_config, env: env_config }).deploy
+  #       end
+  #     end
+  #   end
+  # end
 end
-=end
 
 namespace :bump do
   task :env do
@@ -97,6 +107,13 @@ namespace :apidoc do
 
   desc 'Publish docs to Postman'
   task :publish do |task|
+    Ros::Exec.new.execute(task.name)
+  end
+end
+
+namespace :erd do
+  desc 'Generate ERD'
+  task :generate  do |task|
     Ros::Exec.new.execute(task.name)
   end
 end

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  fluentd:
+    image: railsonservices/fluentd
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - "./fluentd/log:/fluentd/log"
+      - "./fluentd/etc/config.d:/fluentd/etc"

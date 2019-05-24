@@ -1,0 +1,15 @@
+# stdout logging is an infrastructure concern
+# fluentd runs as a DaemonSet on each node
+# this logs to a directory based on the service name
+
+<source>
+  @type forward
+  port 24224
+</source>
+<% service_names.each do |name| %>
+
+<match <%= name %>.*>
+  @type file
+  path /fluentd/log/<%= name %>
+</match>
+<% end %>
