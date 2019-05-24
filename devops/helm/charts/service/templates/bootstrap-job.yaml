@@ -29,6 +29,13 @@ spec:
           command: 
             {{- toYaml . | trim | nindent 12 }}
           {{- end }}
+          {{- with .Values.app.env }}
+          env:
+            {{- range $name, $value := . }}
+            - name: {{ $name | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
           {{- if or (.Values.app.envFromSecrets) (.Values.app.envFromConfigMaps) }}
           envFrom:
             {{- range .Values.app.envFromConfigMaps }}
@@ -40,15 +47,20 @@ spec:
                 name: {{ . | quote }}
             {{- end }}
           {{- end }}
-          {{- with .Values.app.env }}
-          env:
-            {{- range $name, $value := . }}
-            - name: {{ $name | quote }}
-              value: {{ $value | quote }}
-            {{- end }}
-          {{- end }}
           resources:
             {{- toYaml .Values.resources | trim | nindent 12 }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | trim | nindent 8}}
+      {{- end }}
+      {{- if .Values.secretMounts }}
+      volumes:
+        {{- range $index, $secretMount := .Values.secretMounts }}
+        - name: secret-volume-{{ $index }}
+          secret:
+            secretName: {{ $secretMount.secretName }}
+        {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

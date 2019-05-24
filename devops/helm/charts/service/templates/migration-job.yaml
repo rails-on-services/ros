@@ -37,8 +37,12 @@ spec:
               value: {{ $value | quote }}
             {{- end }}
           {{- end }}
-          {{- if .Values.app.envFromSecrets }}
+          {{- if or (.Values.app.envFromSecrets) (.Values.app.envFromConfigMaps) }}
           envFrom:
+            {{- range .Values.app.envFromConfigMaps }}
+            - configMapRef:
+                name: {{ . | quote }}
+            {{- end }}
             {{- range .Values.app.envFromSecrets }}
             - secretRef:
                 name: {{ . | quote }}
