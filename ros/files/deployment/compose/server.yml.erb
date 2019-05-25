@@ -6,6 +6,8 @@
     depends_on:
       - wait
     ports:
+      # - "1234:1234"
+      # - "9394:9394"
       - "3000"<% if mount %>
     volumes:
       - "${<%= context_dir %>}/services/<%= name %>:/home/rails/app"
