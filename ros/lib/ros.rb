@@ -8,14 +8,7 @@ Config.setup do |config|
 end
 
 require 'ros/version'
-require 'ros/deployment'
 
-require 'ros/ops/infra'
-require 'ros/ops/platform'
-require 'ros/ops/service'
-require 'ros/ops/kubernetes'
-require 'ros/ops/compose'
-require 'ros/config'
 
 module Ros
   # Copied from ActiveSupport::StringInquirer
@@ -35,7 +28,7 @@ module Ros
         ObjectSpace.each_object(Class).select { |klass| klass < self }
       end
 
-      def config; @config ||= Ros::Config.new end
+      def config; @config ||= Settings end
 
       def configure
         yield self.config
@@ -45,13 +38,22 @@ module Ros
   end
 
   class << self
-    def platform
-      @platform ||= Ros::Platform.descendants.first
+    def ops_action(type, action, options = Config::Options.new)
+      require "ros/ops/#{Settings.infra.type}"
+      obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new(options)
+      obj.send(action)
     end
 
-    def env
-      @env ||= StringInquirer.new(ENV['ROS_ENV'] || 'development')
+    def load_env(env = nil)
+      Ros.env = env if env
+      Config.load_and_set_settings('./config/platform.yml', "./config/environments/#{Ros.env}.yml")
+      require Ros.root.join('config/platform')
     end
+
+    def platform; @platform ||= Ros::Platform.descendants.first end
+    def env; @env ||= StringInquirer.new(ENV['ROS_ENV'] || default_env) end
+    def env=(env); @env = StringInquirer.new(env) end
+    def default_env; @default_env ||= 'local' end
 
     def root
       @root ||= (cwd = Dir.pwd
@@ -97,7 +99,4 @@ module Ros
   end
 end
 
-unless Ros.root.nil?
-  Config.load_and_set_settings('./config/platform.yml', "./config/environments/#{Ros.env}.yml")
-  require Ros.root.join('config/platform')
-end
+Ros.load_env unless Ros.root.nil?

@@ -18,13 +18,16 @@ module Ros
         end
         in_root do
           %x(git clone git@github.com:rails-on-services/ros.git) if options.dev
-          %x(git clone #{base_url}rails-on-services/devops.git)
+          # TODO: The devops folder of ros repo needs to be written to the project
+          # TODO: Where here are files being copied from ros/files/project dir
+          # %x(git clone #{base_url}rails-on-services/devops.git)
         end
       end
 
       def create_ros_services
         return if options.dev
         # TODO for each ros service gem, generate a rails application in ./services that includes that gem
+        # TODO figure out how the ros services are written to a new project. they should be apps that include ros service gems
       end
 
       def finish_message

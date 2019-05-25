@@ -4,10 +4,10 @@ require 'bump'
 module Ros
   class Deployment
     attr_accessor :infra, :platform, :services, :profiles, :images
-    attr_accessor :options # This is holding any options passed in from CLI (Thor)
+    attr_accessor :options # CLI options
 
-    def initialize
-      self.options = Config::Options.new
+    def initialize(options)
+      self.options = options
       %i(infra platform services profiles images).each do |type|
         self.send("#{type}=", Settings.send(type))
       end

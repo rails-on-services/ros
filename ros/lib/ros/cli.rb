@@ -91,63 +91,28 @@ module Ros
       %x(lpass add --non-interactive --notes #{lpass_name} < app.env)
     end
 
-    # option :port, type: :string, aliases: '-p'
-    # option :profiles, type: :boolean
-    # option :daemon, type: :boolean, aliases: '-d'
     desc 'console', 'Start the Ros console (short-cut alias: "c")'
-    option :environment, type: :string, alias: '-e'
-    option :image, type: :string, alias: '-i'
-    option :platform, type: :string, alias: '-p'
-    option :deployment, type: :string, alias: '-d'
     map %w(c) => :console
-    def console(env = 'development')
-      # binding.pry
+    def console(env = nil)
+      Ros.load_env(env) if (env and env != Ros.default_env)
       Pry.start
     end
 
-    desc 'list', 'List things'
-    def list(what = 'platforms')
-      STDOUT.puts "#{what}\n\n#{Settings.send(what).keys.join("\n")}"
+    desc 'list', 'List configuration objects'
+    map %w(ls) => :list
+    def list(what = nil)
+      STDOUT.puts 'Options: services, profiles, images' if what.nil?
+      STDOUT.puts "#{Settings.send(what).keys.join("\n")}" unless what.nil?
     end
 
-    # option :environment, type: :string, alias: '-e', default: 'development'
-    # option :port, type: :string, aliases: '-p'
-    desc 'server PROFILE', 'Start all services defined in PROFILE (short-cut alias: "s")'
-    option :environment, type: :string, aliases: '-e', default: 'local'
+    desc 'server PROFILE', 'Start all services (short-cut alias: "s")'
+    option :build, type: :boolean, aliases: '-b'
     option :daemon, type: :boolean, aliases: '-d'
-    option :noop, type: :boolean, aliases: '-n'
+    option :environment, type: :string, aliases: '-e', default: 'local'
     map %w(s) => :server
-    def server # (profile = nil)
-      # options.merge!(Settings.compose.profiles.select{ |d| d.name.eql?(profile) }.first.to_h) if profile
-      # require 'ros/compose'
-      # Ros::Compose.new(options.merge(profile: profile)).server
-      Config.load_and_set_settings('./config/platform.yml', "./config/environments/#{options.environment}.yml")
-      require Ros.root.join('config/platform')
-      require "ros/ops/#{Settings.infra.type}"
-      type = :service
-      action = :provision
-      obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new
-      obj.options = options
-      obj.send(action)
+    def server
+      Ros.load_env(options.environment) if options.environment != Ros.default_env
+      Ros.ops_action(:service, :provision, options)
     end
-
-    # TODO Invoke TF code to launch a server
-    desc 'build SERVICE', 'Build an image for all services or a specific service'
-    option :force, type: :boolean, default: false, aliases: '-f'
-    option :profile, type: :string, aliases: '-p'
-    def build(service = nil)
-      options.merge!(Settings.compose.images.select{ |d| d.name.eql?(options.profile) }.first.to_h) if options.profile
-      config = options.merge({
-        service: service
-      })
-      require 'ros/compose'
-      Ros::Compose.new(config).build
-    end
-    # NOTE: Perhpas could use this code:
-    # def initialize(config)
-    #   self.config = Thor::CoreExt::HashWithIndifferentAccess.new(
-    #     port: '3000'
-    #   ).merge(config)
-
   end
 end

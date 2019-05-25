@@ -36,9 +36,9 @@ module Ros
       # TODO: implement
       def gem_version_check
         require 'bundler'
-        errors = services.keys.each_with_object([]) do |image, errors|
-          check = image_gems_version_check(image)
-          errors.append({ image: image, mismatches: check }) if check.size.positive?
+        errors = services.each_with_object([]) do |service, errors|
+          check = image_gems_version_check(service)
+          errors.append({ image: service.first, mismatches: check }) if check.size.positive?
         end
         if errors.size.positive?
           if config.force
@@ -52,9 +52,12 @@ module Ros
         true
       end
 
-      def image_gems_version_check(image)
+      def image_gems_version_check(service)
+        image = service.first
+        root_dir = service.last.dig(:ros) ? "#{Ros.root}/ros" : Ros.root
+        service_dir = "#{root_dir}/services/#{image}"
         definition = nil
-        Dir.chdir("#{Ros.root}/services/#{image}") do
+        Dir.chdir(service_dir) do
           definition = Bundler::Definition.build('Gemfile', 'Gemfile.lock', nil)
         end
         gems = definition.requested_specs.select{ |s| images.static_gems.keys.include?(s.name.to_sym) }

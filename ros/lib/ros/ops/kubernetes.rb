@@ -1,4 +1,8 @@
 # frozen_string_literal: true
+require 'ros/deployment'
+require 'ros/ops/infra'
+require 'ros/ops/platform'
+require 'ros/ops/service'
 
 module Ros
   module Ops

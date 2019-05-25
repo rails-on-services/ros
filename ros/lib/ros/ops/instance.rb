@@ -1,4 +1,8 @@
 # frozen_string_literal: true
+require 'ros/deployment'
+require 'ros/ops/infra'
+require 'ros/ops/platform'
+require 'ros/ops/service'
 
 module Ros
   module Ops
@@ -88,8 +92,9 @@ module Ros
           content = compose_envs.each_with_object([]) do |kv, ary|
             ary << "#{kv[0].upcase}=#{kv[1]}"
           end.join("\n")
-          content = "# .env\n# This file was auto generated\n# Compose Variables\n#{content}"
-          File.write("#{Ros.root}/.env", content)
+          content = "# This file was auto generated\n# The values are used by docker-compose\n# #{Ros.env}\n#{content}"
+          FileUtils.mkdir_p("#{Ros.root}/config/compose")
+          File.write("#{Ros.root}/config/compose/#{Ros.env}.env", content)
         end
 
         def compose_envs
@@ -109,9 +114,13 @@ module Ros
         # by changing the project name in config/app
         # TODO: get working in ros and enclosing project: 'CONTEXT_DIR' => Ros.is_ros? ? '..' : '../ros'
         def provision
+          FileUtils.rm('.env')
+          FileUtils.ln_s("config/compose/#{Ros.env}.env", '.env')
           return unless gem_version_check
-          services.keys.each { |service| compose("build #{service}") }
-          # TODO: take -d (and any other options) and pass them in
+          if options.build
+            services.keys.each { |service| compose("build #{service}") }
+            return
+          end
           compose_options = options.daemon ? '-d' : ''
           compose("up #{compose_options}")
         end
