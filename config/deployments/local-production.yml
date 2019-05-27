@@ -1,0 +1,13 @@
+# Configuration values defined here override any values defined in deployment.yml
+---
+meta:
+  components:
+    image: production
+
+services:
+  cognito:
+    mount: no
+  comm:
+    mount: no
+  iam:
+    mount: no
