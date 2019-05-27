@@ -4,4 +4,4 @@ services:
     image: waisbrot/wait
     depends_on:<% basic_service_names.reject{ |name| %i(wait nginx sftp).include?(name) }.each do |name| %><%= "\n      - #{name}" %><% end %>
     environment:
-      TARGETS: "postgres:5432,redis:6379,fluentd:24224,localstack:4572"
+      TARGETS: "postgres:5432,redis:6379<% if basic_service_names.include?('fluentd') %>,fluentd:24224<% end %><% if basic_service_names.include?('localstack') %>,localstack:4572<% end %>"

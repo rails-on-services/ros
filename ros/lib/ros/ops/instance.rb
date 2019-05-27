@@ -11,19 +11,31 @@ module Ros
         include Ros::Ops::Infra
         include Ros::Ops::Instance
 
+        # TODO: Here would be the array of host/port maps; test it
+        def host_port_map
+          Dir["#{Ros.root}/config/environments/*.yml"].each_with_object([]) do |file, ary|
+            Config.load_and_set_settings(file)
+            if Settings.infra.type.eql? 'instance'
+              ary.append({ host: Settings.infra.endpoint.host, port: Settings.platform.nginx_host_port })
+            end 
+          end
+        end
+
+        # TODO: Write out the host_port_map into tf_vars
         def tf_vars_aws
           {
-            ec2_ami_distro: infra.ami_distro,
-            aws_region: infra.aws_region,
+            aws_region: provider.region,
             route53_zone_main_name: infra.dns.domain,
             route53_zone_this_name: infra.dns.subdomain,
-            ec2_tags: infra.ec2_tags,
-            ec2_instance_type: infra.instance_type,
-            ec2_key_pair: infra.ec2_key_pair,
-            lambda_filename: infra.lambda_filename
+            ec2_instance_type: provider.instance.type,
+            ec2_key_pair: provider.instance.key_pair,
+            ec2_tags: provider.instance.tags,
+            ec2_ami_distro: provider.instance.ami_distro
+            # lambda_filename: infra.lambda_filename
           }
         end
 
+        # TODO: this probably needs a tf var that is set to the name of the file for TF to write code into
         def after_provision
           puts "TODO: After terraform apply, write instance IP to devops/ansible/inventory/#{infra.type}"
         end
@@ -121,8 +133,18 @@ module Ros
             services.keys.each { |service| compose("build #{service}") }
             return
           end
+          if options.initialize
+            compose("up wait")
+            services.each do |name, config|
+              prefix = config.ros ? 'app:' : ''
+              compose("run --rm #{name} rails #{prefix}ros:db:reset:seed")
+            end
+          end
           compose_options = options.daemon ? '-d' : ''
           compose("up #{compose_options}")
+          if options.initialize
+            %x(cat ros/services/iam/tmp/#{Settings.platform.environment.partition_name}/postman/222_222_222-Admin_2.json)
+          end
         end
 
         # def provision_with_ansible
@@ -136,10 +158,7 @@ module Ros
         #   end
         # end
 
-        def rollback
-          # TODO: take options such as rm and so on
-          compose('stop')
-        end
+        def rollback; compose(:down) end
 
         def compose(cmd); system_cmd(compose_env, "docker-compose #{cmd}") end
 
@@ -148,7 +167,7 @@ module Ros
 
       def template_prefix; 'compose' end
 
-      def deploy_path; "#{platform.nginx_host_port}" end
+      def deploy_path; Ros.env end
     end
   end
 end

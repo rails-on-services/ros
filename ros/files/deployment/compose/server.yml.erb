@@ -1,6 +1,6 @@
   <%= name %>:
     image: "${IMAGE_REPOSITORY}/<%= name %>:${IMAGE_TAG}"
-    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "--pid", "/tmp/server.pid"]
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-P", "/tmp/server.pid"]
     env_file:
       - ./platform.env<% if has_envs %><%= "\n      - ../services/#{name}.env" %><% end %>
     depends_on:

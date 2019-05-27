@@ -19,38 +19,29 @@ module Ros
     desc 'new', "Create a new Ros platform project. \"ros new my_project\" creates a\n" \
       'new project called MyProject in "./my_project"'
     option :force, type: :boolean, default: false, aliases: '-f'
-    option :dev, type: :boolean, default: false, aliases: '-d' #, required: true
-    def new(name, host = nil)
+    def new(*args)
+      name = args.first
       FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
       raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if File.exist?(name)
-      require_relative 'generators/project.rb'
-      generator = Ros::Generators::Project.new
-      generator.destination_root = name
-      generator.options = options
-      generator.name = name
-      FileUtils.mkdir_p(generator.destination_root)
-      Dir.chdir(name) { init(nil, host) }
-      generator.invoke_all
-      Dir.chdir(name) { generate('sdk', name) }
-      Dir.chdir(name) { generate('core', name) }
+      FileUtils.mkdir_p(name)
+      Dir.chdir(name) do
+        %w(project env).each do |artifact|
+          require_relative "generators/#{artifact}.rb"
+          Object.const_get("Ros::Generators::#{artifact.capitalize}").new(:new, args, options).execute
+        end
+      end
     end
 
     desc 'generate TYPE NAME', 'Generate a new service, sdk or core gem'
     map %w(g) => :generate
     option :force, type: :boolean, default: false, aliases: '-f'
-    def generate(artifact, name = nil)
-      raise Error, set_color("ERROR: Not a Ros project", :red) unless File.exists?('config/env')
-      valid_artifacts = %w(service sdk core)
+    def generate(artifact, *args)
+      raise Error, set_color("ERROR: Not a Ros project", :red) if Ros.root.nil?
+      valid_artifacts = %w(service sdk core env)
       raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
-      raise Error, set_color("ERROR: must supply a name for service", :red) if artifact.eql?('service') and name.nil?
+      raise Error, set_color("ERROR: must supply a name for #{artifact}", :red) if %w(service env).include?(artifact) and args[0].nil?
       require_relative "generators/#{artifact}.rb"
-      generator = Object.const_get("Ros::Generators::#{artifact.capitalize}").new
-      generator.destination_root = artifact.eql?('service') ? "services/#{name}" : "services/#{name}#{artifact.eql?('sdk') ? '_' : '-'}#{artifact}"
-      FileUtils.rm_rf(generator.destination_root) if Dir.exists?(generator.destination_root) and options.force
-      generator.options = options
-      generator.name = name
-      generator.project = File.basename(Dir.pwd)
-      generator.invoke_all
+      Object.const_get("Ros::Generators::#{artifact.capitalize}").new(:generate, args, options).execute
     end
 
     desc 'destroy TYPE NAME', 'Destroy a service, sdk or core gem'
@@ -69,16 +60,16 @@ module Ros
       generator.invoke_all
     end
 
-    desc 'init', 'Initialize the project with default settings'
-    def init(name = nil, host = nil)
-      name ||= File.basename(Dir.pwd)
-      host ||= 'http://localhost:3000'
-      require_relative 'generators/env.rb'
-      generator = Ros::Generators::Env.new
-      generator.options = options.merge(uri: URI(host))
-      generator.name = name
-      generator.invoke_all
-    end
+    # desc 'init', 'Initialize the project with default settings'
+    # def init(name = nil, host = nil)
+    #   name ||= File.basename(Dir.pwd)
+    #   host ||= 'http://localhost:3000'
+    #   require_relative 'generators/env.rb'
+    #   generator = Ros::Generators::Env.new
+    #   generator.options = options.merge(uri: URI(host))
+    #   generator.name = name
+    #   generator.invoke_all
+    # end
 
     # TODO Handle show and edit as well
     desc 'lpass ACTION', 'Transfer the contents of app.env to/from a Lastpass account'
@@ -109,10 +100,31 @@ module Ros
     option :build, type: :boolean, aliases: '-b'
     option :daemon, type: :boolean, aliases: '-d'
     option :environment, type: :string, aliases: '-e', default: 'local'
+    option :initialize, type: :boolean, aliases: '-i'
     map %w(s) => :server
     def server
       Ros.load_env(options.environment) if options.environment != Ros.default_env
       Ros.ops_action(:service, :provision, options)
+    end
+
+    desc 'reset SERVICE', 'Reset a service'
+    def reset(service)
+      %x(docker-compose stop #{service})
+      %x(docker-compose rm #{service})
+      %x(docker-compose up -d #{service})
+      %x(docker container exec #{Settings.platform.environment.partition_name}_nginx_1 nginx -s reload)
+    end
+
+    desc 'restart all non-platform services', 'Restarts all non-platform services'
+    def restart
+      # TODO: needs to get the correct name of the worker, etc
+      # Settings.services.each_with_object([]) do |service, ary|
+      #   ary.concat service.profiles
+      # end
+      %x(docker-compose stop #{Settings.services.keys.join(' ')})
+      %x(docker-compose up -d #{Settings.services.keys.join(' ')})
+      sleep 3
+      %x(docker container exec #{Settings.platform.environment.partition_name}_nginx_1 nginx -s reload)
     end
   end
 end

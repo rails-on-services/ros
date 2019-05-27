@@ -4,59 +4,71 @@ require 'thor/group'
 
 module Ros
   module Generators
-    class Env < Thor::Group
-      include Thor::Actions
-      attr_accessor :name, :options
-      desc 'Initialize a Ros project environment'
+    class Env
+      attr_accessor :action, :generator
 
-      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files/project').to_s end
+      def initialize(action, args, options)
+        self.action = action
+        self.generator = EnvGenerator.new
+        generator.name = args.shift
+        generator.destination_root = 'config/settings'
+        host = args.shift || 'http://localhost:3000'
+        generator.options = options.merge(uri: URI(host))
+      end
 
-      def keys; @keys ||= OpenStruct.new end
-
-      def generate
-        in_root do
-          directory('.')
-          create_file 'services/.keep'
-          # TODO write out variables to TF code's terraform.tfvars in devops
+      def execute
+        if action.eql? :new
+          %w(console local development production).each do |env|
+            xgenerator = EnvGenerator.new
+        xgenerator.destination_root = 'config/settings'
+        host = 'http://localhost:3000'
+        xgenerator.options = generator.options.merge(uri: URI(host))
+            xgenerator.name = env
+            xgenerator.invoke_all
+          end
+          # TODO: implement
+          # NOTE: current format_envs is a method in deployment.rb; maybe move to Ros
+          # binding.pry
+          Config.load_and_set_settings('config/settings/console.yml')
+          content = Ros.format_envs('', Settings).join("\n")
+          # binding.pry
+          File.write('config/console.env', content)
+        else
+          generator.invoke_all
         end
       end
 
-      def version_content
-        create_file 'VERSION', <<~HEREDOC
-          0.1.0
-        HEREDOC
-      end
+      # def x_execute
+      #   generator.destination_root = artifact.eql?('service') ? "services/#{name}" : "services/#{name}#{artifact.eql?('sdk') ? '_' : '-'}#{artifact}"
+      #   FileUtils.rm_rf(generator.destination_root) if Dir.exists?(generator.destination_root) and options.force
+      #   generator.options = options
+      #   generator.name = name
+      #   generator.project = File.basename(Dir.pwd)
+      #   generator.invoke_all
+      # end
+    end
+
+    class EnvGenerator < Thor::Group
+      include Thor::Actions
+      attr_accessor :name, :options
+      desc 'Initialize a platform environment'
+
+      def keys; @keys ||= Config::Options.new end
 
       def generate_secrets
         require 'securerandom'
         keys.rails_master_key = SecureRandom.hex
         keys.secret_key_base = SecureRandom.hex(64)
-        keys.platform__jwt__encryption_key = SecureRandom.hex
-        keys.platform__credential__salt = rand(10 ** 9)
-        keys.platform__encryption_key = SecureRandom.hex
+        keys.platform = Config::Options.new
+        keys.platform.jwt = Config::Options.new
+        keys.platform.jwt.encryption_key = SecureRandom.hex
+        keys.platform.credential = Config::Options.new
+        keys.platform.credential.salt = rand(10 ** 9)
+        keys.platform.encryption_key = SecureRandom.hex
       end
 
-      def config_platform_content
-        create_file 'config/platform.rb', <<~HEREDOC
-          # frozen_string_literal: true
-
-          module #{name.split('_').collect(&:capitalize).join}
-            class Platform < Ros::Platform
-              config.compose_project_name = '#{name}'
-              config.image_repository = '#{name}'
-            end
-          end
-        HEREDOC
-      end
-
-      def config_platform_content
-        append_to_file "#{Ros.root}/compose/base.yml", <<-HEREDOC
-      - "${ROS_DIR}/compose/containers/nginx/services.conf:/etc/nginx/conf.d/services/ros.conf"
-        HEREDOC
-      end if Ros.has_ros?
-
-      def app_env_content
-        create_file 'config/env', <<~HEREDOC
+      def platform_env
+        create_file "#{name}.yml", <<~HEREDOC
           # ENVs read by the docker compose files to set common values across all services
           # If the direnv package is installed these values will automatically be set as shell variables upon entering the project directory
           # Otherwise, to set these values manually from the project root directory in the shell do this:
@@ -64,89 +76,56 @@ module Ros
           # $ source config/env
 
           # Rails
-          SECRET_KEY_BASE=#{keys.secret_key_base}
-          RAILS_MASTER_KEY=#{keys.rails_master_key}
+          secret_key_base: #{keys.secret_key_base}
+          rails_master_key: #{keys.rails_master_key}
 
           # Uncomment to set to a remote host
-          # RAILS_DATABASE_HOST=localhost
+          # rails_database_host: localhost
 
           # Service
-          PLATFORM__PARTITION_NAME=#{name}
+          platform:
+            partition_name: #{name}
 
           # JWT
-          PLATFORM__JWT__ENCRYPTION_KEY=#{keys.platform__jwt__encryption_key}
-          PLATFORM__JWT__ISS=#{options.uri.scheme}://iam.#{options.uri.to_s.split('//').last}
-          PLATFORM__JWT__AUD=#{options.uri}
+            jwt:
+              encryption_key: #{keys.platform.jwt.encryption_key}
+              iss: #{options.uri.scheme}://iam.#{options.uri.to_s.split('//').last}
+              aud: #{options.uri}
 
           # Hosts to which these services respond to
-          PLATFORM__HOSTS=#{options.uri.host}
+            hosts: #{options.uri.host}
 
           # Postman workspace to which API documentation updates are written
-          PLATFORM__POSTMAN__WORKSPACE=#{options.uri.host}
-          PLATFORM__POSTMAN__API_KEY=
+            postman:
+              workspace: #{options.uri.host}
+              api_key:
 
-          PLATFORM__API_DOCS__SERVER__HOST=#{options.uri}
+            api_docs:
+              server:
+                host: #{options.uri}
 
           # SDK
-          PLATFORM__CONNECTION__TYPE=host
-          PLATFORM__EXTERNAL_CONNECTION_TYPE=path
+            connection:
+              type: host
+            external_connection_type: path
 
-          # IAM specific:
-          PLATFORM__CREDENTIAL__SALT=#{keys.platform__credential__salt}
+          # Services
+          services:
+            iam:
+              environment:
+                platform:
+                  credential:
+                    salt: #{keys.platform.credential.salt}
 
-          # Comm specific:
-          PLATFORM__ENCRYPTION_KEY=#{keys.platform__encryption_key}
-        HEREDOC
-      end
-
-      def compose_env_content
-        create_file 'compose/env', <<~HEREDOC
-          RAILS_DATABASE_HOST=db
-        HEREDOC
-      end
-
-      def rakefile_content
-        create_file 'Rakefile', <<~HEREDOC
-          load 'ros/tasks/Rakefile'
+            comm:
+              environment:
+                platform:
+                  encryption_key: #{keys.platform.encryption_key}
         HEREDOC
       end
 
       def finish_message
         say "\nCreated envs at #{destination_root}"
-      end
-
-      private
-
-      def gemfile_content
-        ros_gems = ''
-        if options.dev
-          ros_gems = <<~'EOF'
-          git 'git@github.com:rails-on-services/ros.git', glob: '**/*.gemspec', branch: :master do
-            gem 'ros', path: 'ros/ros'
-            gem 'ros-cognito', path: 'ros/services/cognito'
-            gem 'ros-comm', path: 'ros/services/comm'
-            gem 'ros-core', path: 'ros/services/core'
-            gem 'ros-iam', path: 'ros/services/iam'
-            gem 'ros_sdk', path: 'ros/services/sdk'
-          end
-          EOF
-        end
-        create_file 'Gemfile' do <<~HEREDOC
-          source 'https://rubygems.org'
-          git_source(:github) { |repo| "https://github.com/\#{repo}.git" }
-
-          # Gems used in the Rails application templates
-          gem 'bootsnap'
-          gem 'listen'
-          gem 'pry'
-          gem 'rails', '~> 6.0.0.beta3'
-          gem 'rake'
-          gem 'rspec-rails'
-          gem 'rubocop'
-          gem 'spring'
-          #{ros_gems}
-          HEREDOC
-        end
       end
     end
   end

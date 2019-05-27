@@ -4,6 +4,8 @@ require 'ros/ops/infra'
 require 'ros/ops/platform'
 require 'ros/ops/service'
 
+# aws eks update-kubeconfig --name production --role-arn arn:aws:iam::912765489874:role/eks-admin
+
 module Ros
   module Ops
     module Kubernetes
@@ -13,10 +15,10 @@ module Ros
 
         def tf_vars_aws
           {
-            aws_region: infra.aws_region,
+            aws_region: provider.region,
             route53_zone_main_name: infra.dns.domain,
             route53_zone_this_name: infra.dns.subdomain,
-            name: infra.name
+            # name: infra.name
           }
         end
       end

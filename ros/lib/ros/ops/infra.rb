@@ -22,7 +22,7 @@ module Ros
         {
           terraform: {
             backend: {
-              "#{infra.tf_state.type}": infra.tf_state.to_h.select { |k, v| k.to_s != 'type' } || {}
+              "#{infra.terraform.state.type}": infra.terraform.state.to_h.select { |k, v| k.to_s != 'type' } || {}
             }
           }
         }

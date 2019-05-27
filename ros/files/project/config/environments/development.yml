@@ -1,0 +1,36 @@
+# Configuration values defined here override any values defined in platform.yml
+---
+meta:
+  components:
+    provider: aws/kubernetes
+    image: development
+
+platform:
+  # TODO: use the value of infra.provider to provision storage, e.g. S3 bucket
+  storage: platform # storage is provisioned at platform with a dir per service
+  # storage: service # each service provisions its own storage
+  environment:
+    partition_name: perx
+    connection__host__port: 80
+  # Define the basic services that will be running on the platform and their default environment
+  basic_services:
+    # Uses custom helm chart
+    fluentd:
+    # Uses custom helm chart
+    ingress:
+    # Uses ?
+    # localstack:
+    # Uses helm stable repo chart
+    postgres:
+    # Uses helm stable repo chart
+    redis:
+  services:
+    image: development
+    environment:
+      rails_database_host: postgres
+      redis_url: redis://redis-master:6379
+
+infra:
+  dns:
+    domain: rails-on-services.org
+    subdomain: ros

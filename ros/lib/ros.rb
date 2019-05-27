@@ -39,15 +39,36 @@ module Ros
 
   class << self
     def ops_action(type, action, options = Config::Options.new)
-      require "ros/ops/#{Settings.infra.type}"
-      obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new(options)
+      provider, infra_type = Settings.meta.components.provider.split('/')
+      require "ros/ops/#{infra_type}"
+      obj = Object.const_get("Ros::Ops::#{infra_type.capitalize}::#{type.to_s.capitalize}").new(options)
+      # require "ros/ops/#{Settings.infra.type}"
+      # obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new(options)
       obj.send(action)
     end
 
+    # TODO: remove the '-' thing and use inherit from
     def load_env(env = nil)
+      files = ['./config/platform.yml']
+      if env&.index('-')
+        base_file = "./config/environments/#{env.split('-').first}.yml"
+        files.append(base_file) if File.exists?(base_file)
+      end
       Ros.env = env if env
-      Config.load_and_set_settings('./config/platform.yml', "./config/environments/#{Ros.env}.yml")
+      files.append("./config/environments/#{Ros.env}.yml")
+      Config.load_and_set_settings(files)
       require Ros.root.join('config/platform')
+    end
+
+    def format_envs(key, value, ary = [])
+      if value.is_a?(Config::Options)
+        value.each_pair do |skey, value|
+          format_envs("#{key}#{key.empty? ? '' : '__'}#{skey}", value, ary)
+        end
+      else
+        ary.append("#{key.upcase}=#{value}")
+      end
+      ary
     end
 
     def platform; @platform ||= Ros::Platform.descendants.first end
@@ -77,25 +98,25 @@ module Ros
       Settings.devops.registry.eql?('railsonservices') and Settings.platform.environment.partition_name.start_with?('ros')
     end
 
-    def service_names; services.keys.sort end
+    # def service_names; services.keys.sort end
 
-    def services
-      projects.reject{ |p| projects[p].name.eql? 'core' }
-    end
+    # def services
+    #   projects.reject{ |p| projects[p].name.eql? 'core' }
+    # end
 
-    def project_names; projects.keys.sort end
+    # def project_names; projects.keys.sort end
 
-    def projects
-      @projects ||= (Dir["#{root}/**/config/application.rb"].each_with_object({}) do |path, hash|
-        key = path.to_s.gsub("#{root}/", '')
-        ros = key.start_with? 'ros/services'
-        key = key.split('/').shift(ros ? 3 : 2).join('/')
-        engine = path.include?('dummy')
-        apath = root.join(key)
-        name = key.split('/').pop
-        hash[key] = OpenStruct.new(engine: engine, name: name, root: apath, ros: ros)
-      end)
-    end
+    # def projects
+    #   @projects ||= (Dir["#{root}/**/config/application.rb"].each_with_object({}) do |path, hash|
+    #     key = path.to_s.gsub("#{root}/", '')
+    #     ros = key.start_with? 'ros/services'
+    #     key = key.split('/').shift(ros ? 3 : 2).join('/')
+    #     engine = path.include?('dummy')
+    #     apath = root.join(key)
+    #     name = key.split('/').pop
+    #     hash[key] = OpenStruct.new(engine: engine, name: name, root: apath, ros: ros)
+    #   end)
+    # end
   end
 end
 

@@ -1,0 +1,37 @@
+# Configuration values defined here override any values defined in platform.yml
+---
+meta:
+  # inherits: cluster
+  components:
+    provider: aws/instance
+    image: development
+
+platform:
+  environment:
+    request_logging:
+      enabled: no
+    system_logging:
+      enabled: no
+  nginx_host_port: 3000
+  basic_services:
+    fluentd:
+      enabled: no
+    wait:
+
+services:
+  cognito:
+    profiles: ['server']
+  comm:
+    profiles: ['server']
+  iam:
+    profiles: ['server']
+
+provider:
+  region: us-east-1
+  instance:
+    type: m6.large
+
+infra:
+  dns:
+    domain: rails-on-services.org
+    subdomain: ros

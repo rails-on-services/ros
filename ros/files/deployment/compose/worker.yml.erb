@@ -1,6 +1,6 @@
   <%= name %>_worker:
     image: "${IMAGE_REPOSITORY}/<%= name %>:${IMAGE_TAG}"
-    command: ["cd", "spec/dummy", "&&", "bundle", "exec", "sidekiq"] # , "-q", "cognito_platform_consumer_events"]
+    command: ["bundle", "exec", "sidekiq", "-r", "spec/dummy"]
     env_file:
       - ./platform.env<% if has_envs %><%= "\n      - ../services/#{name}.env" %><% end %>
     depends_on:

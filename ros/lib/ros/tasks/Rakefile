@@ -1,10 +1,6 @@
 require 'ros'
 require 'ros/exec'
 
-# TODO: move to guides repo
-# Ros.env = the env file to load which includes the infra, platform, services
-# branch name or 'default' = the namnespace (k8s) or nginx port number (compose) for the platform
-# deployment/kubernetes/infra.rb
 namespace :ops do
   %i(configure provision rollback).each do |action|
     desc "#{action.capitalize} all"

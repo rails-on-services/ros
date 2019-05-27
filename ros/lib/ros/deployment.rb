@@ -3,15 +3,26 @@ require 'bump'
 
 module Ros
   class Deployment
-    attr_accessor :infra, :platform, :services, :profiles, :images
+    attr_accessor :meta, :platform, :services, :providers, :infra, :profiles, :images
+    attr_accessor :provider, :image
     attr_accessor :options # CLI options
 
     def initialize(options)
       self.options = options
-      %i(infra platform services profiles images).each do |type|
+      %i(meta platform services providers infra profiles images).each do |type|
         self.send("#{type}=", Settings.send(type))
       end
+      %i(provider image).each do |type|
+        self.send("#{type}=", Settings.send("#{type}s").dig(*Settings.meta.components.send(type).split('/')))
+      end
+      infra.provider = Settings.meta.components.provider.split('/').first 
+      infra.type = Settings.meta.components.provider.split('/').last
+      # binding.pry
     end
+
+    # def provider_name; @provider_name ||= end
+    # def provider_type; @provider_type ||= Settings.meta.components.provider.split('/').last end
+    # def image_name; @image_nmae ||= Settings.meta.components.image end
 
     def template_hash(name = '', profile = ''); template_vars(name, profile).merge(base_vars) end
     def template_vars(name, profile); {} end
@@ -29,7 +40,8 @@ module Ros
     end
 
     def version; Bump::Bump.current end
-    def image; images[platform.services.image] end
+    def image; images[Settings.meta.components.image] end
+    # def image; images[platform.services.image] end
     def image_tag; "#{version}-#{sha}#{image_suffix}" end
     def image_suffix; image.build_args.rails_env.eql?('production') ? '' : "-#{image.build_args.rails_env}" end
 
@@ -56,15 +68,17 @@ module Ros
     end
 
     # Underscored representation of a Config hash
+    # TODO: find the callers and just add Ros. in front then remove this code
     def format_envs(key, value, ary = [])
-      if value.is_a?(Config::Options)
-        value.each_pair do |skey, value|
-          format_envs("#{key}#{key.empty? ? '' : '__'}#{skey}", value, ary)
-        end
-      else
-        ary.append("#{key.upcase}=#{value}")
-      end
-      ary
+      Ros.format_envs(key, value, ary = [])
+      # if value.is_a?(Config::Options)
+      #   value.each_pair do |skey, value|
+      #     format_envs("#{key}#{key.empty? ? '' : '__'}#{skey}", value, ary)
+      #   end
+      # else
+      #   ary.append("#{key.upcase}=#{value}")
+      # end
+      # ary
     end
   end
 end
