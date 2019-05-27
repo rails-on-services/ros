@@ -2,10 +2,8 @@ class User < Cognito::ApplicationRecord
   has_many :user_pools
   has_many :pools, through: :user_pools
 
-  def self.converter_hash
-    # { title: :salutation, last_name: :last_name, phone_number: :mobile, primary_identifier: :ui, pool_name: :team }
-    # { title: :salutation, last_name: :last_name, phone_number: :phone_number, primary_identifier: :ui, pool_name: :campaign }
-    { title: :salutation, last_name: :last_name, phone_number: :mobile, primary_identifier: :ui, pool_name: :campaign_id }
+  def self.convert
+    { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number, 'Unique Number' => :primary_identifier, 'Campaign Code' => :pool_name }
   end
 
   def self.reset
@@ -14,19 +12,17 @@ class User < Cognito::ApplicationRecord
     User.delete_all
   end
 
-  def self.load_csv(file_name, create = false, converter = converter_hash)
-    CSV.foreach(file_name, { headers: true, header_converters: :symbol }) do |row|
+  # User.load_csv('/home/admin/prudential.csv', true)
+  def self.load_csv(file_name, create = false)
+    CSV.foreach(file_name, { headers: true, header_converters: lambda { |name| convert[name] } }) do |row|
       if create
-        pool = Pool.find_or_create_by(name: row[converter[:pool_name]] || 'unknown')
-        user = User.find_or_create_by(primary_identifier: row[converter[:primary_identifier]]).tap do |user|
-          user.title = row[converter[:title]]
-          user.phone_number = row[converter[:phone_number]]
-          user.last_name = row[converter[:last_name]]
-          user.save
-        end
+        pool = Pool.find_or_create_by(name: row[:pool_name] || 'unknown')
+        row[:phone_number] = "+#{row[:phone_number]}"
+        row = row.to_h.except(:pool_name)
+        user = User.create(row)
         pool.users << user
       else
-        puts "title: #{row[converter[:title]]} phone_number: #{row[converter[:phone_number]]} last_name: #{row[converter[:last_name]]} id: #{row[converter[:primary_identifier]]} pool: #{row[converter[:pool_name]]}"
+        puts "title: #{row[:title]} phone_number: #{row[:phone_number]} last_name: #{row[:last_name]} id: #{row[:primary_identifier]} pool: #{row[:pool_name]}"
       end
     end
   end

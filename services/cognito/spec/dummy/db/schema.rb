@@ -36,6 +36,12 @@ ActiveRecord::Schema.define(version: 2019_03_17_073328) do
     t.index ["user_id"], name: "index_identifiers_on_user_id"
   end
 
+  create_table "platform_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
   create_table "pools", force: :cascade do |t|
     t.string "name"
     t.jsonb "properties"
@@ -44,10 +50,16 @@ ActiveRecord::Schema.define(version: 2019_03_17_073328) do
     t.index ["name"], name: "index_pools_on_name", unique: true
   end
 
+  create_table "tenant_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
   create_table "tenants", force: :cascade do |t|
     t.string "schema_name", null: false
-    t.jsonb "properties"
-    t.jsonb "platform_properties"
+    t.jsonb "properties", default: {}, null: false
+    t.jsonb "platform_properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
