@@ -4,16 +4,37 @@ require 'thor/group'
 
 module Ros
   module Generators
-    class Service < Thor::Group
+    class Service
+      attr_accessor :action, :args, :options
+
+      def initialize(action, args, options)
+        self.action = action
+        self.args = args
+        self.options = options
+      end
+
+      def execute
+        name = args.first
+        generator = ServiceGenerator.new
+        generator.name = name
+        generator.options = options
+        generator.destination_root = "services/#{name}"
+        generator.project = File.basename(Dir.pwd)
+        generator.invoke_all
+      end
+    end
+
+    class ServiceGenerator < Thor::Group
       include Thor::Actions
       attr_accessor :name, :options, :project
       desc 'Generate a new Ros service'
 
-      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files').to_s end
-      def one_service?
-        services = Dir['services/*'] - ['services/core', 'services/sdk']
-        services.size.eql?(1) and services.first.eql? "services/#{name}"
-      end
+      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../assets').to_s end
+
+      # def one_service?
+      #   services = Dir['services/*'] - ['services/core', 'services/sdk']
+      #   services.size.eql?(1) and services.first.eql? "services/#{name}"
+      # end
 
       def generate
         return unless self.behavior.eql? :invoke
@@ -21,7 +42,6 @@ module Ros
         rails_options = '--api -S -J -C -T -M'
         exec_system = "rails new #{rails_options} -m #{template_file} #{name}"
         puts exec_system
-        # FileUtils.mkdir_p destination_root
         Dir.chdir('services') { system exec_system }
       end
 

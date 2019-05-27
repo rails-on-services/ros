@@ -1,4 +1,4 @@
-# Configuration values defined here override any values defined in platform.yml
+# Configuration values defined here override any values defined in deployment.yml
 ---
 meta:
   # inherits: cluster
@@ -7,15 +7,19 @@ meta:
     image: development
 
 platform:
+  nginx_host_port: 3000
   environment:
     request_logging:
       enabled: no
     system_logging:
       enabled: no
-  nginx_host_port: 3000
   basic_services:
     fluentd:
       enabled: no
+    localstack:
+    nginx:
+    postgres:
+    redis:
     wait:
 
 services:

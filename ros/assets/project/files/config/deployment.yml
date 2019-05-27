@@ -6,31 +6,21 @@ platform:
   # storage: service # each service provisions its own storage
   environment:
     aws_access_key_id: test
-    # export PLATFORM__PLATFORM__ENVIRONMENT__AWS_SECRET_ACCESS_KEY
+    # export PLATFORM__ENVIRONMENT__AWS_SECRET_ACCESS_KEY
     aws_secret_access_key: test2
-    partition_name: ros
-    connection__type: host
-    external_connection_type: path
-    jwt:
-      encryption_key: a8b016ee43b3aba9eec24a20458b5fea
-    # NOTE: request+system logging should not care/be aware of the underlying storage
     request_logging:
       enabled: yes
     system_logging:
       enabled: yes
       # connection__host__port: 80
-  # Define the basic services that will be running on the platform and their default environment
+  # The supporting services that run on the platform and their default environment
   basic_services:
     fluentd:
       config:
         bucket: data-lake
-    localstack:
-    monitoring:
-      environment:
-        key: value
-    nginx:
-    postgres:
-    redis:
+    # monitoring:
+    # moenvironment:
+    # mo  key: value
     sftp:
       environment:
         aws_access_key_id: test
@@ -64,10 +54,6 @@ services:
     ros: yes
     environment:
       # overrride by setting PLATFORM__SERVICES__COMM__ENVIRONMENT__AWS_ACCESS_KEY_ID
-      twilio_account_sid: test
-      twilio_auth_token: test2
-      platform:
-        encryption_key: VGKW9+cyBar28X4KinE9LFSQ/5M7jCHP
   iam:
     mount: yes
     profiles: ['server', 'worker']
@@ -166,7 +152,7 @@ infra:
       # dynamodb_table: org-rails-on-services-terraform-lock
 
 devops:
-  registry: perxtech
+  registry: railsonservices
   cicd:
     provider: circleci
     push_on_new_tag: true

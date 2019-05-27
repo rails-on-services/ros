@@ -4,14 +4,35 @@ require 'thor/group'
 
 module Ros
   module Generators
-    class Sdk < Thor::Group
+    class Sdk
+      attr_accessor :action, :args, :options
+
+      def initialize(action, args, options)
+        self.action = action
+        self.args = args
+        self.options = options
+      end
+
+      def execute
+        name = args.first
+        generator = SdkGenerator.new
+        generator.name = name
+        generator.options = options
+        generator.destination_root = "services/#{name}_sdk"
+        generator.invoke_all
+      end
+    end
+
+    class SdkGenerator < Thor::Group
       include Thor::Actions
-      attr_accessor :name, :options, :project
+      attr_accessor :name, :options
       desc 'Generate a new Ros based SDK'
 
-      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../files').to_s end
+      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../assets').to_s end
 
       def generate
+        return unless self.behavior.eql? :invoke
+        # FileUtils.rm_rf(destination_root) if Dir.exists?(destination_root) and options.force
         gem_options = '--exe --no-coc --no-mit'
         Dir.chdir('services') do
           system "bundle gem #{gem_options} #{name}_sdk"
@@ -52,7 +73,6 @@ module Ros
       end
 
       def lib_file_content
-        # TODO: If options.dev do this; If not then declare ros_sdk as a dependency in the gemspec
         in_root do
           append_to_file "lib/#{name}_sdk.rb", after: "version\"\n" do <<~HEREDOC
             require '#{name}_sdk/models'
@@ -87,8 +107,12 @@ module Ros
           FileUtils.mv "#{name}_sdk", 'sdk'
         end
         action = self.behavior.eql?(:invoke) ? 'Created' : 'Destroyed'
-        say "\n#{action} SDK gem at #{destination_root.gsub("#{name}_sdk", 'sdk')}"
+        say "\n#{action} SDK gem at #{final_root}"
       end
+
+      private
+
+      def final_root; destination_root.gsub("#{name}_sdk", 'sdk') end
     end
   end
 end

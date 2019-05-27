@@ -1,0 +1,47 @@
+# Rails
+secret_key_base: <%= keys.secret_key_base %>
+rails_master_key: <%= keys.rails_master_key %>
+
+# Uncomment to set to a remote host
+# rails_database_host: localhost
+
+# Service
+platform:
+  partition_name: <%= keys.platform.partition_name %>
+
+# JWT
+  jwt:
+    encryption_key: <%= keys.platform.jwt.encryption_key %>
+    iss: <%= options.uri.scheme %>://iam.<%= options.uri.to_s.split('//').last %>
+    aud: <%= options.uri %>
+
+# Hosts to which these services respond to
+  hosts: <%= options.uri.host %>
+
+# Postman workspace to which API documentation updates are written
+  postman:
+    workspace: <%= options.uri.host %>
+    api_key:
+
+  api_docs:
+    server:
+      host: <%= options.uri %>
+
+# SDK
+  connection:
+    type: host
+  external_connection_type: path
+
+# Services
+services:
+  iam:
+    environment:
+      platform:
+        credential:
+          salt: <%= keys.platform.credential.salt %>
+  comm:
+    environment:
+      platform:
+        encryption_key: <%= keys.platform.encryption_key %>
+        twilio_account_sid: test
+        twilio_auth_token: test2

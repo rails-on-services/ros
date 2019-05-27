@@ -8,10 +8,11 @@ module Ros
         FileUtils.rm_rf(service_root)
         FileUtils.mkdir_p(service_root)
         services.each_pair do |name, config|
+          next if config&.enabled.eql? false
           content = service_content(name, config)
           File.write("#{service_root}/#{name}.yml", content)
           next unless envs = config.dig(:environment)
-          content = format_envs('', envs).join("\n")
+          content = Ros.format_envs('', envs).join("\n")
           File.write("#{service_root}/#{name}.env", content)
         end
         after_configure
@@ -37,6 +38,8 @@ module Ros
       def gem_version_check
         require 'bundler'
         errors = services.each_with_object([]) do |service, errors|
+          config = service.last
+          next if config&.enabled.eql? false
           check = image_gems_version_check(service)
           errors.append({ image: service.first, mismatches: check }) if check.size.positive?
         end

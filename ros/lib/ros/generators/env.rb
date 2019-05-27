@@ -5,53 +5,51 @@ require 'thor/group'
 module Ros
   module Generators
     class Env
-      attr_accessor :action, :generator
+      attr_accessor :action, :args, :options
 
       def initialize(action, args, options)
+        args.push('http://localhost:3000') if args.size == 1
+        envs = action.eql?(:new) ? %w(console local development production) : [args.first]
+        args.push(envs)
         self.action = action
-        self.generator = EnvGenerator.new
-        generator.name = args.shift
-        generator.destination_root = 'config/settings'
-        host = args.shift || 'http://localhost:3000'
-        generator.options = options.merge(uri: URI(host))
+        self.args = args
+        self.options = options
       end
 
       def execute
-        if action.eql? :new
-          %w(console local development production).each do |env|
-            xgenerator = EnvGenerator.new
-        xgenerator.destination_root = 'config/settings'
-        host = 'http://localhost:3000'
-        xgenerator.options = generator.options.merge(uri: URI(host))
-            xgenerator.name = env
-            xgenerator.invoke_all
-          end
-          # TODO: implement
-          # NOTE: current format_envs is a method in deployment.rb; maybe move to Ros
-          # binding.pry
-          Config.load_and_set_settings('config/settings/console.yml')
-          content = Ros.format_envs('', Settings).join("\n")
-          # binding.pry
-          File.write('config/console.env', content)
-        else
+        name, host, envs = args
+        envs.each do |env|
+          generator = EnvGenerator.new
+          generator.name = name
+          generator.env = env
+          generator.options = options.merge(uri: URI(host))
+          generator.destination_root = 'config/environments'
           generator.invoke_all
+        end
+        if action.eql? :new
+          Config.load_and_set_settings('config/environments/console.yml')
+          content = Ros.format_envs('', Settings).join("\n")
+          File.write('config/console.env', console_content)
+          File.append('config/console.env', content)
+          FileUtils.rm('config/environments/console.yml')
         end
       end
 
-      # def x_execute
-      #   generator.destination_root = artifact.eql?('service') ? "services/#{name}" : "services/#{name}#{artifact.eql?('sdk') ? '_' : '-'}#{artifact}"
-      #   FileUtils.rm_rf(generator.destination_root) if Dir.exists?(generator.destination_root) and options.force
-      #   generator.options = options
-      #   generator.name = name
-      #   generator.project = File.basename(Dir.pwd)
-      #   generator.invoke_all
-      # end
+      def console_content
+        "# ENVs read by the docker compose files to set common values across all services\n" \
+        "# If the direnv package is installed these values will automatically be set as shell variables upon entering the project directory\n" \
+        "# Otherwise, to set these values manually from the project root directory in the shell do this:\n" \
+        "# $ set -a\n" \
+        "# $ source config/console.env\n" \
+        "# $ set +a\n"
+      end
     end
 
     class EnvGenerator < Thor::Group
       include Thor::Actions
-      attr_accessor :name, :options
+      attr_accessor :name, :options, :env
       desc 'Initialize a platform environment'
+      def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../assets/project').to_s end
 
       def keys; @keys ||= Config::Options.new end
 
@@ -65,63 +63,8 @@ module Ros
         keys.platform.credential = Config::Options.new
         keys.platform.credential.salt = rand(10 ** 9)
         keys.platform.encryption_key = SecureRandom.hex
-      end
-
-      def platform_env
-        create_file "#{name}.yml", <<~HEREDOC
-          # ENVs read by the docker compose files to set common values across all services
-          # If the direnv package is installed these values will automatically be set as shell variables upon entering the project directory
-          # Otherwise, to set these values manually from the project root directory in the shell do this:
-          # $ set -a
-          # $ source config/env
-
-          # Rails
-          secret_key_base: #{keys.secret_key_base}
-          rails_master_key: #{keys.rails_master_key}
-
-          # Uncomment to set to a remote host
-          # rails_database_host: localhost
-
-          # Service
-          platform:
-            partition_name: #{name}
-
-          # JWT
-            jwt:
-              encryption_key: #{keys.platform.jwt.encryption_key}
-              iss: #{options.uri.scheme}://iam.#{options.uri.to_s.split('//').last}
-              aud: #{options.uri}
-
-          # Hosts to which these services respond to
-            hosts: #{options.uri.host}
-
-          # Postman workspace to which API documentation updates are written
-            postman:
-              workspace: #{options.uri.host}
-              api_key:
-
-            api_docs:
-              server:
-                host: #{options.uri}
-
-          # SDK
-            connection:
-              type: host
-            external_connection_type: path
-
-          # Services
-          services:
-            iam:
-              environment:
-                platform:
-                  credential:
-                    salt: #{keys.platform.credential.salt}
-
-            comm:
-              environment:
-                platform:
-                  encryption_key: #{keys.platform.encryption_key}
-        HEREDOC
+        keys.platform.partition_name = name
+        template 'templates/environments.yml.erb', "#{env}.yml"
       end
 
       def finish_message

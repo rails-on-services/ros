@@ -48,15 +48,16 @@ module Ros
         def template_vars(name, profile_name)
           {
             name: name,
-            service_names: services.keys,
-            basic_service_names: platform.basic_services.keys,
+            service_names: Settings.services.reject{|s| s.last.enabled.eql? false }.map{|s| s.first},
+            basic_service_names: Settings.platform.basic_services.reject{|s| s.last&.enabled.eql? false }.map{|s| s.first},
             relative_path_from_root: relative_path_from_root
           }
         end
 
         def write_nginx
           content = File.read("#{template_services_root}/nginx/nginx.conf.erb")
-          content = ERB.new(content).result_with_hash({ service_names: services.keys })
+          keys = Settings.services.reject{|s| s.last.enabled.eql? false }.map{|s| s.first}
+          content = ERB.new(content).result_with_hash({ service_names: keys })
           content_dir = "#{platform_root}/nginx"
           FileUtils.mkdir_p(content_dir)
           File.write("#{content_dir}/nginx.conf", content)
@@ -105,9 +106,11 @@ module Ros
             ary << "#{kv[0].upcase}=#{kv[1]}"
           end.join("\n")
           content = "# This file was auto generated\n# The values are used by docker-compose\n# #{Ros.env}\n#{content}"
-          FileUtils.mkdir_p("#{Ros.root}/config/compose")
-          File.write("#{Ros.root}/config/compose/#{Ros.env}.env", content)
+          FileUtils.mkdir_p(compose_dir)
+          File.write("#{compose_dir}/#{Ros.env}.env", content)
         end
+
+        def compose_dir; "#{Ros.root}/tmp/compose" end
 
         def compose_envs
           {
@@ -127,7 +130,7 @@ module Ros
         # TODO: get working in ros and enclosing project: 'CONTEXT_DIR' => Ros.is_ros? ? '..' : '../ros'
         def provision
           FileUtils.rm('.env')
-          FileUtils.ln_s("config/compose/#{Ros.env}.env", '.env')
+          FileUtils.ln_s("#{compose_dir}/#{Ros.env}.env", '.env')
           return unless gem_version_check
           if options.build
             services.keys.each { |service| compose("build #{service}") }

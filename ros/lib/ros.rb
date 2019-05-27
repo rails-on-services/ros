@@ -1,14 +1,14 @@
 # frozen_string_literal: true
+
+require 'ros/version'
 require 'pry'
 require 'config'
+
 Config.setup do |config|
   config.use_env = true
   config.env_prefix = 'PLATFORM'
   config.env_separator = '__'
 end
-
-require 'ros/version'
-
 
 module Ros
   # Copied from ActiveSupport::StringInquirer
@@ -22,44 +22,32 @@ module Ros
     end
   end
 
-  class Platform
-    class << self
-      def descendants
-        ObjectSpace.each_object(Class).select { |klass| klass < self }
-      end
-
-      def config; @config ||= Settings end
-
-      def configure
-        yield self.config
-        self
-      end
-    end
-  end
-
   class << self
     def ops_action(type, action, options = Config::Options.new)
       provider, infra_type = Settings.meta.components.provider.split('/')
       require "ros/ops/#{infra_type}"
       obj = Object.const_get("Ros::Ops::#{infra_type.capitalize}::#{type.to_s.capitalize}").new(options)
-      # require "ros/ops/#{Settings.infra.type}"
-      # obj = Object.const_get("Ros::Ops::#{Settings.infra.type.capitalize}::#{type.to_s.capitalize}").new(options)
       obj.send(action)
     end
 
-    # TODO: remove the '-' thing and use inherit from
+    # load deployments/env and environments/env
+    # If the environment has a '-' in it and an environment is defined before the '-' then use it as a base
     def load_env(env = nil)
-      files = ['./config/platform.yml']
-      if env&.index('-')
-        base_file = "./config/environments/#{env.split('-').first}.yml"
-        files.append(base_file) if File.exists?(base_file)
-      end
       Ros.env = env if env
-      files.append("./config/environments/#{Ros.env}.yml")
+      envs = []
+      envs.append(Ros.env.split('-').first) if Ros.env&.index('-')
+      envs.append(Ros.env)
+      files = ['./config/deployment.yml']
+      %w(deployments environments).each do |type|
+        envs.each do |env|
+          asset = "./config/#{type}/#{env}.yml"
+          files.append(asset) if File.exists?(asset)
+        end
+      end
       Config.load_and_set_settings(files)
-      require Ros.root.join('config/platform')
     end
 
+    # Underscored representation of a Config hash
     def format_envs(key, value, ary = [])
       if value.is_a?(Config::Options)
         value.each_pair do |skey, value|
@@ -71,7 +59,7 @@ module Ros
       ary
     end
 
-    def platform; @platform ||= Ros::Platform.descendants.first end
+    # def platform; @platform ||= Ros::Platform.descendants.first end
     def env; @env ||= StringInquirer.new(ENV['ROS_ENV'] || default_env) end
     def env=(env); @env = StringInquirer.new(env) end
     def default_env; @default_env ||= 'local' end
@@ -79,7 +67,7 @@ module Ros
     def root
       @root ||= (cwd = Dir.pwd
         while not cwd.eql?('/')
-          break Pathname.new(cwd) if File.exists?("#{cwd}/config/platform.rb")
+          break Pathname.new(cwd) if File.exists?("#{cwd}/config/deployment.yml")
           cwd = File.expand_path('..', cwd)
         end)
     end
@@ -97,26 +85,6 @@ module Ros
     def is_ros?
       Settings.devops.registry.eql?('railsonservices') and Settings.platform.environment.partition_name.start_with?('ros')
     end
-
-    # def service_names; services.keys.sort end
-
-    # def services
-    #   projects.reject{ |p| projects[p].name.eql? 'core' }
-    # end
-
-    # def project_names; projects.keys.sort end
-
-    # def projects
-    #   @projects ||= (Dir["#{root}/**/config/application.rb"].each_with_object({}) do |path, hash|
-    #     key = path.to_s.gsub("#{root}/", '')
-    #     ros = key.start_with? 'ros/services'
-    #     key = key.split('/').shift(ros ? 3 : 2).join('/')
-    #     engine = path.include?('dummy')
-    #     apath = root.join(key)
-    #     name = key.split('/').pop
-    #     hash[key] = OpenStruct.new(engine: engine, name: name, root: apath, ros: ros)
-    #   end)
-    # end
   end
 end
 

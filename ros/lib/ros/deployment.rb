@@ -17,7 +17,6 @@ module Ros
       end
       infra.provider = Settings.meta.components.provider.split('/').first 
       infra.type = Settings.meta.components.provider.split('/').last
-      # binding.pry
     end
 
     # def provider_name; @provider_name ||= end
@@ -59,26 +58,12 @@ module Ros
     def deploy_root; @deploy_root ||= "#{Ros.root}/tmp/deployments/#{deploy_path}" end
     def relative_path_from_root; @relative_path_from_root ||= deploy_root.gsub("#{Ros.root}/", '') end
     def relative_path; @relative_path ||= ('../' * deploy_root.gsub("#{Ros.root}/", '').split('/').size).chomp('/') end
-    def template_root; @template_root ||= Pathname(__FILE__).join("../../../files/deployment/#{template_prefix}") end
-    def template_services_root; @template_services_root ||= Pathname(__FILE__).join("../../../files/deployment/services") end
+    def template_root; @template_root ||= Pathname(__FILE__).join("../../../assets/deployment/#{template_prefix}") end
+    def template_services_root; @template_services_root ||= Pathname(__FILE__).join("../../../assets/deployment/services") end
 
     def system_cmd(env, cmd)
       puts "Running #{cmd}"
       system(env, cmd) unless options.noop
-    end
-
-    # Underscored representation of a Config hash
-    # TODO: find the callers and just add Ros. in front then remove this code
-    def format_envs(key, value, ary = [])
-      Ros.format_envs(key, value, ary = [])
-      # if value.is_a?(Config::Options)
-      #   value.each_pair do |skey, value|
-      #     format_envs("#{key}#{key.empty? ? '' : '__'}#{skey}", value, ary)
-      #   end
-      # else
-      #   ary.append("#{key.upcase}=#{value}")
-      # end
-      # ary
     end
   end
 end

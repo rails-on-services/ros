@@ -1,9 +1,9 @@
-# Configuration values defined here override any values defined in platform.yml
+# Configuration values defined here override any values defined in deployment.yml
 ---
 meta:
   components:
     provider: aws/kubernetes
-    image: development
+    image: production
 
 platform:
   # TODO: use the value of infra.provider to provision storage, e.g. S3 bucket
@@ -18,14 +18,7 @@ platform:
     fluentd:
     # Uses custom helm chart
     ingress:
-    # Uses ?
-    # localstack:
-    # Uses helm stable repo chart
-    postgres:
-    # Uses helm stable repo chart
-    redis:
   services:
-    image: development
     environment:
       rails_database_host: postgres
       redis_url: redis://redis-master:6379

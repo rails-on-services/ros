@@ -25,26 +25,27 @@ module Ros
       raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if File.exist?(name)
       FileUtils.mkdir_p(name)
       Dir.chdir(name) do
-        %w(project env).each do |artifact|
+        %w(project env core sdk).each do |artifact|
           require_relative "generators/#{artifact}.rb"
           Object.const_get("Ros::Generators::#{artifact.capitalize}").new(:new, args, options).execute
         end
       end
     end
 
-    desc 'generate TYPE NAME', 'Generate a new service, sdk or core gem'
+    desc 'generate TYPE NAME', 'Generate a new environment or service'
     map %w(g) => :generate
     option :force, type: :boolean, default: false, aliases: '-f'
     def generate(artifact, *args)
       raise Error, set_color("ERROR: Not a Ros project", :red) if Ros.root.nil?
-      valid_artifacts = %w(service sdk core env)
+      valid_artifacts = %w(service env)
       raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
       raise Error, set_color("ERROR: must supply a name for #{artifact}", :red) if %w(service env).include?(artifact) and args[0].nil?
       require_relative "generators/#{artifact}.rb"
       Object.const_get("Ros::Generators::#{artifact.capitalize}").new(:generate, args, options).execute
     end
 
-    desc 'destroy TYPE NAME', 'Destroy a service, sdk or core gem'
+    # TODO: refactor setting action to :destroy
+    desc 'destroy TYPE NAME', 'Destroy an environment or service'
     map %w(d) => :destroy
     def destroy(artifact, name = nil)
       valid_artifacts = %w(service)
@@ -59,17 +60,6 @@ module Ros
       generator.behavior = :revoke
       generator.invoke_all
     end
-
-    # desc 'init', 'Initialize the project with default settings'
-    # def init(name = nil, host = nil)
-    #   name ||= File.basename(Dir.pwd)
-    #   host ||= 'http://localhost:3000'
-    #   require_relative 'generators/env.rb'
-    #   generator = Ros::Generators::Env.new
-    #   generator.options = options.merge(uri: URI(host))
-    #   generator.name = name
-    #   generator.invoke_all
-    # end
 
     # TODO Handle show and edit as well
     desc 'lpass ACTION', 'Transfer the contents of app.env to/from a Lastpass account'

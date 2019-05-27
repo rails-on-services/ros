@@ -15,12 +15,13 @@ module Ros
       def platform_root; "#{deploy_root}/platform" end
 
       def configure_basic_services
-        platform.basic_services.keys.each do |name|
+        platform.basic_services.each do |name, config|
+          next if config&.enabled.eql? false
           content = File.read("#{template_root}/#{name}.yml.erb")
           content = ERB.new(content).result_with_hash(template_hash(name))
           File.write("#{platform_root}/#{name}.yml", content)
           if envs = platform.basic_services.dig(name, :environment)
-            content = format_envs('', envs).join("\n")
+            content = Ros.format_envs('', envs).join("\n")
             File.write("#{platform_root}/#{name}.env", content)
           end
         end
@@ -28,8 +29,8 @@ module Ros
 
       def configure_env
         envs = platform.environment.dup.merge!(environment)
-        ary = format_envs(:platform, envs)
-        content = format_envs('', platform.services.environment, ary).join("\n")
+        ary = Ros.format_envs(:platform, envs)
+        content = Ros.format_envs('', platform.services.environment, ary).join("\n")
         File.write("#{platform_root}/platform.env", content)
       end
 
