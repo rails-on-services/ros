@@ -7,6 +7,8 @@ Makefile
 .gitmodules
 .overcommit.yml
 
+**/tmp/pids/*.pid
+
 #
 # OS X
 #
@@ -47,8 +49,6 @@ coverage/
 .ruby-version
 .ruby-gemset
 
-./compose
 ./config
 ./devops
 ./ros
-skaffold.yaml

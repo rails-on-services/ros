@@ -105,6 +105,11 @@ module Ros
       %x(docker container exec #{Settings.platform.environment.partition_name}_nginx_1 nginx -s reload)
     end
 
+    desc 'ps', 'List running services'
+    def ps
+      puts %x(docker-compose ps)
+    end
+
     desc 'restart all non-platform services', 'Restarts all non-platform services'
     def restart
       # TODO: needs to get the correct name of the worker, etc

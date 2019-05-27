@@ -9,11 +9,11 @@ RUN gem install \
     bundler:2.0.1 \
     nokogiri:1.10.3 \
     ffi:1.10.0 \
-    mini_portile2:2.3.0 \
-    msgpack:1.2.6 \
+    mini_portile2:2.4.0 \
+    msgpack:1.2.10 \
     pg:1.1.4 \
     nio4r:2.3.1 \
-    puma:3.12.0 \
+    puma:3.12.1 \
     eventmachine:1.2.7
 
 ARG project=user
@@ -51,7 +51,7 @@ RUN addgroup --gid ${PGID} rails \
  && useradd -ms /bin/bash -d /home/rails --uid ${PUID} --gid ${PGID} rails \
  && mkdir -p /home/rails/app \
  && echo 'set editing-mode vi' > /home/rails/.inputrc \
- && echo "alias rspec='spring rspec $@'\nalias ss='spring stop'\nalias rs='spring rails server -b 0.0.0.0'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
+ && echo "alias rspec='spring rspec $@'\nalias src='ss; rc'\nalias ss='spring stop'\nalias rs='rails server -b 0.0.0.0 --pid /tmp/server.pid'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
  && chown rails:rails /home/rails -R \
  && echo 'rails ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
@@ -75,4 +75,4 @@ EXPOSE 3000
 USER ${PUID}:${PGID}
 
 # Boot the application; Override this from the command line in order to run other tools
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-P", "/tmp/server.pid"]

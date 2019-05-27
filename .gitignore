@@ -7,6 +7,7 @@
 **/spec/dummy/storage/
 **/spec/dummy/tmp/
 **/tmp/
-config/env
+config/console.env
 .env
 skaffold-overrides.yaml
+erd.pdf
