@@ -16,8 +16,14 @@ module Ros
     end
 
     class ClientConfigurationError < StandardError; end
+    class MyPaginator < JsonApiClient::Paginating::Paginator
+      self.page_param = 'number'
+      self.per_page_param = 'size'
+    end
 
+    # JsonApiClient::Paginating::Paginator
     class Base < JsonApiClient::Resource
+      self.paginator = MyPaginator
       attr_accessor :gid
 
       def to_gid
