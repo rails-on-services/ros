@@ -16,6 +16,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
   enable_extension "plpgsql"
 
   create_table "campaigns", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
     t.string "owner_type"
     t.bigint "owner_id"
     t.integer "cognito_endpoint_id"
@@ -24,18 +26,8 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.index ["owner_type", "owner_id"], name: "index_campaigns_on_owner_type_and_owner_id"
   end
 
-  create_table "credentials", force: :cascade do |t|
-    t.bigint "provider_id"
-    t.string "key"
-    t.string "encrypted_secret"
-    t.string "encrypted_secret_iv"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["provider_id", "key"], name: "index_credentials_on_provider_id_and_key", unique: true
-    t.index ["provider_id"], name: "index_credentials_on_provider_id"
-  end
-
   create_table "events", force: :cascade do |t|
+    t.string "name"
     t.bigint "campaign_id"
     t.bigint "template_id"
     t.string "target_type"
@@ -66,20 +58,42 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.index ["provider_id"], name: "index_messages_on_provider_id"
   end
 
+  create_table "platform_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
   create_table "providers", force: :cascade do |t|
     t.string "name"
     t.string "type"
+    t.string "encrypted_credentials"
+    t.string "encrypted_credentials_iv"
+    t.string "encrypted_credential_1"
+    t.string "encrypted_credential_1_iv"
+    t.string "encrypted_credential_2"
+    t.string "encrypted_credential_2_iv"
+    t.string "encrypted_credential_3"
+    t.string "encrypted_credential_3_iv"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "templates", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
     t.bigint "campaign_id"
     t.text "content"
     t.string "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["campaign_id"], name: "index_templates_on_campaign_id"
+  end
+
+  create_table "tenant_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
   end
 
   create_table "tenants", force: :cascade do |t|
@@ -107,7 +121,6 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "credentials", "providers"
   add_foreign_key "events", "campaigns"
   add_foreign_key "events", "providers"
   add_foreign_key "events", "templates"

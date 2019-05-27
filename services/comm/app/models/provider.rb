@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 class Provider < Comm::ApplicationRecord
-  attr_reader :credentials_hash, :client
+  attr_reader :client
 
-  has_many :credentials
+  attr_encrypted_options.merge!(key: Settings.encryption_key, encode: true, encode_iv: true)
+  attr_encrypted :credential_1
+  attr_encrypted :credential_2
+  attr_encrypted :credential_3
 
   validates :type, presence: true
 
   def self.services; [] end
 
   def sms; raise NotImplementedError end
-
-  def credentials_hash
-    @credentials_hash ||= credentials.each_with_object({}) { |c, h| h[c.key] = c.secret }
-  end
 end

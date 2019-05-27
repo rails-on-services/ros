@@ -34,8 +34,9 @@ class Event < Comm::ApplicationRecord
 
   def published?; status.eql?('published') end
 
+  # TODO: These are still commented out
   def queue_job
     # EventJob.set(wait_until: send_at).perform_later(self, current_tenant.id)
-    EventJob.perform_now(self, current_tenant.id)
+    # EventJob.perform_now(self, current_tenant.id)
   end
 end

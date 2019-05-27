@@ -2,7 +2,8 @@
 
 module Providers
   class Aws < Provider
-    def self.credentials_keys; %w(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY) end
+    alias_attribute :access_key_id, :credential_1
+    alias_attribute :secret_access_key, :credential_2
 
     def self.services; %w(sms) end
 
@@ -10,15 +11,15 @@ module Providers
       @client ||= ::Aws::SNS::Client.new(
         region: 'ap-southeast-1',
         access_key_id: access_key_id,
-        secret_access_key: secret_access_key)
+        secret_access_key: secret_access_key) if x_access_key_id and x_secret_access_key
     end
 
-    def access_key_id
-      credentials_hash['AWS_ACCESS_KEY_ID'] || current_tenant.platform_twilio_enabled ? ENV['AWS_ACCESS_KEY_ID'] : nil
+    def x_access_key_id
+      access_key_id || current_tenant.platform_aws_enabled ? ENV['AWS_ACCESS_KEY_ID'] : nil
     end
 
-    def secret_access_key
-      credentials_hash['AWS_SECRET_ACCESS_KEY'] || current_tenant.platform_twilio_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
+    def x_secret_access_key
+      secret_access_key || current_tenant.platform_aws_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
     end
 
     # TODO: Get from provider
@@ -32,7 +33,7 @@ module Providers
       res = client.publish(phone_number: message.to, message: message.body)
       p message
     # rescue
-      # Rails.logger.warn('No Twilio client configured for tenant.account_id') and return if tenant.twilio_client.nil?
+      # Rails.logger.warn('No AWS client configured for tenant.account_id') and return if client.nil?
     end
   end
 end

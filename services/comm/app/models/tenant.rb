@@ -3,5 +3,5 @@
 class Tenant < Comm::ApplicationRecord
   include Ros::TenantConcern
 
-  store_accessor :platform_properties, :platform_twilio_enabled
+  store_accessor :platform_properties, :platform_twilio_enabled, :platform_aws_enabled
 end

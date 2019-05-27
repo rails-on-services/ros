@@ -10,6 +10,10 @@ gem 'pg'
 gem 'ros-core', path: '../core'
 gem 'ros_sdk', path: '../sdk'
 
+group :production do
+  gem 'puma'
+end
+
 gem 'dotenv'
 
 group :development do

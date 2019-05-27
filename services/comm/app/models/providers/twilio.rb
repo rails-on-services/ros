@@ -2,44 +2,39 @@
 
 module Providers
   class Twilio < Provider
-    def self.credentials_keys; %w(TWILIO_ACCOUNT_SID TWILIO_AUTH_TOKEN) end
+    alias_attribute :account_sid, :credential_1
+    alias_attribute :auth_token, :credential_2
 
-    def self.services; %w(sms) end
+    def self.services; %w(sms call) end
 
     def client
-      @client ||= ::Twilio::REST::Client.new(account_sid, auth_token) if account_sid and auth_token
+      @client ||= ::Twilio::REST::Client.new(x_account_sid, x_auth_token) if x_account_sid and x_auth_token
     end
 
-    def account_sid
-      credentials_hash['TWILIO_ACCOUNT_SID'] || current_tenant.platform_twilio_enabled ? ENV['TWILIO_ACCOUNT_SID'] : nil
+    def x_account_sid
+      account_sid || current_tenant.platform_twilio_enabled ? ENV['TWILIO_ACCOUNT_SID'] : nil
     end
 
-    def auth_token
-      credentials_hash['TWILIO_AUTH_TOKEN'] || current_tenant.platform_twilio_enabled ? ENV['TWILIO_AUTH_TOKEN'] : nil
+    def x_auth_token
+      auth_token || current_tenant.platform_twilio_enabled ? ENV['TWILIO_AUTH_TOKEN'] : nil
     end
 
     # TODO: Get from provider
     def from; '+12565308753' end
 
     def sms(message)
+      # Rails.logger.warn('No Twilio client configured for tenant.account_id') and return unless client
       message.update(from: from)
       # binding.pry
       # TODO: toggle sending on and off
       res = client.messages.create(from: from, to: message.to, body: message.body)
       # p res
       p message
-    # rescue
-      # Rails.logger.warn('No Twilio client configured for tenant.account_id') and return if tenant.twilio_client.nil?
     end
 
-    # Dotenv.load('../../app.env')
-    # Get your Account Sid and Auth Token from twilio.com/console
-    # set up a client to talk to the Twilio REST API
-    # @twilio_client = Twilio::REST::Client.new(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
-    # from = '+12565308753'
-    # to = whatup.From.gsub('whatsapp:', '')
-
-    # @twilio_client.calls.create(from: from, to: to, url: 'http://demo.twilio.com/docs/voice.xml')
-    #Tenant.find_by(schema_name: tenant.schema_name)
+    def call(message)
+      # to = whatup.From.gsub('whatsapp:', '')
+      client.calls.create(from: from, to: to, url: 'http://demo.twilio.com/docs/voice.xml')
+    end
   end
 end
