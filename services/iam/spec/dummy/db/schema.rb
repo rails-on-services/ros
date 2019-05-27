@@ -50,6 +50,12 @@ ActiveRecord::Schema.define(version: 2019_02_15_214421) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "platform_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
   create_table "policies", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -96,17 +102,22 @@ ActiveRecord::Schema.define(version: 2019_02_15_214421) do
     t.index ["reset_password_token"], name: "index_roots_on_reset_password_token", unique: true
   end
 
+  create_table "tenant_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
   create_table "tenants", force: :cascade do |t|
     t.string "schema_name", null: false
-    t.jsonb "properties"
-    t.jsonb "platform_properties"
+    t.jsonb "properties", default: {}, null: false
+    t.jsonb "platform_properties", default: {}, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.bigint "root_id", null: false
     t.string "alias"
     t.string "name"
     t.string "state"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["alias"], name: "index_tenants_on_alias", unique: true
     t.index ["root_id"], name: "index_tenants_on_root_id", unique: true
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end
@@ -148,13 +159,15 @@ ActiveRecord::Schema.define(version: 2019_02_15_214421) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.boolean "console", default: false, null: false
-    t.boolean "api", default: false, null: false
-    t.string "time_zone", default: "UTC", null: false
+    t.boolean "console", default: false, null: false, comment: "Allow console access when true"
+    t.boolean "api", default: false, null: false, comment: "Allow API access when true"
+    t.string "time_zone", default: "UTC", null: false, comment: "Adjust timestamps to this time zone"
     t.jsonb "attached_policies", default: {}, null: false
     t.jsonb "attached_actions", default: {}, null: false
-    t.string "username", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
+    t.jsonb "properties", default: {}, null: false, comment: "Custom properties of the user"
+    t.jsonb "display_properties", default: {}, null: false, comment: "Custom display properties of the user"
+    t.string "username", null: false
+    t.string "encrypted_password", default: "", null: false, comment: "Required if console is true"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

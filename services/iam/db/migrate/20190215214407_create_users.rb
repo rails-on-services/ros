@@ -3,15 +3,17 @@
 class CreateUsers < ActiveRecord::Migration[6.0]
   def change
     create_table :users do |t|
-      t.boolean :console, null: false, default: false
-      t.boolean :api, null: false, default: false
-      t.string :time_zone, null: false, default: 'UTC'
+      t.boolean :console, null: false, default: false, comment: 'Allow console access when true'
+      t.boolean :api, null: false, default: false, comment: 'Allow API access when true'
+      t.string :time_zone, null: false, default: 'UTC', comment: 'Adjust timestamps to this time zone'
       t.jsonb :attached_policies, null: false, default: {}
       t.jsonb :attached_actions, null: false, default: {}
+      t.jsonb :properties, null: false, default: {}, comment: 'Custom properties of the user'
+      t.jsonb :display_properties, null: false, default: {}, comment: 'Custom display properties of the user'
 
       ## Database authenticatable
       t.string :username, null: false, index: { unique: true }
-      t.string :encrypted_password, null: false
+      t.string :encrypted_password, null: false, default: '', comment: 'Required if console is true'
 
       ## Recoverable
       t.string   :reset_password_token, index: { unique: true }

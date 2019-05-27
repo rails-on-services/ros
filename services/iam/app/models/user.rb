@@ -7,7 +7,7 @@ class User < Iam::ApplicationRecord
   has_many :policies, through: :user_policies
   has_many :actions, through: :policies
 
-  has_many :user_groups
+  has_many :user_groups, dependent: :delete_all
   has_many :groups, through: :user_groups
   has_many :group_policies, through: :groups, source: :policies
   has_many :group_actions, through: :groups, source: :actions
