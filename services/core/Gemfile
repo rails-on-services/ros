@@ -4,7 +4,7 @@ gemspec
 
 gem 'pry-rails'
 gem 'awesome_print'
-gem 'ros_sdk', path: '../ros_sdk'
+gem 'ros_sdk', path: '../sdk'
 group :development, :test do
   gem 'brakeman', require: false
   gem 'pry-byebug'
