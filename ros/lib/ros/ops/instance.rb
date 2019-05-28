@@ -129,16 +129,21 @@ module Ros
         # by changing the project name in config/app
         # TODO: get working in ros and enclosing project: 'CONTEXT_DIR' => Ros.is_ros? ? '..' : '../ros'
         def provision
-          FileUtils.rm('.env')
+          FileUtils.rm_f('.env')
           FileUtils.ln_s("#{compose_dir}/#{Ros.env}.env", '.env')
           return unless gem_version_check
+          # TODO: make build its own rake task and method
           if options.build
-            services.keys.each { |service| compose("build #{service}") }
+            services.each_pair do |name, config|
+              next if config&.enabled.eql? false
+              compose("build #{name}")
+            end
             return
           end
           if options.initialize
             compose("up wait")
             services.each do |name, config|
+              next if config&.enabled.eql? false
               prefix = config.ros ? 'app:' : ''
               compose("run --rm #{name} rails #{prefix}ros:db:reset:seed")
             end
@@ -148,6 +153,11 @@ module Ros
           if options.initialize
             %x(cat ros/services/iam/tmp/#{Settings.platform.environment.partition_name}/postman/222_222_222-Admin_2.json)
           end
+        end
+
+        # TODO: implement rake method
+        def credentials_show
+          %x(cat ros/services/iam/tmp/#{Settings.platform.environment.partition_name}/postman/222_222_222-Admin_2.json)
         end
 
         # def provision_with_ansible
