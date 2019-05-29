@@ -16,20 +16,32 @@ module Ros
     map %w(-v --version) => :version
     def version; say "Ros #{VERSION}" end
 
-    desc 'new', "Create a new Ros platform project. \"ros new my_project\" creates a\n" \
+    desc 'new NAME HOST', "Create a new Ros platform project. \"ros new my_project\" creates a\n" \
       'new project called MyProject in "./my_project"'
     option :force, type: :boolean, default: false, aliases: '-f'
     def new(*args)
-      name = args.first
+      name = args[0]
+      host = URI(args[1] || 'http://localhost:3000')
       FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
-      raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if File.exist?(name)
-      FileUtils.mkdir_p(name)
-      Dir.chdir(name) do
-        %w(project env core sdk).each do |artifact|
-          require_relative "generators/#{artifact}.rb"
-          Object.const_get("Ros::Generators::#{artifact.capitalize}").new(:new, args, options).execute
-        end
+      raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if Dir.exists?(name)
+      require_relative 'generators/project/project_generator.rb'
+      generator = Ros::Generators::ProjectGenerator.new(args)
+      generator.destination_root = name
+      generator.invoke_all
+      require_relative 'generators/env/env_generator.rb'
+      %w(console local development production).each do |env|
+        generator = Ros::Generators::EnvGenerator.new([env, name, host, :nil])
+        generator.destination_root = name
+        generator.invoke_all
       end
+      require_relative 'generators/core/core_generator.rb'
+      generator = Ros::Generators::CoreGenerator.new(args)
+      generator.destination_root = name
+      generator.invoke_all
+      require_relative 'generators/sdk/sdk_generator.rb'
+      generator = Ros::Generators::SdkGenerator.new(args)
+      generator.destination_root = name
+      generator.invoke_all
     end
 
     desc 'generate TYPE NAME', 'Generate a new environment or service'
@@ -40,8 +52,14 @@ module Ros
       valid_artifacts = %w(service env)
       raise Error, set_color("ERROR: invalid artifact #{artifact}. valid artifacts are: #{valid_artifacts.join(', ')}", :red) unless valid_artifacts.include? artifact
       raise Error, set_color("ERROR: must supply a name for #{artifact}", :red) if %w(service env).include?(artifact) and args[0].nil?
-      require_relative "generators/#{artifact}.rb"
-      Object.const_get("Ros::Generators::#{artifact.capitalize}").new(:generate, args, options).execute
+      require_relative "generators/#{artifact}/#{artifact}_generator.rb"
+      name = args[0]
+      args.push(File.basename(Dir.pwd))
+      generator = Object.const_get("Ros::Generators::#{artifact.capitalize}Generator").new(args)
+      generator.options = options
+      # generator.destination_root = '.'
+      # generator.destination_root = Ros.root
+      generator.invoke_all
     end
 
     # TODO: refactor setting action to :destroy
