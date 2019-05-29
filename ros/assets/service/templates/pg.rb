@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-gem 'pg'
+gem 'pg' unless @profile.is_engine?
 
 # run 'sudo apt install libpq-dev'
 database_prefix = "#{@profile.service_name.tr('-', '_')}"

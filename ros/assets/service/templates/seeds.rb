@@ -22,6 +22,7 @@ start_id = (Tenant.last&.id || 0) + 1
   Tenant.create!(schema_name: Tenant.account_id_to_schema(id.to_s * 9))
 end
 RUBY
+end
 
 create_file 'db/seeds/development/data.seeds.rb' do <<-RUBY
 # frozen_string_literal: true
@@ -35,7 +36,6 @@ after 'development:tenants' do
   end
 end
 RUBY
-end
 end
 
 # Create a rake task that imports seedback seeds

@@ -26,7 +26,7 @@ append_to_file 'README.md' do <<-RUBY
 RUBY
 end
 
-create_file 'doc/open_api.yml' do <<-FILE
+create_file 'doc/open_api.yml' do <<-RUBY
 ---
 api_docs:
   info:
@@ -34,13 +34,25 @@ api_docs:
     version: '0.1.0'
   server:
     description: 'server description'
-FILE
+RUBY
 end
 
-# insert_into_file "lib/#{@namespaced_name}.rb", before: 'require' do <<-RUBY
-# require 'ros/core'
-# RUBY
-# end
+create_file 'config/environment.rb'
+
+create_file 'config/spring.rb' do <<-RUBY
+Spring.application_root = './spec/dummy'
+RUBY
+end
+
+create_file 'config/sidekiq.yml' do <<-RUBY
+---
+:queues:
+  - #{@profile.service_name}_platform_producer_events
+  - #{@profile.service_name}_platform_consumer_events
+  - #{@profile.service_name}_tenant_producer_events
+  - #{@profile.service_name}_tenant_consumer_events
+RUBY
+end
 
 # copy_file 'defaults/files/Procfile', 'Procfile'
 # template 'defaults/files/tmuxinator.yml', '.tmuxinator.yml'

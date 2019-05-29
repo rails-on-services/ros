@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+insert_into_file @profile.config_file, before: 'require' do <<-RUBY
+require 'ros/core'
+RUBY
+end
+
 # TODO: here might be the issue with spec/dummy migrations
 if @profile.is_ros?
   inject_into_file @profile.initializer_file, after: ".api_only = true\n" do <<-RUBY
@@ -41,8 +46,8 @@ end
 inject_into_file @profile.initializer_file, after: ".api_only = true\n" do <<-RUBY
       initializer :service_values do |app|
         name = self.class.parent.name.demodulize.underscore
-        Settings.service.name = name # 'iam'
-        Settings.service.policy_name = name # 'Iam'
+        Settings.service.name = name # '#{@profile.service_name}'
+        Settings.service.policy_name = name.capitalize # '#{@profile.service_name.capitalize}'
       end
 RUBY
 end
