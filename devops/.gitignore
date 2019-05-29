@@ -1,5 +1,6 @@
 .terraform
 terraform.tfvars
+terraform.tfvars.json
 terraform.tfstate
 terraform.tfstate.backup
 state.tf.json

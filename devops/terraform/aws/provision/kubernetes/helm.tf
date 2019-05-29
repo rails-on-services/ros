@@ -21,24 +21,24 @@ EOS
 
 data "aws_eks_cluster" "cluster" {
   depends_on = ["module.eks"]
-  name       = "${local.eks_cluster_name}"
+  name = "${local.eks_cluster_name}"
 }
 
 data "aws_eks_cluster_auth" "cluster-auth" {
   depends_on = ["module.eks", "null_resource.k8s-tiller-rbac"]
-  name       = "${local.eks_cluster_name}"
+  name = "${local.eks_cluster_name}"
 }
 
 provider "helm" {
-  namespace       = "kube-system"
-  install_tiller  = true
-  tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.13.1"
+  namespace = "kube-system"
+  install_tiller = true
+  tiller_image = "gcr.io/kubernetes-helm/tiller:v2.14.0"
   service_account = "tiller"
 
   kubernetes {
-    host                   = "${data.aws_eks_cluster.cluster.endpoint}"
+    host = "${data.aws_eks_cluster.cluster.endpoint}"
     cluster_ca_certificate = "${base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)}"
-    token                  = "${data.aws_eks_cluster_auth.cluster-auth.token}"
+    token = "${data.aws_eks_cluster_auth.cluster-auth.token}"
   }
 }
 
@@ -58,27 +58,27 @@ data "template_file" "cluster-autoscaler-value" {
   template = "${file("${path.module}/templates/helm-cluster-autoscaler.tpl")}"
 
   vars = {
-    aws_region   = "${var.aws_region}"
+    aws_region = "${var.aws_region}"
     cluster_name = "${local.eks_cluster_name}"
   }
 }
 
 resource "helm_release" "cluster-autoscaler" {
   depends_on = ["null_resource.k8s-tiller-rbac"]
-  name       = "cluster-autoscaler"
-  chart      = "stable/cluster-autoscaler"
-  namespace  = "kube-system"
-  wait       = true
+  name = "cluster-autoscaler"
+  chart = "stable/cluster-autoscaler"
+  namespace = "kube-system"
+  wait = true
 
   values = ["${data.template_file.cluster-autoscaler-value.rendered}"]
 }
 
 resource "helm_release" "metrics-server" {
   depends_on = ["null_resource.k8s-tiller-rbac"]
-  name       = "metrics-server"
-  chart      = "stable/metrics-server"
-  namespace  = "kube-system"
-  wait       = true
+  name = "metrics-server"
+  chart = "stable/metrics-server"
+  namespace = "kube-system"
+  wait = true
 
   values = ["${file("${path.module}/files/helm-metrics-server.yaml")}"]
 }
@@ -92,24 +92,24 @@ data "template_file" "aws-alb-ingress-controller-value" {
 }
 
 resource "helm_release" "aws-alb-ingress-controller" {
-  depends_on = ["null_resource.helm-repository-incubator", "null_resource.k8s-tiller-rbac"]
-  name       = "aws-alb-ingress-controller"
+  depends_on = ["null_resource.helm-repository-incubator", "null_resource.k8s-tiller-rbac", "aws_iam_role_policy_attachment.eks-worker-alb-ingress-controller"]
+  name = "aws-alb-ingress-controller"
   repository = "incubator"
-  chart      = "aws-alb-ingress-controller"
-  namespace  = "kube-system"
-  wait       = true
+  chart = "aws-alb-ingress-controller"
+  namespace = "kube-system"
+  wait = true
 
   values = ["${data.template_file.aws-alb-ingress-controller-value.rendered}"]
 }
 
 resource "helm_release" "istio-init" {
   depends_on = ["null_resource.helm-repository-istio", "null_resource.k8s-tiller-rbac"]
-  name       = "istio-init"
+  name = "istio-init"
   repository = "istio"
-  chart      = "istio-init"
-  version    = "${var.istio_version}"
-  namespace  = "istio-system"
-  wait       = true
+  chart = "istio-init"
+  version = "${var.istio_version}"
+  namespace = "istio-system"
+  wait = true
 
   force_update = true
 }

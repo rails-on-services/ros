@@ -70,6 +70,34 @@ variable "eks_map_roles" {
 }
 
 variable "istio_version" {
-  default     = "1.1.3"
+  default     = "1.1.7"
   description = "Istio version to install"
 }
+
+variable "eks_enable_cluster_logging_s3" {
+  default     = false
+  description = "Whether to enable kubernetes cluster level logging (using fluentd) to a S3 bucket"
+}
+
+variable "eks_cluster_logging_helm_chart" {
+  default     = "../../../../helm/charts/fluentd-cluster-logging"
+  description = "Path to the fluentd-cluster-logging helm chart"
+}
+
+variable "eks_cluster_logging_s3_region" {
+  type        = "string"
+  default     = ""
+  description = "Kubernetes cluster level logging sinck bucket region, if not specified will use aws_region"
+}
+variable "eks_cluster_logging_s3_bucket" {
+  type        = "string"
+  description = "Kubernetes cluster level logging sink bucket name"
+  default     = ""
+}
+
+variable "eks_create_cluster_logging_s3_bucket" {
+  default     = false
+  description = "Whether to create the s3 bucket specified via eks_cluster_logging_s3_bucket"
+}
+
+

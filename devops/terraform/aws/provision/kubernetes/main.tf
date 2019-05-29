@@ -1,3 +1,6 @@
+provider "aws" {
+  region = "${var.aws_region}"
+}
 module "admin" {
   source                 = "../../modules/admin"
   route53_zone_main_name = "${var.route53_zone_main_name}"
@@ -15,7 +18,7 @@ data "template_file" "istio-alb-ingress-gateway-manifest" {
 
 # Currently terraform kubernetes provider doesn't support ingress resource
 resource "null_resource" "istio-alb-ingress-gateway" {
-  depends_on = ["helm_release.istio"]
+  depends_on = ["helm_release.istio", "helm_release.aws-alb-ingress-controller"]
 
   provisioner "local-exec" {
     working_dir = "${path.module}"
@@ -37,7 +40,7 @@ EOS
   }
 
   provisioner "local-exec" {
-    when=  "destroy"
+    when = "destroy"
     working_dir = "${path.module}"
 
     command = <<EOS
