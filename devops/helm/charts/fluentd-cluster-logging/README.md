@@ -1,6 +1,6 @@
 # fluentd-cluster-logging
 
-This chart deployes Cluster-level logging fluentd daemonset to non-GKE kubernetes environment that ships kubernetes logs (container log and node log) to Google Logging.
+This chart deployes Cluster-level logging fluentd daemonset to kubernetes environment that ships kubernetes logs (container log and node log) to Google Logging or S3.
 
 ## Reference
 
