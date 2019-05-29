@@ -1,0 +1,6 @@
+---
+:queues:
+  - <%= @profile.service_name %>_platform_producer_events
+  - <%= @profile.service_name %>_platform_consumer_events
+  - <%= @profile.service_name %>_tenant_producer_events
+  - <%= @profile.service_name %>_tenant_consumer_events
