@@ -30,11 +30,6 @@ services:
   iam:
     profiles: ['server']
 
-provider:
-  region: us-east-1
-  instance:
-    type: m6.large
-
 infra:
   dns:
     domain: rails-on-services.org

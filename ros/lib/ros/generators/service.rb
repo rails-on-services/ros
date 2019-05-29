@@ -31,18 +31,21 @@ module Ros
 
       def self.source_root; Pathname(File.dirname(__FILE__)).join('../../../assets').to_s end
 
-      # def one_service?
-      #   services = Dir['services/*'] - ['services/core', 'services/sdk']
-      #   services.size.eql?(1) and services.first.eql? "services/#{name}"
-      # end
-
       def generate
         return unless self.behavior.eql? :invoke
-        template_file = "#{self.class.source_root}/rails-templates/6-api.rb"
-        rails_options = '--api -S -J -C -T -M'
-        exec_system = "rails new #{rails_options} -m #{template_file} #{name}"
+        return if Dir.exists?("services/#{name}")
+        template_file = "#{self.class.source_root}/service/templates/application.rb"
+        plugin = Ros.is_ros? ? 'plugin' : ''
+        rails_options = '--api -G -S -J -C -T -M --database=postgresql --skip-active-storage'
+        plugin_options = Ros.is_ros? ? '--full --dummy-path=spec/dummy' : ''
+        prefix = Ros.is_ros? ? 'ros-' : ''
+        service_name = "#{prefix}#{name}"
+        exec_system = "rails #{plugin} new #{rails_options} #{plugin_options} -m #{template_file} #{service_name}"
         puts exec_system
-        Dir.chdir('services') { system exec_system }
+        Dir.chdir('services') do
+          system exec_system
+          FileUtils.mv(service_name, name) if Ros.is_ros?
+        end
       end
 
       def sdk_content

@@ -13,9 +13,11 @@ module Ros
 
         # TODO: Here would be the array of host/port maps; test it
         def host_port_map
-          Dir["#{Ros.root}/config/environments/*.yml"].each_with_object([]) do |file, ary|
-            Config.load_and_set_settings(file)
-            if Settings.infra.type.eql? 'instance'
+          Dir[Ros.deployments_dir].each_with_object([]) do |file, ary|
+            name = File.basename(file).gsub('.yml', '')
+            Ros.load_env(name)
+            infra_type = Settings.meta.components.provider.split('/').last
+            if infra_type.eql? 'instance'
               ary.append({ host: Settings.infra.endpoint.host, port: Settings.platform.nginx_host_port })
             end 
           end
@@ -127,7 +129,6 @@ module Ros
         # TODO: stop and rm are passed directly to compose and exits
         # TODO: should be possible to run defaults on port 3000 and another version on 3001
         # by changing the project name in config/app
-        # TODO: get working in ros and enclosing project: 'CONTEXT_DIR' => Ros.is_ros? ? '..' : '../ros'
         def provision
           FileUtils.rm_f('.env')
           FileUtils.ln_s("#{compose_dir}/#{Ros.env}.env", '.env')

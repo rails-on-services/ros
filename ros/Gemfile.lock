@@ -3,6 +3,7 @@ PATH
   specs:
     ros (0.1.0)
       bump
+      bundler (~> 2.0)
       config (= 1.7.1)
       pry
       rake (~> 12.0)
@@ -85,7 +86,6 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
-  bundler (~> 2.0)
   ros!
   rspec (~> 3.8)
 

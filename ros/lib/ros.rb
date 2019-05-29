@@ -77,13 +77,17 @@ module Ros
     def helm_root; root.join('devops/helm') end
     def k8s_root; root.join('devops/k8s') end
 
+    def config_dir; 'config' end
+    def environments_dir; "#{config_dir}/environments" end
+    def deployments_dir; "#{config_dir}/deployments" end
+
     def ros_root; root.join('ros') end
 
     def has_ros?; not is_ros? and Dir.exists?(ros_root) end
 
     # TODO: This is a hack in order to differentiate for purpose of templating files
     def is_ros?
-      Settings.devops.registry.eql?('railsonservices') and Settings.platform.environment.partition_name.start_with?('ros')
+      Settings.devops.registry.eql?('railsonservices') and Settings.platform.partition_name.start_with?('ros')
     end
   end
 end

@@ -23,15 +23,15 @@ module Ros
           generator.name = name
           generator.env = env
           generator.options = options.merge(uri: URI(host))
-          generator.destination_root = 'config/environments'
+          generator.destination_root = '.'
           generator.invoke_all
         end
         if action.eql? :new
           Config.load_and_set_settings('config/environments/console.yml')
           content = Ros.format_envs('', Settings).join("\n")
-          File.write('config/console.env', console_content)
-          File.append('config/console.env', content)
-          FileUtils.rm('config/environments/console.yml')
+          File.write("#{Ros.config_dir}/console.env", console_content)
+          File.append("#{Ros.config_Dir}/console.env", content)
+          FileUtils.rm("#{Ros.environments_dir}/console.yml")
         end
       end
 
@@ -64,11 +64,7 @@ module Ros
         keys.platform.credential.salt = rand(10 ** 9)
         keys.platform.encryption_key = SecureRandom.hex
         keys.platform.partition_name = name
-        template 'templates/environments.yml.erb', "#{env}.yml"
-      end
-
-      def finish_message
-        say "\nCreated envs at #{destination_root}"
+        template 'templates/environments.yml.erb', "#{Ros.environments_dir}/#{env}.yml"
       end
     end
   end
