@@ -27,7 +27,7 @@ remove_file "#{@profile.app_dir}/config/database.yml"
 template 'config/database.yml', "#{@profile.app_dir}/config/database.yml"
 
 create_file 'config/environment.rb'
-template 'config/spring.rb'
+template 'config/spring.rb' if @profile.is_engine?
 
 append_to_file 'README.md' do <<-RUBY
 

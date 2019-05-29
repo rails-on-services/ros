@@ -22,6 +22,7 @@ module Ros
     def new(*args)
       name = args[0]
       host = URI(args[1] || 'http://localhost:3000')
+      args.push(:nil, :nil, :nil)
       FileUtils.rm_rf(name) if Dir.exists?(name) and options.force
       raise Error, set_color("ERROR: #{name} already exists. Use -f to force", :red) if Dir.exists?(name)
       require_relative 'generators/project/project_generator.rb'

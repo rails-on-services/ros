@@ -24,15 +24,15 @@ module Ros
       end
 
       # NOTE: This could be in the rails template
-      def gemspec_content
-        gemspec = "#{name}-core.gemspec"
-        klass = "#{name}-core".split('-').collect(&:capitalize).join('::')
-        inside 'lib/core' do
-          comment_lines gemspec, 'require '
-          gsub_file gemspec, "#{klass}::VERSION", "'0.1.0'"
-          gsub_file gemspec, 'TODO: ', ''
-        end
-      end
+      # def gemspec_content
+      #   gemspec = "#{name}-core.gemspec"
+      #   klass = "#{name}-core".split('-').collect(&:capitalize).join('::')
+      #   inside 'lib/core' do
+      #     comment_lines gemspec, 'require '
+      #     gsub_file gemspec, "#{klass}::VERSION", "'0.1.0'"
+      #     gsub_file gemspec, 'TODO: ', ''
+      #   end
+      # end
 
       def finish_message
         action = self.behavior.eql?(:invoke) ? 'Created' : 'Destroyed'

@@ -58,8 +58,8 @@ module Ros
     def deploy_root; @deploy_root ||= "#{Ros.root}/tmp/deployments/#{deploy_path}" end
     def relative_path_from_root; @relative_path_from_root ||= deploy_root.gsub("#{Ros.root}/", '') end
     def relative_path; @relative_path ||= ('../' * deploy_root.gsub("#{Ros.root}/", '').split('/').size).chomp('/') end
-    def template_root; @template_root ||= Pathname(__FILE__).join("../../../assets/deployment/#{template_prefix}") end
-    def template_services_root; @template_services_root ||= Pathname(__FILE__).join("../../../assets/deployment/services") end
+    def template_root; @template_root ||= Pathname(__FILE__).dirname.join("./generators/deployment/#{template_prefix}") end
+    def template_services_root; @template_services_root ||= Pathname(__FILE__).dirname.join("./generators/deployment/services") end
 
     def system_cmd(env, cmd)
       puts "Running #{cmd}"

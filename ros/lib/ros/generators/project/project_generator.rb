@@ -7,6 +7,9 @@ module Ros
     class ProjectGenerator < Thor::Group
       include Thor::Actions
       argument :name
+      argument :ruby_version
+      argument :os_version
+      argument :static_gems
 
       def self.source_paths; [Pathname(File.dirname(__FILE__)).join('templates').to_s, File.dirname(__FILE__)] end
 
@@ -16,7 +19,20 @@ module Ros
           FileUtils.cp_r('ros/devops', '.')
         end if false
         directory('files', '.')
-        empty_directory('services')
+        self.ruby_version = '2.6.3'
+        self.os_version = 'stretch'
+        self.static_gems = [
+    'bundler:2.0.1',
+    'nokogiri:1.10.3',
+    'ffi:1.10.0',
+    'mini_portile2:2.3.0',
+    'msgpack:1.2.9',
+    'pg:1.1.4',
+    'nio4r:2.3.1',
+    'puma:3.12.0',
+    'eventmachine:1.2.7']
+        template 'Dockerfile'
+        # empty_directory('services')
         say "\nCreated Ros project at #{destination_root}"
       end
 
@@ -35,9 +51,9 @@ module Ros
             gem 'ros', path: 'ros/ros'
             gem 'ros-cognito', path: 'ros/services/cognito'
             gem 'ros-comm', path: 'ros/services/comm'
-            gem 'ros-core', path: 'ros/services/core'
             gem 'ros-iam', path: 'ros/services/iam'
-            gem 'ros_sdk', path: 'ros/services/sdk'
+            gem 'ros-core', path: 'ros/lib/core'
+            gem 'ros_sdk', path: 'ros/lib/sdk'
           end
           EOF
         end
