@@ -1,4 +1,4 @@
-FROM ruby:2.6.1-stretch as base
+FROM ruby:2.6.3-stretch as base
 
 # WORKDIR needs to be the same as in the final base image or compiled gems will point to an invalid directory
 RUN mkdir -p /home/rails/app
@@ -35,7 +35,7 @@ RUN bundle install ${bundle_string} \
  && find /usr/local/bundle -iname '*.a' -exec rm -rf {} \;
 
 # Runtime container
-FROM ruby:2.6.1-slim-stretch
+FROM ruby:2.6.3-slim-stretch
 
 # Install OS packages and create a non-root user to run the application
 # To compile pg gem: libpq-dev

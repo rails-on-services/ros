@@ -19,7 +19,7 @@ module Ros
             infra_type = Settings.meta.components.provider.split('/').last
             if infra_type.eql? 'instance'
               ary.append({ host: Settings.infra.endpoint.host, port: Settings.platform.nginx_host_port })
-            end 
+            end
           end
         end
 
@@ -132,7 +132,7 @@ module Ros
         def provision
           FileUtils.rm_f('.env')
           FileUtils.ln_s("#{compose_dir}/#{Ros.env}.env", '.env')
-          return unless gem_version_check
+          # return unless gem_version_check
           # TODO: make build its own rake task and method
           if options.build
             services.each_pair do |name, config|
