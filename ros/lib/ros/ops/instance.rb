@@ -141,8 +141,7 @@ module Ros
             end
             return
           end
-          if options.initialize
-            compose("up wait")
+          if options.initialize && compose("up wait")
             services.each do |name, config|
               next if config&.enabled.eql? false
               prefix = config.ros ? 'app:' : ''
