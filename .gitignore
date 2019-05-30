@@ -11,3 +11,5 @@ config/console.env
 .env
 skaffold-overrides.yaml
 erd.pdf
+.generators
+.rakeTasks
