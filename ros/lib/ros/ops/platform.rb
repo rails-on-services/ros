@@ -66,28 +66,28 @@ module Ros
         }
       end
 
-        def write_fluentd
-          content = File.read("#{template_services_root}/fluentd/requests.conf.erb")
-          content = ERB.new(content).result_with_hash(fluentd_env)
-          content_dir = "#{platform_root}/fluentd"
-          FileUtils.mkdir_p("#{content_dir}/log")
-          FileUtils.chmod('+w', "#{content_dir}/log")
-          FileUtils.mkdir_p("#{content_dir}/etc")
-          File.write("#{content_dir}/etc/requests.conf", content)
-        end
+      def write_fluentd
+        content = File.read("#{template_services_root}/fluentd/requests.conf.erb")
+        content = ERB.new(content).result_with_hash(fluentd_env)
+        content_dir = "#{platform_root}/fluentd"
+        FileUtils.mkdir_p("#{content_dir}/log")
+        FileUtils.chmod('+w', "#{content_dir}/log")
+        FileUtils.mkdir_p("#{content_dir}/etc")
+        File.write("#{content_dir}/etc/requests.conf", content)
+      end
 
-        def fluentd_env
-          {
-            header: fluentd_header,
-            log_tag: "#{api_hostname}.rack-traffic-log",
-            provider: infra.provider,
-            config: {
-              bucket: "#{api_hostname}-#{platform.basic_services.dig(:fluentd, :config, :bucket)}",
-              region: infra.aws_region
-            }
+      def fluentd_env
+        {
+          header: fluentd_header,
+          log_tag: "#{api_hostname}.rack-traffic-log",
+          provider: infra.provider,
+          config: {
+            bucket: "#{api_hostname}-#{platform.basic_services.dig(:fluentd, :config, :bucket)}",
+            region: infra.aws_region
           }
-        end
-        def fluentd_header; '' end
+        }
+      end
+      def fluentd_header; '' end
     end
   end
 end
