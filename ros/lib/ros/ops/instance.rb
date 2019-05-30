@@ -151,13 +151,18 @@ module Ros
           compose_options = options.daemon ? '-d' : ''
           compose("up #{compose_options}")
           if options.initialize
-            %x(cat ros/services/iam/tmp/#{Settings.platform.environment.partition_name}/postman/222_222_222-Admin_2.json)
+            puts FileUtils.pwd
+            FileUtils.mkdir_p "ros/services/iam/tmp#{Settings.platform.environment.partition_name}"
+
+            credentials_show
           end
         end
 
         # TODO: implement rake method
         def credentials_show
-          %x(cat ros/services/iam/tmp/#{Settings.platform.environment.partition_name}/postman/222_222_222-Admin_2.json)
+          if File.file?(postman_settings_json)
+            puts File.read(postman_settings_json)
+          end
         end
 
         # def provision_with_ansible
@@ -181,6 +186,8 @@ module Ros
       def template_prefix; 'compose' end
 
       def deploy_path; Ros.env end
+
+      def postman_settings_json; "ros/services/iam/tmp/#{Settings.platform.environment.partition_name}/postman/222_222_222-Admin_2.json" end
     end
   end
 end
