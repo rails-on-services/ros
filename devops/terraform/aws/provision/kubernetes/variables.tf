@@ -100,4 +100,19 @@ variable "eks_create_cluster_logging_s3_bucket" {
   description = "Whether to create the s3 bucket specified via eks_cluster_logging_s3_bucket"
 }
 
+variable "grafana-password" {
+  type        = "string"
+  description = "Grafana's admin user's initial password"
+}
 
+variable "grafana-hostname" {
+  type        = "string"
+  default     = "grafana"
+  description = "Grafana's hostname, which will be used to compose its public hostname which is of format: {grafana-hostname}.{route53_zone_this_name}.{route53_zone_main_name}"
+}
+
+variable "grafana_dashboards_configmap_label" {
+  type        = "string"
+  default     = "grafana_dashboard"
+  description = "Label that should be used for filtering configMaps for grafana dashboard definitions"
+}

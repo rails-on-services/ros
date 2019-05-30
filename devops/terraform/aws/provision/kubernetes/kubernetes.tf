@@ -146,3 +146,118 @@ resource "helm_release" "istio" {
   wait       = true
   values     = ["${file("${path.module}/files/helm-istio.yaml")}"]
 }
+
+
+data "template_file" "istio-alb-ingress-gateway-manifest" {
+  template = "${file("${path.module}/templates/istio-alb-ingressgateway.tpl")}"
+
+  vars = {
+    acm_cert_arn = "${module.admin.aws_cert_arn}"
+  }
+}
+
+# Currently terraform kubernetes provider doesn't support ingress resource
+resource "null_resource" "istio-alb-ingress-gateway" {
+  depends_on = ["helm_release.istio", "helm_release.aws-alb-ingress-controller"]
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}"
+
+    command = <<EOS
+echo "${module.eks.kubeconfig}" > kube_config.yaml
+cat <<EOT | kubectl apply --kubeconfig kube_config.yaml -f -
+${data.template_file.istio-alb-ingress-gateway-manifest.rendered}
+EOT
+rm kube_config.yaml
+hostname=""
+while [ -z $hostname ]; do
+  echo "Waiting for ingress hostname..."
+  echo "${module.eks.kubeconfig}" > kube_config.yaml
+  hostname=$(kubectl --kubeconfig kube_config.yaml -n istio-system get ingress istio-alb-ingressgateway --template="{{range .status.loadBalancer.ingress}}{{.hostname}}{{end}}")
+  [ -z "$hostname" ] && sleep 3
+done
+echo 'Ingress hostname ready:' && echo $hostname
+rm kube_config.yaml
+EOS
+  }
+
+  provisioner "local-exec" {
+    when = "destroy"
+    working_dir = "${path.module}"
+
+    command = <<EOS
+echo "${module.eks.kubeconfig}" > kube_config.yaml
+kubectl --kubeconfig kube_config.yaml -n istio-system delete ingress istio-alb-ingressgateway
+rm kube_config.yaml
+EOS
+  }
+
+  triggers {
+    kube_config_rendered = "${module.eks.kubeconfig}"
+    manifest_rendered    = "${data.template_file.istio-alb-ingress-gateway-manifest.rendered}"
+  }
+}
+
+# Get the ingress's DNS
+data "external" "istio-alb-ingress-dns" {
+  depends_on = ["null_resource.istio-alb-ingress-gateway"]
+  program    = ["bash", "-c", "echo \"${module.eks.kubeconfig}\" > kube_config.yaml; kubectl --kubeconfig kube_config.yaml -n istio-system get ing istio-alb-ingressgateway -o go-template='{\"hostname\":\"{{(index .status.loadBalancer.ingress 0).hostname}}\"}'"]
+}
+
+resource "null_resource" "enable-ns-default-istio-injection" {
+  depends_on = ["helm_release.istio"]
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}"
+
+    command = <<EOS
+echo "${module.eks.kubeconfig}" > kube_config.yaml
+kubectl --kubeconfig kube_config.yaml label namespace default istio-injection=enabled --overwrite
+rm kube_config.yaml
+EOS
+  }
+}
+
+data "template_file" "grafana-value" {
+  template = "${file("${path.module}/templates/helm-grafana.tpl")}"
+
+  vars = {
+    admin_password     = "${var.grafana-password}"
+    cm_dashboard_label = "${var.grafana_dashboards_configmap_label}"
+  }
+}
+
+resource "helm_release" "grafana" {
+  depends_on = ["null_resource.k8s-tiller-rbac"]
+  name       = "grafana"
+  chart      = "stable/grafana"
+  version    = "3.3.10"
+  namespace  = "default"
+  wait       = true
+
+  values = ["${data.template_file.grafana-value.rendered}"]
+}
+
+data "template_file" "grafana-istio-manifests" {
+  template = "${file("${path.module}/templates/grafana-istio-resources.tpl")}"
+  
+  vars = {
+    host = "${var.grafana-hostname}.${module.admin.aws_route53_record_this_fqdn}"
+  }
+}
+
+resource "null_resource" "create-grafana-istio-manifests" {
+  depends_on = ["helm_release.grafana"]
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}"
+
+    command = <<EOS
+echo "${module.eks.kubeconfig}" > kube_config.yaml
+cat <<EOT | kubectl apply --kubeconfig kube_config.yaml -f -
+${data.template_file.grafana-istio-manifests.rendered}
+EOT
+rm kube_config.yaml
+EOS
+  }
+}
