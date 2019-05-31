@@ -96,6 +96,13 @@ module Ros
         end
       end
 
+      initializer :core_append_migrations do |app|
+        config.paths['db/migrate'].expanded.each do |expanded_path|
+          app.config.paths['db/migrate'] << expanded_path
+          ActiveRecord::Migrator.migrations_paths << expanded_path
+        end
+      end
+
       # Add console methods from ./console.rb
       config.after_initialize do
         Ros::Console::Methods.init
