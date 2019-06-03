@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-require 'pry'
-
-require 'bundler/setup'
-require 'ros'
-
-Ros::Cli.start

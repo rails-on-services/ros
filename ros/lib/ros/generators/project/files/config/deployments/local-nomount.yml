@@ -1,9 +1,0 @@
-# Configuration values defined here override any values defined in deployment.yml
----
-services:
-  cognito:
-    mount: no
-  comm:
-    mount: no
-  iam:
-    mount: no

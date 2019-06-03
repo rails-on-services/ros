@@ -1,6 +1,0 @@
-# frozen_string_literal: true
-
-module <%= @profile.module_name %>
-  class ApplicationJob < ::ApplicationJob
-  end
-end

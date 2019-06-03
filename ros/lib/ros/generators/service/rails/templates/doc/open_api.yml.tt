@@ -1,7 +1,0 @@
----
-api_docs:
-  info:
-    description: 'Service description'
-    version: '0.1.0'
-  server:
-    description: 'server description'

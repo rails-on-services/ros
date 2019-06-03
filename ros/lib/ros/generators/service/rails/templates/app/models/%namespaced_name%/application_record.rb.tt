@@ -1,7 +1,0 @@
-# frozen_string_literal: true
-
-module <%= @profile.module_name %>
-  class ApplicationRecord < ::ApplicationRecord
-    self.abstract_class = true
-  end
-end
