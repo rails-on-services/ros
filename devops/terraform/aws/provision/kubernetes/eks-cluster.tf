@@ -73,3 +73,14 @@ resource "aws_iam_role_policy_attachment" "eks-worker-alb-ingress-controller" {
   policy_arn = "${aws_iam_policy.eks-worker-alb-ingress-controller.arn}"
   role       = "${module.eks.worker_iam_role_name}"
 }
+
+resource "aws_iam_policy" "eks-worker-external-dns" {
+  name_prefix = "eks-worker-external-dns-${local.eks_cluster_name}"
+  description = "EKS worker node external dns policy for cluster ${local.eks_cluster_name}"
+  policy      = "${file("${path.module}/files/aws-external-dns-iam-policy.json")}"
+}
+
+resource "aws_iam_role_policy_attachment" "eks-worker-external-dns" {
+  policy_arn = "${aws_iam_policy.eks-worker-external-dns.arn}"
+  role       = "${module.eks.worker_iam_role_name}"
+}

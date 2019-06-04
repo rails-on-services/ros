@@ -73,6 +73,26 @@ resource "helm_release" "cluster-autoscaler" {
   values = ["${data.template_file.cluster-autoscaler-value.rendered}"]
 }
 
+data "template_file" "external-dns-value" {
+  template = "${file("${path.module}/templates/helm-external-dns.tpl")}"
+
+  vars = {
+    aws_region    = "${var.aws_region}"
+    zoneType      = "public"
+    domainFilters = "${jsonencode(list(module.admin.aws_route53_record_this_fqdn))}"
+    zoneIdFilters = "${jsonencode(list(module.admin.aws_route53_zone_this_zone_id))}"
+  }
+}
+
+resource "helm_release" "external-dns" {
+  depends_on = ["null_resource.k8s-tiller-rbac"]
+  name       = "external-dns"
+  chart      = "stable/external-dns"
+  namespace  = "kube-system"
+  wait       = true
+  values     = ["${data.template_file.external-dns-value.rendered}"]
+}
+
 resource "helm_release" "metrics-server" {
   depends_on = ["null_resource.k8s-tiller-rbac"]
   name = "metrics-server"
