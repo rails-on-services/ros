@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Ros::Core::Engine.routes.draw do
+  mount Sidekiq::Web => '/sidekiq'
   # Respond with 200 to Kubernetes health check
   get 'healthz', to: proc { [200, {}, ['']] }
   root to: proc { [404, { 'Content-Type' => 'application/vnd.api+json' },

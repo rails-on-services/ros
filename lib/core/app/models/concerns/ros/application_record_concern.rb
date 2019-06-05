@@ -30,6 +30,17 @@ module Ros
       def to_urn; "#{self.class.to_urn}/#{send(self.class.urn_id)}" end
 
       def current_tenant; self.class.current_tenant end
+
+      # after_commit :enqueue_after_commit_jobs, if: -> { Settings.workers.enabled }
+
+      def enqueue_after_commit_jobs
+        Ros::PlatformProducerEventJob.perform_now(self)
+        Ros::TenantProducerEventJob.perform_now(self)
+      end
+
+      def as_json(*)
+        super.merge({ 'urn' => to_urn })
+      end
     end
   end
 end
