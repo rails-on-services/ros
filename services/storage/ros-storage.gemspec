@@ -7,11 +7,11 @@ $:.push File.expand_path("lib", __dir__)
 Gem::Specification.new do |spec|
   spec.name        = "ros-storage"
   spec.version     = '0.1.0'
-  spec.authors     = ["Write your name"]
-  spec.email       = ["Write your email address"]
-  # spec.homepage    = "TODO"
-  spec.summary     = "Summary of Storage."
-  spec.description = "Description of Storage."
+  spec.authors     = ['Robert Roach']
+  spec.email       = ['rjayroach@gmail.com']
+  spec.homepage    = 'https://github.com/rails-on-services'
+  spec.summary     = "Manages uploads and downloads of files via UI and SFTP"
+  spec.description = "Processes CSV files, notifies other services when new files are available"
   spec.license     = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -26,6 +26,9 @@ Gem::Specification.new do |spec|
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "rails", "~> 6.0.0.rc1"
+  spec.add_dependency 'shoryuken'
+  spec.add_dependency 'aws-sdk-sqs'
+  spec.add_dependency 'aws-sdk-s3'
 
   spec.add_development_dependency "pg"
 end

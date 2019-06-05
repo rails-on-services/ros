@@ -8,8 +8,9 @@ module Ros
     queue_as "#{Settings.service.name}_platform_producer_events"
 
     def perform(object)
+      # binding.pry
       data = { event: object.persisted?, data: object }.to_json
-      queues = ['comm']
+      queues = ['storage']
       queues.each do |queue|
         queue_name = "#{queue}_platform_consumer_events".to_sym
         Ros::PlatformConsumerEventJob.set(queue: queue_name).perform_later(data)

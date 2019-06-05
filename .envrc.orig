@@ -1,4 +1,4 @@
 #!bash
 set -a
-. ./config/env
+. ./config/console.env
 set +a

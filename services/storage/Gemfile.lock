@@ -35,7 +35,10 @@ PATH
   remote: .
   specs:
     ros-storage (0.1.0)
+      aws-sdk-s3
+      aws-sdk-sqs
       rails (~> 6.0.0.rc1)
+      shoryuken
 
 GEM
   remote: https://rubygems.org/
@@ -105,6 +108,25 @@ GEM
     attr_encrypted (3.1.0)
       encryptor (~> 3.0.0)
     awesome_print (1.8.0)
+    aws-eventstream (1.0.3)
+    aws-partitions (1.172.0)
+    aws-sdk-core (3.54.2)
+      aws-eventstream (~> 1.0, >= 1.0.2)
+      aws-partitions (~> 1.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1.0)
+    aws-sdk-kms (1.21.0)
+      aws-sdk-core (~> 3, >= 3.53.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-s3 (1.42.0)
+      aws-sdk-core (~> 3, >= 3.53.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-sqs (1.16.0)
+      aws-sdk-core (~> 3, >= 3.53.0)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.1.0)
+      aws-eventstream (~> 1.0, >= 1.0.2)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
     brakeman (4.5.1)
@@ -177,6 +199,7 @@ GEM
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     inifile (3.0.0)
+    jmespath (1.4.0)
     json_api_client (1.9.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -284,6 +307,10 @@ GEM
       rake (>= 10.0)
     sentry-raven (2.9.0)
       faraday (>= 0.7.6, < 1.0)
+    shoryuken (4.0.3)
+      aws-sdk-core (>= 2)
+      concurrent-ruby
+      thor
     sidekiq (5.2.5)
       connection_pool (~> 2.2, >= 2.2.2)
       rack (>= 1.5.0)

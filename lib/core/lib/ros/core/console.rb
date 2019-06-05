@@ -49,7 +49,8 @@ module Ros
           end.flatten
         end unless Ros::Console::Methods.methods.include? :models
 
-        def init
+        def init; end
+        def xinit
           es = Set.new
           models.each do |model|
             idx = model.index('/app/models/') + 12
@@ -134,6 +135,8 @@ module Ros::Console::Commands
     Ros::PryCommandSet.add_command(self)
   end
 
+=begin
+  # TODO: move to a module/class in core for jobs; namesapced on the queue type
   class RabbitMQ < Pry::ClassCommand
     match 'mq-send'
     group 'ros'
@@ -159,6 +162,7 @@ module Ros::Console::Commands
       conn.close
     end
   end
+=end
 
   class ToggleLogger < Pry::ClassCommand
     match 'toggle-logger'
@@ -169,12 +173,14 @@ module Ros::Console::Commands
       unless state.nil?
         return if (state == 'off' and ActiveRecord::Base.logger.nil?) or (state == 'on' and not ActiveRecord::Base.logger.nil?)
       end
-      if ActiveRecord::Base.logger.nil?
-        ActiveRecord::Base.logger = Rails.configuration.x.old_logger
-      else
-        Rails.configuration.x.old_logger = ActiveRecord::Base.logger
-        ActiveRecord::Base.logger = nil
-      end
+      swap_logger(ActiveRecord::Base)
+      swap_logger(ActiveJob::Base)
+    end
+
+    def swap_logger(mod)
+      logger_instance = mod.logger
+      mod.logger = Rails.configuration.x.loggers[mod.name]
+      Rails.configuration.x.loggers[mod.name] = logger_instance
     end
 
     Ros::PryCommandSet.add_command(self)

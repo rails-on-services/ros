@@ -31,11 +31,11 @@ module Ros
 
       def current_tenant; self.class.current_tenant end
 
-      # after_commit :enqueue_after_commit_jobs, if: -> { Settings.workers.enabled }
+      after_commit :enqueue_after_commit_jobs  # , if: -> { Settings.workers.enabled }
 
       def enqueue_after_commit_jobs
         Ros::PlatformProducerEventJob.perform_now(self)
-        Ros::TenantProducerEventJob.perform_now(self)
+        # Ros::TenantProducerEventJob.perform_now(self)
       end
 
       def as_json(*)

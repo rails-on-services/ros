@@ -35,11 +35,8 @@ PATH
   remote: .
   specs:
     ros-comm (0.1.0)
-      aws-sdk-s3
       aws-sdk-sns
-      aws-sdk-sqs
       rails (~> 6.0.0.rc1)
-      shoryuken
       twilio-ruby
 
 GEM
@@ -117,17 +114,7 @@ GEM
       aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.21.0)
-      aws-sdk-core (~> 3, >= 3.53.0)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.42.0)
-      aws-sdk-core (~> 3, >= 3.53.0)
-      aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.1)
     aws-sdk-sns (1.16.0)
-      aws-sdk-core (~> 3, >= 3.53.0)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-sqs (1.16.0)
       aws-sdk-core (~> 3, >= 3.53.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.1.0)
@@ -329,10 +316,6 @@ GEM
       rake (>= 10.0)
     sentry-raven (2.9.0)
       faraday (>= 0.7.6, < 1.0)
-    shoryuken (4.0.3)
-      aws-sdk-core (>= 2)
-      concurrent-ruby
-      thor
     sidekiq (5.2.5)
       connection_pool (~> 2.2, >= 2.2.2)
       rack (>= 1.5.0)
