@@ -44,9 +44,7 @@ module Ros
 
       initializer :service_values do |app|
         name = self.class.parent.name.demodulize.underscore
-      # config.after_initialize do
-        Settings.service.name = name # 'iam'
-        Settings.service.policy_name = name.capitalize # 'Iam'
+        Settings.prepend_source!({ service: { name: name, policy_name: name.capitalize } })
       end
     end
   end

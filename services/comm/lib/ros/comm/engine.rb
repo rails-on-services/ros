@@ -26,9 +26,9 @@ module Ros
         Ros.config.model_paths += config.paths['app/models'].expanded
       end if Rails.env.development?
 
-      config.after_initialize do
-        Settings.service.name = 'comm'
-        Settings.service.policy_name = 'Comm'
+      initializer :service_values do |app|
+        name = self.class.parent.name.demodulize.underscore
+        Settings.prepend_source!({ service: { name: name, policy_name: name.capitalize } })
       end
     end
   end

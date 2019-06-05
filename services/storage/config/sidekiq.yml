@@ -1,0 +1,6 @@
+---
+:queues:
+  - storage_platform_producer_events
+  - storage_platform_consumer_events
+  - storage_tenant_producer_events
+  - storage_tenant_consumer_events
