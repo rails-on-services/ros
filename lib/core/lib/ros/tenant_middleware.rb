@@ -16,6 +16,7 @@ module Ros
       Rails.logger.info('Invalid token') and return 'public' if token.nil?
       schema_name = send("tenant_name_from_#{auth_type}")
       Rails.logger.info('Invalid credentials') if schema_name.eql?('public')
+      request.env['X-AccountId'] = schema_name
       Tenant.find_by(schema_name: schema_name)&.schema_name ||'public'
     end
 

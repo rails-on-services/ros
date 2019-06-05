@@ -10,6 +10,8 @@ require 'pry'
 require 'jwt'
 require 'warden'
 require 'config'
+require 'sidekiq'
+require 'sidekiq/web'
 require 'ros_sdk'
 
 require_relative 'tenant_middleware'

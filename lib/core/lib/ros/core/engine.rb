@@ -7,6 +7,8 @@ module Ros
   module Core
     class Engine < ::Rails::Engine
       config.generators.api_only = true
+      # TODO: Make this configurable from ros config/platform.yml
+      config.active_job.queue_adapter = :sidekiq
       config.generators do |g|
         g.test_framework :rspec, fixture: true
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
@@ -20,6 +22,58 @@ module Ros
         Settings.prepend_source!({ credentials: Rails.application.credentials.config })
         Settings.prepend_source!("#{settings_path}.yml")
         Settings.reload!
+      end
+
+      initializer :platform_metrics do |app|
+        if Settings.metrics.enabled
+          require 'prometheus_exporter'
+          # binding.pry
+          require_relative '../prometheus_exporter/web_collector'
+          require_relative '../prometheus_exporter/middleware'
+          Rails.application.config.middleware.insert 0, Ros::PrometheusExporter::Middleware
+          if Settings.metrics.process_stats_enabled
+            # Reports basic process stats like RSS and GC info
+            require 'prometheus_exporter/instrumentation'
+            PrometheusExporter::Instrumentation::Process.start(type: 'master', frequency: Settings.metrics.frequency)
+          end
+        end
+      end
+
+      initializer :request_logging do |app|
+        if Settings.request_logging.enabled
+          if Settings.request_logging.provider.eql? 'fluentd'
+            require 'rack/fluentd_logger'
+            require_relative '../request_logger/fluentd'
+            Rack::FluentdLogger.configure(
+              name: Settings.service.name,
+              host: Settings.request_logging.config.host,
+              port: Settings.request_logging.config.port,
+              # don't want to parse body to json, also underline MIME check code is not working
+              json_parser: ->(d) { d },
+              preprocessor: Ros::RequestLogger::Fluentd.preprocessor
+            )
+            Rails.application.config.middleware.insert 0, Rack::FluentdLogger
+          end
+        end
+      end
+
+      config.after_initialize do
+        if Settings.system_logging.enabled
+          if Settings.system_logging.provider.eql? 'fluentd'
+            Rails.configuration.x.logger =
+              Fluent::Logger::LevelFluentLogger.new(Settings.service.name, Settings.system_logging.config.to_h)
+            Rails.configuration.x.logger.formatter = proc do |severity, datetime, progname, message|
+              map = { level: severity }
+              map[:message] = message if message
+              map[:progname] = progname if progname
+              map[:stage] = ENV['RAILS_ENV']
+              map[:service_name] = Settings.service.name
+              map
+            end
+            Rails.logger = Rails.configuration.x.logger
+            ActiveRecord::Base.logger = Rails.configuration.x.logger
+          end
+        end
       end
 
       initializer :platform_hosts do |app|
@@ -46,6 +100,10 @@ module Ros
           config.json_key_format = :underscored_key
           #:underscored_route, :camelized_route, :dasherized_route, or custom
           config.route_format = :underscored_route
+
+          config.default_paginator = :paged
+          config.default_page_size = 10
+          config.maximum_page_size = 20
         end
         Mime::Type.register 'application/json-patch+json', :json_patch
       end
