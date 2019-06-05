@@ -8,6 +8,6 @@
 **/spec/dummy/tmp/
 **/tmp/
 config/console.env
+config/environments
 .env
-skaffold-overrides.yaml
 erd.pdf

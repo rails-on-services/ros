@@ -1,0 +1,47 @@
+#s Rails
+secret_key_base: cf749ed9416386837cbd0aa4d72ae46de6bb276edb4d22ebb399c12d9b9d569c745671266d6318d82348c83e8f969262e475625e5b26e5b0ab8f9bd47c6dc69a
+rails_master_key: b91a0c645c56b5847eb2f02bd00e4734
+
+# Uncomment to set to a remote host
+# rails_database_host: localhost
+
+# Service
+platform:
+  partition_name: ros
+
+# JWT
+  jwt:
+    encryption_key: af3a21bd1e5d55335aa24784ba5fd06b
+    iss: http://iam.localhost:3000
+    aud: http://localhost:3000
+
+# Hosts to which these services respond to
+  hosts: localhost
+
+# Postman workspace to which API documentation updates are written
+  postman:
+    workspace: localhost
+    api_key:
+
+  api_docs:
+    server:
+      host: http://localhost:3000
+
+# SDK
+  connection:
+    type: host
+  external_connection_type: path
+
+# Services
+services:
+  iam:
+    environment:
+      platform:
+        credential:
+          salt: 302340439
+  comm:
+    environment:
+      platform:
+        encryption_key: 2346b865b738b6ca8b895c9967f38db0
+        twilio_account_sid: test
+        twilio_auth_token: test2

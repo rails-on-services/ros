@@ -7,8 +7,8 @@ gemspec
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'pg'
-gem 'ros-core', path: '../core'
-gem 'ros_sdk', path: '../sdk'
+gem 'ros-core', path: '../../lib/core'
+gem 'ros_sdk', path: '../../lib/sdk'
 
 group :production do
   gem 'puma'

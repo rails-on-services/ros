@@ -1,0 +1,47 @@
+# Rails
+secret_key_base: c3570be0cef53dc4c9138de416405750
+rails_master_key: 24b064557df6a839d769aab5db88348ebb2dbcc9b866aadf83d3acbb813770b35edeb309a6ce19b30aa75f89c6c70a94d7e00d3aceb5b9b6297c395c13166a2e
+
+# Uncomment to set to a remote host
+# rails_database_host: localhost
+
+# Service
+platform:
+  partition_name: ros
+
+# JWT
+  jwt:
+    encryption_key: dab29ec79cf97f3e77efaae54c152bd3
+    iss: https://iam.whistler.com
+    aud: https://whistler.com
+
+# Hosts to which these services respond to
+  hosts: whistler.com
+
+# Postman workspace to which API documentation updates are written
+  postman:
+    workspace: whistler.com
+    api_key:
+
+  api_docs:
+    server:
+      host: https://whistler.com
+
+# SDK
+  connection:
+    type: host
+  external_connection_type: path
+
+# Services
+services:
+  iam:
+    environment:
+      platform:
+        credential:
+          salt: 301607172
+  comm:
+    environment:
+      platform:
+        encryption_key: 0a5a7d590569ddcb8c85d4c25b78e084
+        twilio_account_sid: test
+        twilio_auth_token: test2

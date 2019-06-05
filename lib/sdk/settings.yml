@@ -3,7 +3,7 @@ partition_name: ros
 auth_type: Basic
 
 connection:
-  type: service
+  type: path
   # This is the default. Connections are on https
   # export PLATFORM__CONNECTION__SERVICE__DOMAIN=api.example.com
   service:
@@ -32,4 +32,5 @@ connection:
   path:
     scheme: http
     host: localhost
+    port: 3000
     force_path_style: true

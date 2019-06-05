@@ -6,5 +6,6 @@ require 'ros_sdk'
 require 'ros_sdk/console'
 
 # Start the console
+Console.new(*ARGV).configure
 Pry.config.should_load_plugins = false
 Pry.start

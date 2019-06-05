@@ -25,6 +25,8 @@ module Ros
     def initialize; @model_paths = []; @factory_paths = [] end
   end
 
+  def self.host_tmp_dir; "tmp/#{ENV['PLATFORM__API_DOCS__SERVER__HOST'].gsub('://', '_')}" end
+
   # NOTE: Experimental
   class Application
     def self.config; Settings end

@@ -33,19 +33,11 @@ module Ros
 
     class Credential
       class << self
-        attr_accessor :profile, :access_key_id, :secret_access_key, :partition, :region, :authorization
+        attr_accessor :access_key_id, :secret_access_key, :partition, :region, :authorization
 
-        def configure(profile: (ENV["#{partition.upcase}_PROFILE"] || 'default'),
-                      access_key_id: ENV["#{partition.upcase}_ACCESS_KEY_ID"],
-                      secret_access_key: ENV["#{partition.upcase}_SECRET_ACCESS_KEY"])
-          return if self.access_key_id = access_key_id and self.secret_access_key = secret_access_key
-          credentials_file = "#{Dir.home}/.#{partition}/credentials"
-          return unless File.exists?(credentials_file)
-          if credentials = IniFile.load(credentials_file)[profile]
-            self.profile = profile
-            self.access_key_id = credentials["#{partition}_access_key_id"]
-            self.secret_access_key = credentials["#{partition}_secret_access_key"]
-          end
+        def configure(access_key_id: nil, secret_access_key: nil)
+          self.access_key_id = access_key_id
+          self.secret_access_key = secret_access_key
         end
 
         def partition

@@ -64,7 +64,6 @@ services:
           # PLATFORM__SERVICES__IAM__ENVIRONMENT__PLATFORM__CREDENTIAL__SALT
           salt: 243790007
   storage:
-    enabled: no
     mount: yes
     profiles: ['server', 'worker']
     ros: yes

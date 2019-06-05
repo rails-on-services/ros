@@ -1,8 +1,9 @@
 FROM ruby:2.6.3-stretch as base
 
 # WORKDIR needs to be the same as in the final base image or compiled gems will point to an invalid directory
-RUN mkdir -p /home/rails/app
-WORKDIR /home/rails/app
+# NOTE: For the compiled gems to be shared across services then the WORKDIR needs to be same for all images
+RUN mkdir -p /home/rails/services/app
+WORKDIR /home/rails/services/app
 
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
@@ -19,9 +20,9 @@ RUN gem install \
 ARG project=user
 COPY services/${project}/Gemfile* ./
 COPY services/${project}/ros-${project}.gemspec ./
-# NOTE: Dependent gems need to be copied in so that their dependencies are also installed
-COPY services/core/. ../core/
-COPY services/sdk/. ../sdk/
+# NOTE: Dependent gem's gemspecs need to be copied in so that their dependencies are also installed
+COPY lib/core/*.gemspec ../../lib/core/
+COPY lib/sdk/*.gemspec ../../lib/sdk/
 
 # Remove reference to gems loaded from a path so bundle doesn't blow up
 # RUN sed -i '/path/d' Gemfile
@@ -49,7 +50,7 @@ ARG PGID=1000
 
 RUN addgroup --gid ${PGID} rails \
  && useradd -ms /bin/bash -d /home/rails --uid ${PUID} --gid ${PGID} rails \
- && mkdir -p /home/rails/app \
+ && mkdir -p /home/rails/services/app \
  && echo 'set editing-mode vi' > /home/rails/.inputrc \
  && echo "alias rspec='spring rspec $@'\nalias src='ss; rc'\nalias ss='spring stop'\nalias rs='rails server -b 0.0.0.0 --pid /tmp/server.pid'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
  && chown rails:rails /home/rails -R \
@@ -58,15 +59,15 @@ RUN addgroup --gid ${PGID} rails \
 COPY --chown=rails:rails --from=base /usr/local/bundle /usr/local/bundle
 
 # Rails operations
-WORKDIR /home/rails/app
+WORKDIR /home/rails/services/app
 
 ARG project=user
-COPY --chown=rails:rails services/${project}/. ./
-COPY --chown=rails:rails services/core/. ../core/
-COPY --chown=rails:rails services/sdk/. ../sdk/
-
+COPY --chown=rails:rails lib/core/. ../../lib/core/
+COPY --chown=rails:rails lib/sdk/. ../../lib/sdk/
 # workaround for buildkit not setting correct permissions
-RUN chown rails: /home/rails/core && chown rails: /home/rails/sdk
+RUN chown rails: /home/rails/lib
+
+COPY --chown=rails:rails services/${project}/. ./
 
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes

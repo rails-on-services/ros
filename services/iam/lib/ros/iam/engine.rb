@@ -14,19 +14,25 @@ module Ros
       # Adds this gem's db/migrations path to the enclosing application's migraations_path array
       # if the gem has been included in an application, i.e. it is not running in the dummy app
       # https://github.com/rails/rails/issues/22261
-			initializer :append_migrations do |app|
-				config.paths['db/migrate'].expanded.each do |expanded_path|
-					app.config.paths['db/migrate'] << expanded_path
-					ActiveRecord::Migrator.migrations_paths << expanded_path
-				end unless app.config.paths['db/migrate'].first.include? 'spec/dummy'
-			end
+      initializer :append_migrations do |app|
+        config.paths['db/migrate'].expanded.each do |expanded_path|
+          app.config.paths['db/migrate'] << expanded_path
+          ActiveRecord::Migrator.migrations_paths << expanded_path
+        end unless app.config.paths['db/migrate'].first.include? 'spec/dummy'
+      end
 
-			initializer :console_methods do |app|
+      initializer :platform_settings do |app|
+        settings_path = root.join('config/settings')
+        Settings.prepend_source!("#{settings_path}.yml")
+        Settings.reload!
+      end if File.exists? root.join('config/settings.yml')
+
+      initializer :console_methods do |app|
         Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
         Ros.config.model_paths += config.paths['app/models'].expanded
       end if Rails.env.development?
 
-			initializer :devise_jwt do |app|
+      initializer :devise_jwt do |app|
         # Warden::JWTAuth.configure do |config|
         #   # TODO: Get configuration from ENVs/file
         #   config.secret = Rails.application.credentials.dig(:platform, :jwt_secret) || ENV['PLATFORM_JWT_SECRET'] || 'abcd1234'
@@ -36,9 +42,11 @@ module Ros
         # app.config.middleware.use Warden::JWTAuth::Middleware
       end
 
-      config.after_initialize do
-        Settings.service.name = 'iam'
-        Settings.service.policy_name = 'Iam'
+      initializer :service_values do |app|
+        name = self.class.parent.name.demodulize.underscore
+      # config.after_initialize do
+        Settings.service.name = name # 'iam'
+        Settings.service.policy_name = name.capitalize # 'Iam'
       end
     end
   end

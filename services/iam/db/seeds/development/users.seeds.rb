@@ -1,15 +1,6 @@
 # frozen_string_literal: true
 
 after 'development:tenants' do
-
-# TODO: This is not at all DRY
-fs = SeedFS.new(
-  Settings.partition_name,
-  "tmp/#{Settings.partition_name}",
-  "tmp/#{Settings.partition_name}/postman",
-  "tmp/#{Settings.partition_name}/credentials"
-)
-
   Tenant.all.each do |tenant|
     next if tenant.id.eql? 1
     tenant.switch do
@@ -24,10 +15,7 @@ fs = SeedFS.new(
       User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
       credential = user.credentials.create
-      wu = WriteUser.new(owner: user, tenant: tenant, credential: credential, fs: fs)
-      wu.login
-      wu.credentials
-      wu.postman
+      WriteUser.new(owner: user, tenant: tenant, credential: credential).write
 
       # Create a Group
       group_admin = Group.create(name: 'Administrators')
