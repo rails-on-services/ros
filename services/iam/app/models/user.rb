@@ -32,16 +32,16 @@ class User < Iam::ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable,
-      # :registerable,
-      # :recoverable, :rememberable, :validatable,
-  #    :jwt_authenticatable, # jwt_revocation_strategy: self
-  #     authentication_keys: [:username],
-      authentication_keys: [:username]
-  #    jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+         # :registerable,
+         # :recoverable, :rememberable, :validatable,
+         # :jwt_authenticatable, # jwt_revocation_strategy: self
+         # authentication_keys: [:username],
+         authentication_keys: [:username]
+  # jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
   # TODO: Set scope to the user's policies
   def jwt_payload
-    { iss: "#{Ros::Sdk.service_endpoints['iam']}", sub: to_urn, scope: '*' }
+    { iss: Ros::Sdk.service_endpoints['iam'].to_s, sub: to_urn, scope: '*' }
   end
 
   # NOTE: Credential is in the public schema
