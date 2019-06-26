@@ -15,17 +15,25 @@ class WriteUser
   end
 
   def self.write_dir; "#{Ros.host_tmp_dir}/credentials" end
+
   def write_dir; self.class.write_dir end
 
   def type; owner.class.name.eql?('Root') ? 'email' : 'username' end
+
   def uid; owner.class.name.eql?('Root') ? owner.email : owner.username end
+
   def cred_uid; owner.class.name.eql?('Root') ? owner.email.split('@').first : owner.username end
+
   def part_name; Settings.partition_name end
 
-  def write; login; credentials; postman end
+  def write
+    login
+    credentials
+    postman
+  end
 
   def login
-    puts "Login Payload: user: { #{type}: '#{uid}', password: '#{owner.password}' }, account_id: '#{tenant.account_id}')"
+    puts "Login Payload user: { #{type}: '#{uid}', password: '#{owner.password}' }, account_id: '#{tenant.account_id}')"
   end
 
   def credentials
@@ -46,7 +54,7 @@ class WriteUser
     {
       name: "#{part_name}-#{name}",
       values: [
-        { key: :authorization, value: "Basic #{credential.access_key_id }:#{credential.secret_access_key}" },
+        { key: :authorization, value: "Basic #{credential.access_key_id}:#{credential.secret_access_key}" },
         { key: type, value: uid },
         { key: :password, value: owner.password }
       ]
@@ -60,7 +68,7 @@ if initialize
   WriteUser.initialize
   create_list = [
     { email: 'root@platform.com', password: 'asdfjkl;', api: true },
-    { email: "root@client2.com", password: 'asdfjkl;' }
+    { email: 'root@client2.com', password: 'asdfjkl;' }
   ]
 else
   id = Tenant.last.id
@@ -72,7 +80,8 @@ end
 
 create_list.each do |account|
   Root.create!(account).tap do |root|
-    root.create_tenant(schema_name: Tenant.account_id_to_schema(root.id.to_s * 9), name: "Account #{id}", state: :active)
+    root.create_tenant(schema_name: Tenant.account_id_to_schema(root.id.to_s * 9),
+                       name: "Account #{id}", state: :active)
     credential = Credential.create(owner: root)
     WriteUser.new(owner: root, tenant: root.tenant, credential: credential).write
   end

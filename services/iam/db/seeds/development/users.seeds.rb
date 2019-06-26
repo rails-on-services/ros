@@ -3,15 +3,18 @@
 after 'development:tenants' do
   Tenant.all.each do |tenant|
     next if tenant.id.eql? 1
+
     tenant.switch do
       if Policy.count.zero?
         # Add IAM Policies
-        policy_admin = Policy.create(name: 'AdministratorAccess')
-        policy_user_full = Policy.create(name: 'IamUserFullAccess')
-        policy_user_read_only = Policy.create(name: 'IamUserReadOnlyAccess')
+        Policy.create(name: 'AdministratorAccess')
+        Policy.create(name: 'IamUserFullAccess')
+        Policy.create(name: 'IamUserReadOnlyAccess')
       end
       next if User.count.positive?
-      user = User.create(username: "Admin_#{tenant.id}", password: 'asdfjkl;', console: true, api: true, time_zone: 'Asia/Singapore')
+
+      user = User.create(username: "Admin_#{tenant.id}", console: true, api: true, time_zone: 'Asia/Singapore',
+                         password: 'asdfjkl;')
       User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
       credential = user.credentials.create

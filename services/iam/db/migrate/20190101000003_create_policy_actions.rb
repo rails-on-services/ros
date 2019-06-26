@@ -8,6 +8,6 @@ class CreatePolicyActions < ActiveRecord::Migration[6.0]
 
       t.timestamps
     end
-    add_index :policy_actions, [:policy_id, :action_id], unique: true
+    add_index :policy_actions, %i[policy_id action_id], unique: true
   end
 end

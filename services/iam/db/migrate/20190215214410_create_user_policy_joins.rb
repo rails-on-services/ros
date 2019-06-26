@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateUserPolicyJoins < ActiveRecord::Migration[6.0]
   def change
     create_table :user_policy_joins do |t|
