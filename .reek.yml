@@ -1,0 +1,46 @@
+---
+# directories:
+#  "services/iam":
+#    IrresponsibleModule:
+#      enabled: false
+
+# You can disable smells completely
+detectors:
+  # fails on lib dir
+  LongParameterList:
+    enabled: false
+  TooManyMethods:
+    enabled: false
+  MissingSafeMethod:
+    enabled: false
+  NestedIterators:
+    enabled: false
+  # fails on services dir
+  BooleanParameter:
+    enabled: false
+  ControlParameter:
+    enabled: false
+  NilCheck:
+    enabled: false
+  UnusedParameters:
+    enabled: false
+  UncommunicativeModuleName:
+    enabled: false
+  IrresponsibleModule:
+    enabled: false
+  UncommunicativeVariableName:
+    enabled: false
+  FeatureEnvy:
+    enabled: false
+  TooManyStatements:
+    enabled: false
+  DuplicateMethodCall:
+    enabled: false
+  InstanceVariableAssumption:
+    enabled: false
+  RepeatedConditional:
+    enabled: false
+  UtilityFunction:
+    enabled: false
+  Attribute:
+    enabled: false
