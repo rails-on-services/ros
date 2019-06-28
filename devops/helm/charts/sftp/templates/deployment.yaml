@@ -60,7 +60,8 @@ spec:
           {{- end }}
           readinessProbe:
             tcpSocket:
-              port: 22
+              # the supervisor inet port
+              port: 9001
             initialDelaySeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

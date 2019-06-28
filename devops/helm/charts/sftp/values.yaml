@@ -30,9 +30,11 @@ envFromConfigMaps: []
 service:
   type: ClusterIP
   port: 22
+  externalTrafficPolicy: Local
   # type: LoadBalancer
   # annotations:
   #   service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  #   external-dns.alpha.kubernetes.io/hostname: sftp.devops.perxtech.org
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
