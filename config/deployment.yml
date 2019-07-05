@@ -136,6 +136,9 @@ profiles:
   worker:
     command: bundle exec sidekiq -r spec/dummy
     app_command: bundle exec sidekiq -r spec/dummy
+  sqs_worker:
+    command: bundle exec shoryuken -C config/shoryuken.yml -r ./app/workers
+    app_command: bundle exec shoryuken -C config/shoryuken.yml -r ./app/workers
 
 infra:
   endpoint:

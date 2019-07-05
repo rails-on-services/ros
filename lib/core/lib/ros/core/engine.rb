@@ -21,7 +21,31 @@ module Ros
         # NOTE: Sources are prepended in reverse order, meaning the first prepend is loaded last
         Settings.prepend_source!({ credentials: Rails.application.credentials.config })
         Settings.prepend_source!("#{settings_path}.yml")
+        # binding.pry
         Settings.reload!
+      end
+
+      initializer :infra_services do |app|
+        Rails.configuration.x.infra = Rails::Application::Configuration::Custom.new unless Rails.configuration.x.infra&.configurations
+        # binding.pry
+        Settings.infra.services.each.collect.map{ |p| p[1].provider }.uniq.each do |provider|
+          if provider.eql? 'aws'
+            require 'aws-sdk-s3'
+            Rails.configuration.x.infra.aws.s3 = Aws::S3::Client.new(
+              Settings.infra.providers.aws.credentials.to_h.merge(
+                Settings.infra.providers.aws.services.storage.to_h
+              )
+            )
+            # require 'aws-sdk-sqs'
+            # Rails.configuration.x.infra.aws.sqs = Aws::SQS::Client.new(
+            #   Settings.infra.providers.aws.credentials.to_h.merge(
+            #     Settings.infra.providers.aws.services.mq.to_h
+            #   )
+            # )
+            # require 'shoryuken'
+            # Shoryuken.configure_server { |config| config.sqs_client = Rails.configuration.x.infra.aws.sqs }
+          end
+        end if Settings.infra.services
       end
 
       initializer :platform_metrics do |app|
@@ -45,7 +69,7 @@ module Ros
             require 'rack/fluentd_logger'
             require_relative '../request_logger/fluentd'
             Rack::FluentdLogger.configure(
-              name: Settings.service.name,
+              name: 'test-name', # Settings.service.name,
               host: Settings.request_logging.config.host,
               port: Settings.request_logging.config.port,
               # don't want to parse body to json, also underline MIME check code is not working
@@ -57,6 +81,7 @@ module Ros
         end
       end
 
+=begin
       config.after_initialize do
         if Settings.system_logging.enabled
           if Settings.system_logging.provider.eql? 'fluentd'
@@ -75,6 +100,7 @@ module Ros
           end
         end
       end
+=end
 
       initializer :platform_hosts do |app|
         app.config.hosts = app.config.hosts | Settings.hosts.split(',') if Settings.hosts
@@ -82,6 +108,7 @@ module Ros
 
       initializer :apartment do |app|
         Apartment.configure do |config|
+          # binding.pry
           # Provide list of schemas to be migrated when rails db:migrate is invoked
           # SEE: https://github.com/influitive/apartment#managing-migrations
           config.tenant_names = proc { Tenant.pluck(:schema_name) }

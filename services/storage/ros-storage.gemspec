@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", "~> 6.0.0.rc1"
   spec.add_dependency 'shoryuken'
   spec.add_dependency 'aws-sdk-sqs'
-  spec.add_dependency 'aws-sdk-s3'
 
   spec.add_development_dependency "pg"
 end

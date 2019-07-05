@@ -19,6 +19,7 @@ require_relative 'api_token_strategy'
 require_relative 'routes'
 
 require 'ros/core/engine'
+require 'ros/infra'
 
 module Ros
   class Configuration

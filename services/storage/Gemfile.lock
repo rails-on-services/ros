@@ -4,6 +4,7 @@ PATH
     ros-core (0.1.0)
       apartment (= 2.2.0)
       attr_encrypted (~> 3.1.0)
+      aws-sdk-s3
       config (= 1.7.1)
       grpc (= 1.18.0)
       jsonapi-authorization (= 1.0.0)
@@ -35,7 +36,6 @@ PATH
   remote: .
   specs:
     ros-storage (0.1.0)
-      aws-sdk-s3
       aws-sdk-sqs
       rails (~> 6.0.0.rc1)
       shoryuken
@@ -109,7 +109,7 @@ GEM
       encryptor (~> 3.0.0)
     awesome_print (1.8.0)
     aws-eventstream (1.0.3)
-    aws-partitions (1.172.0)
+    aws-partitions (1.173.0)
     aws-sdk-core (3.54.2)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1.0)
