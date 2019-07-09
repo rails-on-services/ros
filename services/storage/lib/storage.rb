@@ -6,6 +6,7 @@ require 'aws-sdk-s3'
 
 require 'ros/core'
 require "storage/engine"
+require "active_storage/engine"
 
 module Storage
   # Your code goes here...
