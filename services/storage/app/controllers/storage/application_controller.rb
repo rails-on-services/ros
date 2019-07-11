@@ -8,8 +8,19 @@ module Storage
     end
 
     def json_resources(klass, records, context = nil)
-      resources = records.map { |record| klass.new(record, context) }
-      JSONAPI::ResourceSerializer.new(klass).serialize_to_hash(resources)
+      resource = records.map { |record| klass.new(record, context) }
+      serialize_resource(klass, resource)
+    end
+
+    def json_resource(klass, record, context = nil)
+      resource = klass.new(record, context)
+      serialize_resource(klass, resource)
+    end
+
+    private
+
+    def serialize_resource(klass, resource)
+      JSONAPI::ResourceSerializer.new(klass).serialize_to_hash(resource)
     end
   end
 end
