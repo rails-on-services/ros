@@ -2,5 +2,4 @@
 
 class Tenant < Storage::ApplicationRecord
   include Ros::TenantConcern
-  has_one :upload_storage
 end
