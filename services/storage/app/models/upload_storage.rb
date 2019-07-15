@@ -10,7 +10,7 @@ class UploadStorage < Storage::ApplicationRecord
   def upload!(io:)
     upload = ActiveStorage::Blob.new.tap do |blob|
       blob.filename = io.original_filename
-      blob.key = "#{base_path}/#{detect_file_type(io)}/#{blob.class.generate_unique_secure_token}"
+      blob.key = "#{current_tenant.schema_name}/#{detect_file_type(io)}/#{blob.class.generate_unique_secure_token}"
       blob.upload io
       blob.save!
     end
@@ -22,9 +22,5 @@ class UploadStorage < Storage::ApplicationRecord
   def detect_file_type(io)
     return :image if io.content_type.start_with?('image')
     :document
-  end
-
-  def base_path
-    current_tenant.schema_name.delete('_')
   end
 end
