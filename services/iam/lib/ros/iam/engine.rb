@@ -7,8 +7,9 @@ module Ros
     class Engine < ::Rails::Engine
       config.generators.api_only = true
       config.generators do |g|
-        g.test_framework :rspec, fixture: true
-        g.fixture_replacement :factory_bot, dir: 'spec/factories'
+        g.test_framework :rspec
+        g.fixture_replacement :factory_bot
+        g.factory_bot dir: 'spec/factories'
       end
 
       # Adds this gem's db/migrations path to the enclosing application's migraations_path array
@@ -40,6 +41,10 @@ module Ros
         #   # config.revocation_strategies = { user: RevocationStrategy }
         # end
         # app.config.middleware.use Warden::JWTAuth::Middleware
+      end
+
+      initializer "iam.factories", after: "factory_bot.set_factory_paths" do
+        FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
       end
 
       initializer :service_values do |app|

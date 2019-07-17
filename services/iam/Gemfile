@@ -21,9 +21,12 @@ end
 
 group :development, :test do
   gem 'brakeman', require: false
+  gem 'database_cleaner'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'json-schema'
   gem 'pry-byebug'
   gem 'rspec-rails'
-  gem 'factory_bot_rails'
   gem 'spring-commands-rspec'
-  gem 'database_cleaner'
+  gem 'shoulda-matchers'
 end
