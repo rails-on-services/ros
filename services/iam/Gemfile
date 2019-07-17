@@ -22,5 +22,5 @@ end
 group :development, :test do
   gem 'brakeman', require: false
   gem 'spring-commands-rspec'
-  gem 'database_cleaner'
+  gem 'shoulda-matchers'
 end

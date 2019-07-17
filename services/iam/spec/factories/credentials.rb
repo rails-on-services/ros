@@ -2,6 +2,6 @@
 
 FactoryBot.define do
   factory :credential do
-    owner { create(:user) }
+    owner
   end
 end
