@@ -2,36 +2,6 @@
 # Referenced from Settings or Ros.application.config
 # Values set here can be overridden using ENVs
 
-infra:
-  providers:
-    aws:
-      credentials:
-        access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
-        secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
-        region: 'ap-southeast-1'
-      services:
-        mq:
-          endpoint: 'http://localstack:4576'
-          verify_checksums: false
-        storage:
-          endpoint: 'http://localstack:4572'
-          force_path_style: true
-    gcp:
-      credentials:
-        file: /tmp/test.json
-      services:
-    azure:
-      credentials:
-        access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
-      services:
-  services:
-    tenant_storage:
-      provider: aws
-      name: sftp
-    request_storage:
-      provider: aws
-      name: request-logs
-
 request_logging:
   enabled: no
   provider: fluentd
@@ -39,7 +9,7 @@ request_logging:
     host: fluentd
     port: 24224
 
-system_logging:
+event_logging:
   enabled: no
   provider: fluentd
   config:
