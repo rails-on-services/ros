@@ -28,6 +28,10 @@ module Ros
         name = self.class.parent.name.demodulize.underscore
         Settings.prepend_source!({ service: { name: name, policy_name: name.capitalize } })
       end
+
+      initializer "cognito.factories", after: "factory_bot.set_factory_paths" do
+        FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
+      end
     end
   end
 end
