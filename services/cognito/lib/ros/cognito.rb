@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bcrypt'
+require 'devise'
 require 'ros/core'
 require 'ros/cognito/engine'
 
