@@ -7,6 +7,7 @@ after 'development:tenants' do
       Endpoint.create(url: "http://tenant#{tenant.id}.com/hello", target_type: 'Survey::Group', target_id: 1)
       Endpoint.create(url: 'http://i.pxln.io/59dcb', target_type: 'Survey::Campaign', target_id: 1)
       User.reset
+      User.create(primary_identifier: SecureRandom.uuid, first_name: 'test', last_name: 'test', phone_number: '123-123-123', email_address: 'test@test.com', password: '123456')
       # file_name = 'cognito_pools.csv'
       # User.load_csv(file_name)
       # Pool.create(name: 'Internal Testers - Phase I').tap do |pool|

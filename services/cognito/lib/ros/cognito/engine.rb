@@ -43,6 +43,10 @@ module Ros
       initializer 'autoload_services', after: :load_config_initializers do |app|
         Dir[Rails.root.join('../../services/**/*.rb')].each { |file| require file }
       end
+
+      initializer "cognito.factories", after: "factory_bot.set_factory_paths" do
+        FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
+      end
     end
   end
 end
