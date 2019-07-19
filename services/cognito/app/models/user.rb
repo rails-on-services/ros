@@ -1,4 +1,7 @@
 class User < Cognito::ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable
   has_many :user_pools
   has_many :pools, through: :user_pools
 
