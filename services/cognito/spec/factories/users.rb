@@ -2,7 +2,10 @@ FactoryBot.define do
   factory :user do
     primary_identifier { SecureRandom.uuid }
     properties { "" }
-    phone_number { Faker::PhoneNumber.cell_phone }
+    phone { Faker::PhoneNumber.cell_phone }
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    email { Faker::Internet.email }
 
     trait :within_schema do
       transient do

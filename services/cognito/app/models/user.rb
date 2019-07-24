@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class User < Cognito::ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable
+  devise :database_authenticatable, :confirmable
   has_many :user_pools
   has_many :pools, through: :user_pools
 
@@ -9,11 +11,15 @@ class User < Cognito::ApplicationRecord
     { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number, 'Unique Number' => :primary_identifier, 'Campaign Code' => :pool_name }
   end
 
-  def self.find_by_login_attribute(value)
+  def self.by_login_attribute(value)
     key = current_tenant&.login_attribute
     return unless column_names.include? key
 
     find_by(key => value)
+  end
+
+  def confirmation_required?
+    current_tenant&.requires_user_confirmation?
   end
 
   def self.reset

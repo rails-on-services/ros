@@ -8,14 +8,17 @@ class SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create
     return super unless login_user!
-    render json: json_resource(UserResource, current_user)
+    render json: json_resource(UserResource, resource)
   end
 
   protected
 
   def login_user!
-    @current_user = User.find_by_login_attribute(sign_in_params[:login_attribute_value])
-    @current_user&.valid_password? sign_in_params[:password]
+    self.resource = User.by_login_attribute(sign_in_params[:login_attribute_value])
+    # Devise#confirmable
+    return unless resource.active_for_authentication?
+
+    resource.valid_password? sign_in_params[:password]
   end
 
   def sign_in_params
