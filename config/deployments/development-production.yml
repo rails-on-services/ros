@@ -1,0 +1,34 @@
+---
+core:
+  config:
+    feature_set: production-image
+  environment:
+    nginx_host_port: 3002
+
+platform:
+  config:
+    images:
+      rails:
+        # NOTE: for production set build_args to empty hash
+        build_args:
+  services:
+    # account:
+    #   mount: no
+    # billing:
+    #   mount: no
+    cognito:
+      mount: no
+    comm:
+      mount: no
+    iam:
+      mount: no
+    storage:
+      mount: no
+    # game:
+    #   mount: no
+    # loyalty:
+    #   mount: no
+    # reward:
+    #   mount: no
+    survey:
+      mount: no
