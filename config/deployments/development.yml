@@ -19,9 +19,29 @@ components:
           cluster:
             type: instance
         components:
+          vpc:
+            config:
+              provider: aws
+              name: test
+              cidr: 10.100.0.0/16
+          dns:
+            config:
+              provider: aws
+              root_domain: perxtech.io
+              sub_domain: duan
+          cert:
+            config:
+              provider: aws
+              domain_name: duan.perxtech.org
+              route53_domain_name: perxtech.org
+              subject_alternative_names: ['*.duan.perxtech.org']
           instance:
             config:
               provider: aws
+              name_prefix: duan
+              lb_dns_hostnames: ['api.duan.perxtech.org']
+              ec2_key_pair: perx_admin
+
               # this creates a CNAME hello.titan.rails-on-services.org
               # which is how to access the running instance
               name: titan
