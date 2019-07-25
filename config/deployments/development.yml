@@ -1,13 +1,4 @@
-# Configuration values defined here override any values defined in platform.yml
-# naming and segmenting nginx for compose multi deploys
-# writing out IAM credentials in a namespace aware way
-# if feature_set is an ENV var then IAM can use that
-# postman generating api docs for a feature set aware endpoint
-# WORKSPACE is api_endpoint
-# tmp/deployments/development/be/application/feature_set
-# tmp/deployments/development/be/infra/cluster
-# tmp/deployments/development/no-mount
-# tmp/deployments/development/production-image
+# Values defined here override any values defined in platform.yml
 ---
 components:
   be:
@@ -40,13 +31,6 @@ components:
               name_prefix: ros
               lb_dns_hostnames: ['api.ros.perxtech.org']
               ec2_key_pair: perx_admin
-
-              # this creates a CNAME hello.titan.rails-on-services.org
-              # which is how to access the running instance
-              name: titan
-              dns:
-                # domain: rails-on-services.org
-                subdomain: titan
             # NOTE: The instance does not deploy services like the cluster does
             # components:
             #   services:
@@ -66,9 +50,6 @@ components:
         config:
           feature_from_branch: no
           feature_set: mounted
-          dns:
-            # domain: rails-on-services.org
-            subdomain: demo
         environment:
           bucket_endpoint_url: http://localstack:4572
           aws_access_key_id: this_key_from_development_yml
