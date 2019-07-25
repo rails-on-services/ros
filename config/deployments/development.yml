@@ -22,24 +22,23 @@ components:
           vpc:
             config:
               provider: aws
-              name: test
+              name: ros
               cidr: 10.100.0.0/16
           dns:
             config:
               provider: aws
-              root_domain: perxtech.io
-              sub_domain: duan
+              root_domain: perxtech.org
+              sub_domain: ros
           cert:
             config:
               provider: aws
-              domain_name: duan.perxtech.org
-              route53_domain_name: perxtech.org
-              subject_alternative_names: ['*.duan.perxtech.org']
+              domain_name: ros.perxtech.org
+              subject_alternative_names: ['*.ros.perxtech.org']
           instance:
             config:
               provider: aws
-              name_prefix: duan
-              lb_dns_hostnames: ['api.duan.perxtech.org']
+              name_prefix: ros
+              lb_dns_hostnames: ['api.ros.perxtech.org']
               ec2_key_pair: perx_admin
 
               # this creates a CNAME hello.titan.rails-on-services.org
