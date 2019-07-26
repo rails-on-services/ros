@@ -12,7 +12,7 @@ commands:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
 jobs:
-  build_docker_image:
+  build_and_test:
     working_directory: ~/project
     executor: ros-cli
     shell: /bin/bash --login -eo pipefail
@@ -22,9 +22,16 @@ jobs:
           version: 18.09.3
       - checkout
       - docker_login
-      - run: 
-          command: ros
+      - run:
+          name: Build Docker Images 
+          command: ros build
+      - run:
+          name: Push Docker Images
+          command: ros push
+      - run:
+          name: Run Tests
+          command: ros test
 workflows:
-  build_docker_image:
+  build_and_test:
     jobs:
-      - build_docker_image
+      - build_and_test
