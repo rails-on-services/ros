@@ -24,13 +24,13 @@ jobs:
       - docker_login
       - run:
           name: Build Docker Images 
-          command: ros build
+          command: ros be build
       - run:
           name: Push Docker Images
-          command: ros push
+          command: ros be push
       - run:
           name: Run Tests
-          command: ros test
+          command: ros be test
 workflows:
   build_and_test:
     jobs:
