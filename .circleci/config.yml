@@ -31,6 +31,8 @@ jobs:
       - run:
           name: Run Tests
           command: ros be test
+          environment:
+            ROS_PROFILE: image
 workflows:
   build_and_test:
     jobs:
