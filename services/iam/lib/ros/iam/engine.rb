@@ -31,10 +31,9 @@ module Ros
         end
       end
 
-      initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
-        if Rails.env.development? and Rails.const_defined?('Console')
+      initializer 'service.configure_console_methods' do |_app|
+        if Rails.env.development? and not Rails.const_defined?('Server')
           Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
-          Ros.config.model_paths += config.paths['app/models'].expanded
         end
       end
 

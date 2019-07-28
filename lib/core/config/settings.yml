@@ -1,7 +1,6 @@
 # This service's specific configuration; calculate URNs, etc
 # Referenced from Settings or Ros.application.config
 # Values set here can be overridden using ENVs
-
 request_logging:
   enabled: no
   provider: fluentd

@@ -48,4 +48,4 @@ config:
           build_args:
             rails_env: development
             bundle_string: --without production
-            os_packages: ['libpq5', 'tree', 'curl', 'git', 'sudo', 'vim', 'less', 'tcpdump', 'net-tools', 'iputils-ping']
+            os_packages: ['libpq5', 'tree', 'curl', 'git', 'sudo', 'vim', 'less', 'tcpdump', 'net-tools', 'iputils-ping', 'graphviz']

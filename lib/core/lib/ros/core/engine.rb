@@ -186,13 +186,8 @@ module Ros
         end
       end
 
-      # Add console methods from ./console.rb
       initializer 'ros_core.configure_console_methods' do |_app|
-        require_relative 'console'
-        if Rails.const_defined?('Console')
-          Ros::Console::Methods.init
-          TOPLEVEL_BINDING.eval('self').extend Ros::Console::Methods
-        end
+        require_relative 'console' unless Rails.const_defined?('Server')
       end
     end
   end
