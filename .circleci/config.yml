@@ -3,7 +3,7 @@ executors:
   ros-cli:
     docker:
       - image: railsonservices/cli
-        entrypoint: /bin/bash
+        entrypoint: /bin/bash -l
 commands:
   docker_login:
     description: Login to dockerhub
