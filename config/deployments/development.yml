@@ -61,7 +61,7 @@ components:
             components:
               fluentd:
                 config:
-                  enabled: no
+                  enabled: yes
               localstack:
               nginx:
               postgres:
@@ -73,7 +73,7 @@ components:
               redis_url: redis://redis:6379
               platform:
                 request_logging:
-                  enabled: no
+                  enabled: yes
                   config:
                     host: fluentd
                 infra:
@@ -113,6 +113,6 @@ components:
                 config:
                   profiles: ['server']
                   # command: ["tail", "-F", "log/development.log"]
-              storage:
-                config:
-                  profiles: ['server']
+              # storage:
+              #   config:
+              #     profiles: ['server']
