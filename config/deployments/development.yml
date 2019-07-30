@@ -74,8 +74,8 @@ components:
               platform:
                 request_logging:
                   enabled: yes
-                  config:
-                    host: fluentd
+                event_logging:
+                  enabled: yes
                 infra:
                   services:
                     storage:

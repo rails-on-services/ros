@@ -84,18 +84,12 @@ module Ros
       config.after_initialize do
         if Settings.event_logging.enabled
           if Settings.event_logging.provider.eql? 'fluentd'
-            Rails.configuration.x.logger =
-              Fluent::Logger::LevelFluentLogger.new(Settings.service.name, Settings.system_logging.config.to_h)
-            Rails.configuration.x.logger.formatter = proc do |severity, datetime, progname, message|
-              map = { level: severity }
-              map[:message] = message if message
-              map[:progname] = progname if progname
-              map[:stage] = ENV['RAILS_ENV']
-              map[:service_name] = Settings.service.name
-              map
-            end
-            Rails.logger = Rails.configuration.x.logger
-            ActiveRecord::Base.logger = Rails.configuration.x.logger
+            require_relative '../cloudevents/fluentd_avro_logger'
+            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
+            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
+
+            # Rails.logger = Rails.configuration.x.logger
+            # ActiveRecord::Base.logger = Rails.configuration.x.logger
           end
         end
       end

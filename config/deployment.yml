@@ -107,7 +107,7 @@ components:
             # environment:
             components:
               fluentd: # request logging and cloud events
-              # kafka:
+              kafkastack:
               #   config:
               #     destination: big_query
               sftp:
@@ -130,11 +130,17 @@ components:
                   process_stats_enabled: false
                 partition_name: ros
                 request_logging:
-                  enabled: yes
+                  enabled: no
                   config:
                     host: fluentd
+                    port: 24224
                 event_logging:
                   enabled: no
+                  config:
+                    name: events-log
+                    host: fluentd
+                    port: 24224
+                    schema_registry_url: http://kafkastack:8081
             components:
               account:
                 config:
