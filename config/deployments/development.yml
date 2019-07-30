@@ -61,7 +61,7 @@ components:
             components:
               fluentd:
                 config:
-                  enabled: no
+                  enabled: yes
               localstack:
               nginx:
               postgres:

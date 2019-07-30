@@ -13,20 +13,20 @@ components:
       infra:
         config:
           cluster:
-            type: cluster
+            type: kubernetes
         components:
           vpc:
             config:
               provider: aws
-          cluster:
+          kubernetes:
             config:
               provider: aws
               name: develop
       application:
         config:
           dns:
-            # domain: perxtech.org
-            subdomain: whistler
+            root_domain: perxtech.org
+            sub_domain: ros-test
         components:
           services:
             ingress:
