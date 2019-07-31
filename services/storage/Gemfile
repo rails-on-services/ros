@@ -18,7 +18,7 @@ gem 'pry-rails'
 gem 'awesome_print'
 group :development, :test do
   gem 'brakeman', require: false
-  gem 'pry-byebug'
+  # gem 'pry-byebug'
   gem 'pry-stack_explorer'
   gem 'faker'
 end
@@ -30,6 +30,7 @@ end
 gem 'ros-core', path: '../../lib/core'
 gem 'ros_sdk', path: '../../lib/sdk'
 group :development, :test do
+gem 'dotenv'
   gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'spring-commands-rspec'
