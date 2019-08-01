@@ -25,6 +25,9 @@ jobs:
       - run:
           command: ros generate:be
       - run:
+          # probably a bug, need to run this twice
+          command: yes | ros generate:be
+      - run:
           name: Build Docker Images 
           command: ros be build
       - run:
