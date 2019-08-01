@@ -23,16 +23,19 @@ jobs:
       - checkout
       - docker_login
       - run:
+          command: ros generate:be
+      - run:
           name: Build Docker Images 
           command: ros be build
       - run:
           name: Push Docker Images
           command: ros be push
-      - run:
-          name: Run Tests
-          command: ros be test
-          environment:
-            ROS_PROFILE: image
+      # TODO
+      # - run:
+      #     name: Run Tests
+      #     command: ros be test
+      #     environment:
+      #       ROS_PROFILE: image
 workflows:
   build_and_test:
     jobs:
