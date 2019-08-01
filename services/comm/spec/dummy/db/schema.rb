@@ -15,6 +15,27 @@ ActiveRecord::Schema.define(version: 2019_11_27_070152) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "audiences", force: :cascade do |t|
+    t.bigint "campaign_id"
+    t.string "name"
+    t.string "company_name"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.string "country"
+    t.string "phone"
+    t.string "reminder"
+    t.string "from_name"
+    t.string "from_email"
+    t.string "subject"
+    t.string "language"
+    t.string "external_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["campaign_id"], name: "index_audiences_on_campaign_id"
+  end
+
   create_table "campaigns", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -24,6 +45,20 @@ ActiveRecord::Schema.define(version: 2019_11_27_070152) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["owner_type", "owner_id"], name: "index_campaigns_on_owner_type_and_owner_id"
+  end
+
+  create_table "email_campaigns", force: :cascade do |t|
+    t.bigint "campaign_id"
+    t.bigint "audience_id"
+    t.string "external_id"
+    t.string "name"
+    t.string "type"
+    t.string "from_name"
+    t.string "from_email"
+    t.string "subject"
+    t.string "preview_text"
+    t.index ["audience_id"], name: "index_email_campaigns_on_audience_id"
+    t.index ["campaign_id"], name: "index_email_campaigns_on_campaign_id"
   end
 
   create_table "events", force: :cascade do |t|
