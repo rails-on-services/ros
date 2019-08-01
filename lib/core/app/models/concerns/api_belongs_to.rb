@@ -9,11 +9,11 @@ module ApiBelongsTo
   class_methods do
     # Reads a GID, caches and returns the result with a simple declaration
     # Example: api_belongs_to :user, class_name: 'Ros::IAM::User'
-    def api_belongs_to(model_name, class_name: nil, foreign_key: nil, polymorphic: nil)
+    def api_belongs_to(model_name, class_name: nil, foreign_key: nil, polymorphic: nil, attr_id: nil)
       model_name = model_name.to_s
       class_name = class_name || model_name.classify
       attr_type = polymorphic ? "#{model_name}_type" : model_name
-      attr_id = "#{model_name}_id"
+      attr_id = attr_id || "#{model_name}_id"
       gid_name = "#{model_name}_gid"
 
       # defines a method that returns a GlobalID in format: gid://internal/Service::Model/:id
