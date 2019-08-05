@@ -39,4 +39,7 @@ after 'development:tenants' do
   File.open("#{Ros.host_tmp_dir}/credentials.json", 'w') do |f|
     f.puts(@created_list.to_json)
   end
+  # Output the contents so that it can be captured by the helm log file when deployed into kubernetes
+  STDOUT.puts 'Credentials are next:'
+  STDOUT.puts File.read("#{Ros.host_tmp_dir}/credentials.json")
 end

@@ -27,12 +27,3 @@ components:
               storage:
                 config:
                   mount: no
-              # game:
-              #   mount: no
-              # loyalty:
-              #   mount: no
-              # reward:
-              #   mount: no
-              survey:
-                config:
-                  mount: no

@@ -7,7 +7,6 @@
 **/spec/dummy/storage/
 **/spec/dummy/tmp/
 **/tmp/
-config/console.env
 config/environments
 .env
 erd.pdf

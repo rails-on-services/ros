@@ -52,10 +52,6 @@ components:
           cluster:
             type: kubernetes
         components:
-          kubernetes:
-            config:
-              provider: aws
-              name: enceladus
           dns:
             config:
               provider: aws
@@ -69,6 +65,10 @@ components:
                   host: api
                 sftp:
                   host: sftp
+          kubernetes:
+            config:
+              provider: aws
+              name: enceladus
             components:
               infra:
                 components:
@@ -170,6 +170,12 @@ components:
                 config:
                   mount: yes
                   profiles: ['server', 'worker']
+                  ros: yes
+              organization:
+                config:
+                  enabled: no
+                  mount: yes
+                  profiles: ['server']
                   ros: yes
               storage:
                 config:
