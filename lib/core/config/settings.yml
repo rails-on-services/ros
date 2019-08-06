@@ -1,7 +1,6 @@
 # This service's specific configuration; calculate URNs, etc
 # Referenced from Settings or Ros.application.config
 # Values set here can be overridden using ENVs
-
 request_logging:
   enabled: no
   provider: fluentd
@@ -9,7 +8,7 @@ request_logging:
     host: fluentd
     port: 24224
 
-system_logging:
+event_logging:
   enabled: no
   provider: fluentd
   config:
@@ -30,9 +29,9 @@ partition_name: ros
 region: ''
 auth_type: Basic # Internal # used by SDK to compose Authentication header
 
-service:
-  name: # set by the service
-  policy_name: # set by the service
+# service:
+#   name: # set by the service
+#   policy_name: # set by the service
 
 # PLATFORM__EXTERNAL_CONNECTION__TYPE=host
 external_connection:

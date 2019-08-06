@@ -18,7 +18,7 @@ after 'development:tenants' do
       User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
       credential = user.credentials.create
-      WriteUser.new(owner: user, tenant: tenant, credential: credential).write
+      @created_list.append({ type: 'user', owner: user, tenant: tenant, credential: credential, secret: credential.secret_access_key })
 
       # Create a Group
       group_admin = Group.create(name: 'Administrators')
@@ -33,4 +33,13 @@ after 'development:tenants' do
       # Role.create(name: 'PerxUserReadOnlyAccess')
     end
   end
+
+  # Append newly created credentials to credentials.json in the tmp directory
+  FileUtils.mkdir_p(Ros.host_tmp_dir)
+  File.open("#{Ros.host_tmp_dir}/credentials.json", 'w') do |f|
+    f.puts(@created_list.to_json)
+  end
+  # Output the contents so that it can be captured by the helm log file when deployed into kubernetes
+  STDOUT.puts 'Credentials are next:'
+  STDOUT.puts File.read("#{Ros.host_tmp_dir}/credentials.json")
 end
