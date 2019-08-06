@@ -2,10 +2,10 @@
 .gitignore
 README.md
 Dockerfile
-Makefile
 .circleci
 .gitmodules
-.overcommit.yml
+
+**/tmp
 
 **/tmp/pids/*.pid
 

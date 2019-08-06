@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationJob < Ros::ApplicationJob
   # Automatically retry jobs that encountered a deadlock
   # retry_on ActiveRecord::Deadlocked

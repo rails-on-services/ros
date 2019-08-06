@@ -71,13 +71,26 @@ module Ros
           yield
         end
       end
+
+      # NOTE: *** WARNING ***
+      # These next three methods are only for use in the console in development mode
+      # DO NOT use these methods to set/use credentials in request handling!
+      def set_root_credential; set_user_credential(root_id, 'root') end
+
+      def set_user_credential(uid = nil, type = 'user')
+        return unless Rails.env.development?
+        Ros::Sdk::Credential.authorization = Settings.tenant[id].try(:[], type).try(:[], uid)
+      end
+
+      def clear_credential; Ros::Sdk::Credential.authorization = nil end
   
       # NOTE: This method is very important!
       # Called by RpcWorker#receive and TenantMiddleware#parse_tenant_name
       # It parses a request hash and sets the necessary RequestStere settings
       # The caller then uses these settings to select the appropriate schema for the request to operate on
-# TODO: This is probably where the JWT will be processed; Or it will already be decrypted and values put into the header
-# NOTE: Either way, the request header needs to put the tenant somewhere so logging can be done per tenant
+      # TODO: This is probably where the JWT will be processed; Or it will already be decrypted and values put into the header
+      # NOTE: Either way, the request header needs to put the tenant somewhere so logging can be done per tenant
+      # NOTE: This method does not current work. it is code ported from another project
       def self.set_request_store(request_hash)
         request = RequestStore.store[:tenant_request] = ApiAll::TenantRequest.new(request_hash)
         raise ArgumentError, 'Tenant schema is nil!' unless request.schema_name

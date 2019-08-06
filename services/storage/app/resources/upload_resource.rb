@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 class UploadResource < Storage::ApplicationResource
-  abstract true
+  attributes :name, :etag, :size, :transfer_map_id
+  has_one
 end

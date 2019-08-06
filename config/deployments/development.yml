@@ -1,35 +1,118 @@
-# Configuration values defined here override any values defined in deployment.yml
+# Values defined here override any values defined in platform.yml
 ---
-meta:
-  components:
-    provider: aws/kubernetes
-    image: development
-
-platform:
-  # TODO: use the value of infra.provider to provision storage, e.g. S3 bucket
-  storage: platform # storage is provisioned at platform with a dir per service
-  # storage: service # each service provisions its own storage
-  environment:
-    partition_name: perx
-    connection__host__port: 80
-  # Define the basic services that will be running on the platform and their default environment
-  basic_services:
-    # Uses custom helm chart
-    fluentd:
-    # Uses custom helm chart
-    ingress:
-    # Uses ?
-    # localstack:
-    # Uses helm stable repo chart
-    postgres:
-    # Uses helm stable repo chart
-    redis:
-  services:
+components:
+  be:
     environment:
-      rails_database_host: postgres
-      redis_url: redis://redis-master:6379
+      nginx_host_port: 3000
+    components:
+      infra:
+        config:
+          cluster:
+            type: instance
+        components:
+          vpc:
+            config:
+              provider: aws
+              name: ros
+              cidr: 10.100.0.0/16
+          dns:
+            config:
+              provider: aws
+              root_domain: perxtech.org
+              sub_domain: ros
+          cert:
+            config:
+              provider: aws
+              domain_name: ros.perxtech.org
+              subject_alternative_names: ['*.ros.perxtech.org']
+          instance:
+            config:
+              provider: aws
+              name_prefix: ros
+              lb_dns_hostnames: ['api.ros.perxtech.org']
+              ec2_key_pair: perx_admin
+            # NOTE: The instance does not deploy services like the cluster does
+            # components:
+            #   services:
+            #     components:
+            #       fluentd:
+            #         config:
+            #           enabled: no
+            #       grafana:
+            #         config:
+            #           enabled: no
+            #       prometheus:
+            #         config:
+            #           enabled: no
+      application:
+        # Uncomment and set values to a hostname that is mapped to this machine
+        # to enable public access to this installation
+        config:
+          feature_from_branch: no
+          feature_set: mounted
+        environment:
+          bucket_endpoint_url: http://localstack:4572
+          aws_access_key_id: this_key_from_development_yml
+          aws_secret_access_key: this_key_from_development_yml
+          aws_default_region: ap-southeast-1
+          aws_account_id: 123456789
+        components:
+          services:
+            components:
+              fluentd:
+                config:
+                  enabled: yes
+              localstack:
+              nginx:
+              postgres:
+              redis:
+              wait:
 
-infra:
-  dns:
-    domain: rails-on-services.org
-    subdomain: ros
+          platform:
+            environment:
+              redis_url: redis://redis:6379
+              platform:
+                request_logging:
+                  enabled: yes
+                event_logging:
+                  enabled: yes
+                infra:
+                  services:
+                    storage:
+                      aws:
+                        endpoint: http://localstack:4572
+                        force_path_style: yes
+                    mq:
+                      aws:
+                        endpoint: http://localstack:4576
+                        verify_checksums: no
+                  resources:
+                    storage:
+                      primary:
+                        provider: aws
+                        enabled: yes
+                    mq:
+                      primary:
+                        provider: aws
+            components:
+              storage:
+                environment:
+                  platform:
+                    infra:
+                      resources:
+                        mq:
+                          primary:
+                            enabled: yes
+              cognito:
+                config:
+                  profiles: ['server']
+              comm:
+                config:
+                  profiles: ['server']
+              iam:
+                config:
+                  profiles: ['server']
+                  # command: ["tail", "-F", "log/development.log"]
+              # storage:
+              #   config:
+              #     profiles: ['server']

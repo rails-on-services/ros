@@ -9,6 +9,7 @@ module Ros
     queue_as "#{Settings.service.name}_platform_consumer_events"
 
     def perform(object)
+      puts object
       payload = JSON.parse(object)
       event = payload['event']
       data = payload['data']
