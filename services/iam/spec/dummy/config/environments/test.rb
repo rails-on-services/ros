@@ -19,7 +19,7 @@ Rails.application.configure do
   }
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local = true
+  config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
   config.cache_store = :null_store
 
@@ -28,7 +28,7 @@ Rails.application.configure do
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
-  #config.action_controller.default_url_options = { host: 'localhost', port: 3000 }
+
   # Store uploaded files on the local file system in a temporary directory.
   #config.active_storage.service = :test
   config.hosts << 'www.example.com'
