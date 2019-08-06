@@ -23,10 +23,12 @@ jobs:
       - checkout
       - docker_login
       - run:
-          command: ros generate:be
+          command: ros be infra init -l
+          environment:
+            ROS_ENV: test
       - run:
-          # probably a bug, need to run this twice
-          command: yes | ros generate:be
+          name: Generate the platform environment
+          command: ros be init
       - run:
           name: Build Docker Images 
           command: ros be build
