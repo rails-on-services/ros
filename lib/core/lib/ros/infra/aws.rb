@@ -37,10 +37,12 @@ module Ros
       class Mq < Ros::Infra::Aws
         include Ros::Infra::Mq
 
+        attr_accessor :client
+
+        # TODO: review this as config is being outshadowed
         def initialize(client_config, config)
-          # binding.pry
           require 'shoryuken'
-          self.client = ::Aws::SQS::Client.new(self.class.credentials.merge(client_config))
+          self.client = ::Aws::SQS::Client.new(credentials.merge(client_config))
           Shoryuken.configure_server { |config| config.sqs_client = client }
         end
       end
@@ -53,7 +55,10 @@ module Ros
           require 'aws-sdk-s3'
           self.client = ::Aws::S3::Client.new(credentials.merge(client_config))
           self.name = config.bucket_name
-          self.service_path = Settings.service.name
+          # TODO: Check if this makes sense or the AWS should have a setting
+          # with the service name
+          self.service_path = Settings.dig(:service, :name)
+          # self.service_path = Settings.service.name
           self.notifications_path = "#{service_path}/*"
 
           begin
