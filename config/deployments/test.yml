@@ -29,9 +29,11 @@ components:
             sub_domain: ros-test
         components:
           services:
-            ingress:
-            postgres:
-            redis:
+            components:
+              ingress:
+              kafkastack:
+              postgres:
+              redis:
           platform:
             config:
               images:

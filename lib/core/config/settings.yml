@@ -14,8 +14,9 @@ event_logging:
   config:
     host: fluentd
     port: 24224
-    use_nonblock: yes
-    wait_writeable: no
+    schemas_path: doc/schemas
+    name: events-log
+    schema_registry_url: http://kafkastack:8081
 
 metrics:
   enabled: no

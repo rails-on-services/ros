@@ -30,15 +30,8 @@ module Ros
       class << self
         attr_reader :logger, :cloudevents_specversion, :avro
   
-        def configure(
-          name: ENV['FLUENTD_NAME'],
-          host: ENV['FLUENTD_HOST'],
-          port: (ENV['FLUENTD_PORT'] || 24_224).to_i,
-          schema_registry_url: nil,
-          schemas_path: nil,
-          cloudevents_specversion: '0.4-wip',
-          **
-        )
+        def configure(name: nil, host: nil, port: 24_224, schema_registry_url: nil, schemas_path: nil,
+                      cloudevents_specversion: '0.4-wip')
           @avro = AvroTurf::Messaging.new(registry_url: schema_registry_url, schemas_path: schemas_path)
           @cloudevents_specversion = cloudevents_specversion
           @logger = Fluent::Logger::FluentLogger.new(name, host: host, port: port)
@@ -47,11 +40,9 @@ module Ros
 
       def initialize(source)
         @source = source
-
-        self.class.configure if self.class.logger.nil?
       end
       
-      def log_event(type, id, data, subject: nil, time: Time.now)
+      def log_event(type, id, data, subject: nil, time: Time.zone.now)
         event = Event.new
         event.source = @source
         event.specversion = self.class.cloudevents_specversion
@@ -61,9 +52,9 @@ module Ros
         event.datacontenttype = 'application/avro'
         event.datacontentencoding = 'Base64'
         event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z') 
-        event.data = Base64.encode64(
-          self.class.avro.encode(data, schema_name: type)
-        )
+      binding.pry
+        event.data = Base64.encode64(self.class.avro.encode(data, schema_name: type))
+      binding.pry
         self.class.logger.post(@source, event.to_h)
       end
     end
