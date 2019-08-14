@@ -4,7 +4,7 @@ $:.push File.expand_path("lib", __dir__)
 
 Gem::Specification.new do |spec|
   spec.name        = 'ros-core'
-  spec.version     = '0.1.0' # Ros::Core::VERSION
+  spec.version     = '0.2.0' # Ros::Core::VERSION
   spec.authors     = ['Robert Roach']
   spec.email       = ['rjayroach@gmail.com']
   spec.homepage    = 'https://github.com/rails-on-services'
@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '~> 6.0.0.rc2'
   spec.add_dependency 'jsonapi-resources', '0.9.5'
   spec.add_dependency 'jsonapi-authorization', '1.0.0'
+  spec.add_dependency 'json-schema'
   spec.add_dependency 'warden', '1.2.8'
   spec.add_dependency 'jwt', '2.1.0'
   spec.add_dependency 'pry-rails', '0.3.9'
