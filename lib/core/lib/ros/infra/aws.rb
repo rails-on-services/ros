@@ -38,7 +38,7 @@ module Ros
         include Ros::Infra::Mq
 
         def initialize(client_config, config)
-          binding.pry
+          # binding.pry
           require 'shoryuken'
           self.client = ::Aws::SQS::Client.new(self.class.credentials.merge(client_config))
           Shoryuken.configure_server { |config| config.sqs_client = client }
