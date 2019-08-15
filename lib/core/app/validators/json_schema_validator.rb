@@ -5,6 +5,8 @@ require 'json_schemer'
 class JsonSchemaValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     schema_file = options.fetch(:schema)
+    validator = init_validator(schema_file, record)
+
     return unless validator
 
     errors = validator.validate(value).to_a
@@ -17,10 +19,10 @@ class JsonSchemaValidator < ActiveModel::EachValidator
 
   private
 
-  def validator(schema_file, record)
-    return JSONSchemer.schema(schema_file) if schema_file
+  def init_validator(schema_file, record)
+    return JSONSchemer.schema(schema_file) if schema_file && File.exist?(schema_file)
 
-    record.errors.add(attribute, 'missing schema in validator')
+    record.errors.add(:validator, 'missing schema in validator')
     nil
   end
 end
