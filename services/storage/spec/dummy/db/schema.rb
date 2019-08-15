@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_15_104922) do
+ActiveRecord::Schema.define(version: 2019_06_09_161139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "column_maps", force: :cascade do |t|
+    t.bigint "transfer_map_id", null: false
+    t.string "name"
+    t.string "user_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["transfer_map_id"], name: "index_column_maps_on_transfer_map_id"
+  end
 
   create_table "platform_events", force: :cascade do |t|
     t.string "resource"
@@ -36,4 +45,23 @@ ActiveRecord::Schema.define(version: 2019_02_15_104922) do
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end
 
+  create_table "transfer_maps", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "service"
+    t.string "target"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "uploads", force: :cascade do |t|
+    t.string "name"
+    t.string "etag"
+    t.integer "size"
+    t.integer "transfer_map_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  add_foreign_key "column_maps", "transfer_maps"
 end

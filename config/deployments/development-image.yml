@@ -1,0 +1,29 @@
+---
+components:
+  be:
+    config:
+      feature_set: image
+      feature_from_branch: no
+    environment:
+      nginx_host_port: 3001
+    components:
+      application:
+        components:
+          platform:
+            components:
+              # account:
+              #   mount: no
+              # billing:
+              #   mount: no
+              cognito:
+                config:
+                  mount: no
+              comm:
+                config:
+                  mount: no
+              iam:
+                config:
+                  mount: no
+              storage:
+                config:
+                  mount: no

@@ -26,3 +26,15 @@ module Ros
     end
   end
 end
+
+    # event = Ros::LifecycleEvent.new(payload)
+    # event.urn; event.tenant
+    # binding.pry
+    # payload = JSON.parse(payload)
+    # urn = Ros::Urn.from_urn(payload['data']['urn'])
+    # schema_name = Tenant.account_id_to_schema(urn.account_id)
+    # Tenant.find_by(schema_name: schema_name).switch do
+    #   method = "#{urn.service_name}_#{urn.resource_type}"
+    #   puts "send(method, urn: urn, event: payload['event'], data: payload['data'])"
+    # end
+

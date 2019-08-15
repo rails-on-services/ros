@@ -48,26 +48,29 @@ RUN apt-get update \
 ARG PUID=1000
 ARG PGID=1000
 
-RUN addgroup --gid ${PGID} rails \
+RUN [ $(getent group $PGID) ] || addgroup --gid ${PGID} rails \
  && useradd -ms /bin/bash -d /home/rails --uid ${PUID} --gid ${PGID} rails \
  && mkdir -p /home/rails/services/app \
  && echo 'set editing-mode vi' > /home/rails/.inputrc \
  && echo "alias rspec='spring rspec $@'\nalias src='ss; rc'\nalias ss='spring stop'\nalias rs='rails server -b 0.0.0.0 --pid /tmp/server.pid'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
- && chown rails:rails /home/rails -R \
+ && chown ${PUID}:${PGID} /home/rails -R \
  && echo 'rails ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
-COPY --chown=rails:rails --from=base /usr/local/bundle /usr/local/bundle
+COPY --from=base /usr/local/bundle /usr/local/bundle
 
 # Rails operations
 WORKDIR /home/rails/services/app
 
 ARG project=user
-COPY --chown=rails:rails lib/core/. ../../lib/core/
-COPY --chown=rails:rails lib/sdk/. ../../lib/sdk/
+COPY lib/core/. ../../lib/core/
+COPY lib/sdk/. ../../lib/sdk/
 # workaround for buildkit not setting correct permissions
 RUN chown rails: /home/rails/lib
 
-COPY --chown=rails:rails services/${project}/. ./
+COPY services/${project}/. ./
+
+# CircleCI docker version is old, it doesn't expand ARGs or ENVs for "COPY --chown" directive
+RUN chown -R ${PUID}:${PGID} /home/rails /usr/local/bundle
 
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes

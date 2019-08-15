@@ -1,0 +1,54 @@
+# Configuration values defined here override any values defined in platform.yml
+# aws eks update-kubeconfig --name production --role-arn arn:aws:iam::814127428874:role/eks-admin
+# name-db.subdomain.domain
+# api-db.whistler.perxtech.net
+# pru-api-db.whistler.perxtech.net
+# pru-api-redis.whistler.perxtech.net
+# tmp/deployments/staging/master
+# tmp/deployments/staging/feature
+---
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: kubernetes
+        components:
+          vpc:
+            config:
+              provider: aws
+          kubernetes:
+            config:
+              provider: aws
+              name: develop
+      application:
+        config:
+          dns:
+            root_domain: perxtech.org
+            sub_domain: ros-test
+        components:
+          services:
+            ingress:
+            postgres:
+            redis:
+          platform:
+            config:
+              images:
+                rails:
+                  # NOTE: for production set rails_env to production
+                  build_args:
+                    rails_env: development
+            components:
+              cognito:
+                config:
+                  profiles: ['server']
+              comm:
+                config:
+                  profiles: ['server']
+              iam:
+                config:
+                  profiles: ['server']
+              storage:
+                config:
+                  profiles: ['server']

@@ -1,18 +1,10 @@
 version: 2.1
+executors:
+  ros-cli:
+    docker:
+      - image: railsonservices/cli
+        entrypoint: /bin/bash -l
 commands:
-  setup_buildkitd:
-    description: Enable docker experimental feature and setup buildkit environment
-    steps:
-      - run:
-          name: Enable docker experimental feature
-          command: |
-            # Restart Docker with experimental features on.
-            sudo sh -c 'echo '\''{"experimental":true}'\'' > /etc/docker/daemon.json'
-            sudo systemctl restart docker
-      - run:
-          name: Setup buildkit environment variable
-          command: |
-            echo 'export DOCKER_BUILDKIT=1' >> $BASH_ENV
   docker_login:
     description: Login to dockerhub
     steps:
@@ -20,26 +12,36 @@ commands:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
 jobs:
-  build_docker_image:
+  build_and_test:
     working_directory: ~/project
-    machine:
-      image: circleci/classic:201808-01
-      docker_layer_caching: true
+    executor: ros-cli
+    shell: /bin/bash --login -eo pipefail
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 18.09.3
       - checkout
-      - setup_buildkitd
       - docker_login
-      - run: 
-          name: Build docker images
-          command: |
-            # use short commit hash as docker tag
-            echo "Docker Tag: ${CIRCLE_SHA1:0:7}"
-            make -j DOCKER_TAG=${CIRCLE_SHA1:0:7} build
       - run:
-          name: Push docker images
-          command: |
-            make -j DOCKER_TAG=${CIRCLE_SHA1:0:7} push
+          command: ros be infra init -l
+          environment:
+            ROS_ENV: test
+      - run:
+          name: Generate the platform environment
+          command: ros be init
+      - run:
+          name: Build Docker Images 
+          command: ros be build
+      - run:
+          name: Push Docker Images
+          command: ros be push
+      # TODO
+      # - run:
+      #     name: Run Tests
+      #     command: ros be test
+      #     environment:
+      #       ROS_PROFILE: image
 workflows:
-  build_docker_image:
+  build_and_test:
     jobs:
-      - build_docker_image
+      - build_and_test

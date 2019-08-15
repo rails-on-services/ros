@@ -11,9 +11,7 @@ platform:
   # storage: service # each service provisions its own storage
   environment:
     partition_name: perx
-    connection:
-      host:
-        port: 80
+    connection__host__port: 80
   # Define the basic services that will be running on the platform and their default environment
   basic_services:
     # Uses custom helm chart
@@ -27,5 +25,5 @@ platform:
 
 infra:
   dns:
-    domain: rails-on-services.org
-    subdomain: ros
+    domain: perxtech.net
+    subdomain: whistler
