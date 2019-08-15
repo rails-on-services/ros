@@ -103,11 +103,11 @@ module Ros
           # binding.pry
           # Provide list of schemas to be migrated when rails db:migrate is invoked
           # SEE: https://github.com/influitive/apartment#managing-migrations
-          config.tenant_names = proc { Tenant.pluck(:schema_name) }
+          # config.tenant_names = proc { Tenant.pluck(:schema_name) }
 
-          # List of models that are NOT multi-tenanted
-          # See: https://github.com/influitive/apartment#excluding-models
-          config.excluded_models = Tenant.excluded_models
+          # # List of models that are NOT multi-tenanted
+          # # See: https://github.com/influitive/apartment#excluding-models
+          # config.excluded_models = Tenant.excluded_models
         end
       end
 
@@ -173,12 +173,12 @@ module Ros
         end
       end
 
-      initializer 'ros_core.configure_migrations' do |app|
-        config.paths['db/migrate'].expanded.each do |expanded_path|
-          app.config.paths['db/migrate'] << expanded_path
-          ActiveRecord::Migrator.migrations_paths << expanded_path
-        end
-      end
+      # initializer 'ros_core.configure_migrations' do |app|
+      #   config.paths['db/migrate'].expanded.each do |expanded_path|
+      #     app.config.paths['db/migrate'] << expanded_path
+      #     ActiveRecord::Migrator.migrations_paths << expanded_path
+      #   end
+      # end
 
       initializer 'ros_core.configure_console_methods' do |_app|
         require_relative 'console' unless Rails.const_defined?('Server')
