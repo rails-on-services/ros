@@ -184,6 +184,9 @@ module Ros
       end
 
       initializer 'ros_core.configure_console_methods' do |_app|
+        if Rails.env.development? and not Rails.const_defined?('Server')
+          Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
+        end
         require_relative 'console' unless Rails.const_defined?('Server')
       end
     end
