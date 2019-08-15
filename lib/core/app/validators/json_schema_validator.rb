@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'json-schema'
+require 'json_schemer'
 
 class JsonSchemaValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     schema_file = options.fetch(:schema)
-    return unless schema_file_present?(schema_file, record)
+    return unless validator
 
-    errors = JSON::Validator.fully_validate(schema_file.to_s, value, strict: true)
+    errors = validator.validate(value).to_a
     return true if errors.empty?
 
     record.errors.add(attribute,
@@ -17,10 +17,10 @@ class JsonSchemaValidator < ActiveModel::EachValidator
 
   private
 
-  def schema_file_present?(schema_file, record)
-    return true if schema_file
+  def validator(schema_file, record)
+    return JSONSchemer.schema(schema_file) if schema_file
 
     record.errors.add(attribute, 'missing schema in validator')
-    false
+    nil
   end
 end
