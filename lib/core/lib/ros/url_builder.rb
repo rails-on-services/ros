@@ -5,7 +5,7 @@ module Ros
     class JSONAPI::LinkBuilder
 
       def base_url
-        return @base_url unless service_engine_name
+        return @base_url if service_engine_name.blank?
 
         "#{@base_url}/#{service_engine_name}"
       end
