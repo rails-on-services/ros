@@ -5,8 +5,8 @@ default: &default
   adapter: postgresql
   encoding: unicode
   host: <%= ENV.fetch('RAILS_DATABASE_HOST') { 'localhost' } %>
-  username: <%= ENV.fetch('RAILS_DATABASE_USER') { '' } %>
-  password: <%= ENV.fetch('RAILS_DATABASE_PASSWORD') { '' } %>
+  username: <%= ENV.fetch('RAILS_DATABASE_USER') { 'admin' } %>
+  password: <%= ENV.fetch('RAILS_DATABASE_PASSWORD') { 'admin' } %>
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
   timeout: 5000
 
