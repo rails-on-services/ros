@@ -4,7 +4,7 @@ $:.push File.expand_path("lib", __dir__)
 
 Gem::Specification.new do |spec|
   spec.name        = 'ros-core'
-  spec.version     = '0.2.0' # Ros::Core::VERSION
+  spec.version     = '0.1.0' # Ros::Core::VERSION
   spec.authors     = ['Robert Roach']
   spec.email       = ['rjayroach@gmail.com']
   spec.homepage    = 'https://github.com/rails-on-services'
