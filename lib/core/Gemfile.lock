@@ -241,6 +241,7 @@ GEM
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     parallel (1.17.0)
+    pg (1.1.4)
     prometheus_exporter (0.4.5)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -351,6 +352,7 @@ DEPENDENCIES
   brakeman
   database_cleaner
   factory_bot_rails
+  pg
   pry-byebug
   pry-rails
   ros-core!
