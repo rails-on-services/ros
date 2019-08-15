@@ -8,12 +8,12 @@ class JsonSchemaValidator < ActiveModel::EachValidator
     validator = init_validator(schema_file)
 
     if validator
-      errors = validator.validate(value).to_a
-      return true if errors.empty?
+      result = validator.validate(value).to_a
+      return true if result.empty?
 
       record.errors.add(attribute,
                         :json_schema_mismatch,
-                        schema: schema_file, errors: errors)
+                        schema: schema_file, errors: result[0]["details"])
     else
       record.errors.add(:validator, 'missing schema in validator')
     end
