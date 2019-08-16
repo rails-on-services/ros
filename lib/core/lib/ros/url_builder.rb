@@ -13,7 +13,7 @@ module Ros
       private
 
       def service_engine_name
-        primary_resource_klass.superclass.to_s.split("::")[0...-1].first&.downcase
+        primary_resource_klass.superclass.to_s.split("::")[0...-1].first&.underscore
       end
 
     end
