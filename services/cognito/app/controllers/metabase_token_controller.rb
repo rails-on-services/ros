@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TokenController < Cognito::ApplicationController
+class MetabaseTokenController < Cognito::ApplicationController
   DEFAULT_TYPE = 'question'
 
   def show
