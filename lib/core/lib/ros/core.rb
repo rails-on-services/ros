@@ -15,6 +15,7 @@ require 'sidekiq/web'
 require 'ros_sdk'
 
 require_relative 'tenant_middleware'
+require_relative 'url_builder'
 require_relative 'api_token_strategy'
 require_relative 'routes'
 
