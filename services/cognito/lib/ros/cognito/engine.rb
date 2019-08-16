@@ -38,6 +38,10 @@ module Ros
           Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
         end
       end
+
+      initializer 'autoload_services', after: :load_config_initializers do |app|
+        Dir[Rails.root.join('../../services/**/*.rb')].each { |file| require file }
+      end
     end
   end
 end
