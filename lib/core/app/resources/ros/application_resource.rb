@@ -3,6 +3,7 @@
 module Ros
   class ApplicationResource < JSONAPI::Resource
     include JSONAPI::Authorization::PunditScopedResource
+    include Ros::UrlBuilder
     abstract
     attributes :urn, :created_at, :updated_at
 
