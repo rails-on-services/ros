@@ -69,8 +69,10 @@ ARG project=user
 
 # CircleCI docker version is old, it doesn't expand ARGs or ENVs for "COPY --chown" directive
 # TODO: Uncomment below line once CircleCI is at 19.03
-COPY --chown=${PUID}:${PGID} lib/core/. ../../lib/core/
-COPY --chown=${PUID}:${PGID} lib/sdk/. ../../lib/sdk/
+# COPY --chown=${PUID}:${PGID} lib/core/. ../../lib/core/
+# COPY --chown=${PUID}:${PGID} lib/sdk/. ../../lib/sdk/
+COPY --chown=rails:rails lib/core/. ../../lib/core/
+COPY --chown=rails:rails lib/sdk/. ../../lib/sdk/
 # COPY lib/core/. ../../lib/core/
 # COPY lib/sdk/. ../../lib/sdk/
 # TODO: remove above two lines when Circle at 19.03
@@ -80,7 +82,8 @@ RUN chown rails: /home/rails/lib
 
 # CircleCI docker version is old, it doesn't expand ARGs or ENVs for "COPY --chown" directive
 # TODO: Uncomment below line once CircleCI is at 19.03
-COPY --chown=${PUID}:${PGID} services/${project}/. ./
+# COPY --chown=${PUID}:${PGID} services/${project}/. ./
+COPY --chown=rails:rails services/${project}/. ./
 # COPY services/${project}/. ./
 # RUN chown -R ${PUID}:${PGID} /home/rails/services /usr/local/bundle
 # TODO: remove above two lines when Circle at 19.03
