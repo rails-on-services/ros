@@ -56,21 +56,34 @@ RUN [ $(getent group $PGID) ] || addgroup --gid ${PGID} rails \
  && chown ${PUID}:${PGID} /home/rails -R \
  && echo 'rails ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
+# CircleCI docker version is old, it doesn't expand ARGs or ENVs for "COPY --chown" directive
+# TODO: Uncomment below line once CircleCI is at 19.03
+# COPY --chown=${PUID}:${PGID} --from=base /usr/local/bundle /usr/local/bundle
 COPY --from=base /usr/local/bundle /usr/local/bundle
+# TODO: remove above line when Circle at 19.03
 
 # Rails operations
 WORKDIR /home/rails/services/app
 
 ARG project=user
-COPY lib/core/. ../../lib/core/
-COPY lib/sdk/. ../../lib/sdk/
+
+# CircleCI docker version is old, it doesn't expand ARGs or ENVs for "COPY --chown" directive
+# TODO: Uncomment below line once CircleCI is at 19.03
+COPY --chown=${PUID}:${PGID} lib/core/. ../../lib/core/
+COPY --chown=${PUID}:${PGID} lib/sdk/. ../../lib/sdk/
+# COPY lib/core/. ../../lib/core/
+# COPY lib/sdk/. ../../lib/sdk/
+# TODO: remove above two lines when Circle at 19.03
+
 # workaround for buildkit not setting correct permissions
 RUN chown rails: /home/rails/lib
 
-COPY services/${project}/. ./
-
 # CircleCI docker version is old, it doesn't expand ARGs or ENVs for "COPY --chown" directive
-RUN chown -R ${PUID}:${PGID} /home/rails /usr/local/bundle
+# TODO: Uncomment below line once CircleCI is at 19.03
+COPY --chown=${PUID}:${PGID} services/${project}/. ./
+# COPY services/${project}/. ./
+# RUN chown -R ${PUID}:${PGID} /home/rails/services /usr/local/bundle
+# TODO: remove above two lines when Circle at 19.03
 
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes
