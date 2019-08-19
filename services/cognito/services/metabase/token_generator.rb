@@ -15,7 +15,7 @@ module Metabase
     }, allow_blank: true
 
     def initialize(payload:, expiry:)
-      @config = Metabase::Config.new(Rails.configuration.try(:metabase))
+      @config = Metabase::Config.new(Settings.metabase.encryption_key)
 
       @exp = expiry || config.default_expiry
       @payload = payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + exp)
