@@ -52,9 +52,9 @@ module Ros
         event.datacontenttype = 'application/avro'
         event.datacontentencoding = 'Base64'
         event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z') 
-      binding.pry
+        # binding.pry
         event.data = Base64.encode64(self.class.avro.encode(data, schema_name: type))
-      binding.pry
+        # binding.pry
         self.class.logger.post(@source, event.to_h)
       end
     end
