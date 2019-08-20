@@ -17,18 +17,21 @@ RUN gem install \
     puma:3.12.1 \
     eventmachine:1.2.7
 
-ARG project=user
-COPY services/${project}/Gemfile* ./
-COPY services/${project}/ros-${project}.gemspec ./
-# NOTE: Dependent gem's gemspecs need to be copied in so that their dependencies are also installed
+# NOTE: Copy in a generic Gemfile and the dependent gem's gemspecs so that their dependencies are also installed
+COPY services/Gemfile* ./
 COPY lib/core/*.gemspec ../../lib/core/
 COPY lib/sdk/*.gemspec ../../lib/sdk/
 
+# Don't use the --deployment flag since this is a container. See: http://bundler.io/man/bundle-install.1.html#DEPLOYMENT-MODE
+ARG bundle_string='--without development test'
+RUN bundle install ${bundle_string}
+
 # Remove reference to gems loaded from a path so bundle doesn't blow up
 # RUN sed -i '/path/d' Gemfile
+ARG project=user
+COPY services/${project}/Gemfile* ./
+COPY services/${project}/ros-${project}.gemspec ./
 
-# # Don't use the --deployment flag since this is a container. See: http://bundler.io/man/bundle-install.1.html#DEPLOYMENT-MODE
-ARG bundle_string='--without development test'
 RUN bundle install ${bundle_string} \
  && find /usr/local/bundle -iname '*.o' -exec rm -rf {} \; \
  && find /usr/local/bundle -iname '*.a' -exec rm -rf {} \;
