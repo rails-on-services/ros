@@ -14,7 +14,7 @@ event_logging:
   config:
     host: fluentd
     port: 24224
-    schemas_path: doc/schemas
+    schemas_path: doc/schemas/cloud_events
     name: events-log
     schema_registry_url: http://kafkastack:8081
 
