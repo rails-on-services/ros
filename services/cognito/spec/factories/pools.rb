@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :pool do
-    name { "MyString" }
+    sequence(:name) { |n| "Pool-#{n}-Name" }
     properties { "" }
   end
 end
