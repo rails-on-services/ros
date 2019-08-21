@@ -1,0 +1,20 @@
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: instance
+        components:
+          vpc:
+            config:
+              provider: gcp         #other supported types: azure, oracle
+              vpc_name: my-test-vpc
+              subnet_name: my-test-subnet
+              cidr: '10.100.0.0/16'
+          instance:
+            config:
+              provider: gcp
+              name: my-test-instance
+              machine_type: 'f1-micro'
+              disk_image: 'debian-cloud/debian-9'
