@@ -4,6 +4,7 @@ module Ros
   module ApplicationRecordConcern
     extend ActiveSupport::Concern
     include ApiBelongsTo
+    include AssociationResource
 
     class_methods do
       # urn:partition:service:region:account_id:resource_type
