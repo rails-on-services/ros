@@ -4,7 +4,8 @@ module Ros
   module ApplicationRecordConcern
     extend ActiveSupport::Concern
     include ApiBelongsTo
-  
+    include AssociationResource
+
     class_methods do
       # urn:partition:service:region:account_id:resource_type
       # def self.to_urn; "#{urn_base}:#{current_tenant.try(:account_id)}:#{name.underscore}" end
