@@ -11,6 +11,14 @@ module Ros
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
       end
 
+      initializer 'ros_core.sidekiq' do |app|
+        if Sidekiq.server?
+          require 'pry-remote'
+          # Rails.logger = Sidekiq::Logging.logger
+          # ActiveRecord::Base.logger = Sidekiq::Logging.logger
+        end
+      end
+
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
       # export PLATFORM__CREDENTIALS__JWT_ENCRYPTION_KEY='test'
       initializer 'ros_core.set_platform_config' do |app|

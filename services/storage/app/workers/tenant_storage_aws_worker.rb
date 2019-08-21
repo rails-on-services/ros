@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
+# The AWS specific implementation to handle new files added to an S3 bucket
+
 require_relative '../../spec/dummy/config/application'
 Rails.application.initialize!
-Ros::Infra.tenant_storage.enable_notifications
+# sqs_client = Rails.configuration.x.infra.resources.mq.primary.client
+# Rails.configuration.x.infra.services.storage.enable_notifications(sqs_client)
 
 class TenantStorageAwsWorker < TenantStorageWorker
   include Shoryuken::Worker
 
-  shoryuken_options queue: Ros::Infra.tenant_storage.queue_name, auto_delete: true
+  shoryuken_options queue: Rails.configuration.x.infra.resources.storage.primary.notifications['storage/sftp/home'], auto_delete: true
 
   # Process a lifecycle event from the S3 bucket
   def perform(_sqs_msg, payload)

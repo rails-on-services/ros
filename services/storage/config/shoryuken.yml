@@ -1,2 +1,3 @@
 queues:
-  - sftp-events
+  # - sftp-events
+  - storage-sftp-home

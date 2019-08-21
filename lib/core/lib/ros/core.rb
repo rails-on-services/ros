@@ -120,6 +120,7 @@ module Ros
     rescue JWT::DecodeError
     end
 
+    def is_platform_urn?; account_id.eql?('platform') end
     def resource_type; resource.split('/').first end
     def resource_id; resource.split('/').last end
 
