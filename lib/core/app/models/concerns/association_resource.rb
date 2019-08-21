@@ -29,7 +29,7 @@ module AssociationResource
       )
     end
 
-    def has_many_resources(resource_name, class_name: nil, foreign_key:, as: nil)
+    def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
       return unless find_resource(resource_name).blank?
 
       resource_associations << HasManyResources.new(

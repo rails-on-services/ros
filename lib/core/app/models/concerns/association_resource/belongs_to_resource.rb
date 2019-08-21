@@ -4,7 +4,7 @@ module AssociationResource
   class BelongsToResource
     include ActiveModel::Model
     include AssociationInterface
-    attr_reader :name, :class_name, :foreign_key, :polymorphic
+    attr_reader :class_name, :foreign_key, :polymorphic
 
     def initialize(name:, class_name:, foreign_key:, polymorphic: false)
       @name = name
@@ -37,7 +37,7 @@ module AssociationResource
     def query_resource(model)
       resource_klass = extract_resource_klass(model)
       resource_id = extract_resource_id(model)
-      resource_klass.constantize.find(resource_id).first
+      resource_klass.constantize.where(id: resource_id).first
     end
   end
 end
