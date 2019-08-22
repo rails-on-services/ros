@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe PolicyPolicy do
   subject { PolicyPolicy.new(user, policy) }
 
-  let(:policy) { FactoryGirl.create(:policy) }
+  let(:policy) { FactoryBot.create(:policy) }
 
   context 'for a visitor' do
     let(:user) { nil }
@@ -19,7 +19,7 @@ describe PolicyPolicy do
   end
 
   context 'for a user' do
-    let(:user) { FactoryGirl.create(:user) }
+    let(:user) { FactoryBot.create(:user) }
 
     it { should permit(:show)    }
     it { should permit(:create)  }

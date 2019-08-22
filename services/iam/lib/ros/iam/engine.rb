@@ -8,7 +8,8 @@ module Ros
       config.generators.api_only = true
       config.generators do |g|
         g.test_framework :rspec, fixture: true
-        g.fixture_replacement :factory_bot, dir: 'spec/factories'
+        g.fixture_replacement :factory_bot
+        g.factory_bot dir: 'spec/factories'
       end
 
       initializer 'service.set_platform_config', before: 'ros_core.load_platform_config' do |_app|
@@ -32,10 +33,13 @@ module Ros
       end
 
       initializer 'service.configure_console_methods' do |_app|
-        if Rails.env.development? and not Rails.const_defined?('Server')
+        if Rails.env.development? && !Rails.const_defined?('Server')
           # Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
-          FactoryBot.definition_file_paths = Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
         end
+      end
+
+      initializer 'iam.factories', after: 'factory_bot.set_factory_paths' do
+        FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
       end
 
       initializer 'service.configure_devise_jwt' do |app|
