@@ -38,5 +38,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'aws-sdk-s3'
 
-  # spec.add_development_dependency 'sqlite3', '~> 1.3'
+  spec.add_development_dependency 'factory_bot_rails', '~> 5.0.2'
+  spec.add_development_dependency 'rspec-rails', '~> 3.8.2'
 end
