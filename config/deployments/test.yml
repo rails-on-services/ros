@@ -31,7 +31,10 @@ components:
           services:
             components:
               ingress:
-              kafkastack:
+              kafka:
+              kafka-zookeeper:
+              kafka-schema-registry:
+              kafka-connect:
               postgres:
               redis:
           platform:
