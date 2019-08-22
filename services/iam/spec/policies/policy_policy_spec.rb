@@ -10,38 +10,61 @@ describe PolicyPolicy do
   context 'for a visitor' do
     let(:user) { nil }
 
+    it { is_expected.to_not permit(:index)   }
     it { is_expected.to_not permit(:show)    }
     it { is_expected.to_not permit(:create)  }
-    it { is_expected.to_not permit(:new)     }
     it { is_expected.to_not permit(:update)  }
-    it { is_expected.to_not permit(:edit)    }
     it { is_expected.to_not permit(:destroy) }
   end
 
   context 'for a user' do
-    context 'user is root' do
+    context 'root' do
       let(:user) { FactoryBot.create(:root) }
 
+      it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }
       it { is_expected.to permit(:create)  }
-      it { is_expected.to permit(:new)     }
       it { is_expected.to permit(:update)  }
-      it { is_expected.to permit(:edit)    }
       it { is_expected.to permit(:destroy) }
     end
 
-    context 'user has the AdministratorAccess' do
-      let(:administrator_access) do
+    context 'with the AdministratorAccess' do
+      let(:policy) do
         FactoryBot.create :policy, name: 'AdministratorAccess'
       end
-      let(:user) { FactoryBot.create(:user, policies: [administrator_access]) }
+      let(:user) { FactoryBot.create(:user, policies: [policy]) }
 
+      it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }
       it { is_expected.to permit(:create)  }
-      it { is_expected.to permit(:new)     }
       it { is_expected.to permit(:update)  }
-      it { is_expected.to permit(:edit)    }
       it { is_expected.to permit(:destroy) }
+    end
+
+    context 'with the IamFullAccess' do
+      let(:policy) do
+        FactoryBot.create :policy, name: 'IamFullAccess'
+      end
+      let(:user) { FactoryBot.create(:user, policies: [policy]) }
+
+      it { is_expected.to permit(:index)   }
+      it { is_expected.to permit(:show)    }
+      it { is_expected.to permit(:create)  }
+      it { is_expected.to permit(:update)  }
+      it { is_expected.to permit(:destroy) }
+    end
+
+    context 'with the IamReadOnlyAccess' do
+      let(:policy) do
+        FactoryBot.create :policy, name: 'IamReadOnlyAccess'
+      end
+      let(:user) { FactoryBot.create(:user, policies: [policy]) }
+
+      it { is_expected.to permit(:index)   }
+      it { is_expected.to permit(:show)    }
+      it { is_expected.to_not permit(:create)  }
+      it { is_expected.to_not permit(:update)  }
+      it { is_expected.to_not permit(:destroy) }
     end
   end
 end

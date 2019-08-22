@@ -28,7 +28,9 @@ module Ros
         }
       end
 
-      def policy_name; Settings.service.policy_name end
+      def policy_name
+        Settings.service.policy_name
+      end
 
       def model_name
         name.gsub('Policy', '').to_s
