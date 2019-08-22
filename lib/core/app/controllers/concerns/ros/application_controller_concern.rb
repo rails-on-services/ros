@@ -9,24 +9,24 @@ module Ros
 
       # Return JSONAPI Error objects on common errors
       # https://jsonapi.org/examples/#error-objects-basics
-      rescue_from Pundit::NotAuthorizedError do |error|
-        render(status: :forbidden, json: { errors: [{
-          status: '403', code: :forbidden, title: 'Forbidden'
-        }]})
+      rescue_from Pundit::NotAuthorizedError do |_error|
+        render(status: :forbidden,
+               json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] })
       end
 
       # TODO: Will internal errors still be reported to Sentry.io?
-      rescue_from StandardError do |error|
-        render(status: :internal_server_error, json: { errors: [{
-          status: '500', code: :internal_server_error, title: 'Internal Server Error'
-        }]})
-      end if Rails.env.production?
+      if Rails.env.production?
+        rescue_from StandardError do |_error|
+          render(status: :internal_server_error,
+                 json: { errors: [{ status: '500', code: :internal_server_error, title: 'Internal Server Error' }] })
+        end
+      end
 
       before_action :authenticate_it!
       before_action :set_raven_context, if: -> { Settings.credentials.sentry_dsn }
 
       def authenticate_it!
-        return unless @current_user = request.env['warden'].authenticate!(:api_token)
+        return unless (@current_user = request.env['warden'].authenticate!(:api_token))
         return unless request.env['HTTP_AUTHORIZATION'].starts_with?('Basic')
 
         @current_jwt = Jwt.new(current_user.jwt_payload)
@@ -50,9 +50,8 @@ module Ros
       # This method is invoked on 404s from application's routes.rb if it extends
       # Ros::Routes and includes 'catch_not_found' at the bottom of the routes.rb file
       def not_found
-        render(status: :not_found, json: { errors: [{
-          status: '404', code: :not_found, title: 'Not Found'
-        }]})
+        render(status: :not_found,
+               json: { errors: [{ status: '404', code: :not_found, title: 'Not Found' }]})
         # render jsonapi: nil, code: 404, title: 'Invalid Path', detail: params[:path], status: :not_found
       end
 
