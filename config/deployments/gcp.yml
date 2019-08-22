@@ -1,0 +1,30 @@
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: instance
+        components:
+          provider_settings:
+            config: 
+              provider: gcp
+              region: us-central1
+              zone: us-central1-a
+              project: 'mimetic-shape-247710' 
+              credentials_file: 'mimetic-shape-247710-2c0c07e2c5e6.json'
+          vpc:
+            config:
+              provider: gcp         #other supported types: azure, oracle
+              vpc_name: my-test-vpc
+              subnet_name: my-test-subnet
+              cidr: '10.100.0.0/16'
+          instance:
+            config:
+              provider: gcp
+              name: my-test-instance
+              machine_type: 'f1-micro'
+              disk_image: 'debian-cloud/debian-9'
+          dns:
+            config:
+              provider: gcp
