@@ -351,13 +351,13 @@ DEPENDENCIES
   awesome_print
   brakeman
   database_cleaner
-  factory_bot_rails
+  factory_bot_rails (~> 5.0.2)
   pg
   pry-byebug
   pry-rails
   ros-core!
   ros_sdk!
-  rspec-rails
+  rspec-rails (~> 3.8.2)
   spring-commands-rspec
 
 BUNDLED WITH

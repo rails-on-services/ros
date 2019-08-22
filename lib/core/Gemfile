@@ -9,8 +9,6 @@ gem 'ros_sdk', path: '../sdk'
 group :development, :test do
   gem 'brakeman', require: false
   gem 'pry-byebug'
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
   gem 'spring-commands-rspec'
   gem 'database_cleaner'
 end
