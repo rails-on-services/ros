@@ -11,11 +11,10 @@ class UserResource < Iam::ApplicationResource
   filter :username
 
   def self.creatable_fields(context)
-    super - %i(attached_policies attached_actions)
+    super - %i[attached_policies attached_actions jwt_payload]
   end
 
   def self.updatable_fields(context)
-    super - %i(attached_policies attached_actions)
+    super - %i[attached_policies attached_actions jwt_payload]
   end
 end
-

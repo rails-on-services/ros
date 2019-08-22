@@ -29,10 +29,7 @@ describe PolicyPolicy do
     end
 
     context 'with the AdministratorAccess' do
-      let(:policy) do
-        FactoryBot.create :policy, name: 'AdministratorAccess'
-      end
-      let(:user) { FactoryBot.create(:user, policies: [policy]) }
+      let(:user) { FactoryBot.create(:user, :administrator_access) }
 
       it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }

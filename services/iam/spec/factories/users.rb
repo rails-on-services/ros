@@ -6,6 +6,10 @@ FactoryBot.define do
     password { Faker::Internet.password }
     console { true }
     api { true }
+
+    trait :administrator_access do
+      policies { [FactoryBot.create(:policy, :administrator_access)] }
+    end
   end
 end
 # TODO: Move to Cognito
