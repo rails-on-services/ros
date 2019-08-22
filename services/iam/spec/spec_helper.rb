@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'factory_bot_rails'
+require 'support/factory_bot'
+require 'support/pundit_matcher'
+
 # Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 # Dir[Rails.root.join('spec', 'factories', '**', '*.rb')].each { |f| require f }
 

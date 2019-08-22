@@ -7,9 +7,6 @@ require 'rspec/rails'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'pry'
-require 'factory_bot_rails'
-require 'support/factory_bot'
-require 'support/pundit_matcher'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
