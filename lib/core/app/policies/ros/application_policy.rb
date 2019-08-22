@@ -99,8 +99,6 @@ module Ros
     #
 
     def check_action(action)
-      Rails.logger.debug("in action with #{action} and #{self.class.name}")
-      Rails.logger.debug("in action with #{action} and #{user}")
       return true if user.class.name.eql? 'Root'
 
       (user.attached_policies.keys & accepted_policies(action)).any? ||
