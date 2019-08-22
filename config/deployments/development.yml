@@ -62,6 +62,7 @@ components:
               fluentd:
                 config:
                   enabled: yes
+              # kafkastack:
               localstack:
               nginx:
               postgres:
