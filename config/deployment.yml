@@ -107,7 +107,6 @@ components:
             # environment:
             components:
               fluentd: # request logging and cloud events
-              kafkastack:
               #   config:
               #     destination: big_query
               sftp:

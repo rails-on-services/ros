@@ -66,16 +66,16 @@ COPY --chown=rails:rails --from=base /usr/local/bundle /usr/local/bundle
 # Rails operations
 WORKDIR /home/rails/services/app
 
-ARG project=user
-
 # TODO: Replace rails:rails with ${PUID}:${PGID} when CircleCI is at 19.03
 COPY --chown=rails:rails lib/core/. ../../lib/core/
 COPY --chown=rails:rails lib/sdk/. ../../lib/sdk/
 
-COPY --chown=rails:rails services/${project}/. ./
-
 # workaround for buildkit not setting correct permissions
 RUN chown rails: /home/rails/lib
+
+# Copy in the project files
+ARG project=user
+COPY --chown=rails:rails services/${project}/. ./
 
 ARG rails_env=production
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes
