@@ -101,13 +101,20 @@ module Ros
     def check_action(action)
       return true if user.class.name.eql? 'Root'
 
-      (user.attached_policies.keys & accepted_policies(action)).any? ||
-        (user.attached_actions.keys & accepted_actions(action)).any?
+      user_policies = user&.attached_policies || {}
+      user_actions = user&.attached_actions || {}
+
+      (user_policies.keys & accepted_policies(action)).any? ||
+        (user_actions.keys & accepted_actions(action)).any?
     end
 
-    def accepted_policies(action); self.class.accepted_policies[action] || [] end
+    def accepted_policies(action)
+      self.class.accepted_policies[action] || []
+    end
 
-    def accepted_actions(action); self.class.accepted_actions[action] || [] end
+    def accepted_actions(action)
+      self.class.accepted_actions[action] || []
+    end
 
     def self.accepted_policies
       {
@@ -118,6 +125,7 @@ module Ros
         ],
         show?: [
           'AdministratorAccess',
+          "#{policy_name}FullAccess",
           "#{policy_name}ReadOnlyAccess"
         ],
         create?: [
