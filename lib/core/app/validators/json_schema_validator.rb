@@ -11,9 +11,22 @@ class JsonSchemaValidator < ActiveModel::EachValidator
       result = validator.validate(value).to_a
       return true if result.empty?
 
-      record.errors.add(attribute,
-                        :json_schema_mismatch,
-                        schema: schema_file, errors: result[0]["details"])
+      details = result[0]["details"]
+      fallback_error = "'#{result[0]["data_pointer"].gsub(/^\//, '')}' property is invalid"
+
+      record.errors.add(
+        attribute,
+        :json_schema_mismatch,
+        schema: schema_file,
+        errors: details.nil? ?
+          fallback_error :
+          details,
+        errors_summary: details.nil? ?
+          fallback_error :
+          details
+            .map { |k, v| "#{k}: #{v.kind_of?(Array) ? v.join(', ') : v}" }
+            .join('; ')
+      )
     else
       record.errors.add(:validator, 'missing schema in validator')
     end
