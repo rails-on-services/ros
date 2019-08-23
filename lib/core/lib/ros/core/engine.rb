@@ -81,19 +81,6 @@ module Ros
         end
       end
 
-      config.after_initialize do
-        if Settings.event_logging.enabled
-          if Settings.event_logging.provider.eql? 'fluentd'
-            require_relative '../cloudevents/fluentd_avro_logger'
-            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
-            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
-
-            # Rails.logger = Rails.configuration.x.logger
-            # ActiveRecord::Base.logger = Rails.configuration.x.logger
-          end
-        end
-      end
-
       initializer 'ros_core.set_platform_hosts' do |app|
         app.config.hosts = app.config.hosts | Settings.hosts.split(',') if Settings.hosts
       end
@@ -188,6 +175,16 @@ module Ros
           Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
         end
         require_relative 'console' unless Rails.const_defined?('Server')
+      end
+
+      config.after_initialize do
+        if Settings.event_logging.enabled
+          if Settings.event_logging.provider.eql? 'fluentd'
+            require_relative '../cloudevents/fluentd_avro_logger'
+            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
+            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
+          end
+        end
       end
     end
   end
