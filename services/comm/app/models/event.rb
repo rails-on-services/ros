@@ -5,7 +5,7 @@ class Event < Comm::ApplicationRecord
   belongs_to :template
   belongs_to :provider
   # maybe target should be cognito_pool_id
-  api_belongs_to :target, polymorphic: true
+  belongs_to_resource :target, polymorphic: true
   # api_has_many :users, through: :target
 
   has_many :messages, as: :owner
