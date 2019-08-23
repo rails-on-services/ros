@@ -33,7 +33,8 @@ module Ros
 
       initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
         if Rails.env.development? and not Rails.const_defined?('Server')
-          Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
+          # Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
+          FactoryBot.definition_file_paths = Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
         end
       end
     end
