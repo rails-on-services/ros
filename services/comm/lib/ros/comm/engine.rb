@@ -15,7 +15,7 @@ module Ros
       initializer 'service.set_platform_config', before: 'ros_core.load_platform_config' do |_app|
         settings_path = root.join('config/settings.yml')
         Settings.prepend_source!(settings_path) if File.exists? settings_path
-        name = self.class.parent.name.demodulize.underscore
+        name = self.class.module_parent.name.demodulize.underscore
         Settings.prepend_source!({ service: { name: name, policy_name: name.capitalize } })
       end
 
