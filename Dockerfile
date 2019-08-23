@@ -9,11 +9,11 @@ WORKDIR /home/rails/services/app
 RUN gem install \
     bundler:2.0.2 \
     nokogiri:1.10.4 \
-    ffi:1.10.0 \
+    ffi:1.11.1 \
     mini_portile2:2.4.0 \
-    msgpack:1.2.10 \
+    msgpack:1.3.1 \
     pg:1.1.4 \
-    nio4r:2.3.1 \
+    nio4r:2.4.0 \
     puma:3.12.1 \
     eventmachine:1.2.7
 
