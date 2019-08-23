@@ -11,11 +11,11 @@ components:
               provider: gcp
               region: us-central1
               zone: us-central1-a
-              project: 'mimetic-shape-247710' 
-              credentials_file: 'mimetic-shape-247710-2c0c07e2c5e6.json'
+              project: 'google-project-name' 
+              credentials_file: '/path/to/credentials.json'
           vpc:
             config:
-              provider: gcp         #other supported types: azure, oracle
+              provider: gcp         # other supported types: azure, oracle
               vpc_name: my-test-vpc
               subnet_name: my-test-subnet
               cidr: '10.100.0.0/16'
@@ -24,7 +24,9 @@ components:
               provider: gcp
               name: my-test-instance
               machine_type: 'f1-micro'
-              disk_image: 'debian-cloud/debian-9'
+              disk_image: 'debian'        # ubuntu or debian
+              project_name: my-project    # path to ROS project on instance ~/my-project/ros
+              ssh_public_key: '~/.ssh/id_rsa.pub'  # local path to SSH public key
           dns:
             config:
               provider: gcp
