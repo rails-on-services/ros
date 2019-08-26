@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Roots::SessionsController < Devise::ApplicationController
-
   protected
 
   def login_user!
@@ -12,5 +11,4 @@ class Roots::SessionsController < Devise::ApplicationController
   def sign_in_params
     params.require(:data).require(:attributes).permit(%i[email password])
   end
-
 end
