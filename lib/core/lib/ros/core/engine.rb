@@ -81,33 +81,21 @@ module Ros
         end
       end
 
-      config.after_initialize do
-        if Settings.event_logging.enabled
-          if Settings.event_logging.provider.eql? 'fluentd'
-            require_relative '../cloudevents/fluentd_avro_logger'
-            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
-            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
-
-            # Rails.logger = Rails.configuration.x.logger
-            # ActiveRecord::Base.logger = Rails.configuration.x.logger
-          end
-        end
-      end
-
       initializer 'ros_core.set_platform_hosts' do |app|
         app.config.hosts = app.config.hosts | Settings.hosts.split(',') if Settings.hosts
       end
 
       initializer 'ros_core.configure_apartment' do |app|
         Apartment.configure do |config|
-          # binding.pry
-          # Provide list of schemas to be migrated when rails db:migrate is invoked
-          # SEE: https://github.com/influitive/apartment#managing-migrations
-          config.tenant_names = proc { Tenant.pluck(:schema_name) }
+          if Settings.dig(:service, :name) # then we are in a service
+            # Provide list of schemas to be migrated when rails db:migrate is invoked
+            # SEE: https://github.com/influitive/apartment#managing-migrations
+            config.tenant_names = proc { Tenant.pluck(:schema_name) }
 
-          # List of models that are NOT multi-tenanted
-          # See: https://github.com/influitive/apartment#excluding-models
-          config.excluded_models = Tenant.excluded_models
+            # List of models that are NOT multi-tenanted
+            # See: https://github.com/influitive/apartment#excluding-models
+            config.excluded_models = Tenant.excluded_models
+          end
         end
       end
 
@@ -123,6 +111,8 @@ module Ros
           config.default_paginator = :paged
           config.default_page_size = 10
           config.maximum_page_size = 20
+          config.top_level_meta_include_page_count = true
+          config.top_level_meta_page_count_key = :page_count
         end
         Mime::Type.register 'application/json-patch+json', :json_patch
       end
@@ -174,14 +164,29 @@ module Ros
       end
 
       initializer 'ros_core.configure_migrations' do |app|
-        config.paths['db/migrate'].expanded.each do |expanded_path|
-          app.config.paths['db/migrate'] << expanded_path
-          ActiveRecord::Migrator.migrations_paths << expanded_path
+        if Settings.dig(:service, :name) # then we are in a service
+          config.paths['db/migrate'].expanded.each do |expanded_path|
+            app.config.paths['db/migrate'] << expanded_path
+            ActiveRecord::Migrator.migrations_paths << expanded_path
+          end
         end
       end
 
       initializer 'ros_core.configure_console_methods' do |_app|
+        if Rails.env.development? and not Rails.const_defined?('Server')
+          Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
+        end
         require_relative 'console' unless Rails.const_defined?('Server')
+      end
+
+      config.after_initialize do
+        if Settings.event_logging.enabled
+          if Settings.event_logging.provider.eql? 'fluentd'
+            require_relative '../cloudevents/fluentd_avro_logger'
+            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
+            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
+          end
+        end
       end
     end
   end

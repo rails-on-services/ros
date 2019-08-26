@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+require 'faker'
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods

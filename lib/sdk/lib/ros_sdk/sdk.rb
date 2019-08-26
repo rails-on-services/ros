@@ -67,11 +67,11 @@ module Ros
           self.domain = domain
           self.port = port
           self.force_path_style = force_path_style
-          self.service = (service || parent.name.split('::').last).downcase
+          self.service = (service || module_parent.name.split('::').last).downcase
           Ros::Sdk.configured_services ||= {}
-          Ros::Sdk.configured_services[self.service] = parent
-          parent::Base.site = endpoint
-          parent::Base.connection.use Ros::Sdk::Middleware
+          Ros::Sdk.configured_services[self.service] = module_parent
+          module_parent::Base.site = endpoint
+          module_parent::Base.connection.use Ros::Sdk::Middleware
           Ros::Sdk.configured_services[self.service]
         end
 

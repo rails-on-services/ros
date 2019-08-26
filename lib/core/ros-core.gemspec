@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '~> 6.0.0.rc2'
   spec.add_dependency 'jsonapi-resources', '0.9.5'
   spec.add_dependency 'jsonapi-authorization', '1.0.0'
+  spec.add_dependency 'json_schemer'
   spec.add_dependency 'warden', '1.2.8'
   spec.add_dependency 'jwt', '2.1.0'
   spec.add_dependency 'pry-rails', '0.3.9'
@@ -37,5 +38,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'aws-sdk-s3'
 
-  # spec.add_development_dependency 'sqlite3', '~> 1.3'
+  spec.add_development_dependency 'factory_bot_rails', '~> 5.0.2'
+  spec.add_development_dependency 'rspec-rails', '~> 3.8.2'
 end

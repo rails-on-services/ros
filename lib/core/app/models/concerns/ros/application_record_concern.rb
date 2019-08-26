@@ -4,7 +4,7 @@ module Ros
   module ApplicationRecordConcern
     extend ActiveSupport::Concern
     include ApiBelongsTo
-  
+
     class_methods do
       # urn:partition:service:region:account_id:resource_type
       # def self.to_urn; "#{urn_base}:#{current_tenant.try(:account_id)}:#{name.underscore}" end
@@ -31,7 +31,14 @@ module Ros
 
       def current_tenant; self.class.current_tenant end
 
-      after_commit :enqueue_after_commit_jobs  # , if: -> { Settings.workers.enabled }
+      after_commit :enqueue_after_commit_jobs
+
+      # TODO: Uncomment when we have the model avro schema generator ready
+      # after_commit :stream_cloud_event  # , if: -> { Settings.workers.enabled }
+
+      def stream_cloud_event
+        Ros::StreamCloudEventJob.perform_now(self)
+      end
 
       def enqueue_after_commit_jobs
         Ros::PlatformProducerEventJob.perform_now(self)

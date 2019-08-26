@@ -17,6 +17,7 @@ class Tenant < Iam::ApplicationRecord
   def create_service_tenants
     Ros::Sdk.configured_services.each do |name, service|
       next if name.eql? 'iam'
+
       service::Tenant.create(schema_name: schema_name)
       # TODO: Log a warning if any call fails
     end

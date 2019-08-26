@@ -5,4 +5,6 @@ Ros::Cognito::Engine.routes.draw do
   jsonapi_resources :users
   jsonapi_resources :pools
   jsonapi_resources :endpoints
+
+  resources :metabase_token, only: :show
 end
