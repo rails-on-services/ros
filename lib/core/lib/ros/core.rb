@@ -93,7 +93,7 @@ module Ros
 
     def alg; Settings.jwt.alg end
 
-    def encryption_key; Settings.jwt.encryption_key end
+    def encryption_key; Settings.jwt.encryption_key || '' end
   end
 
   Urn = Struct.new(:txt, :partition_name, :service_name, :region, :account_id, :resource) do

@@ -50,7 +50,7 @@ class Credential < Iam::ApplicationRecord
     schema_name = Apartment::Tenant.current
     account_id = schema_name.remove('_')
     offset = rand(0..6)
-    salt = Settings.credential.salt.to_s.split('')
+    salt = Settings.credential&.salt.to_s.split('')
     key_prefix = "A#{(offset + 65).chr}"
     account_id.split('').each_with_object(key_prefix.split('')) do |v, a|
       a.append (v.to_i + salt.shift.to_i + offset + 65).chr
@@ -67,8 +67,8 @@ class Credential < Iam::ApplicationRecord
 
   def schema_name_from_access_key_id
     offset = access_key_id[1].ord - 65
-    salt = Settings.credential.salt.to_s.split('')
-    a = access_key_id[2...].split('')
+    salt = Settings.credential&.salt.to_s.split('')
+    a = access_key_id.last(2).split('')
     b = a.values_at(* a.each_index.select {|i| i.even?})
     b.each_with_object([]) do |char, a|
       a.append (char.ord - salt.shift.to_i - offset - 65).to_s
