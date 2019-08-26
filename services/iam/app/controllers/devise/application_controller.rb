@@ -39,5 +39,4 @@ class Devise::ApplicationController < Devise::SessionsController
   def serialize_resource(klass, resource)
     JSONAPI::ResourceSerializer.new(klass).serialize_to_hash(resource)
   end
-
 end
