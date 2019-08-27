@@ -45,7 +45,6 @@ module Ros
   end
   # NOTE: End Experimental
 
-
   # TODO: Authorize method
   # TODO: scope value is the subject's policies; What if the subject's policies change after token issued?
   # It could be that every token expires in 10 minutes or something which means that the auth strategy
