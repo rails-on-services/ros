@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'users requests', type: :request do
-  include LoginSpecHelper
-
   describe 'GET index' do
     let(:body) { JSON.parse(response.body) }
     context 'unauthenticated user' do
