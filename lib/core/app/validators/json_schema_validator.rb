@@ -7,20 +7,14 @@ class JsonSchemaValidator < ActiveModel::EachValidator
     schema_file = options.fetch(:schema)
     validator = init_validator(schema_file)
 
-    unless validator
-      return false
-    end
+    return false unless validator
 
     result = validator.validate(value).to_a
     return true if result.empty?
 
-    record.errors.add(
-      attribute,
-      :json_schema_mismatch,
-      schema: schema_file,
-      errors: errors(result),
-      errors_summary: errors_summary(result)
-    )
+    record.errors.add(attribute, :json_schema_mismatch,
+                      schema: schema_file, errors: errors(result),
+                      errors_summary: errors_summary(result))
   end
 
   private
@@ -35,23 +29,22 @@ class JsonSchemaValidator < ActiveModel::EachValidator
   end
 
   def fallback_error(result)
-    "'#{result[0]["data_pointer"].gsub(/^\//, '')}' property is invalid"
+    "'#{result[0]['data_pointer'].gsub(%r{^\/}, '')}' property is invalid"
   end
 
   def errors(result)
-    details = result[0]["details"]
+    details = result[0]['details']
 
     details.nil? ? fallback_error(result) : details
   end
 
   def errors_summary(result)
-    details = result[0]["details"]
+    details = result[0]['details']
 
-    return details.nil? ?
-      fallback_error(result) :
-      details
-        .map { |k, v| "#{k}: #{v.kind_of?(Array) ? v.join(', ') : v}" }
-        .join('; ')
+    if details.nil?
+      fallback_error(result)
+    else
+      details.map { |k, v| "#{k}: #{v.is_a?(Array) ? v.join(', ') : v}" }.join('; ')
+    end
   end
-
 end
