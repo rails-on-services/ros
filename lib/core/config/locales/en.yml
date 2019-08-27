@@ -2,4 +2,4 @@ en:
   activerecord:
     errors:
       messages:
-        json_schema_mismatch: "does not match specified schema"
+        json_schema_mismatch: "does not match specified schema: %{errors_summary}"
