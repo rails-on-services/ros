@@ -29,6 +29,8 @@ module Ros
       def authenticate_it!
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
         return unless request.env['HTTP_AUTHORIZATION'].starts_with?('Basic')
+
+        @current_jwt = Jwt.new(current_user.jwt_payload)
       end
 
       def current_user
@@ -60,8 +62,7 @@ module Ros
       def set_headers!
         return if current_user&.jwt_payload.blank?
 
-        @current_jwt = Jwt.new(current_user.jwt_payload)
-        response.set_header('Authorization', "Bearer #{@current_jwt.encode}")
+        response.set_header('Authorization', "Bearer #{current_jwt.encode}")
       end
 
       # Documentation

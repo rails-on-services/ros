@@ -10,6 +10,7 @@ module Ros
     def parse_tenant_name(request)
       @auth_string = request.env['HTTP_AUTHORIZATION']
       return 'public' unless auth_string.present?
+
       @auth_type, @token = auth_string.split(' ')
       @auth_type.downcase!
       Rails.logger.info("Invalid auth type #{auth_type}") and return 'public' unless auth_type.in? %w(basic bearer)
@@ -17,11 +18,12 @@ module Ros
       schema_name = send("tenant_name_from_#{auth_type}")
       Rails.logger.info('Invalid credentials') if schema_name.eql?('public')
       request.env['X-AccountId'] = schema_name
-      Tenant.find_by(schema_name: schema_name)&.schema_name ||'public'
+      Tenant.find_by(schema_name: schema_name)&.schema_name || 'public'
     end
 
     def tenant_name_from_basic
       return 'public' unless @access_key_id = token.split(':').first
+
       credential.try(:schema_name) || 'public'
     end
 
@@ -36,6 +38,7 @@ module Ros
 
     def tenant_name_from_bearer
       return 'public' unless account_id = urn.try(:account_id)
+
       Tenant.account_id_to_schema(account_id)
     end
 

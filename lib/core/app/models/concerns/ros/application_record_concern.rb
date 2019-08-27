@@ -24,7 +24,6 @@ module Ros
       def urn_id; :id end
     end
 
-
     included do
       # urn:partition:service:region:account_id:resource_type/id
       def to_urn; "#{self.class.to_urn}/#{send(self.class.urn_id)}" end
