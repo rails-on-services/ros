@@ -30,7 +30,7 @@ module Ros
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
         return unless request.env['HTTP_AUTHORIZATION'].starts_with?('Basic')
 
-        @current_jwt = Jwt.new(current_user.jwt_payload)
+        @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
       end
 
       def current_user
