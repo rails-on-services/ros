@@ -41,7 +41,7 @@ class User < Iam::ApplicationRecord
 
   # TODO: Set scope to the user's policies
   def jwt_payload
-    @jwt_payload ||= { iss: Ros::Sdk.service_endpoints['iam'].to_s, sub: to_urn, scope: '*' }
+    @jwt_payload ||= { iss: Settings.jwt.iss, sub: to_urn, scope: '*' }
   end
 
   # NOTE: Credential is in the public schema
