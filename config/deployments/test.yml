@@ -44,6 +44,9 @@ components:
               comm:
                 config:
                   profiles: ['server']
+              organization:
+                config:
+                  profiles: ['server']
               iam:
                 config:
                   profiles: ['server']

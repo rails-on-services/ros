@@ -165,6 +165,11 @@ components:
                   mount: yes
                   profiles: ['server', 'worker']
                   ros: yes
+              organization:
+                config:
+                  mount: yes
+                  profiles: ['server', 'worker']
+                  ros: yes
               storage:
                 config:
                   enabled: yes
