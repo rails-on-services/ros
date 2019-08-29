@@ -16,7 +16,7 @@ FactoryBot.define do
         schema { 'public' }
       end
 
-      before(:create) do |user, evaluator|
+      before(:create) do |_user, evaluator|
         Apartment::Tenant.switch! evaluator.schema
       end
 
