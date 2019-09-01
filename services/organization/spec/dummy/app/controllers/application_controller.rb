@@ -1,3 +1,3 @@
 class ApplicationController < ActionController::API
-    include Ros::ApplicationControllerConcern
+  include Ros::ApplicationControllerConcern
 end
