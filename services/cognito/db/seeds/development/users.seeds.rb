@@ -20,6 +20,9 @@ after 'development:tenants' do
       #   pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Homes', phone_number: '')
       #   pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Lucas', phone_number: '')
       # end
+      Pool.create(name: 'Gold')
+      Pool.create(name: 'Silver')
+      Pool.create(name: 'Bronze')
     end
   end
 end
