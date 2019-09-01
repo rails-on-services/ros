@@ -21,13 +21,19 @@ after 'development:tenants' do
       @created_list.append({ type: 'user', owner: user, tenant: tenant, credential: credential, secret: credential.secret_access_key })
 
       # Create a Group
-      group_admin = Group.create(name: 'Administrators')
+      group_admin = Group.create(name: 'Admin')
 
       # Attach the Admin Policy to the Group
       group_admin.policies << Policy.first
 
       # Assign the first User to the Admin Group
       group_admin.users << User.first
+
+      # NOTE: create remainign groups
+      Group.create(name: 'Creator')
+      Group.create(name: 'Customer Support')
+      Group.create(name: 'Manager')
+      Group.create(name: 'Viewer')
 
       # Role.create(name: 'PerxServiceRoleForIAM')
       # Role.create(name: 'PerxUserReadOnlyAccess')
