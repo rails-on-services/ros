@@ -62,6 +62,7 @@ module Ros
 
         @current_jwt = Jwt.new(current_user.jwt_payload)
         response.set_header('Authorization', "Bearer #{@current_jwt.encode}")
+        response.set_header('Access-Control-Expose-Headers', 'Authorization')
       end
 
       # Documentation
