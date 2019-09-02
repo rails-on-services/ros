@@ -58,7 +58,6 @@ ARG PGID=1000
 RUN [ $(getent group $PGID) ] || addgroup --gid ${PGID} rails \
  && useradd -ms /bin/bash -d /home/rails --uid ${PUID} --gid ${PGID} rails \
  && mkdir -p /home/rails/services/app \
- && echo 'set editing-mode vi' > /home/rails/.inputrc \
  && echo "alias rspec='spring rspec $@'\nalias src='ss; rc'\nalias ss='spring stop'\nalias rs='rails server -b 0.0.0.0 --pid /tmp/server.pid'\nalias rc='spring rails console'\nalias rk='spring rake'" > /home/rails/.bash_aliases \
  && chown ${PUID}:${PGID} /home/rails -R \
  && echo 'rails ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers

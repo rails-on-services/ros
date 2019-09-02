@@ -68,7 +68,7 @@ class Credential < Iam::ApplicationRecord
   def schema_name_from_access_key_id
     offset = access_key_id[1].ord - 65
     salt = Settings.credential&.salt.to_s.split('')
-    a = access_key_id.last(2).split('')
+    a = access_key_id[2..-1].split('')
     b = a.values_at(* a.each_index.select(&:even?))
     b.each_with_object([]) do |char, a|
       a.append((char.ord - salt.shift.to_i - offset - 65).to_s)
