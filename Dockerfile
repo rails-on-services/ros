@@ -23,6 +23,10 @@ COPY lib/core/*.gemspec ../../lib/core/
 COPY lib/sdk/*.gemspec ../../lib/sdk/
 
 # Don't use the --deployment flag since this is a container. See: http://bundler.io/man/bundle-install.1.html#DEPLOYMENT-MODE
+# ARG GEM_SERVER=http://host.docker.internal:9292
+# ARG GEM_SERVER=http://gateway.docker.internal:9292
+# ARG GEM_SERVER=http://172.17.0.1:9292
+ARG GEM_SERVER
 ARG bundle_string='--without development test'
 RUN bundle install ${bundle_string}
 
