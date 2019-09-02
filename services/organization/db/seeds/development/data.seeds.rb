@@ -5,6 +5,8 @@ after 'development:tenants' do
     is_even = (tenant.id % 2).zero?
     next if tenant.id.eql? 1
     tenant.switch do
+      first_org = FactoryBot.create(:org)
+      FactoryBot.create(:branch, org: first_org)
     end
   end
 end

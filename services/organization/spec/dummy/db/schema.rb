@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_28_151554) do
+ActiveRecord::Schema.define(version: 2019_09_02_123256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "branches", force: :cascade do |t|
+    t.bigint "org_id"
+    t.string "name"
+    t.jsonb "properties", default: {}, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["org_id"], name: "index_branches_on_org_id"
+  end
 
   create_table "orgs", force: :cascade do |t|
     t.string "name"
@@ -44,4 +53,5 @@ ActiveRecord::Schema.define(version: 2019_08_28_151554) do
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end
 
+  add_foreign_key "branches", "orgs"
 end
