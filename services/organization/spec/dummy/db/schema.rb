@@ -18,8 +18,7 @@ ActiveRecord::Schema.define(version: 2019_08_28_151554) do
   create_table "orgs", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.jsonb "properties"
-    t.jsonb "display_properties"
+    t.jsonb "properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
