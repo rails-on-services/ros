@@ -1,37 +1,27 @@
-source 'https://rubygems.org'
+source ENV['GEM_SERVER'] || 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-# Declare your gem's dependencies in organization.gemspec.
-# Bundler will treat runtime dependencies like base dependencies, and
-# development dependencies will be added by default to the :development group.
 gemspec
 
-# Declare any dependencies that are still in development here instead of in
-# your gemspec. These might include edge Rails or gems from your path or
-# Git. Remember to move these dependencies to your gemspec before releasing
-# your gem to rubygems.org.
-
-# To use a debugger
-# gem 'byebug', group: [:development, :test]
+gem 'pry-rails'
+gem 'awesome_print'
+gem 'pg'
+gem 'ros-core', path: '../../lib/core'
+gem 'ros_sdk', path: '../../lib/sdk'
 
 group :production do
   gem 'puma'
 end
 
-gem 'pry-rails'
-gem 'awesome_print'
-group :development, :test do
-  gem 'brakeman', require: false
-  gem 'pry-byebug'
-  gem 'pry-stack_explorer'
-  gem 'faker'
+group :development do
+  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'rails-erd'
 end
 
-gem 'ros-core', path: '../../lib/core'
-gem 'ros_sdk', path: '../../lib/sdk'
 group :development, :test do
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
-  gem 'spring-commands-rspec'
+  gem 'brakeman', require: false
   gem 'database_cleaner'
+  gem 'spring-commands-rspec'
 end
