@@ -1,0 +1,6 @@
+---
+:queues:
+  - organization_platform_producer_events
+  - organization_platform_consumer_events
+  - organization_tenant_producer_events
+  - organization_tenant_consumer_events

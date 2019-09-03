@@ -24,6 +24,9 @@ components:
               iam:
                 config:
                   mount: no
+              organization:
+                config:
+                  mount: no
               storage:
                 config:
                   mount: no

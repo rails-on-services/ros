@@ -113,6 +113,9 @@ components:
               iam:
                 config:
                   profiles: ['server']
+              organization:
+                config:
+                  profiles: ['server']
                   # command: ["tail", "-F", "log/development.log"]
               # storage:
               #   config:

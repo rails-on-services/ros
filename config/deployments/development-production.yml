@@ -22,6 +22,8 @@ platform:
       mount: no
     iam:
       mount: no
+    organization:
+      mount: no
     storage:
       mount: no
     # game:
