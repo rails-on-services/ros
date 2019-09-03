@@ -18,7 +18,7 @@ gem 'pry-rails'
 gem 'awesome_print'
 group :development, :test do
   gem 'brakeman', require: false
-  # gem 'pry-byebug'
+  gem 'pry-remote'
   gem 'pry-stack_explorer'
   gem 'faker'
 end

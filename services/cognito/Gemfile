@@ -19,6 +19,7 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'rails-erd'
+  gem 'pry-remote'
 end
 
 
@@ -27,7 +28,6 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'pry-byebug'
   gem 'pry-stack_explorer'
   gem 'rspec-rails'
   gem 'rubocop', require: false
