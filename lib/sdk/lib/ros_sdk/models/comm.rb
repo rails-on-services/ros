@@ -9,5 +9,6 @@ module Ros
 
     class Message < Base; end
     class Channel < Base; end
+    class Campaign < Base; end
   end
 end
