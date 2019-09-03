@@ -6,5 +6,6 @@ module Ros
     class Base < Ros::Sdk::Base; end
 
     class Tenant < Base; end
+    class Org < Base; end
   end
 end
