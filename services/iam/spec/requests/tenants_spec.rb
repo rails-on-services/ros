@@ -98,12 +98,6 @@ RSpec.describe 'tenants requests', type: :request do
 
           post '/tenants', params: params, headers: auth_headers
 
-          puts 'response.code:'
-          puts response.code
-
-          puts 'body:'
-          puts body
-
           expect(response).to_not be_successful
           expect(response.code).to eq '400'
           expect(body['errors'][0]['title']).to eq('Param not allowed')
