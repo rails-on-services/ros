@@ -3,7 +3,7 @@
 module Ros
   module ApplicationRecordConcern
     extend ActiveSupport::Concern
-    include ApiBelongsTo
+    include AssociationResource
 
     class_methods do
       # urn:partition:service:region:account_id:resource_type
@@ -22,6 +22,10 @@ module Ros
 
       # NOTE: Override in model to provide a custom id
       def urn_id; :id end
+
+      def resource_name; "#{service_name}::#{name}" end
+
+      def service_name; Ros::Sdk.configured_services[Settings.service.name] end
     end
 
 
