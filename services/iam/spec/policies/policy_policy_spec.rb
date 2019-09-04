@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe PolicyPolicy do
+RSpec.describe PolicyPolicy do
   subject { PolicyPolicy.new(user, policy) }
 
   let(:policy) { FactoryBot.create(:policy) }

@@ -62,7 +62,7 @@ components:
               fluentd:
                 config:
                   enabled: yes
-              # kafkastack:
+              kafkastack:
               localstack:
               nginx:
               postgres:
@@ -111,6 +111,9 @@ components:
                 config:
                   profiles: ['server']
               iam:
+                config:
+                  profiles: ['server']
+              organization:
                 config:
                   profiles: ['server']
                   # command: ["tail", "-F", "log/development.log"]

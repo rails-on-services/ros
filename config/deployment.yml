@@ -135,11 +135,6 @@ components:
                     port: 24224
                 event_logging:
                   enabled: no
-                  config:
-                    name: events-log
-                    host: fluentd
-                    port: 24224
-                    schema_registry_url: http://kafkastack:8081
             components:
               account:
                 config:
@@ -172,9 +167,8 @@ components:
                   ros: yes
               organization:
                 config:
-                  enabled: no
                   mount: yes
-                  profiles: ['server']
+                  profiles: ['server', 'worker']
                   ros: yes
               storage:
                 config:

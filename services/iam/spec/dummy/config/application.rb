@@ -21,10 +21,6 @@ module Dummy
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
     config.hosts << 'iam'
-    # NOTE: This is being used to ensure that the requests specs
-    # do not fail due to hosts problems. Not sure if this is the
-    # right way to solve it but must move on
-    config.hosts << 'www.example.com' if Rails.env.test?
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

@@ -51,6 +51,10 @@ module Ros
         # end
         # app.config.middleware.use Warden::JWTAuth::Middleware
       end
+
+      initializer 'service.configure.rspec.factories', after: 'factory_bot.set_factory_paths' do
+        FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
+      end
     end
   end
 end

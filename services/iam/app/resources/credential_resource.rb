@@ -12,4 +12,3 @@ class CredentialResource < Iam::ApplicationResource
     }
   end
 end
-

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'users requests', type: :request do
+RSpec.describe 'users requests', type: :request do
   describe 'GET index' do
     let(:body) { JSON.parse(response.body) }
     context 'unauthenticated user' do
@@ -19,6 +19,7 @@ describe 'users requests', type: :request do
         cr = {}
         tenant.switch do
           user = FactoryBot.create(:user, :administrator_access)
+          login(user)
           cr = user.credentials.create
         end
 
@@ -58,14 +59,13 @@ describe 'users requests', type: :request do
         cr = {}
         tenant.switch do
           user = FactoryBot.create(:user, :administrator_access)
+          login(user)
           cr = user.credentials.create
         end
-
         headers = {
           'Content-Type' => 'application/vnd.api+json',
           'Authorization' => "Basic #{cr.access_key_id}:#{cr.secret_access_key}"
         }
-
         post '/users', params: user_data, headers: headers
       end
 
