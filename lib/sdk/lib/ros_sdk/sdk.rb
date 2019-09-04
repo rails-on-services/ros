@@ -33,11 +33,15 @@ module Ros
 
     class Credential
       class << self
-        attr_accessor :access_key_id, :secret_access_key, :partition, :region, :authorization
+        attr_accessor :access_key_id, :secret_access_key, :partition, :region, :authorization, :request_headers
 
         def configure(access_key_id: nil, secret_access_key: nil)
           self.access_key_id = access_key_id
           self.secret_access_key = secret_access_key
+        end
+
+        def request_headers
+          @request_headers ||= {}
         end
 
         def partition

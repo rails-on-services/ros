@@ -17,8 +17,8 @@ module Ros
         # # env[:request_headers]['X-Request-Id'] = RequestStore.store[:request_id]
         # #      env[:request_headers]['X-Request-Id'] = Thread.current[:request_id] # NOTE: Not present when calling Tenant.create from rails console
         env.request_headers['Authorization'] = Ros::Sdk::Credential.authorization # if Ros::Sdk.authorization
+        env.request_headers.merge!(Ros::Sdk::Credential.request_headers)
         # env.request_headers['Authorization'] = RequestStore.store['Authorization']
-        # binding.pry
         response = @app.call(env)
         # binding.pry
         Ros::Sdk::Credential.authorization = response.env.response_headers['authorization'] if response.env.response_headers['authorization']

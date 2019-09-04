@@ -49,12 +49,13 @@ module Ros
       end
 
       initializer 'ros_core.initialize_platform_metrics' do |app|
+        app.config.middleware.insert_after(ActionDispatch::RequestId, Ros::DtraceMiddleware)
         if Settings.metrics.enabled
           require 'prometheus_exporter'
           # binding.pry
           require_relative '../prometheus_exporter/web_collector'
           require_relative '../prometheus_exporter/middleware'
-          Rails.application.config.middleware.insert 0, Ros::PrometheusExporter::Middleware
+          app.config.middleware.insert 0, Ros::PrometheusExporter::Middleware
           if Settings.metrics.process_stats_enabled
             # Reports basic process stats like RSS and GC info
             require 'prometheus_exporter/instrumentation'
