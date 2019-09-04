@@ -3,7 +3,6 @@
 module Ros
   module ApplicationRecordConcern
     extend ActiveSupport::Concern
-    include ApiBelongsTo
     include AssociationResource
 
     class_methods do
