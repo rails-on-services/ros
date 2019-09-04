@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-
 shared_examples 'it belongs_to_resource' do |resource|
-
   it { should respond_to resource }
 
   describe 'association config' do
@@ -23,7 +21,6 @@ shared_examples 'it belongs_to_resource' do |resource|
       end
 
       context 'Resource class' do
-
         subject { described_class.find_resource(resource).class_name.classify.safe_constantize }
 
         it 'should be defined' do
@@ -49,7 +46,6 @@ shared_examples 'it belongs_to_resource' do |resource|
 end
 
 shared_examples 'it has_many_resources' do |resource|
-
   it { should respond_to resource }
 
   describe 'association config' do
