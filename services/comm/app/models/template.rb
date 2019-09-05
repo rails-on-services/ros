@@ -14,6 +14,4 @@ class Template < Comm::ApplicationRecord
   def render
     ERB.new(content.gsub('<%= ', '<%= properties.')).result(get_binding)
   end
-
-  def get_binding; binding end
 end
