@@ -5,6 +5,8 @@ class Tenant < Iam::ApplicationRecord
 
   belongs_to :root
 
+  attr_readonly :root_id, :account_id
+
   before_validation :generate_values, on: :create
   validate :fixed_values_unchanged_x, if: :persisted?
 

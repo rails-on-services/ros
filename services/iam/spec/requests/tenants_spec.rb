@@ -38,32 +38,30 @@ RSpec.describe 'tenants requests', type: :request do
     end
   end
 
-  describe 'POST /tenants' do
+  describe 'PATCH /tenants' do
     context 'unauthenticated user' do
       before do
         @headers = { 'Content-Type' => 'application/vnd.api+json' }
       end
 
       it 'returns unauthenticated' do
-        post '/tenants', params: '{}', headers: @headers
+        patch '/tenants', params: '{}', headers: @headers
 
         expect(response).to be_unauthorized
       end
     end
 
     context 'authenticated user' do
-      before do
-        @root = FactoryBot.create :root
-      end
-
       context 'with correct params' do
         it 'returns a successful response' do
+          tenant = FactoryBot.create :tenant
+
           params = {
             "data": {
+              id: "#{tenant.id}",
               "type": "tenants",
               "attributes": {
                 name: "Some Name",
-                "root_id": @root.id,
                 "properties": {
                   "custom_1": "cust_111"
                 }
@@ -71,11 +69,11 @@ RSpec.describe 'tenants requests', type: :request do
             }
           }.to_json
 
-          post '/tenants', params: params, headers: auth_headers
+          patch "/tenants/#{tenant.id}", params: params, headers: auth_headers
 
           expect(response).to be_successful
 
-          expect(response.code).to eq '201'
+          expect(response.code).to eq '200'
           expect(body['data']).to_not be_nil
 
           expect(body['data']['attributes']['name']).to eq('Some Name')
@@ -86,22 +84,47 @@ RSpec.describe 'tenants requests', type: :request do
 
       context 'with incorrect params' do
         it 'returns a successful response' do
+          tenant = FactoryBot.create :tenant
+
           params = {
             "data": {
+              id: "#{tenant.id}",
               "type": "tenants",
               "attributes": {
-                "root_id": @root.id,
                 "blabla": "blabla"
               }
             }
           }.to_json
 
-          post '/tenants', params: params, headers: auth_headers
+          patch "/tenants/#{tenant.id}", params: params, headers: auth_headers
 
           expect(response).to_not be_successful
           expect(response.code).to eq '400'
           expect(body['errors'][0]['title']).to eq('Param not allowed')
           expect(body['errors'][0]['detail']).to eq('blabla is not allowed.')
+        end
+      end
+
+      context 'trying to set readonly root_id param' do
+        it 'returns a successful response' do
+          tenant = FactoryBot.create :tenant
+          root = FactoryBot.create :root
+
+          params = {
+            "data": {
+              id: "#{tenant.id}",
+              "type": "tenants",
+              "attributes": {
+                "root_id": "#{root.id}"
+              }
+            }
+          }.to_json
+
+          patch "/tenants/#{tenant.id}", params: params, headers: auth_headers
+
+          expect(response).to_not be_successful
+          expect(response.code).to eq '422'
+          expect(body['errors'][0]['title']).to eq('root_id cannot be changed')
         end
       end
     end
