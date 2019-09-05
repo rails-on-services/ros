@@ -9,9 +9,21 @@ RSpec.describe 'templates requests', type: :request do
     Warden.test_mode!
     login_as(authorized_user, scope: 'User')
     allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_basic).and_return(tenant.schema_name)
-    allow_any_instance_of(Ros::Sdk::Middleware).to receive(:call).and_return(OpenStruct.new(request_headers: request_headers))
+    allow_any_instance_of(Ros::Sdk::Middleware).to receive(:call).and_return(OpenStruct.new(authenticated_headers: authenticated_headers))
     allow_any_instance_of(Ros::ApiTokenStrategy).to receive(:authenticate_basic).and_return(authorized_user)
     allow_any_instance_of(ApplicationController).to receive(:set_headers!)
+  end
+
+  let(:tenant) { FactoryBot.create(:tenant) }
+  let(:authorized_user) do
+    FactoryBot.create(:user, attached_policies: { 'AdministratorAccess' => 'true' },
+                             jwt_payload: 'something')
+  end
+  let(:authenticated_headers) do
+    {
+      'Authorization' => 'Basic auth_token',
+      'Content-Type' => 'application/vnd.api+json'
+    }
   end
 
   let(:url) { '/templates' }
@@ -29,24 +41,13 @@ RSpec.describe 'templates requests', type: :request do
     end
 
     context 'authenticated user' do
-      let(:tenant) { FactoryBot.create(:tenant) }
-      let(:authorized_user) do
-        FactoryBot.create(:user, attached_policies: { 'AdministratorAccess' => 'true' },
-                                 jwt_payload: 'something')
-      end
-      let(:request_headers) do
-        {
-          'Authorization' => 'Basic auth_token',
-          'Content-Type' => 'application/vnd.api+json'
-        }
-      end
       let!(:template) { FactoryBot.create(:template, :within_schema, schema: tenant.schema_name) }
 
       before do
         other_tenant = FactoryBot.create(:tenant)
         FactoryBot.create(:template, :within_schema, schema: other_tenant.schema_name)
         fake_authentication
-        get url, headers: request_headers
+        get url, headers: authenticated_headers
       end
 
       it 'returns a successful response' do
@@ -69,30 +70,20 @@ RSpec.describe 'templates requests', type: :request do
       end
     end
 
-    xcontext 'authenticated user' do
+    context 'authenticated user' do
       before do
-        tenant = FactoryBot.create :tenant
-        cr = {}
-        tenant.switch do
-          user = FactoryBot.create(:user, :administrator_access)
-          login(user)
-          cr = user.credentials.create
-        end
-        headers = {
-          'Content-Type' => 'application/vnd.api+json',
-          'Authorization' => "Basic #{cr.access_key_id}:#{cr.secret_access_key}"
-        }
-        post '/users', params: user_data, headers: headers
+        fake_authentication
+        post url, params: template_data, headers: authenticated_headers
       end
 
       context 'correct params' do
-        let(:user_data) do
+        let(:template_data) do
           '{
             "data": {
-              "type": "users",
+              "type": "templates",
               "attributes": {
-                "username": "nicolas",
-                "time_zone": "SGT"
+                "content": "hello mr tambourine",
+                "campaign_entity_id": "1"
               }
             }
           }'
@@ -107,14 +98,14 @@ RSpec.describe 'templates requests', type: :request do
       end
 
       context 'incorrect params' do
-        let(:user_data) do
+        let(:template_data) do
           '{
             "data": {
-              "type": "users",
+              "type": "templates",
               "attributes": {
-                "username": "nicolas",
-                "time_zone": "SGT",
-                "jwt_payload": "hello123"
+                "content": "hello mr tambourine",
+                "campaign_entity_id": "1",
+                "WRONG!!": "Cant do it"
               }
             }
           }'
