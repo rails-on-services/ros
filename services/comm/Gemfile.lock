@@ -45,7 +45,7 @@ PATH
       twilio-ruby
 
 GEM
-  remote: http://172.17.0.1:9292/
+  remote: https://rubygems.org/
   specs:
     actioncable (6.0.0.rc2)
       actionpack (= 6.0.0.rc2)

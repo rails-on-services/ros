@@ -9,5 +9,7 @@ module Ros
 
     class Message < Base; end
     class Channel < Base; end
+    class Event < Base; end
+    class Template < Base; end
   end
 end

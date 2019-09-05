@@ -38,10 +38,6 @@ module Ros
         end
       end
 
-      initializer 'iam.factories', after: 'factory_bot.set_factory_paths' do
-        FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
-      end
-
       initializer 'service.configure_devise_jwt' do |app|
         # Warden::JWTAuth.configure do |config|
         #   # TODO: Get configuration from ENVs/file
