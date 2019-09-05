@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :template do
-    campaign
-    content { "MyText" }
-    status { "MyString" }
+    campaign_entity_id { 1 }
+    content { Faker::ChuckNorris.fact }
+    status { 'N/a' }
   end
 end

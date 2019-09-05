@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_17_114527) do
+ActiveRecord::Schema.define(version: 2019_09_05_024214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,12 +82,11 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
   create_table "templates", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.bigint "campaign_id"
     t.text "content"
     t.string "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["campaign_id"], name: "index_templates_on_campaign_id"
+    t.bigint "campaign_entity_id"
   end
 
   create_table "tenant_events", force: :cascade do |t|
@@ -125,5 +124,4 @@ ActiveRecord::Schema.define(version: 2019_03_17_114527) do
   add_foreign_key "events", "providers"
   add_foreign_key "events", "templates"
   add_foreign_key "messages", "providers"
-  add_foreign_key "templates", "campaigns"
 end
