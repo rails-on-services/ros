@@ -11,10 +11,11 @@ class Message < Comm::ApplicationRecord
 
   def provider_channel
     return if channel.in? provider.class.services
+
     errors.add(:channel, "must be one of: #{provider.class.services.join(' ')}")
   end
 
   def send_message
-    MessageJob.perform_now(self, current_tenant.id)
+    # MessageJob.perform_now(self, current_tenant.id)
   end
 end

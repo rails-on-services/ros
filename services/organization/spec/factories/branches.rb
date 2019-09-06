@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :branch do
-    name { "MyString" }
+    name { 'MyString' }
     properties { {} }
+    org
   end
 end
