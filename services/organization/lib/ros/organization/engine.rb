@@ -14,7 +14,7 @@ module Ros
         settings_path = root.join('config/settings.yml')
         Settings.prepend_source!(settings_path) if File.exist? settings_path
         name = self.class.module_parent.name.demodulize.underscore
-        Settings.prepend_source!({ service: { name: name, policy_name: name.capitalize } })
+        Settings.prepend_source!(service: { name: name, policy_name: name.capitalize })
       end
 
       initializer 'service.initialize_infra_services', after: 'ros_core.initialize_infra_services' do |app|
@@ -23,8 +23,8 @@ module Ros
       # if the gem has been included in an application, i.e. it is not running in the dummy app
       # https://github.com/rails/rails/issues/22261
       initializer 'service.configure_migrations' do |app|
-        unless Rails.root.to_s.end_with?('spec/dummy')
         # unless app.config.paths['db/migrate'].first.include? 'spec/dummy'
+        unless Rails.root.to_s.end_with?('spec/dummy')
           config.paths['db/migrate'].expanded.each do |expanded_path|
             app.config.paths['db/migrate'] << expanded_path
             ActiveRecord::Migrator.migrations_paths << expanded_path
@@ -37,7 +37,7 @@ module Ros
         end
       end
 
-      initializer 'organization.factories', after: 'factory_bot.set_factory_paths' do
+      initializer 'service.configure.rspec.factories', after: 'factory_bot.set_factory_paths' do
         FactoryBot.definition_file_paths << File.expand_path('../../../../spec/factories', __FILE__) if defined?(FactoryBot)
       end
     end
