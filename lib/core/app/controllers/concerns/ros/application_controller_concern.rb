@@ -22,9 +22,18 @@ module Ros
         end
       end
 
+      before_action :error_on_empty_filter_attribute
       before_action :authenticate_it!
       before_action :set_raven_context, if: -> { Settings.credentials.sentry_dsn }
       after_action :set_headers!
+
+      def error_on_empty_filter_attribute
+        resource_klass._attributes.select{ |k,v| v.key?(:allow_nil) && !v[:allow_nil] }.each do |attribute|
+          attribute = attribute[0].to_sym
+          render json: { errors: [{ status: '422', code: :unprocessable_entity, title: "#{attribute} could not be empty"}] },
+            status: :unprocessable_entity if params.key?(:filter) && (params[:filter][attribute].nil? || params[:filter][attribute].empty?)
+        end
+      end
 
       def authenticate_it!
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
