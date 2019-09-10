@@ -35,6 +35,8 @@ module Ros
           self.client = ::Aws::SQS::Client.new(credentials.merge(client_config))
           Shoryuken.configure_server { |config| config.sqs_client = client }
         end
+
+        def queues; client.list_queues end
       end
 
       class Storage
@@ -62,8 +64,8 @@ module Ros
           queue_name = notifications_path.gsub('/', '-')
           notifications[notifications_path] = queue_name
           attrs = queue_name.end_with?('.fifo') ? { 'FifoQueue' => 'true', 'ContentBasedDeduplication' => 'true' } : {}
-          # binding.pry
           sqs.client.create_queue({ queue_name: queue_name, attributes: attrs })
+          binding.pry
           client.put_bucket_notification_configuration(
             bucket: name, notification_configuration: notification_configuration(queue_name, notifications_path)
           )
@@ -74,8 +76,10 @@ module Ros
         def notification_configuration(queue_name, notifications_path)
           {
             queue_configurations: [{
-              queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
-              events: ["s3:ObjectCreated:#{notifications_path}/*"]
+              # queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
+              queue_arn: "arn:aws:sqs:ap-southeast-1:123456789:#{queue_name}",
+              # events: ["s3:ObjectCreated:#{notifications_path}/*"]
+              events: ["s3:ObjectCreated:*"]
             }]
           }
         end

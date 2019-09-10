@@ -1,14 +1,36 @@
 # Storage
-Short description and motivation.
 
-## Usage
-How to use my plugin.
+Storage service for Cloud Native Full Stack
+
+Handles file uploads and downloads by SFTP and API
+
+SFTP server mounts cloud storage, eg S3 bucket on AWS
+
+File uploads trigger a message to eg SQS
+
+This storage service receives the event and processes the file
+
+Depending on the file fingerprint, the storage service notifies the relevant service of a new file
+
+
+## Development
+
+Ensure the SFTP server, IAM, Congito, Comm and Storage services are running
+
+sftp -P 2222 222222222@localhost
+
+### Pre-requisites
+
+IAM Service creates tenant locations on cloud storage
+
+
+
 
 ## Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'storage'
+gem 'ros-storage'
 ```
 
 And then execute:

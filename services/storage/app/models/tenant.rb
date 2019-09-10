@@ -2,6 +2,7 @@
 
 class Tenant < Storage::ApplicationRecord
   include Ros::TenantConcern
+  SFTP_USERS_CONF_PATH = 'storage/sftp/config/users.conf'
 
   after_create :write_tenants_to_sftp_users_conf
 
@@ -13,6 +14,6 @@ class Tenant < Storage::ApplicationRecord
     end
     f.close
 
-    Rails.configuration.x.infra.resources.storage.primary.put('storage/sftp/config/users.conf', f.path)
+    Rails.configuration.x.infra.resources.storage.primary.put(SFTP_USERS_CONF_PATH, f.path)
   end
 end

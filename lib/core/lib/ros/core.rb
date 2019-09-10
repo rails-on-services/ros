@@ -13,6 +13,7 @@ require 'config'
 require 'sidekiq'
 require 'sidekiq/web'
 require 'ros_sdk'
+# require 'pry-remote'
 
 require_relative 'tenant_middleware'
 require_relative 'dtrace_middleware'

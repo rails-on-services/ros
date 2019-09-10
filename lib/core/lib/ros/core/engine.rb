@@ -12,11 +12,6 @@ module Ros
       end
 
       initializer 'ros_core.sidekiq' do |app|
-        if Sidekiq.server?
-          require 'pry-remote'
-          # Rails.logger = Sidekiq::Logging.logger
-          # ActiveRecord::Base.logger = Sidekiq::Logging.logger
-        end
       end
 
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
@@ -91,6 +86,27 @@ module Ros
             require 'prometheus_exporter/instrumentation'
             PrometheusExporter::Instrumentation::Process.start(type: 'master', frequency: Settings.metrics.frequency)
           end
+          # Export Sidekiq metrics
+          # See: https://github.com/discourse/prometheus_exporter#sidekiq-metrics
+          if Sidekiq.server?
+            # Including Sidekiq metrics:
+            app.config.server_middleware do |chain|
+              require 'prometheus_exporter/instrumentation'
+              chain.add PrometheusExporter::Instrumentation::Sidekiq
+            end
+            app.config.death_handlers << PrometheusExporter::Instrumentation::Sidekiq.death_handler
+            # monitor Sidekiq process info:
+            PrometheusExporter::Instrumentation::Process.start type: 'sidekiq'
+            # Sometimes Sidekiq shuts down before it can send metrics generated right before shutdown to collector
+            # If you care about the sidekiq_restarted_jobs_total metric, it is a good idea to explicitly stop the client:
+            Sidekiq.configure_server do |config|
+              at_exit do
+                PrometheusExporter::Client.default.stop(wait_timeout_seconds: 10)
+              end
+            end
+          end
+          # Rails.logger = Sidekiq::Logging.logger
+          # ActiveRecord::Base.logger = Sidekiq::Logging.logger
         end
       end
 
