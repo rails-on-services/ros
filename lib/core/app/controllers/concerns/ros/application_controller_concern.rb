@@ -28,10 +28,13 @@ module Ros
       after_action :set_headers!
 
       def error_on_empty_filter_attribute
-        resource_klass._attributes.select{ |k,v| v.key?(:allow_nil) && !v[:allow_nil] }.each do |attribute|
+        resource_klass._attributes.select { |_k, v| v.key?(:allow_nil) && !v[:allow_nil] }.each do |attribute|
           attribute = attribute[0].to_sym
-          render json: { errors: [{ status: '422', code: :unprocessable_entity, title: "#{attribute} could not be empty"}] },
-            status: :unprocessable_entity if params.key?(:filter) && (params[:filter][attribute].nil? || params[:filter][attribute].empty?)
+          next unless params.key?(:filter) &&
+                      (params[:filter][attribute].nil? || params[:filter][attribute].empty?)
+
+          render json: { errors: [{ status: '422', code: :unprocessable_entity, title: "#{attribute} could not be empty" }] },
+                 status: :unprocessable_entity
         end
       end
 
