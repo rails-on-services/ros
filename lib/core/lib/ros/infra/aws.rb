@@ -65,7 +65,7 @@ module Ros
           notifications[notifications_path] = queue_name
           attrs = queue_name.end_with?('.fifo') ? { 'FifoQueue' => 'true', 'ContentBasedDeduplication' => 'true' } : {}
           sqs.client.create_queue({ queue_name: queue_name, attributes: attrs })
-          binding.pry
+          # binding.pry
           client.put_bucket_notification_configuration(
             bucket: name, notification_configuration: notification_configuration(queue_name, notifications_path)
           )
@@ -74,12 +74,21 @@ module Ros
         # def queue_name; "#{name}-events" end
 
         def notification_configuration(queue_name, notifications_path)
+          puts "Initials: #{notifications_path}, #{credentials.to_json}, #{values.to_json}, #{queue_name}"
           {
             queue_configurations: [{
-              # queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
-              queue_arn: "arn:aws:sqs:ap-southeast-1:123456789:#{queue_name}",
-              # events: ["s3:ObjectCreated:#{notifications_path}/*"]
-              events: ["s3:ObjectCreated:*"]
+              queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
+              events: ["s3:ObjectCreated:*"],
+              filter: {
+                key: {
+                  filter_rules: [
+                    {
+                      name: 'prefix',
+                      value: notifications_path
+                    }
+                  ]
+                }
+              }
             }]
           }
         end
