@@ -14,6 +14,9 @@ module Ros
                json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] })
       end
 
+      # Wrap validation errors with JSONAPI::Exceptions::ValidationErrors for non resource calls
+      rescue_from ActiveRecord::RecordInvalid, with: :handle_validation_errors
+
       # TODO: Will internal errors still be reported to Sentry.io?
       if Rails.env.production?
         rescue_from StandardError do |_error|
@@ -44,6 +47,13 @@ module Ros
         { user: current_user }
       end
 
+      # Custom resource serializer:
+      # render json: json_resources(resource_class: SomeResource, records: query.all)
+      def json_resources(resource_class:, records:, context: nil)
+        resource = Array.wrap(records).map { |record| resource_class.new(record, context) }
+        serialize_resource(resource_class, resource)
+      end
+
       # This method is invoked on 404s from application's routes.rb if it extends
       # Ros::Routes and includes 'catch_not_found' at the bottom of the routes.rb file
       def not_found
@@ -63,6 +73,21 @@ module Ros
         @current_jwt = Jwt.new(current_user.jwt_payload)
         response.set_header('Authorization', "Bearer #{@current_jwt.encode}")
         response.set_header('Access-Control-Expose-Headers', 'Authorization')
+      end
+
+      private
+
+      def handle_validation_errors(e)
+        resource = ApplicationResource.new(e.record, nil)
+        handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
+      end
+
+      def jsonapi_params
+        params.require(:data).require(:attributes)
+      end
+
+      def serialize_resource(klass, resource)
+        JSONAPI::ResourceSerializer.new(klass).serialize_to_hash(resource)
       end
 
       # Documentation
