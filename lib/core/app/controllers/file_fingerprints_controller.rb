@@ -9,7 +9,6 @@ class FileFingerprintsController < ApplicationController
 
   def resources
     models = ApplicationRecord.descendants.collect(&:name).map do |model_name|
-      puts "model_name: #{model_name}"
       next if model_name.constantize.abstract_class?
 
       FileFingerprint.new(model_name, model_name.constantize.new.attributes.keys)
