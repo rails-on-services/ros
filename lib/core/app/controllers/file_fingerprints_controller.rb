@@ -8,6 +8,8 @@ class FileFingerprintsController < ApplicationController
   private
 
   def resources
+    # @TODO: Shometimes `descendants` method is not showing all models
+    # It's probably an autoload issue.
     models = ApplicationRecord.descendants.collect(&:name).map do |model_name|
       next if model_name.constantize.abstract_class?
 
