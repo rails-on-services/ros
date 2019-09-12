@@ -74,7 +74,6 @@ module Ros
         # def queue_name; "#{name}-events" end
 
         def notification_configuration(queue_name, notifications_path)
-          puts "Initials: #{notifications_path}, #{credentials.to_json}, #{values.to_json}, #{queue_name}"
           {
             queue_configurations: [{
               queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
