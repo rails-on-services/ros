@@ -22,7 +22,7 @@ class FileFingerprintsController < ApplicationController
     end
     models.compact!
     # @TODO: Add proper filters based on resource class
-    models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase }
+    models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase } if params.key?(:filter) && params[:filter][:model_name].present?
     models.map! { |record| FileFingerprintResource.new(record, nil) }
   end
 end
