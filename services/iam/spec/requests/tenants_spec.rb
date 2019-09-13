@@ -103,7 +103,7 @@ RSpec.describe 'tenants requests', type: :request do
           expect(response).to_not be_successful
           expect(response.code).to eq '400'
           expect(body['errors'][0]['title']).to eq('Param not allowed')
-          expect(body['errors'][0]['detail']).to eq('blabla is not allowed.')
+          expect(body['errors'][0]['detail']).to eq('root_id is not allowed.')
         end
       end
     end
