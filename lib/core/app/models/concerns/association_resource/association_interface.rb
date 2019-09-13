@@ -3,10 +3,15 @@
 module AssociationResource
   module AssociationInterface
     attr_reader :name
+
     def call(model)
       model.instance_variable_set "@#{name}", query_resource(model) unless persisted_resource? model
 
       model_resource(model)
+    end
+
+    def _resource_class(model)
+      class_name.safe_constantize
     end
 
     def model_resource(model)

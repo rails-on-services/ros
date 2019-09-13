@@ -29,6 +29,10 @@ module Ros
       def to_gid
         @gid ||= GlobalID.new("gid://internal/#{self.class.name}/#{id}")
       end
+
+      def to_urn
+        urn
+      end
     end
 
     class Credential

@@ -10,7 +10,6 @@ module AssociationResource
       @name = name
       @class_name = class_name || name.to_s.classify
       @foreign_key = foreign_key
-
       @associated_name = associated_name
     end
 
@@ -39,9 +38,8 @@ module AssociationResource
 
     def query_resource(model)
       id_column = id_column(model)
-      query = class_name.constantize.where(id_column => model.id)
+      query = _resource_class.where(id_column => model.id)
       query = query.where(type_column => model.class.resource_name) unless type_column.blank?
-
       query.find
     end
   end

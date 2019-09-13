@@ -4,13 +4,42 @@ module AssociationResource
   extend ActiveSupport::Concern
 
   def method_missing(method, *params)
-    return super if self.class.find_resource(method).blank?
+    association = self.class.find_resource(method)
+    return super if resource.blank?
 
-    self.class.find_resource(method).call(self)
+    association.call(self)
+  rescue JsonApiClient::Errors::ApiError => e
+    nil
   end
 
   def respond_to_missing?(method, include_private = false)
     !self.class.find_resource(method).blank? || super
+  end
+
+  def resource(name)
+    resource_klass = _resource_class(name)
+    return unless resource_klass
+
+    resource_klass.new
+  end
+
+  def query_resource(name)
+    resource_klass = _resource_class(name)
+    return unless resource_klass
+
+    query = yield resource_klass
+    query.find
+  rescue JsonApiClient::Errors::ApiError => e
+    nil
+  end
+
+  private
+
+  def _resource_class(name)
+    association = self.class.find_resource(name)
+    return if association.nil?
+
+    association._resource_class(self)
   end
 
   class_methods do

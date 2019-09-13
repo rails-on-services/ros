@@ -13,6 +13,13 @@ module AssociationResource
       @polymorphic = polymorphic
     end
 
+    def _resource_class(model)
+      klass = extract_resource_klass(model)
+      return if klass.nil?
+
+      klass.safe_constantize
+    end
+
     private
 
     def persisted_resource?(model)
@@ -35,9 +42,11 @@ module AssociationResource
     end
 
     def query_resource(model)
-      resource_klass = extract_resource_klass(model)
+      resource_klass = _resource_class(model)
+      return unless resource_klass
+
       resource_id = extract_resource_id(model)
-      resource_klass.constantize.where(id: resource_id).first
+      resource_klass.where(id: resource_id).find.first
     end
   end
 end
