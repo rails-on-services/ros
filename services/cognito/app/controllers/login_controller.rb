@@ -14,7 +14,6 @@ class LoginController < ApplicationController
 
     # Add the 'sub_cognito' claim to the JWT and set the header
     current_jwt.add_claims('sub_cognito' => user.to_urn)
-    response.set_header('AUTHORIZATION', "Bearer #{current_jwt.encode}")
 
     # Render some body back to the client
     render(status: :ok, json: { 'data': [{
