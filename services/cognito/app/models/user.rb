@@ -14,6 +14,10 @@ class User < Cognito::ApplicationRecord
     User.delete_all
   end
 
+  def self.file_fingerprint_attributes
+    column_names + [:pool_name]
+  end
+
   # User.load_csv('/home/admin/prudential.csv', true)
   def self.load_csv(file_name, translation = [], create = false)
     CSV.foreach(file_name, { headers: true, header_converters: lambda { |name| translation[name] } }) do |row|

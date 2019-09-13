@@ -30,5 +30,4 @@ class FileFingerprint
   def count
     1 # count is called for meta
   end
-
 end

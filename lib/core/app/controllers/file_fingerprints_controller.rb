@@ -2,7 +2,7 @@
 
 class FileFingerprintsController < ApplicationController
   def index
-    render json: JSONAPI::ResourceSerializer.new(FileFingerprintResource).serialize_to_hash(resources).to_json
+    render json: JSONAPI::ResourceSerializer.new(FileFingerprintResource).serialize_to_hash(resources)
   end
 
   private
@@ -13,9 +13,16 @@ class FileFingerprintsController < ApplicationController
     models = ApplicationRecord.descendants.collect(&:name).map do |model_name|
       next if model_name.constantize.abstract_class?
 
-      FileFingerprint.new(model_name, model_name.constantize.new.attributes.keys)
+      model_columns = if model_name.constantize.respond_to?(:file_fingerprint_attributes)
+                        model_name.constantize.file_fingerprint_attributes
+                      else
+                        model_name.constantize.column_names
+                      end
+      FileFingerprint.new(model_name, model_columns)
     end
     models.compact!
-    models.map { |record| FileFingerprintResource.new(record, nil) }
+    # @TODO: Add proper filters based on resource class
+    models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase }
+    models.map! { |record| FileFingerprintResource.new(record, nil) }
   end
 end
