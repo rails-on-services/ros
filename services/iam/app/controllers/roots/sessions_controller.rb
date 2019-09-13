@@ -9,6 +9,6 @@ class Roots::SessionsController < Devise::ApplicationController
   end
 
   def sign_in_params
-    params.require(:data).require(:attributes).permit(%i[email password])
+    jsonapi_params.permit(%i[email password])
   end
 end

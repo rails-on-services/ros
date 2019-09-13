@@ -9,9 +9,9 @@ class Devise::ApplicationController < Devise::SessionsController
   def create
     Apartment::Tenant.switch tenant do
       return super unless login_user!
-      @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
 
-      render json: json_resource(user_resource, current_user)
+      @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
+      render json: json_resources(resource_class: user_resource, records: current_user)
     end
   end
 
@@ -26,18 +26,6 @@ class Devise::ApplicationController < Devise::SessionsController
   end
 
   def tenant
-    return Apartment::Tenant.current unless sign_in_params[:tenant_id]
-
-    Tenant.find_by(id: sign_in_params[:tenant_id])&.schema_name || Apartment::Tenant.current
-  end
-
-  # @TODO Move both methods to own module/core for non resourceable actions
-  def json_resource(klass, record, context = nil)
-    resource = klass.new(record, context)
-    serialize_resource(klass, resource)
-  end
-
-  def serialize_resource(klass, resource)
-    JSONAPI::ResourceSerializer.new(klass).serialize_to_hash(resource)
+    Tenant.schema_name_from(account_id: sign_in_params[:account_id]) || Apartment::Tenant.current
   end
 end
