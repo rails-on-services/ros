@@ -9,6 +9,7 @@ class Devise::ApplicationController < Devise::SessionsController
   def create
     Apartment::Tenant.switch tenant do
       return super unless login_user!
+      @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
 
       render json: json_resource(user_resource, current_user)
     end
