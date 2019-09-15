@@ -2,127 +2,97 @@
 
 require 'rails_helper'
 
-RSpec.describe 'events requests', type: :request do
-  def fake_authentication
-    Warden.test_mode!
-    login_as(authorized_user, scope: 'User')
-    allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_basic).and_return(tenant.schema_name)
-    allow_any_instance_of(Ros::Sdk::Middleware).to receive(:call).and_return(OpenStruct.new(request_headers: request_headers))
-    allow_any_instance_of(Ros::ApiTokenStrategy).to receive(:authenticate_basic).and_return(authorized_user)
-    allow_any_instance_of(ApplicationController).to receive(:set_headers!)
+# Create tenant once per suite is 25% faster than creating a tenant (and schema) once per test
+# To enable tenant per test, comment out below and swap the let(:tenant) statements below
+RSpec.configure do |config|
+  config.before(:all) do
+    @as = create(:tenant, schema_name: '222_222_222')
   end
-
-  let(:url) { '/events' }
-  let(:body) { JSON.parse(response.body) }
-
-  describe 'GET index' do
-    context 'unauthenticated user' do
-      before do
-        get url
-      end
-
-      it 'returns unauthenticated' do
-        expect(response).to be_unauthorized
-      end
-    end
-
-    xcontext 'authenticated user' do
-      let(:tenant) { FactoryBot.create(:tenant) }
-      let(:authorized_user) do
-        FactoryBot.create(:user, attached_policies: { 'AdministratorAccess' => 'true' },
-                                 jwt_payload: 'something')
-      end
-      let(:request_headers) do
-        {
-          'Authorization' => 'Basic auth_token',
-          'Content-Type' => 'application/vnd.api+json'
-        }
-      end
-      let!(:event) { FactoryBot.create(:event, :within_schema, schema: tenant.schema_name) }
-
-      before do
-        other_tenant = FactoryBot.create(:tenant)
-        FactoryBot.create(:event, :within_schema, schema: other_tenant.schema_name)
-        fake_authentication
-        get url, headers: request_headers
-      end
-
-      it 'returns a successful response' do
-        expect(response).to be_successful
-        # TODO: improve reponse test coverage
-        expect(body['data']).to_not be_nil
-      end
-    end
+  config.after(:all) do
+    @as.destroy
   end
+end
 
-  describe 'POST create' do
-    context 'unauthenticated user' do
-      before do
-        headers = { 'Content-Type' => 'application/vnd.api+json' }
-        post url, params: '{}', headers: headers
+RSpec.describe 'Events', type: :request do
+  let(:tenant) { Tenant.first }
+  # let(:tenant) { create(:tenant, schema_name: '222_222_222') }
+
+  # Mocked results are 300% faster than non-mocked Basic Authentication
+  # Mocked results are 10% faster than non-mocked Bearer Authentication
+  let(:mock) { true }
+
+  let(:url) { u('/events') }
+  let(:subject) { tenant.switch { create(:event) } }
+
+  context 'all' do
+    include_context 'jsonapi requests'
+
+    describe 'GET index' do
+      context 'Unauthenticated user' do
+        include_context 'unauthorized user'
+        include_examples 'unauthenticated get'
       end
 
-      it 'returns unauthenticated' do
-        expect(response).to be_unauthorized
+      context 'Authenticated user' do
+        include_context 'authorized user'
+
+        it 'returns correct payload' do
+          mock_authentication if mock
+          subject
+          get url, headers: request_headers
+          # TODO: move the tests from data.0 into get and show shared examples
+          expect_json_types(data: :array)
+          expect_json_types('data.0.attributes', :object) # Hash
+          expect_json_keys('data.0.attributes', :name)
+          expect_json_types('data.0.attributes', channel: :string)
+          expect(subject.channel).to eq(get_response.channel)
+        end
       end
     end
 
-    xcontext 'authenticated user' do
-      before do
-        tenant = FactoryBot.create :tenant
-        cr = {}
-        tenant.switch do
-          user = FactoryBot.create(:user, :administrator_access)
-          login(user)
-          cr = user.credentials.create
-        end
-        headers = {
-          'Content-Type' => 'application/vnd.api+json',
-          'Authorization' => "Basic #{cr.access_key_id}:#{cr.secret_access_key}"
-        }
-        post '/users', params: user_data, headers: headers
+    describe 'POST create' do
+      context 'unauthenticated user' do
+        include_context 'unauthorized user'
+        include_examples 'unauthenticated post'
       end
 
-      context 'correct params' do
-        let(:user_data) do
-          '{
-            "data": {
-              "type": "users",
-              "attributes": {
-                "username": "nicolas",
-                "time_zone": "SGT"
-              }
+      context 'Authenticated user' do
+        include_context 'authorized user'
+
+        def jsonapi_data(object, remove = false, *except_attributes)
+          except_attributes.append(*%i[id created_at updated_at]) if remove
+          {
+            data: {
+              type: object.class.name.underscore.pluralize,
+              attributes: object.attributes.except(*except_attributes.map(&:to_s))
             }
-          }'
+          }.to_json
         end
 
-        it 'returns a successful response' do
-          expect(response).to be_successful
-          # TODO: improve reponse test coverage
-          expect(response.code).to eq '201'
-          expect(body['data']).to_not be_nil
-        end
-      end
-
-      context 'incorrect params' do
-        let(:user_data) do
-          '{
-            "data": {
-              "type": "users",
-              "attributes": {
-                "username": "nicolas",
-                "time_zone": "SGT",
-                "jwt_payload": "hello123"
-              }
-            }
-          }'
+        context 'correct params' do
+          it 'returns the correct response and payload' do
+            mock_authentication if mock
+            # create an item in DB, duplicate its attributes and create a new one via API
+            subject
+            model_data = build(:event, provider_id: subject.provider_id, template_id: subject.template_id)
+            post_data = jsonapi_data(model_data, true, :status)
+            post url, params: post_data, headers: request_headers
+            expect(response).to be_created
+            expect(model_data.channel).to eq(post_response.channel)
+          end
         end
 
-        it 'returns a successful response' do
-          expect(response).to_not be_successful
-          expect(response.code).to eq '400'
-          # TODO: improve reponse test coverage
-          expect(body['errors'][0]['title']).to eq('Param not allowed')
+        context 'incorrect params' do
+          it 'returns the correct response and payload' do
+            mock_authentication if mock
+            subject
+            model_data = build(:event, provider_id: subject.provider_id, template_id: subject.template_id)
+            post_data = jsonapi_data(model_data, false, :status)
+            post url, params: post_data, headers: request_headers
+            expect(errors.size).to be_positive
+            expect(response).to be_bad_request
+            expect(error_response.title).to eq('Param not allowed')
+          end
         end
       end
     end

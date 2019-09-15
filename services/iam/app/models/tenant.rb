@@ -32,10 +32,6 @@ class Tenant < Iam::ApplicationRecord
     self.schema_name ||= rand(100_000_000..999_999_999).to_s.scan(/.{3}/).join('_')
   end
 
-  def self.excluded_models
-    super + %w(Root)
-  end
-
   def self.public_schema_endpoints
     %w(/users/sign_in /tenants)
   end
