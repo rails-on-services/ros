@@ -10,6 +10,17 @@ Airborne.configure do |config|
   config.base_url = Ros.dummy_mount_path
 end
 
+# Create tenant once per suite is 25% faster than creating a tenant (and schema) once per test
+# To enable tenant per test, comment out below and swap the let(:tenant) statements below
+RSpec.configure do |config|
+  config.before(:all) do
+    @as = create(:tenant, schema_name: '222_222_222')
+  end
+  config.after(:all) do
+    @as.destroy
+  end
+end
+
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.disable_monkey_patching!
@@ -37,5 +48,6 @@ Shoulda::Matchers.configure do |config|
     with.library :active_model
   end
 end
+
 
 Dir[Ros.spec_root.join('shared/**/*.rb')].each { |f| require f }
