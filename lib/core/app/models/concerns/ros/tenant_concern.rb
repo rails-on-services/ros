@@ -46,9 +46,9 @@ module Ros
 
       validate :fixed_values_unchanged, if: :persisted?
   
-      after_create :create_schema
+      after_commit :create_schema, on: :create
   
-      after_destroy :destroy_schema
+      after_commit :destroy_schema, on: :destroy
 
       def fixed_values_unchanged
         errors.add(:schema_name, 'schema_name cannot be changed') if schema_name_changed?
@@ -105,6 +105,7 @@ module Ros
         raise e if Rails.env.production? # Don't raise an exception in dev mode so to allow seeds to work
       end
   
+      # NOTE: This is only called when tenant#destroy is called NOT tenant#delete
       def destroy_schema
         Apartment::Tenant.drop(schema_name)
         Rails.logger.info("Tenant dropped: #{schema_name}")

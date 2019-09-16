@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-shared_examples 'it belongs_to_resource' do |resource|
+RSpec.shared_examples 'it belongs_to_resource' do |resource|
   it { should respond_to resource }
 
   describe 'association config' do
@@ -45,7 +45,7 @@ shared_examples 'it belongs_to_resource' do |resource|
   end
 end
 
-shared_examples 'it has_many_resources' do |resource|
+RSpec.shared_examples 'it has_many_resources' do |resource|
   it { should respond_to resource }
 
   describe 'association config' do
