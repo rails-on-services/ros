@@ -2,17 +2,6 @@
 
 require 'rails_helper'
 
-# Create tenant once per suite is 25% faster than creating a tenant (and schema) once per test
-# To enable tenant per test, comment out below and swap the let(:tenant) statements below
-# RSpec.configure do |config|
-#   config.before(:all) do
-#     @as = create(:tenant, schema_name: '222_222_222')
-#   end
-#   config.after(:all) do
-#     @as.destroy
-#   end
-# end
-
 RSpec.describe 'Templates', type: :request do
   let(:tenant) { Tenant.first }
   # let(:tenant) { create(:tenant, schema_name: '222_222_222') }
