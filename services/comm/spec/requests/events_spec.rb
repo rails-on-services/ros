@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'Events', type: :request do
   let(:tenant) { Tenant.first }
   # let(:tenant) { create(:tenant, schema_name: '222_222_222') }
@@ -49,7 +50,7 @@ RSpec.describe 'Events', type: :request do
         include_context 'authorized user'
 
         def jsonapi_data(object, remove = false, *except_attributes)
-          except_attributes.append(*%i[id created_at updated_at]) if remove
+          except_attributes.append(:id, :created_at, :updated_at) if remove
           {
             data: {
               type: object.class.name.underscore.pluralize,
@@ -87,3 +88,4 @@ RSpec.describe 'Events', type: :request do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'Templates', type: :request do
   let(:tenant) { Tenant.first }
   # let(:tenant) { create(:tenant, schema_name: '222_222_222') }
@@ -49,7 +50,7 @@ RSpec.describe 'Templates', type: :request do
         include_context 'authorized user'
 
         def jsonapi_data(object, remove = false, *except_attributes)
-          except_attributes.append(*%i[id created_at updated_at]) if remove
+          except_attributes.append(:id, :created_at, :updated_at) if remove
           {
             data: {
               type: object.class.name.underscore.pluralize,
@@ -63,7 +64,7 @@ RSpec.describe 'Templates', type: :request do
             mock_authentication if mock
             # create an item in DB, duplicate its attributes and create a new one via API
             subject
-            model_data = build(:template, content: 'hello mr tambourine') #, wrong: 'invalid payload')
+            model_data = build(:template, content: 'hello mr tambourine')
             post_data = jsonapi_data(model_data, true, :status)
             post url, params: post_data, headers: request_headers
             expect(response).to be_created
@@ -87,3 +88,4 @@ RSpec.describe 'Templates', type: :request do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

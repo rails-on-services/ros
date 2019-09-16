@@ -5,10 +5,10 @@ module Providers
     alias_attribute :account_sid, :credential_1
     alias_attribute :auth_token, :credential_2
 
-    def self.services; %w(sms call) end
+    def self.services; %w[sms call] end
 
     def client
-      @client ||= ::Twilio::REST::Client.new(x_account_sid, x_auth_token) if x_account_sid and x_auth_token
+      @client ||= ::Twilio::REST::Client.new(x_account_sid, x_auth_token) if x_account_sid && x_auth_token
     end
 
     def x_account_sid
@@ -27,12 +27,11 @@ module Providers
       message.update(from: from)
       # binding.pry
       # TODO: toggle sending on and off
-      res = client.messages.create(from: from, to: message.to, body: message.body)
-      # p res
+      client.messages.create(from: from, to: message.to, body: message.body)
       p message
     end
 
-    def call(message)
+    def call(_message)
       # to = whatup.From.gsub('whatsapp:', '')
       client.calls.create(from: from, to: to, url: 'http://demo.twilio.com/docs/voice.xml')
     end
