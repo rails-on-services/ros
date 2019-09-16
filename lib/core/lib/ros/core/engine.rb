@@ -81,7 +81,7 @@ module Ros
           if Settings.metrics.process_stats_enabled
             # Reports basic process stats like RSS and GC info
             require 'prometheus_exporter/instrumentation'
-            PrometheusExporter::Instrumentation::Process.start(type: 'master', frequency: Settings.metrics.frequency)
+            ::PrometheusExporter::Instrumentation::Process.start(type: 'master', frequency: Settings.metrics.frequency)
           end
         end
       end
