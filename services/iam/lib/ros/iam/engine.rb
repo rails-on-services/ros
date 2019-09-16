@@ -28,7 +28,7 @@ module Ros
         end
       end
 
-      initializer 'service.set_factory_paths', after: 'ros_core.set_factory_paths' do
+      initializer 'service.set_factory_paths', before: 'ros_core.set_factory_paths' do
         if defined?(FactoryBot) and not Rails.env.production?
           FactoryBot.definition_file_paths.prepend(Pathname.new(__FILE__).join('../../../../spec/factories'))
         end
@@ -38,7 +38,7 @@ module Ros
       # end
 
       initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
-        if Rails.env.development? && !Rails.const_defined?('Server') and File.exists?('console.rb')
+        if Rails.env.development? && !Rails.const_defined?('Server') and File.exist?('console.rb')
           require_relative 'console'
         end
       end
