@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ros/core'
 require 'ros/organization/engine'
 
