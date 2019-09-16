@@ -30,6 +30,8 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'spring-commands-rspec'
   gem 'shoulda-matchers'
+  gem 'jsonapi-resources-matchers'
+  gem 'pundit-matchers'
   gem 'rspec-rails'
   gem 'faker'
 end
