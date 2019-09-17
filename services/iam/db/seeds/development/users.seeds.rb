@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# ubocop:disable Metrics/BlockLength
 after 'development:tenants' do
   Tenant.all.each do |tenant|
     next if tenant.id.eql? 1
@@ -18,16 +19,23 @@ after 'development:tenants' do
       User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
       credential = user.credentials.create
-      @created_list.append({ type: 'user', owner: user, tenant: tenant, credential: credential, secret: credential.secret_access_key })
+      @created_list.append(type: 'user', owner: user, tenant: tenant, credential: credential,
+                           secret: credential.secret_access_key)
 
       # Create a Group
-      group_admin = Group.create(name: 'Administrators')
+      group_admin = Group.create(name: 'Admin')
 
       # Attach the Admin Policy to the Group
       group_admin.policies << Policy.first
 
       # Assign the first User to the Admin Group
       group_admin.users << User.first
+
+      # NOTE: create remainign groups
+      Group.create(name: 'Creator')
+      Group.create(name: 'Customer Support')
+      Group.create(name: 'Manager')
+      Group.create(name: 'Viewer')
 
       # Role.create(name: 'PerxServiceRoleForIAM')
       # Role.create(name: 'PerxUserReadOnlyAccess')
@@ -43,3 +51,4 @@ after 'development:tenants' do
   STDOUT.puts 'Credentials are next:'
   STDOUT.puts File.read("#{Ros.host_tmp_dir}/credentials.json")
 end
+# ubocop:enable Metrics/BlockLength

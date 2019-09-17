@@ -2,8 +2,22 @@
 
 FactoryBot.define do
   factory :template do
-    campaign
-    content { "MyText" }
-    status { "MyString" }
+    campaign_entity_id { 1 }
+    content { Faker::ChuckNorris.fact }
+    status { 'N/a' }
+
+    trait :within_schema do
+      transient do
+        schema { 'public' }
+      end
+
+      before(:create) do |_entity, evaluator|
+        Apartment::Tenant.switch! evaluator.schema
+      end
+
+      after(:create) do
+        Apartment::Tenant.reset
+      end
+    end
   end
 end

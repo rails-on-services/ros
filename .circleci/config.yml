@@ -1,9 +1,11 @@
 version: 2.1
+
 executors:
   ros-cli:
     docker:
       - image: railsonservices/cli
         entrypoint: /bin/bash -l
+
 commands:
   docker_login:
     description: Login to dockerhub
@@ -11,11 +13,14 @@ commands:
       - run:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
+
 jobs:
   build_and_test:
     working_directory: ~/project
     executor: ros-cli
     shell: /bin/bash --login -eo pipefail
+    environment:
+      ROS_PROFILE: specs
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
@@ -23,25 +28,49 @@ jobs:
       - checkout
       - docker_login
       - run:
-          command: ros be infra init -l
-          environment:
-            ROS_ENV: test
+          name: Generate the platform environment
+          command: ros be init -v
+      - run:
+          name: Generate the application services and platform templates
+          command: ros generate:be:application
+      - run:
+          name: Build Docker Images
+          command: ros be build -v
+      - run:
+          name: Run Tests
+          command: ros be test -v
+
+  push_and_deploy:
+    working_directory: ~/project
+    executor: ros-cli
+    shell: /bin/bash --login -eo pipefail
+    # NOTE: The ROS_ENV var determines into which cluster the application is deployed
+    environment:
+      ROS_ENV: test
+      ROS_PROFILE: limited
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 18.09.3
+      - checkout
+      - docker_login
+      - run:
+          name: Initialize EKS authenticator and generate kubeconfig
+          command: ros be infra init -l -v
       - run:
           name: Generate the platform environment
-          command: ros be init
+          command: ros be init -v
       - run:
-          name: Build Docker Images 
-          command: ros be build
+          name: Generate the application services and platform templates
+          command: ros generate:be:application
       - run:
-          name: Push Docker Images
-          command: ros be push
-      # TODO
-      # - run:
-      #     name: Run Tests
-      #     command: ros be test
-      #     environment:
-      #       ROS_PROFILE: image
+          name: Build, Push and Deploy Docker Images
+          command: ros be up -b -v
+
 workflows:
-  build_and_test:
+  build_test_push_and_deploy:
     jobs:
       - build_and_test
+      # - push_and_deploy:
+      #     requires:
+      #       - build_and_test

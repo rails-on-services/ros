@@ -5,4 +5,3 @@ module Iam
     abstract
   end
 end
-

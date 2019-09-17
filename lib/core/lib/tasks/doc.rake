@@ -24,7 +24,6 @@ namespace :ros do
     task generate: :environment do
       require Ros::Core::Engine.root.join('doc/open_api').to_s
       ActiveRecord::Base.connection.begin_transaction(joinable: false)
-      Ros::Console::Methods.factories.each { |f| require f }
       FactoryBot.create(:tenant).switch do
         OpenApi.write_docs
       end

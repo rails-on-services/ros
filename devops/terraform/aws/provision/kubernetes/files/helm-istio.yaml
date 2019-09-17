@@ -1,4 +1,0 @@
-gateways:
-  istio-ingressgateway:
-    type: NodePort
-    autoscaleMin: 2

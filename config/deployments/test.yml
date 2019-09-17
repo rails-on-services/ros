@@ -1,11 +1,4 @@
-# Configuration values defined here override any values defined in platform.yml
-# aws eks update-kubeconfig --name production --role-arn arn:aws:iam::814127428874:role/eks-admin
-# name-db.subdomain.domain
-# api-db.whistler.perxtech.net
-# pru-api-db.whistler.perxtech.net
-# pru-api-redis.whistler.perxtech.net
-# tmp/deployments/staging/master
-# tmp/deployments/staging/feature
+# Configuration values defined here override any values defined in development.yml
 ---
 components:
   be:
@@ -29,9 +22,14 @@ components:
             sub_domain: ros-test
         components:
           services:
-            ingress:
-            postgres:
-            redis:
+            components:
+              ingress:
+              kafka:
+              kafka-zookeeper:
+              kafka-schema-registry:
+              kafka-connect:
+              postgres:
+              redis:
           platform:
             config:
               images:
@@ -44,6 +42,9 @@ components:
                 config:
                   profiles: ['server']
               comm:
+                config:
+                  profiles: ['server']
+              organization:
                 config:
                   profiles: ['server']
               iam:

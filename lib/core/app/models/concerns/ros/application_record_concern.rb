@@ -3,7 +3,7 @@
 module Ros
   module ApplicationRecordConcern
     extend ActiveSupport::Concern
-    include ApiBelongsTo
+    include AssociationResource
 
     class_methods do
       # urn:partition:service:region:account_id:resource_type
@@ -22,6 +22,10 @@ module Ros
 
       # NOTE: Override in model to provide a custom id
       def urn_id; :id end
+
+      def resource_name; "#{service_name}::#{name}" end
+
+      def service_name; Ros::Sdk.configured_services[Settings.service.name] end
     end
 
 
@@ -31,12 +35,52 @@ module Ros
 
       def current_tenant; self.class.current_tenant end
 
-      after_commit :enqueue_after_commit_jobs  # , if: -> { Settings.workers.enabled }
+      after_commit :enqueue_after_commit_jobs
+
+      # TODO: Uncomment when we have the model avro schema generator ready
+      # after_commit :stream_cloud_event  # , if: -> { Settings.workers.enabled }
+
+      def stream_cloud_event
+        Ros::StreamCloudEventJob.perform_now(self)
+      end
 
       def enqueue_after_commit_jobs
         Ros::PlatformProducerEventJob.perform_now(self)
+        # perform(self)
         # Ros::TenantProducerEventJob.perform_now(self)
       end
+
+    def perform(object)
+      data = { event: object.persisted?, data: object }.to_json
+      queues = ['storage']
+      queues.each do |queue|
+        queue_name = "#{queue}_platform_consumer_events".to_sym
+        # Ros::PlatformConsumerEventJob.set(queue: queue_name).perform_later(data)
+        perform_later(data)
+      end
+    end
+
+    def perform_later(object)
+      puts object
+      binding.pry
+      payload = JSON.parse(object)
+      event = payload['event']
+      data = payload['data']
+      urn = Ros::Urn.from_urn(data['urn'])
+      if urn.is_platform_urn?
+        binding.pry
+        # PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
+        return
+      end
+      schema_name = Tenant.account_id_to_schema(urn.account_id)
+      Rails.logger.debug("Schema name #{schema_name}")
+      tenant = Tenant.find_by(schema_name: schema_name)
+      # raise InvalidTenantError unless tenant
+      tenant.switch do
+        method = "#{urn.service_name}_#{urn.resource_type}"
+        PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
+      end
+    end
 
       def as_json(*)
         super.merge({ 'urn' => to_urn })

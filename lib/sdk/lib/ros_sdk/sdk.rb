@@ -33,11 +33,15 @@ module Ros
 
     class Credential
       class << self
-        attr_accessor :access_key_id, :secret_access_key, :partition, :region, :authorization
+        attr_accessor :access_key_id, :secret_access_key, :partition, :region, :authorization, :request_headers
 
         def configure(access_key_id: nil, secret_access_key: nil)
           self.access_key_id = access_key_id
           self.secret_access_key = secret_access_key
+        end
+
+        def request_headers
+          @request_headers ||= {}
         end
 
         def partition
@@ -67,11 +71,11 @@ module Ros
           self.domain = domain
           self.port = port
           self.force_path_style = force_path_style
-          self.service = (service || parent.name.split('::').last).downcase
+          self.service = (service || module_parent.name.split('::').last).downcase
           Ros::Sdk.configured_services ||= {}
-          Ros::Sdk.configured_services[self.service] = parent
-          parent::Base.site = endpoint
-          parent::Base.connection.use Ros::Sdk::Middleware
+          Ros::Sdk.configured_services[self.service] = module_parent
+          module_parent::Base.site = endpoint
+          module_parent::Base.connection.use Ros::Sdk::Middleware
           Ros::Sdk.configured_services[self.service]
         end
 

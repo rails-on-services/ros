@@ -7,6 +7,8 @@ class EventJob < Comm::ApplicationJob
   # MessagesController receives a POST request to create a message (sms) with details of from, to and body
   # After the record is created, a Job is created to send to the destination
   # This means that the correct tenant must be selected by apartment
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def perform(event, tenant_id)
     tenant = Tenant.find(tenant_id)
     tenant.switch do
@@ -27,4 +29,6 @@ class EventJob < Comm::ApplicationJob
       Rails.logger.info('performed job')
     end
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end

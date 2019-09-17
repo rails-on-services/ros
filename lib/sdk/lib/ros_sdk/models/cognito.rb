@@ -10,5 +10,6 @@ module Ros
     class Pool < Base; end
     class User < Base; end
     class Identifier < Base; end
+    class FileFingerprint < Base; end
   end
 end

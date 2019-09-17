@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Event < Comm::ApplicationRecord
-  belongs_to :campaign
+  # belongs_to :campaign
   belongs_to :template
   belongs_to :provider
   # maybe target should be cognito_pool_id
-  api_belongs_to :target, polymorphic: true
+  belongs_to_resource :target, polymorphic: true
   # api_has_many :users, through: :target
 
   has_many :messages, as: :owner
@@ -29,6 +29,7 @@ class Event < Comm::ApplicationRecord
   def provider_channel
     return unless provider
     return if channel.in? provider.class.services
+
     errors.add(:channel, "must be one of: #{provider.class.services.join(' ')}")
   end
 

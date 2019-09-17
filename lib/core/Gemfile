@@ -1,15 +1,13 @@
-source 'https://rubygems.org'
+source ENV['GEM_SERVER'] || 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gemspec
 
+gem 'pg'
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'ros_sdk', path: '../sdk'
 group :development, :test do
   gem 'brakeman', require: false
-  gem 'pry-byebug'
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
   gem 'spring-commands-rspec'
   gem 'database_cleaner'
 end

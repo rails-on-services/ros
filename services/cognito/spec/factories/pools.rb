@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :pool do
-    name { "MyString" }
-    properties { "" }
+    sequence(:name) { |n| "Pool-#{n}-Name" }
+    properties { '' }
   end
 end

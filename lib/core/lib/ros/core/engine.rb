@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../migrations'
-
 module Ros
   module Core
     class Engine < ::Rails::Engine
@@ -11,6 +9,9 @@ module Ros
       config.generators do |g|
         g.test_framework :rspec, fixture: true
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
+      end
+
+      initializer 'ros_core.sidekiq' do |app|
       end
 
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
@@ -23,9 +24,33 @@ module Ros
       end
 
       initializer 'ros_core.load_platform_config' do |app|
-        if Rails.env.development?
-          env_path = Rails.root.join(Rails.root.to_s.end_with?('spec/dummy') ? '../../..' : '..')
-          Dotenv.load("#{env_path}/platform.env") if File.exists?("#{env_path}/platform.env")
+        # The location of the environment files is the parent services/.env dir
+        # This dir is soft linked to the compose directory of the current deployment
+        if Ros.host_env.os? and Dir.exists?("#{Ros.root}/services/.env")
+          configs = ['platform']
+          ary = Settings.instance_variable_get('@config_sources').select { |config|
+            config.instance_variable_get('@hash')&.keys&.include?(:service)
+          }
+          if ary.any? and (service_name = ary.first.hash[:service][:name])
+            configs.append(service_name)
+          end
+          require 'dotenv'
+          configs.each do |env_name|
+            env_file = "#{Ros.root}/services/.env/#{env_name}.env"
+            Dotenv.load(env_file) if File.exists?(env_file)
+          end
+          # Set ENVs that allow the local server to access compose cluster services
+          # TODO: Figure out how core/config/settings.local.yml can override the ENVs
+          ENV['PLATFORM__CONNECTION__HOST__HOST'] = 'localhost'
+          ENV['PLATFORM__CONNECTION__HOST__FORCE_PATH_STYLE'] = 'true'
+          ENV['PLATFORM__REQUEST_LOGGING__ENABLED'] = 'false'
+          ENV['PLATFORM__EVENT_LOGGING__ENABLED'] = 'false'
+          ENV['RAILS_DATABASE_HOST'] = 'localhost'
+          ENV['REDIS_URL'] = 'redis://localhost:6379'
+          ENV['PLATFORM__REQUEST_LOGGING__CONFIG__HOST'] = 'localhost'
+          ENV['PLATFORM__INFRA__SERVICES__STORAGE__AWS__ENDPOINT'] = 'http://localhost:4572'
+          ENV['PLATFORM__INFRA__SERVICES__MQ__AWS__ENDPOINT'] = 'http://localhost:4576'
+          ENV['BUCKET_ENDPOINT_URL'] = 'http://localhost:4572'
         end
         Settings.reload!
       end
@@ -49,17 +74,39 @@ module Ros
       end
 
       initializer 'ros_core.initialize_platform_metrics' do |app|
+        app.config.middleware.insert_after(ActionDispatch::RequestId, Ros::DtraceMiddleware)
         if Settings.metrics.enabled
           require 'prometheus_exporter'
           # binding.pry
           require_relative '../prometheus_exporter/web_collector'
           require_relative '../prometheus_exporter/middleware'
-          Rails.application.config.middleware.insert 0, Ros::PrometheusExporter::Middleware
+          app.config.middleware.insert 0, Ros::PrometheusExporter::Middleware
           if Settings.metrics.process_stats_enabled
             # Reports basic process stats like RSS and GC info
             require 'prometheus_exporter/instrumentation'
             PrometheusExporter::Instrumentation::Process.start(type: 'master', frequency: Settings.metrics.frequency)
           end
+          # Export Sidekiq metrics
+          # See: https://github.com/discourse/prometheus_exporter#sidekiq-metrics
+          if Sidekiq.server?
+            # Including Sidekiq metrics:
+            app.config.server_middleware do |chain|
+              require 'prometheus_exporter/instrumentation'
+              chain.add PrometheusExporter::Instrumentation::Sidekiq
+            end
+            app.config.death_handlers << PrometheusExporter::Instrumentation::Sidekiq.death_handler
+            # monitor Sidekiq process info:
+            PrometheusExporter::Instrumentation::Process.start type: 'sidekiq'
+            # Sometimes Sidekiq shuts down before it can send metrics generated right before shutdown to collector
+            # If you care about the sidekiq_restarted_jobs_total metric, it is a good idea to explicitly stop the client:
+            Sidekiq.configure_server do |config|
+              at_exit do
+                PrometheusExporter::Client.default.stop(wait_timeout_seconds: 10)
+              end
+            end
+          end
+          # Rails.logger = Sidekiq::Logging.logger
+          # ActiveRecord::Base.logger = Sidekiq::Logging.logger
         end
       end
 
@@ -81,33 +128,21 @@ module Ros
         end
       end
 
-      config.after_initialize do
-        if Settings.event_logging.enabled
-          if Settings.event_logging.provider.eql? 'fluentd'
-            require_relative '../cloudevents/fluentd_avro_logger'
-            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
-            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
-
-            # Rails.logger = Rails.configuration.x.logger
-            # ActiveRecord::Base.logger = Rails.configuration.x.logger
-          end
-        end
-      end
-
       initializer 'ros_core.set_platform_hosts' do |app|
         app.config.hosts = app.config.hosts | Settings.hosts.split(',') if Settings.hosts
       end
 
       initializer 'ros_core.configure_apartment' do |app|
         Apartment.configure do |config|
-          # binding.pry
-          # Provide list of schemas to be migrated when rails db:migrate is invoked
-          # SEE: https://github.com/influitive/apartment#managing-migrations
-          config.tenant_names = proc { Tenant.pluck(:schema_name) }
+          if Settings.dig(:service, :name) # then we are in a service
+            # Provide list of schemas to be migrated when rails db:migrate is invoked
+            # SEE: https://github.com/influitive/apartment#managing-migrations
+            config.tenant_names = proc { Tenant.pluck(:schema_name) }
 
-          # List of models that are NOT multi-tenanted
-          # See: https://github.com/influitive/apartment#excluding-models
-          config.excluded_models = Tenant.excluded_models
+            # List of models that are NOT multi-tenanted
+            # See: https://github.com/influitive/apartment#excluding-models
+            config.excluded_models = Ros.excluded_models
+          end
         end
       end
 
@@ -123,6 +158,10 @@ module Ros
           config.default_paginator = :paged
           config.default_page_size = 10
           config.maximum_page_size = 20
+          config.top_level_meta_include_record_count = true
+          config.top_level_meta_record_count_key = :record_count
+          config.top_level_meta_include_page_count = true
+          config.top_level_meta_page_count_key = :page_count
         end
         Mime::Type.register 'application/json-patch+json', :json_patch
       end
@@ -174,14 +213,27 @@ module Ros
       end
 
       initializer 'ros_core.configure_migrations' do |app|
-        config.paths['db/migrate'].expanded.each do |expanded_path|
-          app.config.paths['db/migrate'] << expanded_path
-          ActiveRecord::Migrator.migrations_paths << expanded_path
+        if Settings.dig(:service, :name) # then we are in a service
+          config.paths['db/migrate'].expanded.each do |expanded_path|
+            app.config.paths['db/migrate'] << expanded_path
+            ActiveRecord::Migrator.migrations_paths << expanded_path
+          end
         end
       end
 
-      initializer 'ros_core.configure_console_methods' do |_app|
+      initializer 'ros_core.set_factory_paths', after: 'factory_bot.set_factory_paths' do
+        FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories')) if defined?(FactoryBot) and not Rails.env.production?
+      end
+
+      config.after_initialize do
         require_relative 'console' unless Rails.const_defined?('Server')
+        if Settings.event_logging.enabled
+          if Settings.event_logging.provider.eql? 'fluentd'
+            require_relative '../cloudevents/fluentd_avro_logger'
+            Ros::CloudEvents::FluentdAvroLogger.configure(Settings.event_logging.config.to_h)
+            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name)
+          end
+        end
       end
     end
   end
