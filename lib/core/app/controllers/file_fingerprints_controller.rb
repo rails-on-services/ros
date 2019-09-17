@@ -2,27 +2,22 @@
 
 class FileFingerprintsController < ApplicationController
   def index
-    render json: JSONAPI::ResourceSerializer.new(FileFingerprintResource).serialize_to_hash(resources)
+    render json: json_resources(resource_class: FileFingerprintResource, records: resources)
   end
 
   private
 
   def resources
-    # @TODO: Shometimes `descendants` method is not showing all models
-    # It's probably an autoload issue.
-    models = ApplicationRecord.descendants.collect(&:name).map do |model_name|
-      next if model_name.constantize.abstract_class?
-
-      model_columns = if model_name.constantize.respond_to?(:file_fingerprint_attributes)
-                        model_name.constantize.file_fingerprint_attributes
-                      else
-                        model_name.constantize.column_names
-                      end
-      FileFingerprint.new(model_name, model_columns)
-    end
-    models.compact!
     # @TODO: Add proper filters based on resource class
-    models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase } if params.key?(:filter) && params[:filter][:model_name].present?
+    models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase } if params.dig(:filter, :model_name)
     models.map! { |record| FileFingerprintResource.new(record, nil) }
+  end
+
+  def models
+    @models ||= Ros.table_names.map do |table|
+      klass = table.classify.constantize
+      columns = klass.respond_to?(:file_fingerprint_attributes) ? klass.file_fingerprint_attributes : klass.column_names
+      FileFingerprint.new(table.classify, columns)
+    end.compact
   end
 end

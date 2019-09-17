@@ -13,10 +13,12 @@ RSpec.describe Upload, type: :model do
   it 'can upload and download a file to/from the SFTP server' do
     File.open(file_name, 'w') { |file| file.write('test text') }
     expect(File).not_to exist("#{file_name}.download")
-		Net::SFTP.start(sftp_host, tenant_id, password: tenant_password) do |sftp|
-			sftp.upload!(file_name, "/uploads/#{file_name}")
+
+    Net::SFTP.start(sftp_host, tenant_id, password: tenant_password) do |sftp|
+      sftp.upload!(file_name, "/uploads/#{file_name}")
       sftp.download!("/uploads/#{file_name}", "#{file_name}.download")
     end
+
     expect(File).to exist("#{file_name}.download")
     expect(%x(diff #{file_name} #{file_name}.download).size).to eq(0)
     Dir.glob("#{file_name}*") { |file| File.delete(file) }

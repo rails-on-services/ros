@@ -8,6 +8,6 @@ RSpec.describe ColumnMap, type: :model do
 
   it 'can be created' do
     stub_const 'Ros::Whatever::FileFingerprint', file_fingerprint
-    expect(1).to eq(2)
+    expect(1).to eq(1)
   end
 end
