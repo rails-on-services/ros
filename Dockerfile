@@ -10,11 +10,12 @@ RUN gem install \
     bundler:2.0.2 \
     nokogiri:1.10.4 \
     ffi:1.11.1 \
+    grpc:1.23.0 \
     mini_portile2:2.4.0 \
     msgpack:1.3.1 \
     pg:1.1.4 \
     nio4r:2.5.1 \
-    puma:4.1.0 \
+    puma:4.1.1 \
     eventmachine:1.2.7
 
 # NOTE: Copy in a generic Gemfile and the dependent gem's gemspecs so that their dependencies are also installed
