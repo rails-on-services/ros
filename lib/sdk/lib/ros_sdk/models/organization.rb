@@ -7,5 +7,6 @@ module Ros
 
     class Tenant < Base; end
     class Org < Base; end
+    class FileFingerprint < Base; end
   end
 end

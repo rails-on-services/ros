@@ -11,5 +11,6 @@ module Ros
     class Channel < Base; end
     class Event < Base; end
     class Template < Base; end
+    class FileFingerprint < Base; end
   end
 end

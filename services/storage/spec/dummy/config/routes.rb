@@ -3,6 +3,6 @@
 Rails.application.routes.draw do
   extend Ros::Routes
   mount Ros::Core::Engine => Ros.dummy_mount_path
-  mount Ros::Storage::Engine => Ros.dummy_mount_path
+  mount Storage::Engine => Ros.dummy_mount_path
   catch_not_found
 end

@@ -15,6 +15,10 @@ class User < Cognito::ApplicationRecord
     User.delete_all
   end
 
+  def self.file_fingerprint_attributes
+    column_names + [:pool_name]
+  end
+
   # User.load_csv('/home/admin/prudential.csv', true)
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize

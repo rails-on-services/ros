@@ -12,6 +12,8 @@ module Ros
       def urn_id; :account_id end
   
       def public_schema_endpoints; [] end
+
+      def account_id; 'platform' end
   
       def schema_name_for(id:)
         Tenant.find_by(id: id)&.schema_name || public_schema

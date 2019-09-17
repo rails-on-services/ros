@@ -13,6 +13,7 @@ require 'config'
 require 'sidekiq'
 require 'sidekiq/web'
 require 'ros_sdk'
+# require 'pry-remote'
 
 require_relative 'tenant_middleware'
 require_relative 'dtrace_middleware'
@@ -120,6 +121,7 @@ module Ros
     rescue JWT::DecodeError
     end
 
+    def is_platform_urn?; account_id.eql?('platform') end
     def resource_type; resource.split('/').first end
     def resource_id; resource.split('/').last end
 

@@ -9,7 +9,31 @@ class PlatformEventProcessor
     puts data
   end
 
+  def self.iam_user_group(urn:, event:, data:)
+    puts urn
+    puts event
+    puts data
+  end
+
+  def self.iam_group_policy_join(urn:, event:, data:)
+    puts urn
+    puts event
+    puts data
+  end
+
   def self.iam_user(urn:, event:, data:)
+    puts urn
+    puts event
+    puts data
+  end
+
+  def self.tenant(urn:, event:, data:)
+    puts urn
+    puts event
+    puts data
+  end
+
+  def self.storage_transfer_map(urn:, event:, data:)
     puts urn
     puts event
     puts data
