@@ -2,20 +2,20 @@
 
 module Ros
   module UrlBuilder
-    class JSONAPI::LinkBuilder
+    module JSONAPI
+      class LinkBuilder
+        def base_url
+          return @base_url if service_engine_name.blank?
 
-      def base_url
-        return @base_url if service_engine_name.blank?
+          "#{@base_url}/#{service_engine_name}"
+        end
 
-        "#{@base_url}/#{service_engine_name}"
+        private
+
+        def service_engine_name
+          primary_resource_klass.superclass.to_s.split('::')[0...-1].first&.underscore
+        end
       end
-
-      private
-
-      def service_engine_name
-        primary_resource_klass.superclass.to_s.split("::")[0...-1].first&.underscore
-      end
-
     end
   end
 end

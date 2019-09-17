@@ -30,6 +30,7 @@ module Ros
 
   class << self
     def host_tmp_dir; "tmp/#{Settings.feature_set}" end
+
     def host_env; @host_env ||= ActiveSupport::StringInquirer.new(File.exists?('/.dockerenv') ? 'docker' : 'os') end
 
     def root
@@ -40,6 +41,7 @@ module Ros
           break path if Dir.exists?("#{path}/services") and Dir.exists?("#{path}/lib")
         })
     end
+
     def spec_root; @spec_root ||= Pathname.new(__FILE__).join('../../../spec') end
 
     # def root; @root ||= Pathname.new(__FILE__).join('../../..') end
@@ -53,6 +55,7 @@ module Ros
         ActiveRecord::Base.connection.tables - %w(schema_migrations ar_internal_metadata tenant_events platform_events)
       )
     end
+
     # By default all services exclude only the Tenant model from schemas
     def excluded_models; %w(Tenant) end
   end
@@ -116,18 +119,24 @@ module Ros
     def self.from_jwt(token)
       jwt = Jwt.new(token)
       return unless urn_string = jwt.decode['sub']
+
       from_urn(urn_string)
     # NOTE: Intentionally swallow decode error and return nil
     rescue JWT::DecodeError
     end
 
     def is_platform_urn?; account_id.eql?('platform') end
+
     def resource_type; resource.split('/').first end
+
     def resource_id; resource.split('/').last end
 
     def model_name; resource_type.classify end
+
     def model; model_name.constantize end
+
     def instance; model.find_by_urn(resource_id) end
+
     def to_s; to_a.join(':') end
   end
 
@@ -135,7 +144,7 @@ module Ros
   class FailureApp
     def self.call(env)
       [401, { 'Content-Type' => 'application/vnd.api+json' },
-        [{ errors: [{ status: '401', title: 'Unauthorized' }] }.to_json]]
+       [{ errors: [{ status: '401', title: 'Unauthorized' }] }.to_json]]
     end
   end
 end

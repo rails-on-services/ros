@@ -3,7 +3,7 @@
 module Postman
   class Workspace
     attr_accessor :id, :name, :comm
-    attr_accessor :collections, :environments, :mocks, :monitors #, :workspaces
+    attr_accessor :collections, :environments, :mocks, :monitors # , :workspaces
 
     def initialize(id: nil, name: nil, comm: nil)
       @id = id
@@ -12,19 +12,21 @@ module Postman
     end
 
     def collection(name)
-      col = collections.each.select{ |c| c['name'].eql?(name) }.first || {}
+      col = collections.each.select { |c| c['name'].eql?(name) }.first || {}
       OpenStruct.new(col.merge(type: :collections))
     end
 
-    def collection_names; collections.map{ |a| a['name'] } end
+    def collection_names; collections.map { |a| a['name'] } end
+
     def collections; @collections ||= data['collections'] || [] end
 
     def environment(name)
-      col = environments.each.select{ |c| c['name'].eql?(name) }.first || {}
+      col = environments.each.select { |c| c['name'].eql?(name) }.first || {}
       OpenStruct.new(col.merge(type: :environments))
     end
 
-    def environment_names; environments.map{ |a| a['name'] } end
+    def environment_names; environments.map { |a| a['name'] } end
+
     def environments; @environments ||= data['environments'] || [] end
 
     # Convert data to payload format expected by Postman API

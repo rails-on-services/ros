@@ -77,7 +77,7 @@ class EndpointGenerator < Rails::Generators::NamedBase
 
     # Route
     insert_into_file 'config/routes.rb', after: "routes.draw do\n" do
- "  jsonapi_resources :#{plural_name}\n"
+      "  jsonapi_resources :#{plural_name}\n"
     end
   end
 end

@@ -20,7 +20,7 @@ module Ros
         :data
       ]
       attr_accessor(*ATTRS)
-      
+
       def to_h
         ATTRS.each_with_object({}) { |i, h| h[i] = send(i) }
       end
@@ -29,7 +29,7 @@ module Ros
     class FluentdAvroLogger
       class << self
         attr_reader :logger, :cloudevents_specversion, :avro
-  
+
         def configure(name: nil, host: nil, port: 24_224, schema_registry_url: nil, schemas_path: nil,
                       cloudevents_specversion: '0.4-wip')
           @avro = AvroTurf::Messaging.new(registry_url: schema_registry_url, schemas_path: schemas_path)
@@ -41,7 +41,7 @@ module Ros
       def initialize(source)
         @source = source
       end
-      
+
       def log_event(type, id, data, subject: nil, time: Time.zone.now)
         event = Event.new
         event.source = @source
@@ -51,7 +51,7 @@ module Ros
         event.subject = subject
         event.datacontenttype = 'application/avro'
         event.datacontentencoding = 'Base64'
-        event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z') 
+        event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
         # binding.pry
         event.data = Base64.encode64(self.class.avro.encode(data, schema_name: type, subject: type + '-value'))
         # binding.pry

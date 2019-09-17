@@ -1,5 +1,5 @@
 **/.bundle/
-**/log/*.log
+**/log/
 **/pkg/
 **/spec/dummy/db/*.sqlite3
 **/spec/dummy/db/*.sqlite3-journal

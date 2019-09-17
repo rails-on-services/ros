@@ -12,10 +12,10 @@ module Ros
     queue_as "#{Settings.service.name}_platform_consumer_events"
 
     def perform(object)
-        puts("\n+++++++++ Start\n")
-          binding.remote_pry
+      puts("\n+++++++++ Start\n")
+      binding.remote_pry
       puts object
-        puts("+++++++++ End\n\n")
+      puts("+++++++++ End\n\n")
       payload = JSON.parse(object)
       event = payload['event']
       data = payload['data']
@@ -29,6 +29,7 @@ module Ros
       schema_name = Tenant.account_id_to_schema(urn.account_id)
       tenant = Tenant.find_by(schema_name: schema_name)
       raise InvalidTenantError unless tenant
+
       tenant.switch do
         method = "#{urn.service_name}_#{urn.resource_type}"
         PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
