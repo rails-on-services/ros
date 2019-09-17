@@ -1,0 +1,12 @@
+---
+# NOTE: Not tested
+request_logging:
+  enabled: no
+
+event_logging:
+  enabled: no
+
+connection:
+  host:
+    host: localhost
+    force_path_style: yes

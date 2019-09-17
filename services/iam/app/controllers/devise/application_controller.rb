@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/ClassAndModuleChildren
 class Devise::ApplicationController < Devise::SessionsController
   skip_before_action :authenticate_it!, on: :create
 
@@ -9,6 +10,8 @@ class Devise::ApplicationController < Devise::SessionsController
   def create
     Apartment::Tenant.switch tenant do
       return super unless login_user!
+
+      @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
 
       render json: json_resource(user_resource, current_user)
     end
@@ -40,3 +43,4 @@ class Devise::ApplicationController < Devise::SessionsController
     JSONAPI::ResourceSerializer.new(klass).serialize_to_hash(resource)
   end
 end
+# rubocop:enable Style/ClassAndModuleChildren

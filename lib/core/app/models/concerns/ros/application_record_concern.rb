@@ -46,8 +46,41 @@ module Ros
 
       def enqueue_after_commit_jobs
         Ros::PlatformProducerEventJob.perform_now(self)
+        # perform(self)
         # Ros::TenantProducerEventJob.perform_now(self)
       end
+
+    def perform(object)
+      data = { event: object.persisted?, data: object }.to_json
+      queues = ['storage']
+      queues.each do |queue|
+        queue_name = "#{queue}_platform_consumer_events".to_sym
+        # Ros::PlatformConsumerEventJob.set(queue: queue_name).perform_later(data)
+        perform_later(data)
+      end
+    end
+
+    def perform_later(object)
+      puts object
+      binding.pry
+      payload = JSON.parse(object)
+      event = payload['event']
+      data = payload['data']
+      urn = Ros::Urn.from_urn(data['urn'])
+      if urn.is_platform_urn?
+        binding.pry
+        # PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
+        return
+      end
+      schema_name = Tenant.account_id_to_schema(urn.account_id)
+      Rails.logger.debug("Schema name #{schema_name}")
+      tenant = Tenant.find_by(schema_name: schema_name)
+      # raise InvalidTenantError unless tenant
+      tenant.switch do
+        method = "#{urn.service_name}_#{urn.resource_type}"
+        PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
+      end
+    end
 
       def as_json(*)
         super.merge({ 'urn' => to_urn })

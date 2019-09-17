@@ -25,11 +25,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'json_api_client', '1.9.0'
+  spec.add_dependency 'json_api_client', '1.15.0'
   spec.add_dependency 'pry', '0.12.2'
   spec.add_dependency 'config', '1.7.1'
   spec.add_dependency 'globalid', '0.4.2'
-  spec.add_dependency 'jwt', '2.1.0'
+  spec.add_dependency 'jwt', '2.2.1'
   spec.add_dependency 'inifile', '3.0.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'

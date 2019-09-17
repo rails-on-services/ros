@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
+# Listens for file events on the storage bucket and responds to them
+
+# TODO: Change to concern
 class TenantStorageWorker
   # rubocop:disable Metrics/AbcSize
   def process_event(event)
+    return unless event.schema_name
     Tenant.find_by(schema_name: event.schema_name).switch do
       if event.type.eql? 'upload'
         next if Upload.find_by(name: event.name, etag: event.etag, size: event.size)
 
         upload = Upload.create(name: event.name, etag: event.etag, size: event.size)
+        # TODO: Move to upload after_create
         enqueue(upload)
       elsif event.type.eql? 'download'
       end

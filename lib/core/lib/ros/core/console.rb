@@ -28,13 +28,10 @@ module Ros
     module Methods
       # These methods will be available in the Rails console
       def fbc(type, *options)
-        try_count ||= 0
-        options.empty? ? FactoryBot.create(type) : FactoryBot.create(type, options)
-      rescue KeyError => e
-        try_count += 1
-        Ros::Console::Methods.factories.each { |f| require f }
-        retry if try_count < 2
+        options.empty? ? FactoryBot.create(type) : FactoryBot.create(type, *options)
       end
+
+      def fbp; FactoryBot.definition_file_paths end
 
       def ct; Rails.configuration.x.memoized_shortcuts[:ct] ||= Tenant.find_by(schema_name: Apartment::Tenant.current) end
 
@@ -45,7 +42,8 @@ module Ros
         def load_shortcuts
           return unless Rails.configuration.x.memoized_shortcuts.empty?
           unique_shortcuts = Set.new
-          ApplicationRecord.descendants.select{ |k| not k.abstract_class? }.each do |klass|
+          Ros.table_names.each do |table_name|
+            klass = table_name.classify.constantize
             name = klass.to_s
             type = name.underscore.to_sym
             cmd = name.scan(/\p{Upper}/).join.downcase
@@ -76,12 +74,6 @@ module Ros
         def reset_shortcuts
           Rails.configuration.x.memoized_shortcuts = {}
           Rails.configuration.x.memoized_shortcuts[:loaded] = true
-        end
-
-        def factories
-          Ros.config.factory_paths.each_with_object([]) do |path, ary|
-            ary << Dir[Pathname.new(path).join('**', '*.rb')]
-          end.flatten
         end
       end
     end
@@ -209,12 +201,16 @@ Pry.config.commands.alias_command 'st', 'select-tenant'
 Pry.config.commands.alias_command 'to', 'toggle-logger'
 
 Pry.hooks.add_hook(:before_session, 'load_shortcuts') do |output, binding, pry|
-  output.puts "\nModel Shortcut Console Commands:"
-  Ros::Console::Methods.load_shortcuts
-  Ros::Console::Commands::Shortcuts.new(output: output).process
-  output.puts "\nType `help ros` for additional console commands"
+  if not Rails.const_defined?('Server')
+    output.puts "\nModel Shortcut Console Commands:"
+    Ros::Console::Methods.load_shortcuts
+    Ros::Console::Commands::Shortcuts.new(output: output).process
+    output.puts "\nType `help ros` for additional console commands"
+  end
 end
 
 Pry.hooks.add_hook(:after_session, 'thanks') do |output, binding, pry|
-  output.puts 'Thanks for using ros. Documentation at http://guides.rails-on-services.org'
+  if Rails.env.development? and not Rails.const_defined?('Server')
+    output.puts 'Thanks for using ros. Documentation at http://guides.rails-on-services.org'
+  end
 end

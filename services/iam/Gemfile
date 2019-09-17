@@ -16,13 +16,22 @@ end
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
-  gem 'pry-remote'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'pry-remote'
   gem 'rails-erd'
 end
 
 group :development, :test do
+  gem 'airborne'
+  gem 'dotenv'
   gem 'brakeman', require: false
+  gem 'pry-stack_explorer'
+  gem 'factory_bot_rails'
   gem 'database_cleaner'
   gem 'spring-commands-rspec'
+  gem 'shoulda-matchers'
+  gem 'jsonapi-resources-matchers'
+  gem 'pundit-matchers'
+  gem 'rspec-rails'
+  gem 'faker'
 end

@@ -29,5 +29,4 @@ class MetabaseTokenController < Cognito::ApplicationController
 
     options.merge(params[:params].to_unsafe_h.deep_symbolize_keys)
   end
-
 end

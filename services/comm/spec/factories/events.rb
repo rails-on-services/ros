@@ -8,18 +8,18 @@ FactoryBot.define do
     template
     association :provider, factory: :provider_aws
 
-    trait :within_schema do
-      transient do
-        schema { 'public' }
-      end
+    # trait :within_schema do
+    #   transient do
+    #     schema { 'public' }
+    #   end
 
-      before(:create) do |_entity, evaluator|
-        Apartment::Tenant.switch! evaluator.schema
-      end
+    #   before(:create) do |_entity, evaluator|
+    #     Apartment::Tenant.switch! evaluator.schema
+    #   end
 
-      after(:create) do
-        Apartment::Tenant.reset
-      end
-    end
+    #   after(:create) do
+    #     Apartment::Tenant.reset
+    #   end
+    # end
   end
 end

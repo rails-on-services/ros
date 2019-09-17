@@ -21,9 +21,9 @@ class Upload < Storage::ApplicationRecord
     "#{Rails.root}/tmp/#{remote_path}"
   end
 
-  def get; Storage.get(remote_path) end
+  def get; Rails.configuration.x.infra.resources.storage.primary.get(remote_path) end
 
-  def put; Storage.put(remote_path) end
+  def put; Rails.configuration.x.infra.resources.storage.primary.put(remote_path) end
 
   def column_map
     transfer_map.column_maps.pluck(:user_name, :name).each_with_object({}) do |a, h|
