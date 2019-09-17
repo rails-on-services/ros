@@ -29,15 +29,38 @@ def login_cognito_user(self, identifier):
 
 # def login(self):
 
-class IamTests(TaskSet):
+class SurveyEngagement(TaskSet):
   def on_start(self):
     identifier = fake.name()
     create_cognito_user(self, identifier)
-    response = login_cognito_user(self, identifier)
-    self.token = response.headers['Authorization']
+    login_response = login_cognito_user(self, identifier)
+
+    self.token = login_response.headers['Authorization']
     self.content_type = 'application/vnd.api+json'
-    # print("<<<<<<<<<<")
-    # print(user_response)
+
+    batch_response = self.create_voucher_batch()
+    self.batch_id = json.loads(batch_response.content)['data'][0]['id']
+
+    # create_engagement
+    # create_campaign
+
+  def create_voucher_batch(self):
+    payload = { "data": { "type": "batch", "attributes": { "amount": 50, "start_date": "2019-01-01", "source_id": 1, "source_type": "reward", "code_type": "single_code", "code": "12345" } } }
+    return self.client.post('/voucher/batch', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+
+  def create_survey_engagement(self):
+    payload = { "data": { "type": "engagements", "attributes": { "title": "Test engagement", "image_url": "2019-01-01", "source_id": 1, "source_type": "reward", "code_type": "single_code", "code": "12345" } } }
+    return self.client.post('/voucher/batch', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+
+  # @task(10)
+  # def create_voucher_entities(self):
+  #   payload = { 'data': { "type": "entities", "attributes": { "result_id": 1, "result_type": "Perx::Reward::Entity", "campaign_entity_id": 1 } } }
+
+  @task(10)
+  def create_possible_outcomes(self):
+    payload = { 'data': { "type": "possible_outcomes", "attributes": { "result_id": 1, "result_type": "Perx::Reward::Entity", "campaign_entity_id": 1 } } }
+    self.client.post('/outcome/possible_outcomes', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+  
 
   # def config(self):
   #   return json.loads(open(FILE).read())
@@ -87,8 +110,8 @@ class IamTests(TaskSet):
   #              response.failure(response.content)
 
 
-class IamService(HttpLocust):
-  task_set = IamTests
+class SurveyEngagementService(HttpLocust):
+  task_set = SurveyEngagement
   host = 'http://localhost:3000'
   # 
   # host = 'https://api.whistler.perxtech.org'
