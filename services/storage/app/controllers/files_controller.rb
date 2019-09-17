@@ -3,12 +3,12 @@
 class FilesController < Storage::ApplicationController
 
   def index
-    render status: 200, json: json_resources(FileResource, files)
+    render status: 200, json: json_resources(resource_class: FileResource, records: files)
   end
 
   def create
     file = current_storage.upload! io: params[:file]
-    render status: 200, json: json_resource(FileResource, file)
+    render status: 200, json: json_resources(resource_class: FileResource, records: file)
   end
 
   private

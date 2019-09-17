@@ -6,3 +6,7 @@ local:
   endpoint: http://localstack:4572
   region: 'ap-southeast-1'
   force_path_style: true
+
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp","storage") %>

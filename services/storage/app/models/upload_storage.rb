@@ -21,6 +21,7 @@ class UploadStorage < Storage::ApplicationRecord
 
   def detect_file_type(io)
     return :image if io.content_type.start_with?('image')
+
     :document
   end
 end
