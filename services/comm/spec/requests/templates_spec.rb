@@ -2,7 +2,6 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe 'Templates', type: :request do
   let(:tenant) { Tenant.first }
   # let(:tenant) { create(:tenant, schema_name: '222_222_222') }
@@ -88,4 +87,3 @@ RSpec.describe 'Templates', type: :request do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
