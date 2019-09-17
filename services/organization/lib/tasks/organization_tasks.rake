@@ -8,8 +8,8 @@ namespace :ros do
         seedbank_root = Seedbank.seeds_root
         Seedbank.seeds_root = File.expand_path('db/seeds', Organization::Engine.root)
         Seedbank.load_tasks
-        Rake::Task["db:seed"].invoke
-        Seedbank.seeds_root = seedbank_root 
+        Rake::Task['db:seed'].invoke
+        Seedbank.seeds_root = seedbank_root
       end
     end
   end

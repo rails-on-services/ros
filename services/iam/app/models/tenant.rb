@@ -33,41 +33,40 @@ class Tenant < Iam::ApplicationRecord
   end
 
   def self.public_schema_endpoints
-    %w(/users/sign_in /tenants)
+    %w[/users/sign_in /tenants]
   end
 end
 
-  # after_commit :seed_tenant, on: :create, unless: -> { Rails.env.production? }
-  # after_create :seed_tenant #, on: :create, unless: -> { Rails.env.production? }
+# after_commit :seed_tenant, on: :create, unless: -> { Rails.env.production? }
+# after_create :seed_tenant #, on: :create, unless: -> { Rails.env.production? }
 
+# def seed_tenant
+#   Action.count
+#   Apartment::Tenant.switch(schema_name) do
+#     service = Service.create(name: 'User')
+#     action = ReadAction.create(service: service, name: 'DescribeUser')
 
-  # def seed_tenant
-  #   Action.count
-  #   Apartment::Tenant.switch(schema_name) do
-  #     service = Service.create(name: 'User')
-  #     action = ReadAction.create(service: service, name: 'DescribeUser')
+#     # Create a few Policies
+#     policy_admin = Policy.create(name: 'AdministratorAccess')
+#     policy_user_full = Policy.create(name: 'PerxUserFullAccess')
+#     policy_user_read_only = Policy.create(name: 'PerxUserReadOnlyAccess')
 
-  #     # Create a few Policies
-  #     policy_admin = Policy.create(name: 'AdministratorAccess')
-  #     policy_user_full = Policy.create(name: 'PerxUserFullAccess')
-  #     policy_user_read_only = Policy.create(name: 'PerxUserReadOnlyAccess')
+#     # Attach the Action to the Admin Policy
+#     policy_admin.actions << action
 
-  #     # Attach the Action to the Admin Policy
-  #     policy_admin.actions << action
+#     # Create a Group
+#     group_admin = Group.create(name: 'Administrators')
 
-  #     # Create a Group
-  #     group_admin = Group.create(name: 'Administrators')
+#     # Attach the Admin Policy to the Group
+#     group_admin.policies << policy_admin
 
-  #     # Attach the Admin Policy to the Group
-  #     group_admin.policies << policy_admin
+#     # Create a User
+#     user_admin = User.create(email: 'admin@example.com', password: 'abc123za')
 
-  #     # Create a User
-  #     user_admin = User.create(email: 'admin@example.com', password: 'abc123za')
+#     # Assign the User to the Admin Group
+#     group_admin.users << user_admin
 
-  #     # Assign the User to the Admin Group
-  #     group_admin.users << user_admin
-
-  #     # Role.create(name: 'PerxServiceRoleForIAM')
-  #     # Role.create(name: 'PerxUserReadOnlyAccess')
-  #   end
-  # end
+#     # Role.create(name: 'PerxServiceRoleForIAM')
+#     # Role.create(name: 'PerxUserReadOnlyAccess')
+#   end
+# end

@@ -11,9 +11,9 @@ module Ros
 
       initializer 'service.set_platform_config', before: 'ros_core.load_platform_config' do |_app|
         settings_path = root.join('config/settings.yml')
-        Settings.prepend_source!(settings_path) if File.exists? settings_path
+        Settings.prepend_source!(settings_path) if File.exist? settings_path
         name = self.class.module_parent.name.demodulize.underscore
-        Settings.prepend_source!({ service: { name: name, policy_name: name.capitalize } })
+        Settings.prepend_source!(service: { name: name, policy_name: name.capitalize })
       end
 
       # Adds this gem's db/migrations path to the enclosing application's migraations_path array
@@ -29,7 +29,7 @@ module Ros
       end
 
       initializer 'service.set_factory_paths', after: 'ros_core.set_factory_paths' do
-        if defined?(FactoryBot) and not Rails.env.production?
+        if defined?(FactoryBot) && !Rails.env.production?
           FactoryBot.definition_file_paths.prepend(Pathname.new(__FILE__).join('../../../../spec/factories'))
         end
       end

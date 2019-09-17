@@ -10,6 +10,8 @@ class EndpointResource < Cognito::ApplicationResource
     { target: target_uri(uri) }
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def target_uri(uri)
     service, model = @model.target_type.underscore.split('/')
     case Settings.external_connection.type
@@ -19,13 +21,15 @@ class EndpointResource < Cognito::ApplicationResource
     when 'path'
       uri.path = ['', service, model, @model.target_id].join('/')
     when 'port'
-      # TODO Test for whether service_endpoint is nil
+      # TODO: Test for whether service_endpoint is nil
       uri.port = URI(Ros::Sdk.service_endpoints[service]).port
     when 'host'
       uri.host = URI(Ros::Sdk.service_endpoints[service]).host
     end
     uri.to_s
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def fetchable_fields
     super - [:urn]
