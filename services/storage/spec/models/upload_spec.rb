@@ -20,7 +20,7 @@ RSpec.describe Upload, type: :model do
     end
 
     expect(File).to exist("#{file_name}.download")
-    expect(%x(diff #{file_name} #{file_name}.download).size).to eq(0)
+    expect(`diff #{file_name} #{file_name}.download`.size).to eq(0)
     Dir.glob("#{file_name}*") { |file| File.delete(file) }
   end
 end

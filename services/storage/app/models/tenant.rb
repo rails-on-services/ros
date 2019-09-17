@@ -6,6 +6,7 @@ class Tenant < Storage::ApplicationRecord
 
   after_create :write_tenants_to_sftp_users_conf
 
+  # rubocop:disable Metrics/AbcSize
   def write_tenants_to_sftp_users_conf
     f = Tempfile.new('users.conf')
     self.class.order(:id).all.each do |tenant|
@@ -16,4 +17,5 @@ class Tenant < Storage::ApplicationRecord
 
     Rails.configuration.x.infra.resources.storage.primary.put(SFTP_USERS_CONF_PATH, f.path)
   end
+  # rubocop:enable Metrics/AbcSize
 end
