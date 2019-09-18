@@ -6,6 +6,7 @@ from locust import HttpLocust, task, TaskSet, TaskSequence
 from faker import Faker
 
 FILE = 'services/iam/tmp/mounted/credentials.json'
+# FILE = 'tmp/runtime/production/be/application/mounted/platform/credentials.json'
 
 def config():
   return json.loads(open(FILE).read())
@@ -34,7 +35,7 @@ def login_cognito_user(self, identifier):
   return self.client.post('/cognito/login', data=json.dumps(payload), headers={"authorization": authorization(), 'content-type': 'application/vnd.api+json' } )
 
 class SurveyEngagement(TaskSet):
-  def setup(self):
+  def on_start(self):
     create_iam_user(self)
 
     identifier = Faker().name()
@@ -44,7 +45,6 @@ class SurveyEngagement(TaskSet):
     self.token = login_response.headers['Authorization']
     self.content_type = 'application/vnd.api+json'
 
-  def on_start(self):  
     engagement_response = self.create_survey_engagement()
     self.engagement_id = json.loads(engagement_response.content)['data']['id']
 
@@ -57,8 +57,8 @@ class SurveyEngagement(TaskSet):
     reward_response = self.create_reward_entity()
     self.reward_id = json.loads(reward_response.content)['data']['id']
 
-    # batch_response = self.create_voucher_batch()
-    # self.batch_id = json.loads(batch_response.content)['data'][0]['id']
+    batch_response = self.create_voucher_batch()
+    self.batch_id = json.loads(batch_response.content)['data'][0]['id']
 
   def create_voucher_batch(self):
     payload = { "data": { "type": "batch", "attributes": { "amount": 50, "start_date": "2019-01-01", "source_id": self.reward_id, "source_type": "Perx::Reward::Entity", "code_type": "single_code", "code": "100" } } }
@@ -83,7 +83,6 @@ class SurveyEngagement(TaskSet):
       'card_background_img_url': 'https://robohash.org/card-background.png',
       'background_img_url': 'https://robohash.org/background-image.png'
     }
-
     payload = { "data": { "type": "engagements", "attributes": { "title": "Test engagement", "properties": {}, "display_properties": display_properties, "description": 'description text', "image_url": "www.image.com" } } }
     return self.client.post('/survey/engagements', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
 
