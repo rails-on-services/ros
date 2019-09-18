@@ -22,8 +22,3 @@ load 'rails/tasks/engine.rake'
 load 'rails/tasks/statistics.rake'
 
 require 'bundler/gem_tasks'
-
-if Rails.env.development?
-  require 'rubocop/rake_task'
-  RuboCop::RakeTask.new
-end
