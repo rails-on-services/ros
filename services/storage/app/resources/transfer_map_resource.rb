@@ -2,5 +2,5 @@
 
 class TransferMapResource < Storage::ApplicationResource
   attributes :name, :description, :service, :target
-  has_one
+  has_many :column_maps
 end

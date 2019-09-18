@@ -12,6 +12,10 @@ class Upload < Storage::ApplicationRecord
     end
   end
 
+  def queue_to_services
+    [transfer_map.service]
+  end
+
   def remote_path
     # "home/222222222/uploads/#{name}"
     "home/#{current_tenant.schema_name.gsub('_', '')}/uploads/#{name}"
