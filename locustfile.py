@@ -1,7 +1,6 @@
 import random
 import json
 import pdb
-import os
 
 from locust import HttpLocust, task, TaskSet, TaskSequence
 from faker import Faker
@@ -61,7 +60,7 @@ class SurveyEngagement(TaskSet):
     reward_response = self.create_reward_entity()
     self.reward_id = json.loads(reward_response.content)['data']['id']
 
-    batch_response = self.create_voucher_batch()
+    self.create_voucher_batch()
     # self.batch_id = json.loads(batch_response.content)['data'][0]['id']
 
   def create_voucher_batch(self):
@@ -108,12 +107,20 @@ class SurveyEngagement(TaskSet):
   #   payload = { 'data': { "type": "entities", "attributes": { "batch_id": self.batch_id, "source_id": self.reward_id, "source_type": "Perx::Reward::Entity", "user_id": "1" } } }
   #   response = self.client.post('voucher/entities', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
 
-  @task(20)
+  @task(5)
+  def get_all_vouchers(self):
+    self.client.get('voucher/entities', headers={ "authorization": self.token, 'content-type': self.content_type } )
+
+  @task(5)
+  def get_all_rewards(self):
+    self.client.get('reward/entities', headers={ "authorization": self.token, 'content-type': self.content_type } )
+
+  @task(5)
   def create_possible_outcomes(self):
     payload = { 'data': { "type": "possible_outcomes", "attributes": { "result_id": self.reward_id, "result_type": "Perx::Reward::Entity", "campaign_entity_id": self.campaign_id } } }
     self.client.post('outcome/possible_outcomes', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
 
-  @task(20)
+  @task(5)
   def create_survey_answers(self):
     payload = { "data": { "type": "answers", "attributes": { "engagement_id": 1, "campaign_entity_id": 1, "content": { "something": "good" } } } }
     self.client.post('survey/answers', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )  
