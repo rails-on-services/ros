@@ -1,8 +1,4 @@
-
-
 require 'aws-sdk-sqs'
-
-
 
 class Q
   attr_accessor :client, :queue_name, :queue
