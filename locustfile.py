@@ -6,10 +6,10 @@ from locust import HttpLocust, task, TaskSet, TaskSequence
 from faker import Faker
 
 # NOTE: Running load test in development
-FILE = 'services/iam/tmp/mounted/credentials.json'
+# FILE = 'services/iam/tmp/mounted/credentials.json'
 
 # NOTE: Running load test in live environment
-# FILE = '../tmp/runtime/production/be/application/load-test/platform/credentials.json'
+FILE = '../tmp/runtime/production/be/application/load-test/platform/credentials.json'
 
 def config():
   return json.loads(open(FILE).read())
@@ -44,9 +44,7 @@ class SurveyEngagement(TaskSet):
     identifier = Faker().name()
     create_cognito_user(self, identifier)
     login_response = login_cognito_user(self, identifier)
-
-    self.token = login_response.headers['Authorization']
-    self.content_type = 'application/vnd.api+json'
+    self.header = { "authorization": login_response.headers['Authorization'], 'content-type': 'application/vnd.api+json' }
 
     engagement_response = self.create_survey_engagement()
     self.engagement_id = json.loads(engagement_response.content)['data']['id']
@@ -54,18 +52,18 @@ class SurveyEngagement(TaskSet):
     organization_response = self.create_organization_orgs()
     self.org_id = json.loads(organization_response.content)['data']['id']
 
-    campaign_response = self.create_campaign_entity()
-    self.campaign_id = json.loads(campaign_response.content)['data']['id']
-
     reward_response = self.create_reward_entity()
     self.reward_id = json.loads(reward_response.content)['data']['id']
 
+    campaign_response = self.create_campaign_entity()
+    self.campaign_id = json.loads(campaign_response.content)['data']['id']
+
+    self.create_possible_outcomes()
     self.create_voucher_batch()
-    # self.batch_id = json.loads(batch_response.content)['data'][0]['id']
 
   def create_voucher_batch(self):
     payload = { "data": { "type": "batch", "attributes": { "amount": 50, "start_date": "2019-01-01", "source_id": self.reward_id, "source_type": "Perx::Reward::Entity", "code_type": "single_code", "code": "100" } } }
-    return self.client.post('voucher/batch', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+    return self.client.post('voucher/batch', data=json.dumps(payload), headers=self.header )
 
   def create_survey_engagement(self):
     display_properties = { 'title': 'Collect stamps',
@@ -87,49 +85,48 @@ class SurveyEngagement(TaskSet):
       'background_img_url': 'https://robohash.org/background-image.png'
     }
     payload = { "data": { "type": "engagements", "attributes": { "title": "Test engagement", "properties": {}, "display_properties": display_properties, "description": 'description text', "image_url": "www.image.com" } } }
-    return self.client.post('survey/engagements', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+    return self.client.post('survey/engagements', data=json.dumps(payload), headers=self.header )
 
   def create_campaign_entity(self):
     payload = { "data": { "type": "entities", "attributes": { "engagement_type": "survey", "engagement_id": self.engagement_id, "name": "Test campaign", "status": "draft" } } }
-    return self.client.post('campaign/entities', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+    return self.client.post('campaign/entities', data=json.dumps(payload), headers=self.header )
 
   def create_organization_orgs(self):
     payload = { "data": { "type": "orgs", "attributes": { "name": "Starbucks", "description": "5 dollars voucher" } } }
-    return self.client.post('organization/orgs', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+    return self.client.post('organization/orgs', data=json.dumps(payload), headers=self.header )
 
   def create_reward_entity(self):
     payload = { "data": { "type": "entities", "attributes": { "image_url": "https://lorempixel.com/300/300", "name": "Starbucks Voucher", "reward_type": "Cashback", "category": "F&B", "redemption_type": "Text", "cost_of_reward": 200, "organization_id": self.org_id } } }   
-    return self.client.post('reward/entities', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+    return self.client.post('reward/entities', data=json.dumps(payload), headers=self.header )
+
+  def create_possible_outcomes(self):
+    payload = { 'data': { "type": "possible_outcomes", "attributes": { "result_id": self.reward_id, "result_type": "Perx::Reward::Entity", "campaign_entity_id": self.campaign_id } } }
+    return self.client.post('outcome/possible_outcomes', data=json.dumps(payload), headers=self.header )
 
   # @task(20)
   # NOTE: This endpoint is not yet restful. Uncomment after the create method on voucher/entities_controller have been refactored/removed
   # def create_voucher_entities(self):
   #   payload = { 'data': { "type": "entities", "attributes": { "batch_id": self.batch_id, "source_id": self.reward_id, "source_type": "Perx::Reward::Entity", "user_id": "1" } } }
-  #   response = self.client.post('voucher/entities', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
+  #   response = self.client.post('voucher/entities', data=json.dumps(payload), headers=self.header )
 
   @task(5)
   def get_all_vouchers(self):
-    self.client.get('voucher/entities', headers={ "authorization": self.token, 'content-type': self.content_type } )
+    self.client.get('voucher/entities', headers=self.header )
 
   @task(5)
   def get_all_rewards(self):
-    self.client.get('reward/entities', headers={ "authorization": self.token, 'content-type': self.content_type } )
+    self.client.get('reward/entities', headers=self.header )
 
-  @task(5)
-  def create_possible_outcomes(self):
-    payload = { 'data': { "type": "possible_outcomes", "attributes": { "result_id": self.reward_id, "result_type": "Perx::Reward::Entity", "campaign_entity_id": self.campaign_id } } }
-    self.client.post('outcome/possible_outcomes', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )
-
-  @task(5)
+  @task(10)
   def create_survey_answers(self):
-    payload = { "data": { "type": "answers", "attributes": { "engagement_id": 1, "campaign_entity_id": 1, "content": { "something": "good" } } } }
-    self.client.post('survey/answers', data=json.dumps(payload), headers={ "authorization": self.token, 'content-type': self.content_type } )  
+    payload = { "data": { "type": "answers", "attributes": { "engagement_id": self.engagement_id, "campaign_entity_id": self.campaign_id, "content": { "something": "good" } } } }
+    self.client.post('survey/answers', data=json.dumps(payload), headers=self.header )  
 
 class SurveyEngagementService(HttpLocust):
   task_set = SurveyEngagement
   # NOTE: Running it locally
-  host = 'http://localhost:3000/'
+  # host = 'http://localhost:3000/'
   # NOTE: Running it on uat environment with load-test tag
-  # host = 'https://api-load-test.uat.whistler.perxtech.io/'
+  host = 'https://api-load-test.uat.whistler.perxtech.io/'
   max_weight = 500
   min_weight = 500
