@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ros
   module Comm
     class ApplicationMailer < ActionMailer::Base

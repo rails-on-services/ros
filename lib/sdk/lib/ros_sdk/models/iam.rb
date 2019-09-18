@@ -6,6 +6,7 @@ module Ros
     class Base < Ros::Sdk::Base; end
 
     class Tenant < Base; end
+    class FileFingerprint < Base; end
 
     class Credential < Base; end
     class User < Base

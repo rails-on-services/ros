@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-class Comm::ApplicationJob < ::ApplicationJob
+module Comm
+  class ApplicationJob < ::ApplicationJob
+  end
 end

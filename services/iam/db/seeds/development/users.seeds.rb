@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# ubocop:disable Metrics/BlockLength
 after 'development:tenants' do
   Tenant.all.each do |tenant|
     next if tenant.id.eql? 1
@@ -18,7 +19,8 @@ after 'development:tenants' do
       User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
       credential = user.credentials.create
-      @created_list.append({ type: 'user', owner: user, tenant: tenant, credential: credential, secret: credential.secret_access_key })
+      @created_list.append(type: 'user', owner: user, tenant: tenant, credential: credential,
+                           secret: credential.secret_access_key)
 
       # Create a Group
       group_admin = Group.create(name: 'Admin')
@@ -49,3 +51,4 @@ after 'development:tenants' do
   STDOUT.puts 'Credentials are next:'
   STDOUT.puts File.read("#{Ros.host_tmp_dir}/credentials.json")
 end
+# ubocop:enable Metrics/BlockLength

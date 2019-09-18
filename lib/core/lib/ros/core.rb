@@ -13,38 +13,49 @@ require 'config'
 require 'sidekiq'
 require 'sidekiq/web'
 require 'ros_sdk'
+# require 'pry-remote'
 
 require_relative 'tenant_middleware'
 require_relative 'dtrace_middleware'
 require_relative 'url_builder'
 require_relative 'api_token_strategy'
 require_relative 'routes'
+require_relative '../migrations'
 
 require 'ros/core/engine'
 
 module Ros
-  class Configuration
-    attr_accessor :model_paths, :factory_paths
-
-    def initialize; @model_paths = []; @factory_paths = [] end
-  end
-
-  # def self.host_tmp_dir; "tmp/#{ENV['PLATFORM__FEATURE_SET']}" end
-  def self.host_tmp_dir; "tmp/#{Settings.feature_set}" end
-
-  # NOTE: Experimental
-  class Application
-    def self.config; Settings end
+  module Core
   end
 
   class << self
-    attr_accessor :config
+    def host_tmp_dir; "tmp/#{Settings.feature_set}" end
+    def host_env; @host_env ||= ActiveSupport::StringInquirer.new(File.exists?('/.dockerenv') ? 'docker' : 'os') end
 
-    def config; @config ||= Ros::Configuration.new end
-    def version; '0.1.0' end
-    def application; Application end
+    def root
+      @root ||= (
+        cwd = Pathname.new(Dir.pwd)
+        Dir.pwd.split('/').size.times { |i|
+          path = cwd.join('../' * i)
+          break path if Dir.exists?("#{path}/services") and Dir.exists?("#{path}/lib")
+        })
+    end
+    def spec_root; @spec_root ||= Pathname.new(__FILE__).join('../../../spec') end
+
+    # def root; @root ||= Pathname.new(__FILE__).join('../../..') end
+    # def spec_root; @spec_root ||= root.join('spec') end
+
+    def dummy_mount_path; @dummy_mount_path ||= "/#{host_env.os? ? Settings.service.name : ''}" end
+
+    # TODO: Tenant events and platform events are skipped for now; these will support callbacks
+    def table_names
+      @table_names ||= (
+        ActiveRecord::Base.connection.tables - %w(schema_migrations ar_internal_metadata tenant_events platform_events)
+      )
+    end
+    # By default all services exclude only the Tenant model from schemas
+    def excluded_models; %w(Tenant) end
   end
-  # NOTE: End Experimental
 
   # TODO: Authorize method
   # TODO: scope value is the subject's policies; What if the subject's policies change after token issued?
@@ -110,6 +121,7 @@ module Ros
     rescue JWT::DecodeError
     end
 
+    def is_platform_urn?; account_id.eql?('platform') end
     def resource_type; resource.split('/').first end
     def resource_id; resource.split('/').last end
 
@@ -125,8 +137,5 @@ module Ros
       [401, { 'Content-Type' => 'application/vnd.api+json' },
         [{ errors: [{ status: '401', title: 'Unauthorized' }] }.to_json]]
     end
-  end
-
-  module Core
   end
 end

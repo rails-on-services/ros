@@ -50,5 +50,4 @@ coverage/
 .ruby-gemset
 
 ./config
-./devops
 ./ros

@@ -2,13 +2,10 @@
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
+# rubocop:disable Metrics/LineLength
 Devise.setup do |config|
   config.warden do |manager|
     manager.failure_app = Ros::FailureApp
-    # manager.failure_app = UnauthorizedController
-    # manager.failure_app = Proc.new { |env| ['401', {'Content-Type' => 'application/json'}, { error: 'Unauthorized', code: 401 }] }
-    # manager.default_strategies(scope: :user).unshift :api_token
-    # manager.default_strategies(scope: :user).unshift :credentials_authenticatable
   end
 
   # config.jwt do |jwt|
@@ -311,3 +308,4 @@ Devise.setup do |config|
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
 end
+# rubocop:enable Metrics/LineLength

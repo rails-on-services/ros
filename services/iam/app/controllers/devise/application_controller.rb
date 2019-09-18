@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/ClassAndModuleChildren
 class Devise::ApplicationController < Devise::SessionsController
   skip_before_action :authenticate_it!, on: :create
 
@@ -29,3 +30,4 @@ class Devise::ApplicationController < Devise::SessionsController
     Tenant.schema_name_from(account_id: sign_in_params[:account_id]) || Apartment::Tenant.current
   end
 end
+# rubocop:enable Style/ClassAndModuleChildren

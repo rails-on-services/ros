@@ -37,7 +37,7 @@ module Providers
       message.update(from: from)
       client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
       client.publish(phone_number: message.to, message: message.body)
-    # rescue
+      # rescue
       # Rails.logger.warn('No AWS client configured for tenant.account_id') and return if client.nil?
     end
   end

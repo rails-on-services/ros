@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 namespace :ros do
   namespace :iam do
     namespace :db do
@@ -8,8 +9,8 @@ namespace :ros do
         seedbank_root = Seedbank.seeds_root
         Seedbank.seeds_root = File.expand_path('db/seeds', Ros::Iam::Engine.root)
         Seedbank.load_tasks
-        Rake::Task["db:seed"].invoke
-        Seedbank.seeds_root = seedbank_root 
+        Rake::Task['db:seed'].invoke
+        Seedbank.seeds_root = seedbank_root
       end
     end
 
@@ -47,6 +48,6 @@ namespace :ros do
         end
       end
     end
-
   end
 end
+# rubocop:enable Metrics/BlockLength

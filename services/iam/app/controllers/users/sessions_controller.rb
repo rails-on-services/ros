@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/ClassAndModuleChildren
 class Users::SessionsController < Devise::ApplicationController
   protected
 
@@ -12,3 +13,4 @@ class Users::SessionsController < Devise::ApplicationController
     jsonapi_params.permit(%i[username password account_id])
   end
 end
+# rubocop:enable Style/ClassAndModuleChildren
