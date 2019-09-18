@@ -8,6 +8,9 @@ module AutoGenDoc
     base.extend ClassMethods
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/BlockLength
   module ClassMethods
     def inherited(subclass)
       subclass.class_eval do
@@ -22,7 +25,7 @@ module AutoGenDoc
           query 'page[size]', Integer # , range: { ge: 1 }, default: 1
           query :sort, String
           query :include, String
-          (subclass.resource_class.filters.keys - %i(id)).each do |field|
+          (subclass.resource_class.filters.keys - %i[id]).each do |field|
             query "filter[#{field}]", String, desc: subclass.resource_class.descriptions[field] || nil
           end
           response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
@@ -98,6 +101,9 @@ module AutoGenDoc
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/BlockLength
 end
 
 class ApplicationDoc

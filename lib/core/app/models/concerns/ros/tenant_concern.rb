@@ -4,9 +4,10 @@ module Ros
   module TenantConcern
     extend ActiveSupport::Concern
 
+    # rubocop:disable Metrics/BlockLength
     class_methods do
       def excluded_models
-        %w(Tenant)
+        %w[Tenant]
       end
 
       def urn_id; :account_id end
@@ -20,10 +21,10 @@ module Ros
       end
 
       def schema_name_from(account_id: nil, id: nil)
-        if account_id and (tenant = Tenant.find_by(schema_name: account_id_to_schema(account_id)))
-          return tenant.schema_name
-        elsif id and (tenant = Tenant.find_by(id: id))
-          return tenant.schema_name
+        if account_id && (tenant = Tenant.find_by(schema_name: account_id_to_schema(account_id)))
+          tenant.schema_name
+        elsif id && (tenant = Tenant.find_by(id: id))
+          tenant.schema_name
         end
       end
 
@@ -91,15 +92,16 @@ module Ros
       # Called by RpcWorker#receive and TenantMiddleware#parse_tenant_name
       # It parses a request hash and sets the necessary RequestStere settings
       # The caller then uses these settings to select the appropriate schema for the request to operate on
-      # TODO: This is probably where the JWT will be processed; Or it will already be decrypted and values put into the header
+      # TODO: This is probably where the JWT will be processed
+      # Or it will already be decrypted and values put into the header
       # NOTE: Either way, the request header needs to put the tenant somewhere so logging can be done per tenant
       # NOTE: This method does not current work. it is code ported from another project
-      def self.set_request_store(request_hash)
-        request = RequestStore.store[:tenant_request] = ApiAll::TenantRequest.new(request_hash)
-        raise ArgumentError, 'Tenant schema is nil!' unless request.schema_name
+      # def self.set_request_store(request_hash)
+      #   request = RequestStore.store[:tenant_request] = ApiAll::TenantRequest.new(request_hash)
+      #   raise ArgumentError, 'Tenant schema is nil!' unless request.schema_name
 
-        RequestStore.store[:tenant] = find_by!(schema_name: request.schema_name)
-      end
+      #   RequestStore.store[:tenant] = find_by!(schema_name: request.schema_name)
+      # end
 
       def create_schema
         Apartment::Tenant.create(schema_name)
@@ -118,5 +120,6 @@ module Ros
         raise e if Rails.env.production? # Don't raise an exception in dev mode so to allow seeds to work
       end
     end
+    # rubocop:enable Metrics/BlockLength
   end
 end

@@ -21,7 +21,8 @@ module Ros
       #   # TODO: refactor client, queue_name and  queue_url
       #   queue_name = "#{queue}_lifecycle"
       #   queue_url = "http://localstack:4576/queue/#{queue_name}"
-      #   Rails.configuration.x.client.send_message(queue_url: queue_url, message_body: { destroyed: destroyed?, data: self }.to_json)
+      #   Rails.configuration.x.client.send_message(queue_url: queue_url,
+      #   message_body: { destroyed: destroyed?, data: self }.to_json)
       # end
     end
   end

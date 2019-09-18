@@ -9,10 +9,13 @@ class FileFingerprintsController < ApplicationController
 
   def resources
     # @TODO: Add proper filters based on resource class
-    models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase } if params.dig(:filter, :model_name)
-    models.map! { |record| FileFingerprintResource.new(record, nil) }
+    if params.dig(:filter, :model_name)
+      models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase }
+    end
+    models.map! { |model| FileFingerprintResource.new(model, nil) }
   end
 
+  # This method smells of :reek:ManualDispatch
   def models
     @models ||= Ros.table_names.map do |table|
       klass = table.classify.constantize

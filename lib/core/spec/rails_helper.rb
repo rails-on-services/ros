@@ -30,12 +30,17 @@ Dir[Rails.root.join('spec', 'factories', '**', '*.rb')].each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
+# rubocop:disable Rails/Output
+# rubocop:disable Rails/Exit
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+# rubocop:enable Rails/Output
+# rubocop:enable Rails/Exit
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

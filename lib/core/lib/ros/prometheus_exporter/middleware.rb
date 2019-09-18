@@ -2,6 +2,8 @@
 
 require 'prometheus_exporter/middleware'
 
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/MethodLength
 module Ros
   module PrometheusExporter
     class Middleware < ::PrometheusExporter::Middleware
@@ -36,3 +38,5 @@ module Ros
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength

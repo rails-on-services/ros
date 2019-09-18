@@ -15,7 +15,7 @@ module Postman
     def target; "#{postman_dir}/#{file_name}" end
 
     def convert_to_postman
-      raise raise FileNotFoundException.new('File not found') unless File.exists?(source)
+      raise FileNotFoundException, 'File not found' unless File.exist?(source)
 
       FileUtils.mkdir_p(postman_dir)
       `openapi2postmanv2 -p -s #{source} -o #{target}`

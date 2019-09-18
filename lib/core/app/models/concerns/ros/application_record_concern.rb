@@ -28,6 +28,7 @@ module Ros
       def service_name; Ros::Sdk.configured_services[Settings.service.name] end
     end
 
+    # rubocop:disable Metrics/BlockLength
     included do
       # urn:partition:service:region:account_id:resource_type/id
       def to_urn; "#{self.class.to_urn}/#{send(self.class.urn_id)}" end
@@ -49,28 +50,29 @@ module Ros
         # Ros::TenantProducerEventJob.perform_now(self)
       end
 
-      def perform(object)
-        data = { event: object.persisted?, data: object }.to_json
+      def perform(record)
+        data = { event: record.persisted?, data: record }.to_json
         queues = ['storage']
         queues.each do |queue|
-          queue_name = "#{queue}_platform_consumer_events".to_sym
+          _queue_name = "#{queue}_platform_consumer_events".to_sym
           # Ros::PlatformConsumerEventJob.set(queue: queue_name).perform_later(data)
           perform_later(data)
         end
       end
 
-      def perform_later(object)
-        puts object
-        binding.pry
-        payload = JSON.parse(object)
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
+      def perform_later(record)
+        Rails.logger.debug record
+        payload = JSON.parse(record)
         event = payload['event']
         data = payload['data']
         urn = Ros::Urn.from_urn(data['urn'])
         if urn.is_platform_urn?
-          binding.pry
           # PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
           return
         end
+
         schema_name = Tenant.account_id_to_schema(urn.account_id)
         Rails.logger.debug("Schema name #{schema_name}")
         tenant = Tenant.find_by(schema_name: schema_name)
@@ -80,10 +82,13 @@ module Ros
           PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
         end
       end
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize
 
       def as_json(*)
-        super.merge({ 'urn' => to_urn })
+        super.merge('urn' => to_urn)
       end
     end
+    # rubocop:enable Metrics/BlockLength
   end
 end

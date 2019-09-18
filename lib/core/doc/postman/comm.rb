@@ -42,14 +42,18 @@ module Postman
       "#{base_url}/#{endpoint}"
     end
 
-    def endpoint=(ep)
-      raise ArgumentError, "Invalid endpoint. Valid endpoints are #{valid_endpoints.join(', ')}" unless valid_endpoints.include? ep.to_s
+    # rubocop:disable Lint/DuplicateMethods
+    def endpoint=(endpoint)
+      unless valid_endpoints.include? endpoint.to_s
+        raise ArgumentError, "Invalid endpoint. Valid endpoints are #{valid_endpoints.join(', ')}"
+      end
 
       @endpoint = ep.to_s
     end
+    # rubocop:enable Lint/DuplicateMethods
 
     def valid_endpoints
-      %w(collections environments mocks monitors workspaces)
+      %w[collections environments mocks monitors workspaces]
     end
   end
 end
