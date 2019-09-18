@@ -60,8 +60,7 @@ module Ros
       # inside JSONAPI resources can reference user with context[:user]
       def context
         {
-          user: current_user,
-          cognito_user_id: cognito_user_id
+          user: PolicyUser.new(current_user, cognito_user_id)
         }
       end
 
