@@ -56,9 +56,13 @@ module Ros
         @auth_type ||= ActiveSupport::StringInquirer.new(request.env['HTTP_AUTHORIZATION'].split[0].downcase)
       end
 
-      # Next method is for Pundit; inside JSONAPI resources can reference user with context[:user]
+      # Next method is for Pundit;
+      # inside JSONAPI resources can reference user with context[:user]
       def context
-        { user: current_user }
+        {
+          user: current_user,
+          cognito_user_id: cognito_user_id
+        }
       end
 
       # Custom resource serializer:
