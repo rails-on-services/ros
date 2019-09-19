@@ -9,7 +9,7 @@ class TransferMap < Storage::ApplicationRecord
   # rubocop:disable Rails/FindEach
   def self.match(columns_to_match)
     all.each do |tmap|
-      columns = tmap.column_maps.pluck(:user_name).sort
+      columns = tmap.list_of_columns
       break tmap if columns == columns_to_match
     end
   end
@@ -17,6 +17,14 @@ class TransferMap < Storage::ApplicationRecord
 
   def service_name
     "Ros::#{service&.classify}::FileFingerprint"
+  end
+
+  def list_of_columns
+    column_maps.pluck(:user_name).sort
+  end
+
+  def hash_of_columns
+    column_maps.pluck(:user_name, :name).each_with_object({}) { |a, h| h[a[0].to_sym] = a[1] }
   end
 
   private

@@ -120,7 +120,7 @@ module Ros
           notification_configuration[:queue_configurations] = [{
             # TODO: AWS account ID from configuration
             # queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
-		        queue_arn: "arn:aws:sqs:#{credentials[:region]}:251316246111:#{queue_name}",
+            queue_arn: "arn:aws:sqs:#{credentials[:region]}:251316246111:#{queue_name}",
             events: events,
             filter: { key: { filter_rules: filter_rules } }
           }]
