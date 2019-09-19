@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Spec
       class RemoveFactoryBotClassname < RuboCop::Cop::Cop
-        MSG = 'Please remove factory bot classname when creating records'.freeze
+        MSG = 'Exclude FactoryBot classname when creating/building records'.freeze
         FACTORY_BOT_METHODS = %i(create build build_stubbed)
 
         def on_block(node)
