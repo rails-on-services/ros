@@ -7,6 +7,7 @@ class TenantStorageWorker
   # rubocop:disable Metrics/AbcSize
   def process_event(event)
     return unless event.schema_name
+
     Tenant.find_by(schema_name: event.schema_name).switch do
       if event.type.eql? 'upload'
         next if Upload.find_by(name: event.name, etag: event.etag, size: event.size)

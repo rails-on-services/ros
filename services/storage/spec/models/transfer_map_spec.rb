@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'csv'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe TransferMap, type: :model do
   let(:temp_csv_file) do
     CSV.parse(<<~ROWS)
@@ -38,3 +39,4 @@ RSpec.describe TransferMap, type: :model do
     expect(TransferMap.find(transfer_map.id)).to eq(transfer_map)
   end
 end
+# rubocop:enable Metrics/BlockLength

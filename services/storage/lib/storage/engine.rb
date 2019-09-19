@@ -21,7 +21,9 @@ module Storage
         Rails.configuration.x.infra.resources.mq.primary, 'storage/sftp/home'
       )
       require 'shoryuken'
-      Shoryuken.configure_server { |config| config.sqs_client = Rails.configuration.x.infra.resources.mq.primary.client }
+      Shoryuken.configure_server do |config|
+        config.sqs_client = Rails.configuration.x.infra.resources.mq.primary.client
+      end
       # elsif provider.eql? 'gcp'
       # end
     end
@@ -39,7 +41,7 @@ module Storage
     end
 
     initializer 'service.set_factory_paths', after: 'ros_core.set_factory_paths' do
-      if defined?(FactoryBot) and not Rails.env.production?
+      if defined?(FactoryBot) && !Rails.env.production?
         FactoryBot.definition_file_paths.prepend(Pathname.new(__FILE__).join('../../../spec/factories'))
       end
     end
