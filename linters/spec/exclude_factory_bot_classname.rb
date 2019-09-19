@@ -5,9 +5,9 @@ require 'pry'
 module RuboCop
   module Cop
     module Spec
-      class RemoveFactoryBotClassname < RuboCop::Cop::Cop
-        MSG = 'Please remove factory bot classname when creating records'.freeze
-        FACTORY_BOT_METHODS = %i(create build build_stubbed)
+      class ExcludeFactoryBotClassname < RuboCop::Cop::Cop
+        MSG = 'Exclude FactoryBot classname when creating/building records'
+        FACTORY_BOT_METHODS = %i[create build build_stubbed].freeze
 
         def on_block(node)
           node.each_descendant(:send) do |send_node|
