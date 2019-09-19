@@ -5,7 +5,7 @@ require 'pry'
 module RuboCop
   module Cop
     module Spec
-      class RemoveFactoryBotClassname < RuboCop::Cop::Cop
+      class ExcludeFactoryBotClassname < RuboCop::Cop::Cop
         MSG = 'Exclude FactoryBot classname when creating/building records'
         FACTORY_BOT_METHODS = %i[create build build_stubbed].freeze
 
