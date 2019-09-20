@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Upload < Storage::ApplicationRecord
-  belongs_to :transfer_map, required: false
+  belongs_to :transfer_map, optional: true
 
   before_create :assign_transfer_map
 

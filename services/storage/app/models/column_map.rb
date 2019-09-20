@@ -11,6 +11,7 @@ class ColumnMap < Storage::ApplicationRecord
   end
 
   def service_columns
-    @service_columns ||= transfer_map.service_name.constantize.where(model_name: transfer_map.target).first['model_columns']
+    @service_columns ||=
+      transfer_map.service_name.constantize.where(model_name: transfer_map.target).first['model_columns']
   end
 end

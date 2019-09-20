@@ -27,7 +27,7 @@ class TransferMap < Storage::ApplicationRecord
 
   def target_is_valid
     raise unless service_name.constantize.where(model_name: target).any?
-  rescue
+  rescue StandardError
     errors.add(:invalid_target, "#{target} is invalid target for #{service_name}")
   end
 end

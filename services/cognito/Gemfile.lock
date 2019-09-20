@@ -41,7 +41,7 @@ PATH
       rails (~> 6.0.0.rc2)
 
 GEM
-  remote: http://localhost:9292/
+  remote: https://rubygems.org/
   specs:
     actioncable (6.0.0.rc2)
       actionpack (= 6.0.0.rc2)
