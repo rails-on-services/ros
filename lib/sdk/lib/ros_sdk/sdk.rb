@@ -111,7 +111,7 @@ module Ros
   end
 end
 
-PryCommandSet = Pry::CommandSet.new
+Ros::Sdk::PryCommandSet = Pry::CommandSet.new
 
 class ConsoleHelp < Pry::ClassCommand
   match 'setup-client'
@@ -133,7 +133,20 @@ class ConsoleHelp < Pry::ClassCommand
   BANNER
 
   def process; end
-  PryCommandSet.add_command(self)
+  Ros::Sdk::PryCommandSet.add_command(self)
 end
 
-Pry.config.commands.import PryCommandSet
+class RServices < Pry::ClassCommand
+  match 'sdk'
+  group 'ros'
+  description 'show SDK configured services and endpoints'
+
+  def process
+    output.puts "Services: #{Ros::Sdk.configured_services}"
+    output.puts "Endpoints: #{Ros::Sdk.service_endpoints}"
+  end
+
+  Ros::Sdk::PryCommandSet.add_command(self)
+end
+
+Pry.config.commands.import Ros::Sdk::PryCommandSet

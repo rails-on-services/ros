@@ -7,18 +7,7 @@ require 'avro_turf/messaging'
 module Ros
   module CloudEvents
     class Event
-      ATTRS = %i[
-        id
-        source
-        specversion
-        type
-        datacontentencoding
-        datacontenttype
-        schemaurl
-        subject
-        time
-        data
-      ].freeze
+      ATTRS = %i[id source specversion type datacontentencoding datacontenttype schemaurl subject time data].freeze
       attr_accessor(*ATTRS)
 
       def to_h

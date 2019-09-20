@@ -148,7 +148,7 @@ module Ros
     def to_s; to_a.join(':') end
   end
 
-  # Failure response to return JSONAPI error message when authentication failse
+  # Failure response to return JSONAPI error message when authentication fails
   class FailureApp
     def self.call(_env)
       [401, { 'Content-Type' => 'application/vnd.api+json' },

@@ -28,8 +28,9 @@ module AutoGenDoc
           (subclass.resource_class.filters.keys - %i[id]).each do |field|
             query "filter[#{field}]", String, desc: subclass.resource_class.descriptions[field] || nil
           end
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
-                                                                          .serialize_to_hash(subclass.resources).to_json
+          response 200, :success, :json,
+                   data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
+                                                    .serialize_to_hash(subclass.resources).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
               {
@@ -42,8 +43,9 @@ module AutoGenDoc
 
         api_dry :show do
           header :Authorization, String
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
-                                                                          .serialize_to_hash(subclass.resource).to_json
+          response 200, :success, :json,
+                   data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
+                                                    .serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
               {
@@ -64,8 +66,9 @@ module AutoGenDoc
               attributes: attributes
             }
           }
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
-                                                                          .serialize_to_hash(subclass.resource).to_json
+          response 200, :success, :json,
+                   data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
+                                                    .serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
               {
@@ -87,8 +90,9 @@ module AutoGenDoc
               attributes: attributes
             }
           }
-          response 200, :success, :json, data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
-                                                                          .serialize_to_hash(subclass.resource).to_json
+          response 200, :success, :json,
+                   data: JSONAPI::ResourceSerializer.new(subclass.resource_class)
+                                                    .serialize_to_hash(subclass.resource).to_json
           response 401, :unauthorized, :json, data: {
             'errors': [
               {
