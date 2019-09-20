@@ -13,12 +13,11 @@ class TenantStorageWorker
         # next if Upload.find_by(name: event.name, etag: event.etag, size: event.size)
         if (upload = Upload.with_pending_state.find_by(name: event.name, etag: event.etag, size: event.size))
           upload.succeed!
+          # TODO: Move to upload after_create
+          enqueue(upload) unless upload.transfer_map_id.nil?
         else
           Upload.create(name: event.name, etag: event.etag, size: event.size)
         end
-
-        # enqueue(upload) unless upload.transfer_map_id.nil?
-        # TODO: Move to upload after_create
       elsif event.type.eql? 'download'
       end
     end
