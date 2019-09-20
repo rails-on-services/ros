@@ -2,7 +2,12 @@
 
 # rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/MethodLength
+
+require_relative '../specs_generator.rb'
+
 class EndpointGenerator < Rails::Generators::NamedBase
+  include SpecsGenerator
+
   source_root File.expand_path('templates', __dir__)
 
   def create_files
@@ -38,6 +43,9 @@ class EndpointGenerator < Rails::Generators::NamedBase
         let(:#{name}) { create(:#{name}) }
       end
     FILE
+
+    # Request spec
+    create_request_specs
 
     # Policy
     create_file "app/policies/#{name}_policy.rb", <<~FILE

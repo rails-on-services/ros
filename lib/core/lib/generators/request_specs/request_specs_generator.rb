@@ -1,14 +1,9 @@
-# frozen_string_literal: true
+require_relative '../specs_generator.rb'
 
 class RequestSpecsGenerator < Rails::Generators::NamedBase
+  include SpecsGenerator
+
   def create_files
-    create_file "spec/requests/#{plural_name}_spec.rb", <<~FILE
-      # frozen_string_literal: true
-
-      require 'rails_helper'
-
-      RSpec.describe "#{plural_name} requests", type: :request do
-      end
-    FILE
+    create_request_specs
   end
 end
