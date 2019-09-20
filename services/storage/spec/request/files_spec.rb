@@ -18,6 +18,7 @@ RSpec.describe 'Files requests', type: :request do
       include_context 'authorized user'
 
       before do
+        allow_any_instance_of(ActiveStorage::Blob).to receive(:service_url).and_return('mock_url')
         mock_authentication
         post url, headers: request_headers, params: file_params
       end
