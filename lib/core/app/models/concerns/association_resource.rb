@@ -5,7 +5,7 @@ module AssociationResource
 
   def method_missing(method, *params)
     association = self.class.find_resource(method)
-    return super if resource.blank?
+    return super if association.blank?
 
     association.call(self)
   rescue JsonApiClient::Errors::ApiError => e
