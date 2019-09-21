@@ -28,7 +28,7 @@ module Providers
       # binding.pry
       # TODO: toggle sending on and off
       client.messages.create(from: from, to: message.to, body: message.body)
-      p message
+      Rails.logger.debug message
     end
 
     def call(_message)

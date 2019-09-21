@@ -18,6 +18,7 @@ RSpec.configure do |config|
   end
   config.after(:all) do
     @as.destroy
+    @as.root.destroy if @as.try(:root) # IAM only
   end
 end
 
@@ -46,6 +47,20 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
     with.library :active_record
     with.library :active_model
+  end
+end
+
+RSpec::Matchers.define :permit do |action|
+  match do |policy|
+    policy.public_send("#{action}?")
+  end
+
+  failure_message do |policy|
+    "#{policy.class} does not permit #{action} on #{policy.record} for #{policy.user.inspect}."
+  end
+
+  failure_message_when_negated do |policy|
+    "#{policy.class} does not forbid #{action} on #{policy.record} for #{policy.user.inspect}."
   end
 end
 

@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 source ENV['GEM_SERVER'] || 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-# gemspec
 
 gem 'pry-rails'
 gem 'awesome_print'
@@ -9,23 +10,29 @@ gem 'pg'
 gem 'ros-core', path: '../../lib/core'
 gem 'ros_sdk', path: '../../lib/sdk'
 
-group :production do
-  gem 'puma'
-end
-
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'rails-erd'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'rails-erd'
-  gem 'pry-remote'
 end
 
 group :development, :test do
-  gem 'dotenv'
+  gem 'airborne'
   gem 'brakeman', require: false
-  gem 'rspec-rails'
+  gem 'dotenv'
   gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'jsonapi-resources-matchers'
+  gem 'pry-stack_explorer'
+  gem 'pundit-matchers'
+  gem 'rspec-rails'
+  gem 'rubocop'
+  gem 'rubocop-rails'
+  gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
-  gem 'database_cleaner'
+end
+
+group :production do
+  gem 'puma'
 end

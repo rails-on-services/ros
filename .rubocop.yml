@@ -1,5 +1,9 @@
 require:
   - rubocop-rails
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+Rails/NotNullColumn:
+  Enabled: false
 Metrics/LineLength:
   Max: 120
 Style/Documentation:
@@ -8,12 +12,15 @@ Style/SingleLineMethods:
   Enabled: false
 Metrics/BlockLength:
   Exclude:
-    - '**/spec/requests/**/*.rb'
-    - '**/spec/policies/**/*.rb'
     - '**/db/seeds/**/*.rb'
+    - '**/spec/models/**/*.rb'
+    - '**/spec/policies/**/*.rb'
+    - '**/spec/requests/**/*.rb'
 AllCops:
   Exclude:
     - '**/schema.rb'
+    - '**/db/migrate/*.rb'
+    - '**/db/seeds.rb'
     - '**/*.gemspec'
     - '**/Guardfile'
     - '**/Rakefile'
