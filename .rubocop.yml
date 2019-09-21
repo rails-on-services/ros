@@ -1,9 +1,16 @@
+require:
+  - rubocop-rails
 Metrics/LineLength:
   Max: 120
 Style/Documentation:
   Enabled: false
 Style/SingleLineMethods:
   Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - '**/spec/requests/**/*.rb'
+    - '**/spec/policies/**/*.rb'
+    - '**/db/seeds/**/*.rb'
 AllCops:
   Exclude:
     - '**/schema.rb'
@@ -11,3 +18,4 @@ AllCops:
     - '**/Guardfile'
     - '**/Rakefile'
     - '**/Gemfile'
+    - 'services/storage/sqs_test.rb'

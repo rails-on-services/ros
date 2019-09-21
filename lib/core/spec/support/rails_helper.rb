@@ -33,7 +33,7 @@ end
 #     DatabaseCleaner.strategy = :transaction
 #     DatabaseCleaner.clean_with(:deletion)
 #   end
-# 
+#
 #   config.around(:each) do |example|
 #     DatabaseCleaner.cleaning do
 #       example.run
@@ -48,6 +48,5 @@ Shoulda::Matchers.configure do |config|
     with.library :active_model
   end
 end
-
 
 Dir[Ros.spec_root.join('shared/**/*.rb')].each { |f| require f }

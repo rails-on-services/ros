@@ -4,6 +4,8 @@ module Ros
   module ApplicationControllerConcern
     extend ActiveSupport::Concern
 
+    # rubocop:disable Metrics/BlockLength
+    # rubocop:disable Metrics/AbcSize
     included do
       include JSONAPI::ActsAsResourceController
 
@@ -99,8 +101,8 @@ module Ros
 
       private
 
-      def handle_validation_errors(e)
-        resource = ApplicationResource.new(e.record, nil)
+      def handle_validation_errors(error)
+        resource = ApplicationResource.new(error.record, nil)
         handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
       end
 
@@ -117,5 +119,7 @@ module Ros
         Raven.extra_context(params: params.to_unsafe_h, url: request.url, tenant: Apartment::Tenant.current)
       end
     end
+    # rubocop:enable Metrics/BlockLength
+    # rubocop:enable Metrics/AbcSize
   end
 end

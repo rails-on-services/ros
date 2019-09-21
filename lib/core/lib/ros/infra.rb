@@ -5,9 +5,11 @@ module Ros
     module Storage
       extend ActiveSupport::Concern
 
-      def ls(path = ''); raise NotImplementedError end
-      def get(path); raise NotImplementedError end
-      def put(path); raise NotImplementedError end
+      def ls(_path = ''); raise NotImplementedError end
+
+      def get(_path); raise NotImplementedError end
+
+      def put(_path); raise NotImplementedError end
     end
 
     module Mq

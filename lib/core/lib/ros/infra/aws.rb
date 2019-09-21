@@ -29,11 +29,11 @@ module Ros
         include Ros::Infra::Aws
         include Ros::Infra::Mq
 
-        def initialize(client_config, config)
+        def initialize(client_config, _config)
           # binding.pry
           require 'shoryuken'
           self.client = ::Aws::SQS::Client.new(credentials.merge(client_config))
-          Shoryuken.configure_server { |config| config.sqs_client = client }
+          Shoryuken.configure_server { |server_config| server_config.sqs_client = client }
         end
 
         def queues; client.list_queues end
@@ -54,7 +54,9 @@ module Ros
             client.head_bucket(bucket: config.bucket_name)
           rescue ::Aws::S3::Errors::NotFound
             client.create_bucket(bucket: config.bucket_name)
+          # rubocop:disable Lint/HandleExceptions
           rescue ::Aws::S3::Errors::Http502Error
+            # rubocop:enable Lint/HandleExceptions
             # swallow
           end
         end
@@ -64,7 +66,7 @@ module Ros
           queue_name = notifications_path.gsub('/', '-')
           notifications[notifications_path] = queue_name
           attrs = queue_name.end_with?('.fifo') ? { 'FifoQueue' => 'true', 'ContentBasedDeduplication' => 'true' } : {}
-          sqs.client.create_queue({ queue_name: queue_name, attributes: attrs })
+          sqs.client.create_queue(queue_name: queue_name, attributes: attrs)
           # binding.pry
           client.put_bucket_notification_configuration(
             bucket: name, notification_configuration: notification_configuration(queue_name, notifications_path)
@@ -73,11 +75,12 @@ module Ros
 
         # def queue_name; "#{name}-events" end
 
+        # rubocop:disable Metrics/MethodLength
         def notification_configuration(queue_name, notifications_path)
           {
             queue_configurations: [{
               queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
-              events: ["s3:ObjectCreated:*"],
+              events: ['s3:ObjectCreated:*'],
               filter: {
                 key: {
                   filter_rules: [
@@ -91,6 +94,7 @@ module Ros
             }]
           }
         end
+        # rubocop:enable Metrics/MethodLength
 
         def resource
           @resource ||= ::Aws::S3::Resource.new(client: client).bucket(name)
@@ -99,11 +103,12 @@ module Ros
         def ls(pattern = nil)
           # NOTE: This should be when using -l
           return client.list_objects(bucket: name) unless pattern
+
           # NOTE: This is from regular ls
           # return client.list_objects(bucket: name).contents.each_with_object([]) { |ar, o| o.append(ar.key) }
           # binding.pry
           # resource.objects(prefix: path).select do |obj|
-          resource.objects().select do |obj|
+          resource.objects.select do |obj|
             # obj.key.match(/[.]gz$/)
             obj.key.match(/#{pattern}/)
           end
@@ -111,7 +116,7 @@ module Ros
 
         def get(path)
           local_path = "#{Rails.root}/tmp/#{File.dirname(path)}"
-          FileUtils.mkdir_p(local_path) unless Dir.exists?(local_path)
+          FileUtils.mkdir_p(local_path) unless Dir.exist?(local_path)
           resource.object(path).get(response_target: "#{local_path}/#{File.basename(path)}")
         end
 
