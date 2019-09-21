@@ -100,6 +100,7 @@ module Ros
     # end
     #
 
+    # rubocop:disable Metrics/AbcSize
     def check_action(action)
       return true if user.root?
 
@@ -109,6 +110,7 @@ module Ros
       (user_policies.keys & accepted_policies(action)).any? ||
         (user_actions.keys & accepted_actions(action)).any?
     end
+    # rubocop:enable Metrics/AbcSize
 
     def accepted_policies(action)
       self.class.accepted_policies[action] || []

@@ -125,6 +125,7 @@ module Ros
             filter: { key: { filter_rules: filter_rules } }
           }]
         end
+        # rubocop:enable Metrics/MethodLength
 
         def resource
           @resource ||= ::Aws::S3::Resource.new(client: client).bucket(name)
