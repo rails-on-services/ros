@@ -1,5 +1,7 @@
 require:
   - rubocop-rails
+Rails/HttpPositionalArguments:
+  Enabled: false
 Rails/HasManyOrHasOneDependent:
   Enabled: false
 Rails/NotNullColumn:
