@@ -42,21 +42,3 @@ components:
                 config:
                   enabled: no
                   mount: no
-              game:
-                config:
-                  mount: no
-              loyalty:
-                config:
-                  mount: no
-              reward:
-                config:
-                  mount: no
-              instant_outcome:
-                config:
-                  mount: no
-              survey:
-                config:
-                  mount: no
-              engagements:
-                config:
-                  enabled: no
