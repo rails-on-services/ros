@@ -1,0 +1,61 @@
+# Values defined here override any values defined in deployment.yml
+---
+config:
+  name: demo
+  terraform:
+    state:
+      key: demo-staging
+  infra:
+    aws:
+      cluster:
+        role_name: demo-staging-eks-developer
+
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: kubernetes
+            name: demo-staging
+            aws_profile: 'cnfs-demo'
+            tags:
+              environment: staging
+        components:
+          dns:
+            config:
+              sub_domain: staging
+          vpc:
+            config:
+              cidr: "10.6.0.0/16"
+              create_database_subnets: true
+              create_elasticache_subnets: true
+          globalaccelerator:
+            config:
+              hostname: "*.staging.demo.cnfs.io"
+          databases:
+            config:
+              clusters:
+                default: 
+                  name: demo-staging-main
+                  instance_type: "db.r5.large"
+                  replica_count: 1
+          redis:
+            config:
+              provider: aws
+              enabled: yes
+              clusters:
+                default: 
+                  name: demo-staging
+                  node_type: "cache.r5.large"
+                  number_cache_clusters: 1
+      application:
+        config:
+          feature_from_branch: no
+          feature_from_tag: no
+        components:
+          services:
+            components:
+              # TODO: remove postgres and redis when the applications can use the RDS and ElastiCache instances
+              postgres:
+              redis:
