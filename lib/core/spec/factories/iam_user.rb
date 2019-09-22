@@ -12,19 +12,19 @@ FactoryBot.define do
     time_zone { 'Asia/Singapore' }
     properties { {} }
     display_properties { {} }
-    jwt_payload {
+    jwt_payload do
       { iss: 'http://iam.localhost:3000', sub: 'urn:whistler:iam::222222222:user/Admin_2', scope: '*' }
-    }
+    end
     attached_policies { { AdministratorAccess: 1 } }
     attached_actions { {} }
-  # end
+    # end
 
-  # factory :iam_user, class: OpenStruct do
-  #   username { Faker::Internet.username }
-  #   attached_policies { {} }
+    # factory :iam_user, class: OpenStruct do
+    #   username { Faker::Internet.username }
+    #   attached_policies { {} }
 
     trait :with_administrator_policy do
-      attached_policies { { "AdministratorAccess" => 1 } }
+      attached_policies { { 'AdministratorAccess' => 1 } }
     end
   end
 end

@@ -11,12 +11,14 @@ module Ros
   class PlatformConsumerEventJob < Ros::ApplicationJob
     queue_as "#{Settings.service.name}_platform_consumer_events"
 
-    def perform(object)
-        puts("\n+++++++++ Start\n")
-          binding.remote_pry
-      puts object
-        puts("+++++++++ End\n\n")
-      payload = JSON.parse(object)
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    def perform(record)
+      Rails.logger.debug("\n+++++++++ Start\n")
+      # binding.remote_pry
+      Rails.logger.debug(record)
+      Rails.logger.debug("+++++++++ End\n\n")
+      payload = JSON.parse(record)
       event = payload['event']
       data = payload['data']
       urn = Ros::Urn.from_urn(data['urn'])
@@ -29,10 +31,13 @@ module Ros
       schema_name = Tenant.account_id_to_schema(urn.account_id)
       tenant = Tenant.find_by(schema_name: schema_name)
       raise InvalidTenantError unless tenant
+
       tenant.switch do
         method = "#{urn.service_name}_#{urn.resource_type}"
         PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
   end
 end

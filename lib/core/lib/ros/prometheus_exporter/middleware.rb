@@ -1,16 +1,19 @@
 # frozen_string_literal: true
+
 require 'prometheus_exporter/middleware'
 
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/MethodLength
 module Ros
   module PrometheusExporter
-    class Middleware < ::PrometheusExporter::Middleware 
-      def call(env)
+    class Middleware < ::PrometheusExporter::Middleware
+      def call(_env)
         queue_time = measure_queue_time(env)
-  
+
         MethodProfiler.start
         result = @app.call(env)
         info = MethodProfiler.stop
-  
+
         result
       ensure
         status = (result && result[0]) || -1
@@ -20,7 +23,7 @@ module Ros
           action = params['action']
           controller = params['controller']
         end
-  
+
         @client.send_json(
           type: 'ros_web_collector',
           timings: info,
@@ -35,3 +38,5 @@ module Ros
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength

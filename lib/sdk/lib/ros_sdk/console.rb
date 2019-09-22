@@ -16,7 +16,9 @@ class Console
 
   def initialize(host = nil, profile = nil, partition = nil)
     # Get any parameters passed in and override default configuration
-    self.host = host; self.profile = profile; self.partition = partition
+    self.host = host
+    self.profile = profile
+    self.partition = partition
     self.profile ||= ENV["#{self.partition&.upcase}_PROFILE"] || 'default'
     # self.host = 'https://api.ros.rails-on-services.org'
     # self.profile = '222222222_Admin_2'
@@ -30,6 +32,7 @@ class Console
   def client_config
     cc = Settings.dig(:connection, connection_type)
     return cc unless host
+
     uhost = URI(host)
     cc.host = uhost.hostname
     cc.port = uhost.port
@@ -51,7 +54,8 @@ class Console
 
   def credentials
     credentials_files.each do |file|
-      next unless File.exists?(file)
+      next unless File.exist?(file)
+
       val = IniFile.load(file)[profile]
       break val if val
     end

@@ -1,0 +1,2 @@
+Needed to allow rubocop to run from the root of the project
+when invoke with overcommit

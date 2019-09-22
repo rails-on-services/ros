@@ -4,6 +4,8 @@ module Ros
   module ApplicationControllerConcern
     extend ActiveSupport::Concern
 
+    # rubocop:disable Metrics/BlockLength
+    # rubocop:disable Metrics/AbcSize
     included do
       include JSONAPI::ActsAsResourceController
 
@@ -13,6 +15,7 @@ module Ros
 
       def authenticate_it!
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
+
         if auth_type.basic?
           @current_jwt = Jwt.new(current_user.jwt_payload)
         elsif auth_type.bearer?
@@ -26,6 +29,7 @@ module Ros
 
       def set_headers!
         return unless current_jwt
+
         response.set_header('Authorization', "Bearer #{current_jwt.encode}")
         response.set_header('Access-Control-Expose-Headers', 'Authorization')
       end
@@ -54,9 +58,12 @@ module Ros
         @auth_type ||= ActiveSupport::StringInquirer.new(request.env['HTTP_AUTHORIZATION'].split[0].downcase)
       end
 
-      # Next method is for Pundit; inside JSONAPI resources can reference user with context[:user]
+      # Next method is for Pundit;
+      # inside JSONAPI resources can reference user with context[:user]
       def context
-        { user: current_user }
+        {
+          user: ::PolicyUser.new(current_user, cognito_user_id, params: params)
+        }
       end
 
       # Custom resource serializer:
@@ -94,8 +101,8 @@ module Ros
 
       private
 
-      def handle_validation_errors(e)
-        resource = ApplicationResource.new(e.record, nil)
+      def handle_validation_errors(error)
+        resource = ApplicationResource.new(error.record, nil)
         handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
       end
 
@@ -112,5 +119,7 @@ module Ros
         Raven.extra_context(params: params.to_unsafe_h, url: request.url, tenant: Apartment::Tenant.current)
       end
     end
+    # rubocop:enable Metrics/BlockLength
+    # rubocop:enable Metrics/AbcSize
   end
 end
