@@ -57,7 +57,7 @@ jobs:
   
   test:
     executor: ros_cli
-    parallelism: 5
+    parallelism: 4
     environment:
       ROS_ENV: test
     steps:
