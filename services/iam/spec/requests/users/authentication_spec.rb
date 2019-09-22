@@ -7,8 +7,8 @@ RSpec.describe 'User Authentication', type: :request do
     let(:url) { '/users/sign_in' }
     let(:tenant) { create(:tenant) }
     let(:user) { create(:user, :within_schema, username: 'test_user', password: '123456', schema: tenant.schema_name) }
-    let(:valid_attributes) { { username: user.username, password: '123456', tenant_id: tenant.id } }
-    let(:invalid_attributes) { { username: user.username, password: 'fake', tenant_id: tenant.id } }
+    let(:valid_attributes) { { username: user.username, password: '123456', account_id: tenant.account_id } }
+    let(:invalid_attributes) { { username: user.username, password: 'fake', account_id: tenant.account_id } }
 
     before(:each) do
       post url, params: params, as: :json
