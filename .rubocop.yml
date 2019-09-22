@@ -1,5 +1,6 @@
 require:
   - rubocop-rails
+  - './lib/core/spec/support/rubocop/linters.rb'
 Rails/HttpPositionalArguments:
   Enabled: false
 Rails/HasManyOrHasOneDependent:
