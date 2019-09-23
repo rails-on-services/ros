@@ -3,10 +3,10 @@
 # rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/MethodLength
 
-require_relative '../specs_generator.rb'
+require_relative '../generators.rb'
 
 class EndpointGenerator < Rails::Generators::NamedBase
-  include SpecsGenerator
+  include Generators
 
   source_root File.expand_path('templates', __dir__)
 

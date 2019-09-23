@@ -1,7 +1,7 @@
-require_relative '../specs_generator.rb'
+require_relative '../generators.rb'
 
 class RequestSpecsGenerator < Rails::Generators::NamedBase
-  include SpecsGenerator
+  include Generators
 
   def create_files
     create_request_specs
