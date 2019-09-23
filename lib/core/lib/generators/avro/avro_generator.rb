@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class AvroGenerator < Rails::Generators::NamedBase
   DICTIONARY = {
     integer: 'int',
     string: 'string',
     datetime: 'string'
-  }
+  }.freeze
 
   def create_files
     create_file "doc/schemas/cloud_events/#{service_name}/#{name}.avsc" do
