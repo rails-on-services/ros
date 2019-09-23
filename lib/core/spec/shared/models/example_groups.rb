@@ -10,7 +10,7 @@ RSpec.shared_examples 'application record concern' do
   let(:urn) { "urn:#{partition_name}:#{service_name}:#{region}:#{account_id}:#{underscore_name}" }
 
   let(:factory_name) { described_class.name.downcase.to_sym }
-  
+
   it 'has a factory' do
     expect { create(factory_name) }.not_to raise_error(KeyError)
   end
@@ -20,12 +20,12 @@ RSpec.shared_examples 'application record concern' do
       tenant.switch!
     end
 
-    it 'respind to name and its is not nil' do
+    it 'respond to name and its is not nil' do
       expect(described_class.respond_to?(:name)).to be_truthy
       expect(described_class.name).not_to be_nil
     end
 
-    it 'respind to urn_base and its is not nil' do
+    it 'respond to urn_base and its is not nil' do
       expect(described_class.respond_to?(:urn_base)).to be_truthy
       expect(described_class.urn_base).not_to be_nil
     end
