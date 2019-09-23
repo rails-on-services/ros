@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Interface represents main logic of querying external association
 module AssociationResource
   module AssociationInterface
     attr_reader :name

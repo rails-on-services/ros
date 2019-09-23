@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Class Represents external association ONE_MANY
 module AssociationResource
   class HasManyResources
     include ActiveModel::Model

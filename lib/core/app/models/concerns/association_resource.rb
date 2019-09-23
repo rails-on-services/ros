@@ -16,6 +16,8 @@ module AssociationResource
     !self.class.find_resource(method).blank? || super
   end
 
+  # Returns new instance of the resource or nil
+  # @model.resource(:resource)&.tap do {|resource| resource.name = 'name'; resource.save}
   def resource(name)
     resource_klass = _resource_class(name)
     return unless resource_klass
@@ -23,6 +25,8 @@ module AssociationResource
     resource_klass.new
   end
 
+  # yields query for a given resource
+  # @model.query_resource(:resource) {|query| query.where(some: 'hing')}
   def query_resource(name)
     resource_klass = _resource_class(name)
     return unless resource_klass
@@ -47,6 +51,9 @@ module AssociationResource
       @resource_associations ||= []
     end
 
+    # Adds link to external ONE_ONE association.
+    # :resource_name required. Model will respond this name to query external resource
+    # :class_name required for non-polymorphic associations. Should respond to `where` and `find`
     def belongs_to_resource(resource_name, class_name: nil, foreign_key: nil, polymorphic: false)
       return unless find_resource(resource_name).blank?
 
@@ -58,6 +65,12 @@ module AssociationResource
       )
     end
 
+    # Adds link to external ONE_MANY association.
+    # :resource_name required. Model will respond this name to query external resources
+    # :class_name required. Should respond to `where` and `find`
+    # :as represents polymorphic relation. type will be added to query:
+    #   User.has_many_resources(:some_resource, class_name: 'Some::Resource', as: :external) ->
+    #      Some::Resource.where(external_type: 'User', external_id: user.id)
     def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
       return unless find_resource(resource_name).blank?
 

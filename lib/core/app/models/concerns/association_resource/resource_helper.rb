@@ -20,6 +20,14 @@ module AssociationResource
         # return non active-record includes
         array_includes.merge!(resources_array)
       end
+
+      def belongs_to_resource(resource)
+        belongs_to resource.to_sym, class_name: 'AssociationResource::Included'
+      end
+
+      def has_many_resources(resources)
+        has_many resources.to_sym, class_name: 'AssociationResource::Included'
+      end
     end
   end
 end

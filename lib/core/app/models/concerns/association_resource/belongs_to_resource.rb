@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Class Represents external association ONE_ONE
 module AssociationResource
   class BelongsToResource
     include ActiveModel::Model
