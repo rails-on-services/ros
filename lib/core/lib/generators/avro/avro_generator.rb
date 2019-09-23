@@ -4,7 +4,8 @@ class AvroGenerator < Rails::Generators::NamedBase
   DICTIONARY = {
     integer: 'int',
     string: 'string',
-    datetime: 'string'
+    datetime: 'string',
+    jsonb: 'string'
   }.freeze
 
   def create_files
@@ -29,7 +30,7 @@ class AvroGenerator < Rails::Generators::NamedBase
 
   def build_attributes_json
     model_columns.map do |column|
-      data_type = DICTIONARY[column.sql_type_metadata.type]
+      data_type = DICTIONARY[column.sql_type_metadata.type] || 'string'
       type = column_required(column.name) ? data_type : ['null', data_type]
 
       {
