@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples 'application record concern' do
-
   let(:partition_name) { Settings.partition_name }
   let(:service_name) { Settings.service.name }
   let(:region) { Settings.region }
@@ -15,11 +14,18 @@ RSpec.shared_examples 'application record concern' do
     expect { create(factory_name) }.not_to raise_error(KeyError)
   end
 
-  context 'class methods' do
-    before do
-      tenant.switch!
-    end
+  before do
+    tenant.switch!
+  end
 
+  # TODO: find the right place
+  # context 'after created' do
+  #   it 'enqueued job' do
+  #     expect { subject }.to have_enqueued_job(Ros::PlatformConsumerEventJob)
+  #   end
+  # end
+
+  context 'class methods' do
     it 'respond to name and its is not nil' do
       expect(described_class.respond_to?(:name)).to be_truthy
       expect(described_class.name).not_to be_nil
@@ -41,6 +47,14 @@ RSpec.shared_examples 'application record concern' do
   end
 
   context 'instance methods' do
-    pending "add some examples to (or delete) #{__FILE__}"
+    it 'converts to urn' do
+      expect(subject.respond_to?(:to_urn)).to be_truthy
+      expect(subject.to_urn).to eq("#{urn}/#{subject.id}")
+    end
+
+    it 'related to valid tenant' do
+      expect(subject.respond_to?(:current_tenant)).to be_truthy
+      expect(subject.current_tenant).to eq(tenant)
+    end
   end
 end
