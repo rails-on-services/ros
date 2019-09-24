@@ -1,0 +1,8 @@
+Description:
+    Generates policy spec
+
+Example:
+    rails generate ros:policy_spec Thing
+
+    This will create:
+        spec/policies/things_policy_spec.rb

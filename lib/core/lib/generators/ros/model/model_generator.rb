@@ -3,14 +3,14 @@
 require_relative '../generators_helper.rb'
 
 module Ros
-  class PolicyGenerator < Rails::Generators::NamedBase
+  class ModelGenerator < Rails::Generators::NamedBase
     include GeneratorsHelper
 
     def create_files
-      create_file "app/policies/#{name}_policy.rb", <<~FILE
+      create_file "app/models/#{name}.rb", <<~FILE
         # frozen_string_literal: true
 
-        class #{name.classify}Policy < #{parent_module}ApplicationPolicy
+        class Entity < #{parent_module}ApplicationRecord
         end
       FILE
     end

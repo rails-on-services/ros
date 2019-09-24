@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../generators_helper.rb'
 
 module Ros

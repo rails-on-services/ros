@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ros
   module GeneratorsHelper
     def name_cp

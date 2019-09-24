@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ros
   class ApiDocGenerator < Rails::Generators::NamedBase
     def create_files
