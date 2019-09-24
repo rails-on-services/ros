@@ -10,7 +10,7 @@ class Users::SessionsController < Devise::ApplicationController
   end
 
   def sign_in_params
-    jsonapi_params.permit(%i[username password account_id])
+    jsonapi_params.permit(%i[username password account_id alias])
   end
 end
 # rubocop:enable Style/ClassAndModuleChildren

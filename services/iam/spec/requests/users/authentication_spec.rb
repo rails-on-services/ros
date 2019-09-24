@@ -7,7 +7,7 @@ RSpec.describe 'User Authentication', type: :request do
     let(:url) { '/users/sign_in' }
     let(:tenant) { create(:tenant) }
     let(:user) { create(:user, :within_schema, username: 'test_user', password: '123456', schema: tenant.schema_name) }
-    let(:valid_attributes) { { username: user.username, password: '123456', account_id: tenant.account_id } }
+    let(:valid_attributes) { { username: user.username, password: '123456' } }
     let(:invalid_attributes) { { username: user.username, password: 'fake', account_id: tenant.account_id } }
 
     before(:each) do
@@ -21,9 +21,16 @@ RSpec.describe 'User Authentication', type: :request do
       end
     end
 
-    context 'with valid credentials' do
-      let(:params) { { data: { attributes: valid_attributes } } }
-      xit 'returns success status' do
+    context 'with :account_id' do
+      let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.account_id) } } }
+      it 'returns success status' do
+        expect(response.status).to eq 200
+      end
+    end
+
+    context 'with :alias' do
+      let(:params) { { data: { attributes: valid_attributes.merge(alias: tenant.alias) } } }
+      it 'returns success status' do
         expect(response.status).to eq 200
       end
     end

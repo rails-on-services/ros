@@ -12,7 +12,7 @@ class Devise::ApplicationController < Devise::SessionsController
       return super unless login_user!
 
       @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
-      render json: json_resources(resource_class: user_resource, records: current_user)
+      render json: json_resource(resource_class: user_resource, record: current_user)
     end
   end
 
@@ -27,7 +27,10 @@ class Devise::ApplicationController < Devise::SessionsController
   end
 
   def tenant
-    Tenant.schema_name_from(account_id: sign_in_params[:account_id]) || Apartment::Tenant.current
+    return Tenant.schema_name_from(account_id: sign_in_params[:account_id]) if sign_in_params[:account_id].present?
+    return Tenant.find_by(alias: sign_in_params[:alias])&.schema_name if sign_in_params[:alias].present?
+
+    Apartment::Tenant.current
   end
 end
 # rubocop:enable Style/ClassAndModuleChildren
