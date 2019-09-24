@@ -8,7 +8,7 @@ RSpec.shared_examples 'application record concern' do
   let(:underscore_name) { described_class.name.underscore }
   let(:urn) { "urn:#{partition_name}:#{service_name}:#{region}:#{account_id}:#{underscore_name}" }
 
-  let(:factory_name) { described_class.name.downcase.to_sym }
+  let(:factory_name) { described_class.name.underscore.to_sym }
 
   it 'has a factory' do
     expect { create(factory_name) }.not_to raise_error(KeyError)
