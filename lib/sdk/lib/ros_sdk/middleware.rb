@@ -22,7 +22,6 @@ module Ros
         env.request_headers.merge!(Ros::Sdk::Credential.request_headers)
         # env.request_headers['Authorization'] = RequestStore.store['Authorization']
         response = @app.call(env)
-        binding.pry
         if response.env.response_headers['authorization']
           Ros::Sdk::Credential.authorization = response.env.response_headers['authorization']
         end

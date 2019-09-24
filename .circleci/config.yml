@@ -15,14 +15,29 @@ commands:
       - run:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
-
-  build_test_push:
+  override_feature_set_from_tag:
+    steps:
+      - run:
+          name: Set feature_set from tag
+          command: |
+            ROS_FS=$(echo ${CIRCLE_TAG} | sed 's/enable-api\.\([a-zA-Z0-9-]*\)\..*/\1/')
+            echo "Override ROS feature set to ${ROS_FS}"
+            echo "export ROS_FS=${ROS_FS}" >> $BASH_ENV
+jobs:
+  build:
     executor: ros_cli
-    parallelism: 4
+    parallelism: << parameters.parallelism >>
+    parameters:
+      ros_env:
+        type: string
+      parallelism:
+        type: integer
+        default: 2
     environment:
-      ROS_ENV: test
+      ROS_ENV: << parameters.ros_env >>
     steps:
       - setup_remote_docker:
+          docker_layer_caching: true
           version: 18.09.3
       - checkout
       - docker_login
@@ -33,21 +48,52 @@ commands:
           name: Generate the application services and platform templates
           command: ros generate:be:application
       - run:
-          name: Select platform services
+          name: Select platform services to Build
           command: |
             echo "export PLATFORM_SERVICES=($(ros be ls platform --enabled | circleci tests split))" >> $BASH_ENV
       - run:
-          name: Build, Test and Run
+          name: Build Docker Images
           command: |
-            echo "Selected services: ${PLATFORM_SERVICES[@]}"
-            ros be test -v --build --fail-fast --push ${PLATFORM_SERVICES[@]}
+            echo "Build services: ${PLATFORM_SERVICES[@]}"
+            ros be build -v ${PLATFORM_SERVICES[@]}
+      - run:
+          name: Push Docker Images
+          command: |
+            echo "Push services: ${PLATFORM_SERVICES[@]}"
+            ros be push -v ${PLATFORM_SERVICES[@]}
 
-  integration_tests_and_publish_api_docs:
+  test:
     executor: ros_cli
+    parallelism: 5
     environment:
       ROS_ENV: test
-      # ROS_ENV: development
-      # ROS_PROFILE: stage
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 18.09.3
+      - checkout
+      - docker_login
+      - run:
+          name: Generate the platform environment
+          command: ros be init -v
+      - run:
+          name: Generate the application services and platform templates
+          command: ros generate:be:application
+      - run:
+          name: Select platform services to Build
+          command: |
+            echo "export PLATFORM_SERVICES=($(ros be ls platform --enabled | circleci tests split))" >> $BASH_ENV
+      - run:
+          name: Run tests
+          command: |
+            echo "Test services: ${PLATFORM_SERVICES[@]}"
+            ros be test -v --build --fail-fast --push ${PLATFORM_SERVICES[@]}
+
+  publish_api_doc:
+    executor: ros_cli
+    environment:
+      ROS_ENV: development
+      ROS_PROFILE: stage
     steps:
       - setup_remote_docker:
           version: 18.09.3
@@ -68,10 +114,6 @@ commands:
           name: Up all services
           command: |
             ros be up -d -v
-      # - run:
-      #     name: Run integration tests
-      #     command: |
-      #       ros be test -v --integration
       - run:
           name: Publish API Documentation
           command: |
@@ -91,6 +133,9 @@ commands:
       aws_iam_role:
         type: string
         description: The IAM role to connect to EKS cluster
+      override_feature_set_from_tag:
+        type: boolean
+        default: false
     environment:
       # NOTE: The ROS_ENV var determines into which cluster the application is deployed
       ROS_ENV: << parameters.ros_env >>
@@ -100,6 +145,10 @@ commands:
           version: 18.09.3
       - checkout
       - docker_login
+      - when:
+          condition: << parameters.override_feature_set_from_tag >>
+          steps:
+            - override_feature_set_from_tag
       - run:
           name: Initialize EKS authenticator and generate kubeconfig
           command: ros be infra init --role-name << parameters.aws_iam_role >>
@@ -126,7 +175,47 @@ commands:
             fi
 
 workflows:
-  test_workflow:
+  default:
     jobs:
-      - build_test_and_push:
-          name: test_development_images
+      - test:
+          name: test_and_publish_dev_images
+          filters:
+            tags:
+              # this enables circleci to trigger on tags
+              only: /.*/
+      - build:
+          name: publish_production_images
+          ros_env: production
+          parallelism: 4
+          filters:
+            branches:
+              only:
+                - xmaster
+      - deploy:
+          name: deploy_uat
+          ros_env: production
+          ros_profile: uat
+          aws_iam_role: whistler-uat-eks-admin
+          override_feature_set_from_tag: true
+          requires:
+            - test_and_publish_dev_images
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^enable-api\..+\..+/
+      - deploy:
+          name: deploy_staging
+          ros_env: production
+          ros_profile: staging
+          aws_iam_role: whistler-staging-eks-admin
+          override_feature_set_from_tag: false
+          requires:
+            - test_and_publish_dev_images
+            - publish_production_images
+          filters:
+            branches:
+              only:
+                - xmaster
+  # TODO deploy_production
+
