@@ -1,0 +1,8 @@
+Description:
+    Generates resource spec
+
+Example:
+    rails generate ros:resource_spec Thing
+
+    This will create:
+        spec/requests/things_resource_spec.rb

@@ -1,0 +1,8 @@
+Description:
+    Generates policy
+
+Example:
+    rails generate ros:policy Thing
+
+    This will create:
+        app/policies/things_policy.rb

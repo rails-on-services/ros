@@ -11,8 +11,9 @@ module Ros
 
     def create_files
       generate_resource
-      generate_request_specs
-      generate_resource_specs
+      generate_request_spec
+      generate_resource_spec
+      generate_policy
     end
 
     private
@@ -104,16 +105,20 @@ module Ros
 
     private
 
-    def generate_request_specs
-      Ros::RequestSpecsGenerator.new([name]).invoke_all
+    def generate_request_spec
+      Ros::RequestSpecGenerator.new([name]).invoke_all
     end
 
     def generate_resource
       Ros::ResourceGenerator.new([name]).invoke_all
     end
 
-    def generate_resource_specs
-      Ros::ResourceSpecsGenerator.new([name]).invoke_all
+    def generate_resource_spec
+      Ros::ResourceSpecGenerator.new([name]).invoke_all
+    end
+
+    def generate_policy
+      Ros::PolicyGenerator.new([name]).invoke_all
     end
   end
 end

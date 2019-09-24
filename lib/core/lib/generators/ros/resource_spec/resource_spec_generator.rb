@@ -1,5 +1,5 @@
 module Ros
-  class ResourceSpecsGenerator < Rails::Generators::NamedBase
+  class ResourceSpecGenerator < Rails::Generators::NamedBase
     def create_files
       create_file "spec/resources/#{name}_resource_spec.rb", <<~FILE
         # frozen_string_literal: true
