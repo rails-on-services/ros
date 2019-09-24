@@ -36,6 +36,11 @@ RSpec.shared_examples 'application record concern' do
       expect(described_class.urn_base).not_to be_nil
     end
 
+    it 'respond to urn_id and its is not nil' do
+      expect(described_class.respond_to?(:urn_id)).to be_truthy
+      expect(described_class.urn_id).not_to be_nil
+    end
+
     it 'related to current tennant' do
       expect(described_class.current_tenant).to eq(tenant)
     end
@@ -49,7 +54,7 @@ RSpec.shared_examples 'application record concern' do
   context 'instance methods' do
     it 'converts to urn' do
       expect(subject.respond_to?(:to_urn)).to be_truthy
-      expect(subject.to_urn).to eq("#{urn}/#{subject.id}")
+      expect(subject.to_urn).to eq("#{urn}/#{subject.send(described_class.urn_id)}")
     end
 
     it 'related to valid tenant' do
