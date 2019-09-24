@@ -45,7 +45,7 @@ class AvroGenerator < Rails::Generators::NamedBase
   end
 
   def service_name
-    Rails.application.class.module_parent_name.downcase
+    @service_name ||= Settings.service.name
   end
 
   def column_required(column_name)
