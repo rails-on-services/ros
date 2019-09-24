@@ -2,7 +2,7 @@ Description:
     Generates request specs
 
 Example:
-    rails generate request_specs Thing
+    rails generate ros:request_specs Thing
 
     This will create:
         spec/requests/things_spec.rb

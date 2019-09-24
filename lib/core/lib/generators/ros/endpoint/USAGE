@@ -2,7 +2,7 @@ Description:
     Generates jsonapi controller and resource, pundit policy, model, spec and factory
 
 Example:
-    rails generate endpoint Thing
+    rails generate ros:endpoint Thing
 
     This will create:
         app/controllers/things_controller.rb
