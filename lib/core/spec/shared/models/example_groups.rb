@@ -44,12 +44,17 @@ RSpec.shared_examples 'application record concern' do
       expect(described_class.respond_to?(:to_urn)).to be_truthy
       expect(described_class.to_urn).to eq(urn)
     end
+
+    it 'respond to urn_id and its valid' do
+      expect(described_class.respond_to?(:urn_id)).to be_truthy
+      expect(described_class.urn_id).to eq(:id).or end_with('_id')
+    end
   end
 
   context 'instance methods' do
     it 'converts to urn' do
       expect(subject.respond_to?(:to_urn)).to be_truthy
-      expect(subject.to_urn).to eq("#{urn}/#{subject.id}")
+      expect(subject.to_urn).to eq("#{urn}/#{subject.send(described_class.urn_id)}")
     end
 
     it 'related to valid tenant' do
