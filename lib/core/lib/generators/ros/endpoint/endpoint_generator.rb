@@ -12,6 +12,7 @@ module Ros
     def create_files
       generate_resource
       generate_request_specs
+      generate_resource_specs
     end
 
     private
@@ -109,6 +110,10 @@ module Ros
 
     def generate_resource
       Ros::ResourceGenerator.new([name]).invoke_all
+    end
+
+    def generate_resource_specs
+      Ros::ResourceSpecsGenerator.new([name]).invoke_all
     end
   end
 end
