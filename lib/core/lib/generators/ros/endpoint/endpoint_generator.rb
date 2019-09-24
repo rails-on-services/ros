@@ -14,6 +14,9 @@ module Ros
       generate_request_spec
       generate_resource_spec
       generate_policy
+      generate_policy_spec
+      generate_api_doc
+      generate_route
     end
 
     private
@@ -48,59 +51,59 @@ module Ros
       # FILE
 
       # Resource spec
-      create_file "spec/resources/#{name}_resource_spec.rb", <<~FILE
-        # frozen_string_literal: true
+      # create_file "spec/resources/#{name}_resource_spec.rb", <<~FILE
+      #   # frozen_string_literal: true
 
-        RSpec.describe #{name.classify}Resource, type: :resource do
-          let(:#{name}) { create(:#{name}) }
-        end
-      FILE
+      #   RSpec.describe #{name.classify}Resource, type: :resource do
+      #     let(:#{name}) { create(:#{name}) }
+      #   end
+      # FILE
 
       generate_request_specs
 
       # Policy
-      create_file "app/policies/#{name}_policy.rb", <<~FILE
-        # frozen_string_literal: true
+      # create_file "app/policies/#{name}_policy.rb", <<~FILE
+      #   # frozen_string_literal: true
 
-        class #{name.classify}Policy < #{parent_module}ApplicationPolicy
-        end
-      FILE
+      #   class #{name.classify}Policy < #{parent_module}ApplicationPolicy
+      #   end
+      # FILE
 
       # Policy spec
-      create_file "spec/policies/#{name}_policy_spec.rb", <<~FILE
-        # frozen_string_literal: true
+      # create_file "spec/policies/#{name}_policy_spec.rb", <<~FILE
+      #   # frozen_string_literal: true
 
-        RSpec.describe #{name.classify}Policy, type: :policy do
-          let(:#{name}) { create(:#{name}) }
-        end
-      FILE
+      #   RSpec.describe #{name.classify}Policy, type: :policy do
+      #     let(:#{name}) { create(:#{name}) }
+      #   end
+      # FILE
 
       # Controller
-      create_file "app/controllers/#{plural_name}_controller.rb", <<~FILE
-        # frozen_string_literal: true
+      # create_file "app/controllers/#{plural_name}_controller.rb", <<~FILE
+      #   # frozen_string_literal: true
 
-        class #{name_cp}Controller < #{parent_module}ApplicationController
-        end
-      FILE
+      #   class #{name_cp}Controller < #{parent_module}ApplicationController
+      #   end
+      # FILE
 
       # ApiDoc
-      create_file "doc/resources/#{name}_resource_doc.rb", <<-FILE
-        # frozen_string_literal: true
+      # create_file "doc/resources/#{name}_resource_doc.rb", <<-FILE
+      #   # frozen_string_literal: true
 
-        class #{name.classify}ResourceDoc < ApplicationDoc
-          route_base '#{plural_name}'
+      #   class #{name.classify}ResourceDoc < ApplicationDoc
+      #     route_base '#{plural_name}'
 
-          api :index, 'All #{plural_name.capitalize}'
-          api :show, 'Single #{name.capitalize}'
-          api :create, 'Create #{name.capitalize}'
-          api :update, 'Update #{name.capitalize}'
-        end
-      FILE
+      #     api :index, 'All #{plural_name.capitalize}'
+      #     api :show, 'Single #{name.capitalize}'
+      #     api :create, 'Create #{name.capitalize}'
+      #     api :update, 'Update #{name.capitalize}'
+      #   end
+      # FILE
 
       # Route
-      insert_into_file 'config/routes.rb', after: "routes.draw do\n" do
-        "  jsonapi_resources :#{plural_name}\n"
-      end
+      # insert_into_file 'config/routes.rb', after: "routes.draw do\n" do
+      #   "  jsonapi_resources :#{plural_name}\n"
+      # end
     end
 
     private
@@ -119,6 +122,18 @@ module Ros
 
     def generate_policy
       Ros::PolicyGenerator.new([name]).invoke_all
+    end
+
+    def generate_policy_spec
+      Ros::PolicySpecGenerator.new([name]).invoke_all
+    end
+
+    def generate_api_doc
+      Ros::ApiDocGenerator.new([name]).invoke_all
+    end
+
+    def generate_route
+      Ros::RouteGenerator.new([name]).invoke_all
     end
   end
 end
