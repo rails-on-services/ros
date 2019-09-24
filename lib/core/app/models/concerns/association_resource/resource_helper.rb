@@ -26,7 +26,12 @@ module AssociationResource
       end
 
       def has_many_resources(resources)
-        has_many resources.to_sym, class_name: 'AssociationResource::Included'
+        has_many resources.to_sym,
+                 class_name: 'AssociationResource::Included',
+                 eager_load_on_include: false,
+                 always_include_linkage_data: true
+
+        define_method("records_for_#{resources}") { |_| _model.send(resources.to_sym) }
       end
     end
   end

@@ -5,7 +5,7 @@
 # Resource type will be matched dynamically
 module AssociationResource
   class IncludedResource < Ros::ApplicationResource
-    abstract true
+    immutable
 
     def initialize(model, context)
       reload_attributes!
