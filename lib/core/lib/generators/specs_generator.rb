@@ -72,7 +72,7 @@ module SpecsGenerator
             context 'Authenticated user' do
               include_context 'authorized user'
 
-              #NOTE: Extract and make this a helper method on lib/core/spec/support/helpers/json_helper.rb
+              # NOTE: Extract and make this a helper method on lib/core/spec/support/helpers/json_helper.rb
               def jsonapi_data(object, remove = false, *except_attributes)
                 args = %i[id created_at updated_at]
                 except_attributes.append(*args) if remove
@@ -111,6 +111,42 @@ module SpecsGenerator
                   expect(response).to be_bad_request
                   expect(error_response.title).to eq('Param not allowed')
                 end
+              end
+            end
+          end
+
+          describe 'PUT update' do
+            context 'Unauthenticated user' do
+              include_context 'unauthorized user'
+              include_examples 'unauthenticated get'
+            end
+
+            context 'Authenticated user' do
+              include_context 'authorized user'
+            end
+
+            # NOTE: We should create and extract a similar method to jsonapi_data for PUT update before finalizing this part
+          end
+
+          describe 'DELETE destroy' do
+            context 'Unauthenticated user' do
+              include_context 'unauthorized user'
+              include_examples 'unauthenticated get'
+            end
+
+            context 'Authenticated user' do
+              include_context 'authorized user'
+
+              let!(:model) { tenant.switch { create(:#{name}) } }
+              let(:delete_url) { url + '/' + model.id.to_s }
+
+              before do
+                mock_authentication if mock
+                delete delete_url, headers: request_headers
+              end
+
+              it 'returns returns an ok response status' do
+                expect(response).to be_no_content
               end
             end
           end
