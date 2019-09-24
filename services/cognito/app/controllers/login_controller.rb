@@ -29,6 +29,7 @@ class LoginController < ApplicationController
 
     # Add the 'sub_cognito' claim to the JWT and set the header
     current_jwt.add_claims('sub_cognito' => user.to_urn)
+    current_jwt.add_claims('act_cognito' => user)
 
     # Render some body back to the client
     # TODO: Use controller concern serialize_resource to render

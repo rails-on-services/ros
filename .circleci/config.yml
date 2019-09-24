@@ -16,46 +16,7 @@ commands:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
-jobs:
-  build:
-    executor: ros_cli
-    parallelism: << parameters.parallelism >>
-    parameters:
-      ros_env:
-        type: string
-      parallelism:
-        type: integer
-        default: 2
-    environment:
-      ROS_ENV: << parameters.ros_env >>
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
-          version: 18.09.3
-      - checkout
-      - docker_login
-      - run:
-          name: Generate the platform environment
-          command: ros be init -v
-      - run:
-          name: Generate the application services and platform templates
-          command: ros generate:be:application
-      - run:
-          name: Select platform services to Build
-          command: |
-            echo "export PLATFORM_SERVICES=($(ros be ls platform --enabled | circleci tests split))" >> $BASH_ENV
-      - run:
-          name: Build Docker Images
-          command: |
-            echo "Build services: ${PLATFORM_SERVICES[@]}"
-            ros be build -v ${PLATFORM_SERVICES[@]}
-      - run:
-          name: Push Docker Images
-          command: |
-            echo "Push services: ${PLATFORM_SERVICES[@]}"
-            ros be push -v ${PLATFORM_SERVICES[@]}
-  
-  test:
+  build_test_push:
     executor: ros_cli
     parallelism: 4
     environment:
@@ -72,30 +33,21 @@ jobs:
           name: Generate the application services and platform templates
           command: ros generate:be:application
       - run:
-          name: Select platform services to Build
+          name: Select platform services
           command: |
             echo "export PLATFORM_SERVICES=($(ros be ls platform --enabled | circleci tests split))" >> $BASH_ENV
-      # - run:
-      #     name: Pull Docker Images
-      #     command: |
-      #       echo "Pull services: ${PLATFORM_SERVICES[@]}"
-      #       ros be pull -v ${PLATFORM_SERVICES[@]}
       - run:
-          name: Run tests
+          name: Build, Test and Run
           command: |
-            echo "Test services: ${PLATFORM_SERVICES[@]}"
+            echo "Selected services: ${PLATFORM_SERVICES[@]}"
             ros be test -v --build --fail-fast --push ${PLATFORM_SERVICES[@]}
-      # - run:
-      #     name: Push Docker Images
-      #     command: |
-      #       echo "Push services: ${PLATFORM_SERVICES[@]}"
-      #       ros be push -v ${PLATFORM_SERVICES[@]}
 
-  publish_api_doc:
+  integration_tests_and_publish_api_docs:
     executor: ros_cli
     environment:
-      ROS_ENV: development
-      ROS_PROFILE: stage
+      ROS_ENV: test
+      # ROS_ENV: development
+      # ROS_PROFILE: stage
     steps:
       - setup_remote_docker:
           version: 18.09.3
@@ -116,6 +68,10 @@ jobs:
           name: Up all services
           command: |
             ros be up -d -v
+      # - run:
+      #     name: Run integration tests
+      #     command: |
+      #       ros be test -v --integration
       - run:
           name: Publish API Documentation
           command: |
@@ -123,7 +79,7 @@ jobs:
 
   deploy:
     executor: ros_cli
-    parallelism: 8
+    parallelism: 4
     parameters:
       ros_env:
         type: string
@@ -170,57 +126,7 @@ jobs:
             fi
 
 workflows:
-  # build_test_and_wish_we_could_publish_api_docs:
-  test:
+  test_workflow:
     jobs:
-      # - build:
-      #     name: build_development_images
-      #     ros_env: development
-      # - test:
-      #     requires:
-      #       - build_development_images
-      - test:
+      - build_test_and_push:
           name: test_development_images
-          # ros_env: development
-      # - publish_api_doc:
-      #     requires:
-      #       - build_development_images
-  deploy_uat:
-    jobs:
-      - build:
-          name: build_production_images
-          ros_env: production
-          parallelism: 8
-          filters: &uat_filter
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^enable-api.+/
-      - deploy:
-          name: deploy_uat
-          ros_env: production
-          ros_profile: uat
-          aws_iam_role: demo-uat-eks-admin
-          requires:
-            - build_production_images
-          filters: *uat_filter
-  deploy_staging:
-    jobs:
-      - build:
-          name: build_production_images
-          ros_env: production
-          parallelism: 8
-          filters: &staging_filter
-            branches:
-              only:
-                - master
-      - deploy:
-          name: deploy_staging
-          ros_env: production
-          ros_profile: staging
-          aws_iam_role: demo-staging-eks-admin
-          requires:
-            - build_production_images
-          filters: *staging_filter
-  # TODO deploy_production
-

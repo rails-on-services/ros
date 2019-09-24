@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 # Include common Gemfile
-%w[../Gemfile].each { |gemfile| instance_eval File.read(gemfile) }
+%w[../Gemfile].each do |gemfile|
+  instance_eval(File.read(Pathname.new(File.dirname(__FILE__)).join(gemfile)))
+end
 
 # Include any gems specific to this service
 gemspec
