@@ -4,7 +4,7 @@ class TransferMap < Storage::ApplicationRecord
   has_many :column_maps
   validates :name, :service, :target, presence: true
   validate :service_is_valid
-  validate :target_is_valid
+  validate :target_is_valid, if: -> { Ros.api_calls_enabled }
 
   def self.match(columns_to_match)
     all.each do |tmap|

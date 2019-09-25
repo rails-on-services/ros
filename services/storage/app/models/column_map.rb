@@ -2,7 +2,7 @@
 
 class ColumnMap < Storage::ApplicationRecord
   belongs_to :transfer_map
-  validate :column_name_is_eligible
+  validate :column_name_is_eligible, if: -> { Ros.api_calls_enabled }
 
   private
 

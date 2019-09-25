@@ -46,6 +46,7 @@ components:
         circleci:
           push_on_new_tag: true
       skaffold_version: skaffold/v1beta11
+      compose_version: 3.2
     environment:
       aws_access_key_id: from_deployment_<%= ENV['AWS_ACCESS_KEY_ID'] %>
       aws_secret_access_key: from_deployment_<%= ENV['AWS_SECRET_ACCESS_KEY'] %>
@@ -129,12 +130,12 @@ components:
                   process_stats_enabled: no
                 partition_name: ros
                 request_logging:
-                  enabled: no
+                  enabled: yes
                   config:
                     host: fluentd
                     port: 24224
                 event_logging:
-                  enabled: no
+                  enabled: yes
                   config:
                     name: events-log
                     host: fluentd
@@ -155,13 +156,11 @@ components:
                   ros: yes
               cognito:
                 config:
-                  enabled: yes
                   mount: yes
                   profiles: ['server', 'worker']
                   ros: yes
               comm:
                 config:
-                  enabled: yes
                   mount: yes
                   profiles: ['server', 'worker']
                   ros: yes
@@ -177,12 +176,6 @@ components:
                   ros: yes
               storage:
                 config:
-                  enabled: no
                   mount: yes
                   profiles: ['server', 'worker', 'sqs_worker']
                   ros: yes
-                  # TODO: Perhaps storage just gets the S3 bucket from a platform or service env
-                  # requires localstack running s3 or and S3 bucket, SFTP container, Rails Storage service
-                  # if enabled then either the ALB or the SG needs to permit the SFTP port
-                  # If localstack include that in COMPIOSE_FILE in .env
-                  # If S3 then when calling ros infra:provision it writes a value to tfvars that has TF create the S3 bucket

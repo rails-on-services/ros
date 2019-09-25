@@ -15,17 +15,20 @@ module Storage
       Settings.prepend_source!(service: { name: name, policy_name: name.capitalize })
     end
 
-    initializer 'infra_services_storage', after: 'ros_core.initialize_infra_services' do |_app|
-      # if provider.eql? 'gcp'
-      Rails.configuration.x.infra.resources.storage.primary.enable_notifications(
-        Rails.configuration.x.infra.resources.mq.primary, 'storage/sftp/home'
-      )
-      require 'shoryuken'
-      Shoryuken.configure_server do |config|
-        config.sqs_client = Rails.configuration.x.infra.resources.mq.primary.client
+    initializer 'service.initialize_infra_services', after: 'ros_core.initialize_infra_services' do |_app|
+      # AWS SQS Workers
+      if defined?(Shoryuken)
+        Shoryuken.configure_server do |config|
+          config.sqs_client = Rails.configuration.x.infra.resources.mq.primary.client
+        end
+        Rails.configuration.x.infra.resources.storage.primary.add_queue_notification(
+          queue_name: Rails.configuration.x.infra.resources.mq.primary.name,
+          events: ['s3:ObjectCreated:*'],
+          filter_rules: [{ name: 'prefix', value: 'storage/sftp/home' }, { name: 'suffix', value: '.csv' }]
+        )
+        Rails.configuration.x.infra.resources.storage.primary.enable_notifications
+      # elsif defined?(GcpQueueWorker)
       end
-      # elsif provider.eql? 'gcp'
-      # end
     end
 
     # Adds this gem's db/migrations path to the enclosing application's migraations_path array
@@ -45,12 +48,5 @@ module Storage
         FactoryBot.definition_file_paths.prepend(Pathname.new(__FILE__).join('../../../spec/factories'))
       end
     end
-
-    # initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
-    #   if Rails.env.development? and Rails.const_defined?('Console')
-    #     Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
-    #     Ros.config.model_paths += config.paths['app/models'].expanded
-    #   end
-    # end
   end
 end

@@ -25,15 +25,24 @@ module Ros
         }
       end
 
+      # An instance of this class represents a single Queue
       class Mq
         include Ros::Infra::Aws
         include Ros::Infra::Mq
+        attr_accessor :name, :attrs
 
-        def initialize(client_config, _config)
-          # binding.pry
-          require 'shoryuken'
+        def initialize(client_config, config)
+          require 'aws-sdk-sqs'
           self.client = ::Aws::SQS::Client.new(credentials.merge(client_config))
-          Shoryuken.configure_server { |server_config| server_config.sqs_client = client }
+          self.name = config.queue_name
+          self.attrs = name&.end_with?('.fifo') ? { 'FifoQueue' => 'true', 'ContentBasedDeduplication' => 'true' } : {}
+
+          begin
+            client.create_queue(queue_name: name, attributes: attrs) if name
+          rescue ::Aws::SQS::Errors::InvalidClientTokenId
+            Rails.logger.warn('Configured for SQS but no valid credentials')
+            # TODO: Send exception report to Sentry
+          end
         end
 
         def queues; client.list_queues end
@@ -42,59 +51,60 @@ module Ros
       class Storage
         include Ros::Infra::Aws
         include Ros::Infra::Storage
-        attr_accessor :name, :notifications
+        attr_accessor :name, :notification_configuration
 
         def initialize(client_config, config)
           require 'aws-sdk-s3'
           self.client = ::Aws::S3::Client.new(credentials.merge(client_config))
           self.name = config.bucket_name
-          self.notifications = {}
+          self.notification_configuration = {}
 
+          # We rescue here, report errors and continue because the application
+          # should still be able to run even without access to external storage or queue service
           begin
-            client.head_bucket(bucket: config.bucket_name)
+            client.head_bucket(bucket: name)
+          rescue ::Aws::S3::Errors::Forbidden => e
+            Rails.logger.warn('Configured for S3 but no valid credentials')
+            # TODO: Send exception report to Sentry
           rescue ::Aws::S3::Errors::NotFound
-            client.create_bucket(bucket: config.bucket_name)
+            begin
+              client.create_bucket(bucket: name)
+            rescue ::Aws::S3::Errors::InvalidBucketName
+              # TODO: Get the excpetion type and report it to Sentry
+              Rails.logger.warn("Unable to create bucket #{name}")
+              # TODO: Send exception report to Sentry
+            end
           # rubocop:disable Lint/HandleExceptions
           rescue ::Aws::S3::Errors::Http502Error
+            Rails.logger.warn("Unable to create bucket #{name}")
+            # TODO: Send exception report to Sentry
             # rubocop:enable Lint/HandleExceptions
             # swallow
           end
         end
 
-        def enable_notifications(sqs, notifications_path)
-          # queue_name = "#{notifications_path.gsub('/', '-')}-events"
-          queue_name = notifications_path.gsub('/', '-')
-          notifications[notifications_path] = queue_name
-          attrs = queue_name.end_with?('.fifo') ? { 'FifoQueue' => 'true', 'ContentBasedDeduplication' => 'true' } : {}
-          sqs.client.create_queue(queue_name: queue_name, attributes: attrs)
-          # binding.pry
-          client.put_bucket_notification_configuration(
-            bucket: name, notification_configuration: notification_configuration(queue_name, notifications_path)
-          )
+        def enable_notifications
+          client.put_bucket_notification_configuration(notification_config)
+          Rails.logger.info("Notifications successufully configured #{notification_config}")
+        rescue ::Aws::S3::Errors::InvalidArgument => e
+          Rails.logger.warn("Unable to create notification on bucket #{name}")
+          # TODO: Send exception report to Sentry
+        rescue ::Aws::S3::Errors::NoSuchBucket
+          Rails.logger.warn("Unable to create notification on bucket #{name}")
+          # TODO: Send exception report to Sentry
         end
 
-        # def queue_name; "#{name}-events" end
+        def notification_config; { bucket: name, notification_configuration: notification_configuration } end
 
-        # rubocop:disable Metrics/MethodLength
-        def notification_configuration(queue_name, notifications_path)
-          {
-            queue_configurations: [{
-              queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
-              events: ['s3:ObjectCreated:*'],
-              filter: {
-                key: {
-                  filter_rules: [
-                    {
-                      name: 'prefix',
-                      value: notifications_path
-                    }
-                  ]
-                }
-              }
-            }]
-          }
+        def add_queue_notification(queue_name:, events:, filter_rules:)
+          notification_configuration[:queue_configurations] = [{
+            # TODO: AWS account ID from configuration
+            # queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
+		        queue_arn: "arn:aws:sqs:#{credentials[:region]}:251316246111:#{queue_name}",
+            events: events,
+            filter: { key: { filter_rules: filter_rules } }
+          }]
         end
-        # rubocop:enable Metrics/MethodLength
 
         def resource
           @resource ||= ::Aws::S3::Resource.new(client: client).bucket(name)
@@ -122,6 +132,9 @@ module Ros
 
         def put(path, local_path = "#{Rails.root}/tmp/#{path}")
           resource.object(path).upload_file(local_path)
+        rescue ::Aws::S3::Errors::InvalidAccessKeyId
+          Rails.logger.warn('Configured for S3 but no valid credentials')
+          # TODO: Send exception report to Sentry
         end
       end
     end

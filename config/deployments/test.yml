@@ -29,14 +29,7 @@ components:
               fluentd:
                 config:
                   enabled: no
-              kafkastack:
-                config:
-                  enabled: no
-              sftp:
-                config:
-                  enabled: no
               localstack:
-              nginx:
               postgres:
               redis:
               wait:
