@@ -29,7 +29,7 @@ RSpec.describe 'User Authentication', type: :request do
     end
 
     context 'with :alias' do
-      let(:params) { { data: { attributes: valid_attributes.merge(alias: tenant.alias) } } }
+      let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.alias) } } }
       it 'returns success status' do
         expect(response.status).to eq 200
       end
