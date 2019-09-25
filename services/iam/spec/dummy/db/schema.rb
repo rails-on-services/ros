@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_15_214421) do
+ActiveRecord::Schema.define(version: 2019_09_24_091536) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2019_02_15_214421) do
     t.string "alias"
     t.string "name"
     t.string "state"
+    t.jsonb "display_properties", default: {}
     t.index ["root_id"], name: "index_tenants_on_root_id", unique: true
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end

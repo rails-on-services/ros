@@ -2,6 +2,9 @@
 
 FactoryBot.define do
   factory :iam_user, class: Ros::IAM::User do
+    # https://thoughtbot.com/blog/tips-for-using-factory-girl-without-an-orm
+    skip_create
+
     id { 1 }
     urn { 'urn:whistler:iam::222222222:user/Admin_2' }
     created_at { '2019-09-13T00:25:26.208Z' }
