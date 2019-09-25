@@ -18,6 +18,7 @@ RSpec.configure do |config|
   end
   config.after(:all) do
     @as.destroy
+    @as.root.destroy if @as.try(:root) # IAM only
   end
 end
 
@@ -33,7 +34,7 @@ end
 #     DatabaseCleaner.strategy = :transaction
 #     DatabaseCleaner.clean_with(:deletion)
 #   end
-# 
+#
 #   config.around(:each) do |example|
 #     DatabaseCleaner.cleaning do
 #       example.run
@@ -49,5 +50,18 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+RSpec::Matchers.define :permit do |action|
+  match do |policy|
+    policy.public_send("#{action}?")
+  end
+
+  failure_message do |policy|
+    "#{policy.class} does not permit #{action} on #{policy.record} for #{policy.user.inspect}."
+  end
+
+  failure_message_when_negated do |policy|
+    "#{policy.class} does not forbid #{action} on #{policy.record} for #{policy.user.inspect}."
+  end
+end
 
 Dir[Ros.spec_root.join('shared/**/*.rb')].each { |f| require f }

@@ -17,15 +17,16 @@
 
 PreCommit:
   RuboCop:
-    enabled: true
+    gemfile: 'services/Gemfile'
+    enabled: no
     on_warn: fail # Treat all warnings as failures
     command: ['bundle', 'exec', 'rubocop'] # Invoke within Bundler context
 
   Reek:
-    enabled: true
+    enabled: no
 
   Fasterer:
-    enabled: true
+    enabled: no
 #
 #  TrailingWhitespace:
 #    enabled: true

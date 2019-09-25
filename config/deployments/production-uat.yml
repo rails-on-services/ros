@@ -1,0 +1,71 @@
+# Values defined here override any values defined in deployment.yml
+---
+config:
+  name: demo
+  terraform:
+    state:
+      key: demo-uat
+  infra:
+    aws:
+      cluster:
+        role_name: demo-uat-eks-developer
+
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: kubernetes
+            name: demo-uat
+            aws_profile: 'cnfs-demo'
+            tags:
+              environment: uat
+        components:
+          dns:
+            config:
+              sub_domain: uat
+          vpc:
+            config:
+              cidr: "10.5.0.0/16"
+              create_database_subnets: false
+              create_elasticache_subnets: false
+          kubernetes:
+            config:
+              worker_groups:
+                - name: default_pool
+                  instance_type: m5.2xlarge
+                  asg_max_size: 10
+                  asg_min_size: 1
+          globalaccelerator:
+            config:
+              hostname: "*.uat.demo.cnfs.io"
+          databases:
+            config:
+              enabled: no
+          redis:
+            config:
+              enabled: no
+      application:
+        config:
+          feature_from_tag: yes
+        components:
+          services:
+            components:
+              postgres:
+              redis:
+              kafka-connect:
+                config:
+                  connectors:
+                    bigquery-cloudevents:
+                      type: bigquery
+                      topics: 'iam.user, iam.person'
+                      project: cnfs-development-a
+                      dataset: devops_demo
+          platform:
+            config:
+              images:
+                rails:
+                  # NOTE: for production set rails_env to production
+                  build_args:
+                    rails_env: development

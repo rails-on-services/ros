@@ -12,8 +12,8 @@
 
 if Pry::Prompt.respond_to?(:add)
   desc = "Includes the current Rails environment and project folder name.\n" \
-          "[1] [project_name][Rails.env][Apartment::Tenant.current] pry(main)>"
-  Pry::Prompt.add 'ros', desc, %w(> *) do |target_self, nest_level, pry, sep|
+          '[1] [project_name][Rails.env][Apartment::Tenant.current] pry(main)>'
+  Pry::Prompt.add 'ros', desc, %w[> *] do |target_self, nest_level, pry, sep|
     "[#{pry.input_ring.size}] [#{Settings.dig(:service, :name)}]" \
       "[#{PryRails::Prompt.formatted_env}][#{Apartment::Tenant.current}] " \
     "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
@@ -33,14 +33,20 @@ module Ros
 
       def fbp; FactoryBot.definition_file_paths end
 
-      def ct; Rails.configuration.x.memoized_shortcuts[:ct] ||= Tenant.find_by(schema_name: Apartment::Tenant.current) end
+      def ct
+        Rails.configuration.x.memoized_shortcuts[:ct] ||=
+          Tenant.find_by(schema_name: Apartment::Tenant.current)
+      end
 
       class << self
         # TODO: Some commands don't get created b/c the abbreviations are duplicates
         # Implement a strategy that handles this
         # TODO: Some commands step on pry commands, e.g. `up` for User.pluck is `up` in stack navigation
+        # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/MethodLength
         def load_shortcuts
           return unless Rails.configuration.x.memoized_shortcuts.empty?
+
           unique_shortcuts = Set.new
           Ros.table_names.each do |table_name|
             klass = table_name.classify.constantize
@@ -48,7 +54,7 @@ module Ros
             type = name.underscore.to_sym
             cmd = name.scan(/\p{Upper}/).join.downcase
             if unique_shortcuts.add?(cmd)
-              define_method("#{cmd}") { klass }
+              define_method(cmd.to_s) { klass }
               define_method("#{cmd}a") { klass.all }
               define_method("#{cmd}c") { fbc(type) }
               define_method("#{cmd}f") { Rails.configuration.x.memoized_shortcuts["#{cmd}f"] ||= klass.first }
@@ -67,8 +73,11 @@ module Ros
         rescue ActiveRecord::StatementInvalid => e
           STDOUT.puts "WARNING: Error loading model shortcuts: #{e.message}"
         end
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/AbcSize
 
         def defined_shortcuts; @defined_shortcuts ||= {} end
+
         def undefined_shortcuts; @undefined_shortcuts ||= {} end
 
         def reset_shortcuts
@@ -81,7 +90,7 @@ module Ros
 end
 
 Ros::PryCommandSet = Pry::CommandSet.new
-
+# rubocop:disable Style/ClassAndModuleChildren
 module Ros::Console::Commands
   class TenantSelect < Pry::ClassCommand
     match 'select-tenant'
@@ -95,9 +104,10 @@ module Ros::Console::Commands
       If the id that is passed doesn't exist then the default schema 'public' will become the active schema
     BANNER
 
+    # rubocop:disable Metrics/AbcSize
     def process(id = nil)
       if id.nil?
-        columns = Tenant.column_names.include?('name') ? %i(id schema_name name) : %i(id schema_name)
+        columns = Tenant.column_names.include?('name') ? %i[id schema_name name] : %i[id schema_name]
         output.puts Tenant.order(:id).pluck(*columns).each_with_object([]) { |a, ary| ary << a.join(' ') }
         return
       end
@@ -107,6 +117,7 @@ module Ros::Console::Commands
       Rails.configuration.x.memoized_shortcuts[:ct] = Tenant.find_by(schema_name: Apartment::Tenant.current)
       Rails.configuration.x.memoized_shortcuts[:ct]&.set_root_credential
     end
+    # rubocop:enable Metrics/AbcSize
 
     Ros::PryCommandSet.add_command(self)
   end
@@ -132,7 +143,8 @@ module Ros::Console::Commands
 
     def process(state = nil)
       unless state.nil?
-        return if (state == 'off' and ActiveRecord::Base.logger.nil?) or (state == 'on' and not ActiveRecord::Base.logger.nil?)
+        return if ((state == 'off') && ActiveRecord::Base.logger.nil?) ||
+                  ((state == 'on') && !ActiveRecord::Base.logger.nil?)
       end
       swap_logger(ActiveRecord::Base)
       swap_logger(ActiveJob::Base)
@@ -157,42 +169,42 @@ module Ros::Console::Commands
       output.puts 'Model               Class  All     Create  First   Last    Pluck'
       Ros::Console::Methods.defined_shortcuts.sort.to_h.each_pair do |cmd, name|
         buf = ' ' * (7 - cmd.length)
-        output.puts "#{name}#{' ' * (20 - name.length)}#{cmd}#{buf}#{cmd}a#{buf}#{cmd}c#{buf}#{cmd}f#{buf}#{cmd}l#{buf}#{cmd}p"
+        output.puts "#{name}#{' ' * (20 - name.length)}#{cmd}#{buf}#{cmd}a#{buf}#{cmd}c#{buf}#{cmd}" \
+          "f#{buf}#{cmd}l#{buf}#{cmd}p"
       end
     end
 
     Ros::PryCommandSet.add_command(self)
   end
 
-=begin
   # TODO: move to a module/class in core for jobs; namesapced on the queue type
-  class RabbitMQ < Pry::ClassCommand
-    match 'mq-send'
-    group 'ros'
-    description 'send a message on the mq bus'
+  # class RabbitMQ < Pry::ClassCommand
+  #   match 'mq-send'
+  #   group 'ros'
+  #   description 'send a message on the mq bus'
 
-    # TODO: refactor
-    def process
-      return unless ENV['AMQP_URL']
-      record = { bucket: 'test', key: 'path/to/object' }
-      conn = Bunny.new(ENV['AMQP_URL'])
-      conn.start
-      ch = conn.create_channel
-      puts "#{record[:bucket]}/#{record[:key]}"
-      puts ENV['AMQP_QUEUE_NAME']
-      puts record.merge!({ tenant: 'hsbc', environment: 'development' })
+  #   # TODO: refactor
+  #   def process
+  #     return unless ENV['AMQP_URL']
+  #     record = { bucket: 'test', key: 'path/to/object' }
+  #     conn = Bunny.new(ENV['AMQP_URL'])
+  #     conn.start
+  #     ch = conn.create_channel
+  #     puts "#{record[:bucket]}/#{record[:key]}"
+  #     puts ENV['AMQP_QUEUE_NAME']
+  #     puts record.merge!({ tenant: 'hsbc', environment: 'development' })
 
-      res = ch.default_exchange.publish("#{record[:bucket]}/#{record[:key]}",
-                                        routing_key: ENV['AMQP_QUEUE_NAME'],
-                                        headers: record.merge({ version: ENV['AMQP_VERSION'].to_s }))
+  #     res = ch.default_exchange.publish("#{record[:bucket]}/#{record[:key]}",
+  #                                       routing_key: ENV['AMQP_QUEUE_NAME'],
+  #                                       headers: record.merge({ version: ENV['AMQP_VERSION'].to_s }))
 
-      puts 'Here is output from bunny'
-      puts res
-      conn.close
-    end
-  end
-=end
+  #     puts 'Here is output from bunny'
+  #     puts res
+  #     conn.close
+  #   end
+  # end
 end
+# rubocop:enable Style/ClassAndModuleChildren
 
 Pry.config.commands.import Ros::PryCommandSet
 Pry.config.commands.alias_command 'r', 'reload'
@@ -200,8 +212,8 @@ Pry.config.commands.alias_command 'sc', 'show-shortcuts'
 Pry.config.commands.alias_command 'st', 'select-tenant'
 Pry.config.commands.alias_command 'to', 'toggle-logger'
 
-Pry.hooks.add_hook(:before_session, 'load_shortcuts') do |output, binding, pry|
-  if not Rails.const_defined?('Server')
+Pry.hooks.add_hook(:before_session, 'load_shortcuts') do |output, _binding, _pry|
+  unless Rails.const_defined?('Server')
     output.puts "\nModel Shortcut Console Commands:"
     Ros::Console::Methods.load_shortcuts
     Ros::Console::Commands::Shortcuts.new(output: output).process
@@ -209,8 +221,8 @@ Pry.hooks.add_hook(:before_session, 'load_shortcuts') do |output, binding, pry|
   end
 end
 
-Pry.hooks.add_hook(:after_session, 'thanks') do |output, binding, pry|
-  if Rails.env.development? and not Rails.const_defined?('Server')
+Pry.hooks.add_hook(:after_session, 'thanks') do |output, _binding, _pry|
+  if Rails.env.development? && !Rails.const_defined?('Server')
     output.puts 'Thanks for using ros. Documentation at http://guides.rails-on-services.org'
   end
 end

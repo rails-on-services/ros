@@ -2,13 +2,24 @@
 components:
   be:
     config:
-      feature_set: image
+      feature_set: stage
       feature_from_branch: no
     environment:
       nginx_host_port: 3001
     components:
       application:
         components:
+          services:
+            components:
+              kafkastack:
+                config:
+                  enabled: no
+              fluentd:
+                config:
+                  enabled: no
+              sftp:
+                config:
+                  enabled: no
           platform:
             components:
               # account:
@@ -29,4 +40,5 @@ components:
                   mount: no
               storage:
                 config:
+                  enabled: no
                   mount: no

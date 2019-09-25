@@ -4,7 +4,7 @@ module Postman
   class Comm
     attr_accessor :base_url, :api_key, :endpoint
 
-    def initialize(base_url: 'https://api.getpostman.com', endpoint: nil, api_key: Settings.postman.api_key) 
+    def initialize(base_url: 'https://api.getpostman.com', endpoint: nil, api_key: Settings.postman.api_key)
       @base_url = base_url
       @api_key = api_key
       self.endpoint = endpoint if endpoint
@@ -42,13 +42,18 @@ module Postman
       "#{base_url}/#{endpoint}"
     end
 
-    def endpoint=(ep)
-      raise ArgumentError, "Invalid endpoint. Valid endpoints are #{valid_endpoints.join(', ')}" unless valid_endpoints.include? ep.to_s
+    # rubocop:disable Lint/DuplicateMethods
+    def endpoint=(endpoint)
+      unless valid_endpoints.include? endpoint.to_s
+        raise ArgumentError, "Invalid endpoint. Valid endpoints are #{valid_endpoints.join(', ')}"
+      end
+
       @endpoint = ep.to_s
     end
+    # rubocop:enable Lint/DuplicateMethods
 
     def valid_endpoints
-      %w(collections environments mocks monitors workspaces)
+      %w[collections environments mocks monitors workspaces]
     end
   end
 end

@@ -40,7 +40,7 @@ module AssociationResource
     def query_resource(model)
       id_column = id_column(model)
       query = class_name.constantize.where(id_column => model.id)
-      query = query.where(type_column => model.class.resource_name) unless type_column.blank?
+      query = query.where(type_column => model.class.resource_name) if type_column.present?
 
       query.find
     end

@@ -1,29 +1,173 @@
-# Configuration values defined here override any values defined in deployment.yml
+# Values defined here override any values defined in deployment.yml
 ---
-meta:
-  components:
-    provider: aws/kubernetes
-    image: production
+config:
+  name: demo
+  terraform:
+    state:
+      type: s3
+      bucket: terraform-state-demo
+      key: demo
+      dynamodb_table: terraform-lock
+      region: ap-southeast-1
+      profile: 'cnfs-demo'
+  infra:
+    aws:
+      cluster:
+        role_name: demo-eks-developer
 
-platform:
-  # TODO: use the value of infra.provider to provision storage, e.g. S3 bucket
-  storage: platform # storage is provisioned at platform with a dir per service
-  # storage: service # each service provisions its own storage
-  environment:
-    partition_name: perx
-    connection__host__port: 80
-  # Define the basic services that will be running on the platform and their default environment
-  basic_services:
-    # Uses custom helm chart
-    fluentd:
-    # Uses custom helm chart
-    ingress:
-  services:
-    environment:
-      rails_database_host: postgres
-      redis_url: redis://redis-master:6379
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: kubernetes
+            name: demo
+            aws_profile: 'cnfs-demo'
+            tags:
+              environment: production
+        components:
+          dns:
+            config:
+              root_domain: demo.cnfs.io
+              sub_domain:
+              root_domain_managed_in_route53: yes
+          cert:
+            config:
+              provider: aws
+              subject_alternative_names: []
+          vpc:
+            config:
+              provider: aws
+              cidr: "10.4.0.0/16"
+              create_database_subnets: true
+              create_elasticache_subnets: true
+          iam:
+            config:
+              provider: aws
+          kubernetes:
+            config:
+              provider: aws
+              region: ap-southeast-1
+              admins: [kostya, duan]
+              worker_groups:
+                - name: default_pool
+                  instance_type: m5.2xlarge
+                  asg_max_size: 20
+                  asg_min_size: 1
+            components:
+              infra:
+                config:
+                  extra_namespaces: []
+              services:
+                components:
+                  istio:
+                    config:
+                      version: '1.3.0'
+                  external_dns:
+                    config:
+                      enabled: yes
+                  cluster_logging:
+                    config:
+                      provider: gcp
+                      # gcp_service_account_key: 
+                  grafana:
+                    config:
+                      namespace: 'monitor'
+                      username: admin
+                      # password: 
+                  prometheus:
+                    config:
+                      version: '2.12.0'
+          globalaccelerator:
+            config:
+              provider: aws
+              enabled: yes
+              hostname: "*.demo.cnfs.io"
+          databases:
+            config:
+              provider: aws
+              enabled: yes
+              clusters:
+                default:
+                  name: demo-main
+                  username: postgres
+                  # password:
+                  instance_type: "db.r5.large"
+                  replica_count: 1
+          redis:
+            config:
+              provider: aws
+              enabled: yes
+              clusters:
+                default:
+                  name: demo
+                  node_type: "cache.r5.large"
+                  number_cache_clusters: 1
+      application:
+        config:
+          feature_from_branch: no
+          feature_from_tag: no
+          external_kafka:
+            bootstrap_servers: pkc-l9wvm.ap-southeast-1.aws.confluent.cloud:9092
+            security_protocol: SASL_SSL
+            sasl_mechanism: PLAIN
+            username:
+            password:
+        components:
+          services:
+            components:
+              ingress:
+              # postgres:
+              # redis:
+              fluentd:
+                config:
+                  enabled: yes
+              kafka:
+                config:
+                  enabled: no
+              kafka-zookeeper:
+                config:
+                  enabled: no
+              kafka-schema-registry:
+                config:
+                  enabled: yes
+              kafka-connect:
+                config:
+                  enabled: yes
+                  configurationOverrides:
+                    # test environment settings to save some resources
+                    # config.storage.replication.factor: 1
+                    # status.storage.replication.factor: 1
+                    # offset.storage.replication.factor: 1
+                  connectors: []
+                    # bigquery-cloudevents:
+                    #   type: bigquery
+                    #   topics: 'iam.user, iam.person'
+                    #   project: cnfs-development-a
+                    #   dataset: devops_demo
 
-infra:
-  dns:
-    domain: perxtech.net
-    subdomain: whistler
+          platform:
+            config:
+              images:
+                rails:
+                  # NOTE: for production set rails_env to production
+                  build_args:
+                    rails_env: production
+            environment:
+              platform:
+                metrics:
+                  enabled: no
+                  process_stats_enabled: yes
+                connection:
+                  host:
+                    port: 80
+                request_logging:
+                  enabled: yes
+                  config:
+                    host: fluentd
+                    port: 24224
+                event_logging:
+                  enabled: yes
+                  config:
+                    schema_registry_url: http://kafka-schema-registry:8081

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 def ros_task_prefix
- @ros_task_prefix ||= Dir['lib/**/engine.rb'].any? ? 'app:' : ''
+  @ros_task_prefix ||= Dir['lib/**/engine.rb'].any? ? 'app:' : ''
 end
 
 namespace :ros do
   namespace :db do
-		# desc 'Remove all SQLite3 database files'
+    # desc 'Remove all SQLite3 database files'
     # task :rm do
     #   FileUtils.rm Dir.glob('db/*.sqlite3')
     #   FileUtils.rm_rf('spec/dummy/db')
@@ -16,7 +16,7 @@ namespace :ros do
 
     desc 'Clean a database (removes all tenants)'
     task clean: [:environment] do
-      Tenant.all.each { |tenant| tenant.destroy }
+      Tenant.all.each(&:destroy)
     end
 
     namespace :clean do
