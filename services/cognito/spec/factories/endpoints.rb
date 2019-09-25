@@ -5,6 +5,6 @@ FactoryBot.define do
     url { 'http://localhost:3000/test' }
     target_type { 'Perx::Survey::Campaign' }
     target_id { 1 }
-    properties { {}  }
+    properties { {} }
   end
 end
