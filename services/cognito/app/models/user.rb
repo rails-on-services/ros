@@ -32,10 +32,8 @@ class User < Cognito::ApplicationRecord
         user.update(row.slice(:title, :last_name, :phone_number))
         pool.users << user
       else
-        # rubocop:disable Rails/Output
         puts "title: #{row[:title]} phone_number: #{row[:phone_number]} last_name: #{row[:last_name]} " \
           "id: #{row[:primary_identifier]} pool: #{row[:pool_name]}"
-        # rubocop:enable Rails/Output
       end
     end
   end
