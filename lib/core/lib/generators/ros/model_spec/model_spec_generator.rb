@@ -14,7 +14,7 @@ module Ros
             let!(:subject) { create(:#{name}) }
           end
 
-          pending "add more examples"
+          pending "add more examples here or delete this line"
         end
       FILE
     end
