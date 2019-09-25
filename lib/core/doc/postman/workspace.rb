@@ -3,7 +3,7 @@
 module Postman
   class Workspace
     attr_accessor :id, :name, :comm
-    attr_accessor :collections, :environments, :mocks, :monitors #, :workspaces
+    attr_accessor :collections, :environments, :mocks, :monitors # , :workspaces
 
     def initialize(id: nil, name: nil, comm: nil)
       @id = id
@@ -12,20 +12,24 @@ module Postman
     end
 
     def collection(name)
-      col = collections.each.select{ |c| c['name'].eql?(name) }.first || {}
+      col = collections.each.select { |c| c['name'].eql?(name) }.first || {}
       OpenStruct.new(col.merge(type: :collections))
     end
 
-    def collection_names; collections.map{ |a| a['name'] } end
+    def collection_names; collections.map { |a| a['name'] } end
+
+    # rubocop:disable Lint/DuplicateMethods
     def collections; @collections ||= data['collections'] || [] end
 
     def environment(name)
-      col = environments.each.select{ |c| c['name'].eql?(name) }.first || {}
+      col = environments.each.select { |c| c['name'].eql?(name) }.first || {}
       OpenStruct.new(col.merge(type: :environments))
     end
 
-    def environment_names; environments.map{ |a| a['name'] } end
+    def environment_names; environments.map { |a| a['name'] } end
+
     def environments; @environments ||= data['environments'] || [] end
+    # rubocop:enable Lint/DuplicateMethods
 
     # Convert data to payload format expected by Postman API
     def payload(endpoint, json_data)
@@ -40,12 +44,15 @@ module Postman
       response.status.eql?(200) ? 'ok' : response.body
     end
 
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def data
       comm.endpoint = :workspaces
       if name
         payload = comm.index
         json = JSON.parse(payload.body)['workspaces']
-        if result = json.each.select { |c| c['name'].eql?(name) }.first
+        result = json.each.select { |c| c['name'].eql?(name) }.first
+        if result
           self.id = result['id']
         else
           response = comm.conn.post(comm.endpoint_url, { workspace: { name: name, type: 'team' } }.to_json)
@@ -58,5 +65,7 @@ module Postman
       self.name ||= ws['description']['name']
       ws
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
   end
 end

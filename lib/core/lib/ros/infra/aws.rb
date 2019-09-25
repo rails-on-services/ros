@@ -1,24 +1,15 @@
 # frozen_string_literal: true
 
-module Ros
-  module Infra
-    module Storage
-      extend ActiveSupport::Concern
-      def ls(path = ''); raise NotImplementedError end
-      def get(path); raise NotImplementedError end
-      def put(path); raise NotImplementedError end
-    end
-
-    module Mq
-      extend ActiveSupport::Concern
-    end
-  end
-end
+require 'ros/infra'
 
 module Ros
   module Infra
-    class Aws
-      include Ros::Infra
+    module Aws
+      extend ActiveSupport::Concern
+
+      included do
+        attr_accessor :client
+      end
 
       def credentials
         {
@@ -34,57 +25,76 @@ module Ros
         }
       end
 
-      class Mq < Ros::Infra::Aws
+      class Mq
+        include Ros::Infra::Aws
         include Ros::Infra::Mq
 
-        def initialize(client_config, config)
-          binding.pry
+        def initialize(client_config, _config)
+          # binding.pry
           require 'shoryuken'
-          self.client = ::Aws::SQS::Client.new(self.class.credentials.merge(client_config))
-          Shoryuken.configure_server { |config| config.sqs_client = client }
+          self.client = ::Aws::SQS::Client.new(credentials.merge(client_config))
+          Shoryuken.configure_server { |server_config| server_config.sqs_client = client }
         end
+
+        def queues; client.list_queues end
       end
 
-      class Storage < Ros::Infra::Aws
+      class Storage
+        include Ros::Infra::Aws
         include Ros::Infra::Storage
-        attr_accessor :client, :name, :service_path, :notifications_path
+        attr_accessor :name, :notifications
 
         def initialize(client_config, config)
           require 'aws-sdk-s3'
           self.client = ::Aws::S3::Client.new(credentials.merge(client_config))
           self.name = config.bucket_name
-          self.service_path = Settings.service.name
-          self.notifications_path = "#{service_path}/*"
+          self.notifications = {}
 
           begin
             client.head_bucket(bucket: config.bucket_name)
           rescue ::Aws::S3::Errors::NotFound
             client.create_bucket(bucket: config.bucket_name)
+          # rubocop:disable Lint/HandleExceptions
           rescue ::Aws::S3::Errors::Http502Error
+            # rubocop:enable Lint/HandleExceptions
             # swallow
           end
         end
 
-        def enable_notifications(sqs_client)
+        def enable_notifications(sqs, notifications_path)
+          # queue_name = "#{notifications_path.gsub('/', '-')}-events"
+          queue_name = notifications_path.gsub('/', '-')
+          notifications[notifications_path] = queue_name
           attrs = queue_name.end_with?('.fifo') ? { 'FifoQueue' => 'true', 'ContentBasedDeduplication' => 'true' } : {}
-          sqs_client.create_queue({ queue_name: queue_name, attributes: attrs })
+          sqs.client.create_queue(queue_name: queue_name, attributes: attrs)
+          # binding.pry
           client.put_bucket_notification_configuration(
-            bucket: name, notification_configuration: notification_configuration
+            bucket: name, notification_configuration: notification_configuration(queue_name, notifications_path)
           )
         end
 
-        def queue_name; "#{name}-events" end
+        # def queue_name; "#{name}-events" end
 
-        def notification_configuration
+        # rubocop:disable Metrics/MethodLength
+        def notification_configuration(queue_name, notifications_path)
           {
             queue_configurations: [{
-              queue_arn: queue_arn,
-              events: ["s3:ObjectCreated:#{notifications_path}"]
+              queue_arn: "arn:aws:sqs:#{credentials['region']}:#{values['account_id']}:#{queue_name}",
+              events: ['s3:ObjectCreated:*'],
+              filter: {
+                key: {
+                  filter_rules: [
+                    {
+                      name: 'prefix',
+                      value: notifications_path
+                    }
+                  ]
+                }
+              }
             }]
           }
         end
-
-        def queue_arn; "arn:aws:sqs:#{credentials.region}:#{values.account_id}:#{queue_name}" end
+        # rubocop:enable Metrics/MethodLength
 
         def resource
           @resource ||= ::Aws::S3::Resource.new(client: client).bucket(name)
@@ -93,13 +103,12 @@ module Ros
         def ls(pattern = nil)
           # NOTE: This should be when using -l
           return client.list_objects(bucket: name) unless pattern
+
           # NOTE: This is from regular ls
           # return client.list_objects(bucket: name).contents.each_with_object([]) { |ar, o| o.append(ar.key) }
-
-
           # binding.pry
           # resource.objects(prefix: path).select do |obj|
-          resource.objects().select do |obj|
+          resource.objects.select do |obj|
             # obj.key.match(/[.]gz$/)
             obj.key.match(/#{pattern}/)
           end
@@ -107,12 +116,11 @@ module Ros
 
         def get(path)
           local_path = "#{Rails.root}/tmp/#{File.dirname(path)}"
-          FileUtils.mkdir_p(local_path) unless Dir.exists?(local_path)
+          FileUtils.mkdir_p(local_path) unless Dir.exist?(local_path)
           resource.object(path).get(response_target: "#{local_path}/#{File.basename(path)}")
         end
 
-        def put(path)
-          local_path = "#{Rails.root}/tmp/#{path}"
+        def put(path, local_path = "#{Rails.root}/tmp/#{path}")
           resource.object(path).upload_file(local_path)
         end
       end

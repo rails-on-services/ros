@@ -13,42 +13,58 @@ require 'config'
 require 'sidekiq'
 require 'sidekiq/web'
 require 'ros_sdk'
+# require 'pry-remote'
 
 require_relative 'tenant_middleware'
+require_relative 'dtrace_middleware'
+require_relative 'url_builder'
 require_relative 'api_token_strategy'
 require_relative 'routes'
+require_relative '../migrations'
 
 require 'ros/core/engine'
 
 module Ros
-  class Configuration
-    attr_accessor :model_paths, :factory_paths
-
-    def initialize; @model_paths = []; @factory_paths = [] end
-  end
-
-  # def self.host_tmp_dir; "tmp/#{ENV['PLATFORM__FEATURE_SET']}" end
-  def self.host_tmp_dir; "tmp/#{Settings.feature_set}" end
-
-  # NOTE: Experimental
-  class Application
-    def self.config; Settings end
+  module Core
   end
 
   class << self
-    attr_accessor :config
+    def host_tmp_dir; "tmp/#{Settings.feature_set}" end
 
-    def config; @config ||= Ros::Configuration.new end
-    def version; '0.1.0' end
-    def application; Application end
+    def host_env; @host_env ||= ActiveSupport::StringInquirer.new(File.exist?('/.dockerenv') ? 'docker' : 'os') end
+
+    def root
+      @root ||= begin
+                  cwd = Pathname.new(Dir.pwd)
+                  Dir.pwd.split('/').size.times do |i|
+                    path = cwd.join('../' * i)
+                    break path if Dir.exist?("#{path}/services") && Dir.exist?("#{path}/lib")
+                  end
+                end
+    end
+
+    def spec_root; @spec_root ||= Pathname.new(__FILE__).join('../../../spec') end
+
+    def dummy_mount_path; @dummy_mount_path ||= "/#{host_env.os? ? Settings.service.name : ''}" end
+
+    # TODO: Tenant events and platform events are skipped for now; these will support callbacks
+    def table_names
+      @table_names ||= begin
+        ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata tenant_events platform_events]
+      end
+    end
+
+    def api_calls_enabled; Settings.dig(:api_calls_enabled) || !Rails.env.test? end
+
+    # By default all services exclude only the Tenant model from schemas
+    def excluded_models; %w[Tenant] end
   end
-  # NOTE: End Experimental
-
 
   # TODO: Authorize method
   # TODO: scope value is the subject's policies; What if the subject's policies change after token issued?
   # It could be that every token expires in 10 minutes or something which means that the auth strategy
-  # would check and then re-issue a token as long as the user is still valid; this would update permissions at that point
+  # would check and then re-issue a token as long as the user is still valid;
+  # this would update permissions at that point
   # or it would need to check if the user has been updated since the token was issued
   # def self.issue(iss: Ros::Sdk.service_endpoints['iam'], sub:, scope:)
   #   issued_at = Time.now.to_i
@@ -71,11 +87,11 @@ module Ros
     def default_payload
       issued_at = Time.now.to_i
       token = (expires_in = Settings.dig(:jwt, :token_expires_in_seconds)) ? { exp: issued_at + expires_in } : {}
-      token.merge({ aud: aud, iat: issued_at })
+      token.merge(aud: aud, iat: issued_at)
     end
 
     def add_claims(claims)
-      claims.each_pair { |k, v| @claims[k] = v if k.in? Settings.dig(:jwt, :valid_claims) || [] }
+      claims.each_pair { |k, v| @claims[k] = k.in?(Settings.dig(:jwt, :valid_claims)) ? v : [] }
       self
     end
 
@@ -103,29 +119,39 @@ module Ros
 
     def self.from_jwt(token)
       jwt = Jwt.new(token)
-      return unless urn_string = jwt.decode['sub']
+      return unless (urn_string = jwt.decode['sub'])
+
       from_urn(urn_string)
     # NOTE: Intentionally swallow decode error and return nil
+    # rubocop:disable Lint/HandleExceptions
     rescue JWT::DecodeError
     end
+    # rubocop:enable Lint/HandleExceptions
+
+    # rubocop:disable Naming/PredicateName
+    def is_platform_urn?; account_id.eql?('platform') end
+    # rubocop:enable Naming/PredicateName
 
     def resource_type; resource.split('/').first end
+
     def resource_id; resource.split('/').last end
 
     def model_name; resource_type.classify end
+
     def model; model_name.constantize end
+
+    # rubocop:disable Rails/DynamicFindBy
     def instance; model.find_by_urn(resource_id) end
+    # rubocop:enable Rails/DynamicFindBy
+
     def to_s; to_a.join(':') end
   end
 
-  # Failure response to return JSONAPI error message when authentication failse
+  # Failure response to return JSONAPI error message when authentication fails
   class FailureApp
-    def self.call(env)
+    def self.call(_env)
       [401, { 'Content-Type' => 'application/vnd.api+json' },
-        [{ errors: [{ status: '401', title: 'Unauthorized' }] }.to_json]]
+       [{ errors: [{ status: '401', title: 'Unauthorized' }] }.to_json]]
     end
-  end
-
-  module Core
   end
 end

@@ -18,6 +18,7 @@ class User < Iam::ApplicationRecord
   has_many :role_actions, through: :roles, source: :actions
 
   validates :username, presence: true
+  validates :username, uniqueness: true
   # store_accessor :permissions, :authorized_policies, :authorized_actions
 
   # TODO: validate locales inclusion in list and time_zone in available time zones
@@ -41,7 +42,7 @@ class User < Iam::ApplicationRecord
 
   # TODO: Set scope to the user's policies
   def jwt_payload
-    { iss: Ros::Sdk.service_endpoints['iam'].to_s, sub: to_urn, scope: '*' }
+    @jwt_payload ||= { iss: Settings.jwt.iss, sub: to_urn }
   end
 
   # NOTE: Credential is in the public schema

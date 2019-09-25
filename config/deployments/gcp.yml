@@ -1,0 +1,32 @@
+components:
+  be:
+    components:
+      infra:
+        config:
+          cluster:
+            type: instance
+        components:
+          provider_settings:
+            config: 
+              provider: gcp
+              region: us-central1
+              zone: us-central1-a
+              project: 'google-project-name' 
+              credentials_file: '/path/to/credentials.json'
+          vpc:
+            config:
+              provider: gcp         # other supported types: azure, oracle
+              vpc_name: my-test-vpc
+              subnet_name: my-test-subnet
+              cidr: '10.100.0.0/16'
+          instance:
+            config:
+              provider: gcp
+              name: my-test-instance
+              machine_type: 'f1-micro'
+              disk_image: 'debian'        # ubuntu or debian
+              project_name: my-project    # path to ROS project on instance ~/my-project/ros
+              ssh_public_key: '~/.ssh/id_rsa.pub'  # local path to SSH public key
+          dns:
+            config:
+              provider: gcp

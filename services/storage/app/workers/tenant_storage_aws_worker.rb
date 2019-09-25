@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
+# The AWS specific implementation to handle new files added to an S3 bucket
+
 require_relative '../../spec/dummy/config/application'
 Rails.application.initialize!
-Ros::Infra.tenant_storage.enable_notifications
+# sqs_client = Rails.configuration.x.infra.resources.mq.primary.client
+# Rails.configuration.x.infra.services.storage.enable_notifications(sqs_client)
 
 class TenantStorageAwsWorker < TenantStorageWorker
   include Shoryuken::Worker
+  # binding.pry
 
-  shoryuken_options queue: Ros::Infra.tenant_storage.queue_name, auto_delete: true
+  shoryuken_options queue: Rails.configuration.x.infra.resources.storage.primary.notifications['storage/sftp/home'],
+                    auto_delete: true
 
   # Process a lifecycle event from the S3 bucket
   def perform(_sqs_msg, payload)
+    # binding.pry
     return unless (records = JSON.parse(payload)['Records'])
 
     records.each do |record|
@@ -27,11 +33,15 @@ TenantStorageAwsEvent = Struct.new(:event_time, :event_name, :bucket, :key, :eta
         record['s3']['object']['eTag'], record['s3']['object']['size'])
   end
 
-  def schema_name; key.split('/')[1].scan(/.{3}/).join('_') end
+  def schema_name
+    return unless (match_result = key.match(/\d{9}/))
 
-  def type; key.split('/')[2]&.singularize end
+    match_result[0].scan(/\d{3}/).join('_')
+  end
 
-  def name; key.split('/')[3..-1]&.join('/') end
+  def type; key.split('/')[4]&.singularize end
+
+  def name; key.split('/')[5..-1]&.join('/') end
 end
 
 # {"eventVersion"=>"2.0",

@@ -42,7 +42,7 @@ config:
             mini_portile2: 2.4.0
             msgpack: 1.2.10
             nio4r: 2.3.1
-            nokogiri: 1.10.3
+            nokogiri: 1.10.4
             pg: 1.1.4
             puma: 3.12.1
           build_args:

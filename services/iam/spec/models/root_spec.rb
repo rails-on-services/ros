@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
-  it 'should do a bunch of things' do
-    # expect(1).to eq(2)
+RSpec.describe Root, type: :model do
+  include_examples 'application record concern' do
+    let(:tenant) { create(:tenant, root: subject) }
+    let!(:subject) { create(factory_name) }
   end
 end

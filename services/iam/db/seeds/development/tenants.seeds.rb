@@ -22,6 +22,7 @@ create_list.each do |account|
     root.create_tenant(schema_name: Tenant.account_id_to_schema(root.id.to_s * 9)[0..10],
                        name: "Account #{id}", state: :active)
     credential = Credential.create(owner: root)
-    @created_list.append({ type: 'root', owner: root, tenant: root.tenant, credential: credential, secret: credential.secret_access_key })
+    @created_list.append(type: 'root', owner: root, tenant: root.tenant, credential: credential,
+                         secret: credential.secret_access_key)
   end
 end

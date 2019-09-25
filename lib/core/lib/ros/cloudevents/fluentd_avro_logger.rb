@@ -7,20 +7,9 @@ require 'avro_turf/messaging'
 module Ros
   module CloudEvents
     class Event
-      ATTRS = [
-        :id,
-        :source,
-        :specversion,
-        :type,
-        :datacontentencoding,
-        :datacontenttype,
-        :schemaurl,
-        :subject,
-        :time,
-        :data
-      ]
+      ATTRS = %i[id source specversion type datacontentencoding datacontenttype schemaurl subject time data].freeze
       attr_accessor(*ATTRS)
-      
+
       def to_h
         ATTRS.each_with_object({}) { |i, h| h[i] = send(i) }
       end
@@ -29,29 +18,24 @@ module Ros
     class FluentdAvroLogger
       class << self
         attr_reader :logger, :cloudevents_specversion, :avro
-  
-        def configure(
-          name: ENV['FLUENTD_NAME'],
-          host: ENV['FLUENTD_HOST'],
-          port: (ENV['FLUENTD_PORT'] || 24_224).to_i,
-          schema_registry_url: nil,
-          schemas_path: nil,
-          cloudevents_specversion: '0.4-wip',
-          **
-        )
+
+        # rubocop:disable Metrics/ParameterLists
+        def configure(name: nil, host: nil, port: 24_224, schema_registry_url: nil, schemas_path: nil,
+                      cloudevents_specversion: '0.4-wip')
           @avro = AvroTurf::Messaging.new(registry_url: schema_registry_url, schemas_path: schemas_path)
           @cloudevents_specversion = cloudevents_specversion
           @logger = Fluent::Logger::FluentLogger.new(name, host: host, port: port)
         end
+        # rubocop:enable Metrics/ParameterLists
       end
 
       def initialize(source)
         @source = source
-
-        self.class.configure if self.class.logger.nil?
       end
-      
-      def log_event(type, id, data, subject: nil, time: Time.now)
+
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
+      def log_event(type, id, data, subject: nil, time: Time.zone.now)
         event = Event.new
         event.source = @source
         event.specversion = self.class.cloudevents_specversion
@@ -60,12 +44,14 @@ module Ros
         event.subject = subject
         event.datacontenttype = 'application/avro'
         event.datacontentencoding = 'Base64'
-        event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z') 
-        event.data = Base64.encode64(
-          self.class.avro.encode(data, schema_name: type)
-        )
+        event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+        # binding.pry
+        event.data = Base64.encode64(self.class.avro.encode(data, schema_name: type, subject: type + '-value'))
+        # binding.pry
         self.class.logger.post(@source, event.to_h)
       end
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end

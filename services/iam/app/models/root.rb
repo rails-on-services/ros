@@ -11,11 +11,11 @@ class Root < Iam::ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
- #         :jwt_authenticatable, # jwt_revocation_strategy: self
- #         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+  #         :jwt_authenticatable, # jwt_revocation_strategy: self
+  #         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
   def jwt_payload
-    { iss: "#{Ros::Sdk.service_endpoints['iam']}", sub: to_urn, scope: '*' }
+    @jwt_payload ||= { iss: Settings.jwt.iss, sub: to_urn, scope: '*' }
   end
 
   def current_tenant

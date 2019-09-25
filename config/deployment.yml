@@ -14,20 +14,24 @@ config:
       # bucket: org-rails-on-services-terraform-state
       # key: ros-develop-ec2
       # dynamodb_table: org-rails-on-services-terraform-lock
+  infra:
+    aws:
+      cluster:
+        role_name: eks-admin
 
 components:
   fe:
+    config:
+      provider: aws # gcp azure
     components:
       server:
-        config:
-          provider: aws # gcp azure
-      storage:
       application:
   data:
+    config:
+      provider: gcp
     components:
       warehouse:
         config:
-          provider: gcp
           type: big_query
         components:
       api:
@@ -43,23 +47,22 @@ components:
           push_on_new_tag: true
       skaffold_version: skaffold/v1beta11
     environment:
-      aws_access_key_id: "from_deployment_<%= ENV['AWS_ACCESS_KEY_ID'] %>"
-      aws_secret_access_key: "from_deployment_<%= ENV['AWS_SECRET_ACCESS_KEY'] %>"
+      aws_access_key_id: from_deployment_<%= ENV['AWS_ACCESS_KEY_ID'] %>
+      aws_secret_access_key: from_deployment_<%= ENV['AWS_SECRET_ACCESS_KEY'] %>
       aws_default_region: ap-southeast-1
     components:
       infra:
         config:
           cluster:
-            type: kubernetes
+            type: instance
         components:
           dns:
             config:
               provider: aws
-              root_domain: perxtech.io
-              sub_domain: enceladus
+              root_domain: localhost
+              sub_domain:
               endpoints:
-                grafana:
-                  host: grafana
+                grafana: grafana
                 api:
                   scheme: https
                   host: api
@@ -68,11 +71,8 @@ components:
           kubernetes:
             config:
               provider: aws
-              name: enceladus
             components:
               infra:
-                components:
-                  istio:
               services:
                 components:
                   # NOTE: should also have separate credentials from logging
@@ -84,18 +84,22 @@ components:
                   # may install additional platform specific dashboards
                   grafana:
                     environment:
-                      key: value
+                      # key: value
                   prometheus:
                     environment:
-                      key: value
+                      # key: value
       application:
         config:
-          # Multiple deployments can be configured by setting feature_from_branch to 'yes'
-          # When 'yes' deployments are made into the namespace taken from the branch name
-          feature_from_branch: yes
           # When feature_from_branch is 'yes' the deployment's endpoint is mapped to api-branch.subdomain.domain
           # A deployment from the branch with the same name as feature_set will mapped to api.subdomain.domain
           feature_set: master
+          # Multiple deployments can be configured by setting feature_from_branch or feature_from_tag to 'yes'
+          # When 'yes' deployments are made into the namespace taken from the branch name
+          # feature_from_branch: yes
+          # branch_regex or tag_regex should contain one and only one capture group, and the group captured will be set as feature_set
+          # branch_regex: feature\/([a-z\dA-Z-]{,19}[a-zA-Z\d])
+          feature_from_tag: yes
+          tag_regex: enable-api\.([a-z\dA-Z-]{,19}[a-zA-Z\d])
         components:
           infra:
             components:
@@ -104,15 +108,10 @@ components:
                 config:
                   dashboard_1: 'location of dashboard template'
           services:
-            # environment:
+            environment:
             components:
               fluentd: # request logging and cloud events
-              kafkastack:
-              #   config:
-              #     destination: big_query
               sftp:
-                environment:
-                  bucket_prefix: storage
           platform:
             environment:
               rails_database_host: postgres
@@ -126,8 +125,8 @@ components:
                 infra:
                   provider: aws
                 metrics:
-                  enabled: false
-                  process_stats_enabled: false
+                  enabled: no
+                  process_stats_enabled: no
                 partition_name: ros
                 request_logging:
                   enabled: no
@@ -173,13 +172,12 @@ components:
                   ros: yes
               organization:
                 config:
-                  enabled: no
                   mount: yes
-                  profiles: ['server']
+                  profiles: ['server', 'worker']
                   ros: yes
               storage:
                 config:
-                  enabled: yes
+                  enabled: no
                   mount: yes
                   profiles: ['server', 'worker', 'sqs_worker']
                   ros: yes

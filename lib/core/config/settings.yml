@@ -14,8 +14,9 @@ event_logging:
   config:
     host: fluentd
     port: 24224
-    use_nonblock: yes
-    wait_writeable: no
+    schemas_path: doc/schemas/cloud_events
+    name: events-log
+    schema_registry_url: http://kafkastack:8081
 
 metrics:
   enabled: no
@@ -65,7 +66,7 @@ jwt:
   # export PLATFORM__JWT__ISS=perx
   iss: ros
   alg: HS256
-  valid_claims: ['sub_cognito']
+  valid_claims: ['sub_cognito', 'act', 'act_cognito']
 
 # The host names to which this service responsds
 # See lib/ros/core/engine.rb#platform_hosts initializer

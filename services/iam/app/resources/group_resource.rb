@@ -6,5 +6,3 @@ class GroupResource < Iam::ApplicationResource
 
   filter :name
 end
-
-
