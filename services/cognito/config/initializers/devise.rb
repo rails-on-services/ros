@@ -2,6 +2,7 @@
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
+# rubocop:disable Metrics/LineLength
 Devise.setup do |config|
   config.warden do |manager|
     manager.failure_app = Ros::FailureApp
@@ -313,3 +314,4 @@ Devise.setup do |config|
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
 end
+# rubocop:enable Metrics/LineLength

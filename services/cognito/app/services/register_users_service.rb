@@ -40,5 +40,4 @@ class RegisterUsersService
     end
     user.send_confirmation_instructions
   end
-
 end

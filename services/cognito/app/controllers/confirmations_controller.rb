@@ -25,5 +25,4 @@ class ConfirmationsController < Devise::ConfirmationsController
   def render_success!
     render json: { status: :ok }
   end
-
 end

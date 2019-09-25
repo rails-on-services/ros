@@ -11,7 +11,6 @@ class Tenant < Cognito::ApplicationRecord
     settings[:email_confirmation]
   end
 
-
   private
 
   def settings

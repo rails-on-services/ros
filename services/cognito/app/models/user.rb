@@ -23,17 +23,6 @@ class User < Cognito::ApplicationRecord
     current_tenant&.requires_user_confirmation?
   end
 
-  def self.by_login_attribute(value)
-    key = current_tenant&.login_attribute
-    return unless column_names.include? key
-
-    find_by(key => value)
-  end
-
-  def confirmation_required?
-    current_tenant&.requires_user_confirmation?
-  end
-
   def self.reset
     UserPool.delete_all
     Pool.delete_all
