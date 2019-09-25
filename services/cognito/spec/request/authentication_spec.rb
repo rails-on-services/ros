@@ -5,8 +5,8 @@ require "rails_helper"
 RSpec.describe 'User Authentication', type: :request do
   context :create do
     let(:url) { '/users/sign_in' }
-    let(:tenant) { create(:tenant, platform_properties: { login_attribute_key: :phone_number }) }
-    let!(:user) { create(:user, :within_schema, phone_number: '123-123-123', password: '123456', schema: tenant.schema_name) }
+    let(:tenant) { create(:tenant, platform_properties: { login_attribute_key: :phone }) }
+    let!(:user) { tenant.switch { create(:user, phone: '123-123-123', password: '123456') } }
     let(:valid_attributes) { { login_attribute_value: '123-123-123', password: '123456' } }
     let(:invalid_attributes) { { login_attribute_value: '123-123-123', password: 'fake' } }
 

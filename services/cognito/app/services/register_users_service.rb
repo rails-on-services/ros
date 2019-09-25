@@ -33,6 +33,7 @@ class RegisterUsersService
   def confirm_user!(user)
     return unless user.persisted?
     return unless tenant.requires_user_confirmation?
+
     if user&.email.blank?
       logger.info("Can't notify User: #{user.attributes}. Invalid email")
       return
