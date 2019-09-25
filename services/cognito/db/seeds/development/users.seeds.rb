@@ -12,17 +12,17 @@ after 'development:tenants' do
       # User.load_csv(file_name)
       Pool.create(name: 'Developers').tap do |pool|
         pool.users.create(primary_identifier: 'developer', title: 'Mr', last_name: 'Developer',
-                          phone_number: '+15855551212')
+                          phone: '+15855551212')
       end
       Pool.create(name: 'Gold Tier').tap do |pool|
-        pool.users.create(primary_identifier: 'jones', title: 'Mr', last_name: 'Jones', phone_number: '+1388200363')
-        pool.users.create(primary_identifier: 'miller', title: 'Mrs', last_name: 'Miller', phone_number: '+1396537757')
-        pool.users.create(primary_identifier: 'doe', title: 'Miss', last_name: 'Doe', phone_number: '+1382800710')
+        pool.users.create(primary_identifier: 'jones', title: 'Mr', last_name: 'Jones', phone: '+1388200363')
+        pool.users.create(primary_identifier: 'miller', title: 'Mrs', last_name: 'Miller', phone: '+1396537757')
+        pool.users.create(primary_identifier: 'doe', title: 'Miss', last_name: 'Doe', phone: '+1382800710')
       end
       Pool.create(name: 'Silver Tier').tap do |pool|
-        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Ms', last_name: 'Shelly', phone_number: '')
-        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Homes', phone_number: '')
-        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Lucas', phone_number: '')
+        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Ms', last_name: 'Shelly', phone: '')
+        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Homes', phone: '')
+        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Lucas', phone: '')
       end
     end
   end
