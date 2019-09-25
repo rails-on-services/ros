@@ -2,7 +2,7 @@
 
 module Ros
   # rubocop:disable Metrics/ClassLength
-  class RequestSpecsGenerator < Rails::Generators::NamedBase
+  class RequestSpecGenerator < Rails::Generators::NamedBase
     def create_files
       create_file "spec/requests/#{plural_name}_spec.rb", <<~FILE
         # frozen_string_literal: true
