@@ -45,9 +45,6 @@ module Ros
 
     def spec_root; @spec_root ||= Pathname.new(__FILE__).join('../../../spec') end
 
-    # def root; @root ||= Pathname.new(__FILE__).join('../../..') end
-    # def spec_root; @spec_root ||= root.join('spec') end
-
     def dummy_mount_path; @dummy_mount_path ||= "/#{host_env.os? ? Settings.service.name : ''}" end
 
     # TODO: Tenant events and platform events are skipped for now; these will support callbacks
@@ -56,6 +53,8 @@ module Ros
         ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata tenant_events platform_events]
       end
     end
+
+    def api_calls_enabled; Settings.dig(:api_calls_enabled) || !Rails.env.test? end
 
     # By default all services exclude only the Tenant model from schemas
     def excluded_models; %w[Tenant] end

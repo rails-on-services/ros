@@ -6,6 +6,9 @@ Rails/HasManyOrHasOneDependent:
   Enabled: false
 Rails/NotNullColumn:
   Enabled: false
+Rails/Output:
+  Exclude:
+    - '**/rails_helper.rb'
 Metrics/LineLength:
   Max: 120
 Style/Documentation:

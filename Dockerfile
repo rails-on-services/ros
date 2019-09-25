@@ -74,8 +74,8 @@ WORKDIR /home/rails/services/app
 # TODO: Replace rails:rails with ${PUID}:${PGID} when CircleCI is at 19.03
 COPY --chown=rails:rails lib/core/. ../../lib/core/
 COPY --chown=rails:rails lib/sdk/. ../../lib/sdk/
-COPY services/Gemfile ../Gemfile
-COPY .rubocop.yml ./.rubocop.yml
+COPY --chown=rails:rails services/Gemfile ../Gemfile
+COPY --chown=rails:rails .rubocop.yml ../../.rubocop.yml
 
 # workaround for buildkit not setting correct permissions
 RUN sed -i '/git/d' ../../lib/sdk/*.gemspec \

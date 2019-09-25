@@ -103,24 +103,3 @@ components:
                         mq:
                           primary:
                             enabled: yes
-              game:
-                config:
-                  profiles: ['server']
-              campaign:
-                config:
-                  profiles: ['server']
-              instant_outcome:
-                config:
-                  profiles: ['server']
-              loyalty:
-                config:
-                  profiles: ['server']
-              reward:
-                config:
-                  profiles: ['server']
-              survey:
-                config:
-                  profiles: ['server']
-              voucher:
-                config:
-                  profiles: ['server', 'worker']

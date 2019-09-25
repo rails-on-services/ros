@@ -15,7 +15,14 @@ commands:
       - run:
           name: Login to dockerhub
           command: echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin
-
+  override_feature_set_from_tag:
+    steps:
+      - run:
+          name: Set feature_set from tag
+          command: |
+            ROS_FS=$(echo ${CIRCLE_TAG} | sed 's/enable-api\.\([a-zA-Z0-9-]*\)\..*/\1/')
+            echo "Override ROS feature set to ${ROS_FS}"
+            echo "export ROS_FS=${ROS_FS}" >> $BASH_ENV
 jobs:
   build:
     executor: ros_cli
@@ -54,7 +61,7 @@ jobs:
           command: |
             echo "Push services: ${PLATFORM_SERVICES[@]}"
             ros be push -v ${PLATFORM_SERVICES[@]}
-  
+
   test:
     executor: ros_cli
     parallelism: 4
@@ -62,6 +69,7 @@ jobs:
       ROS_ENV: test
     steps:
       - setup_remote_docker:
+          docker_layer_caching: true
           version: 18.09.3
       - checkout
       - docker_login
@@ -75,21 +83,11 @@ jobs:
           name: Select platform services to Build
           command: |
             echo "export PLATFORM_SERVICES=($(ros be ls platform --enabled | circleci tests split))" >> $BASH_ENV
-      # - run:
-      #     name: Pull Docker Images
-      #     command: |
-      #       echo "Pull services: ${PLATFORM_SERVICES[@]}"
-      #       ros be pull -v ${PLATFORM_SERVICES[@]}
       - run:
           name: Run tests
           command: |
             echo "Test services: ${PLATFORM_SERVICES[@]}"
             ros be test -v --build --fail-fast --push ${PLATFORM_SERVICES[@]}
-      # - run:
-      #     name: Push Docker Images
-      #     command: |
-      #       echo "Push services: ${PLATFORM_SERVICES[@]}"
-      #       ros be push -v ${PLATFORM_SERVICES[@]}
 
   publish_api_doc:
     executor: ros_cli
@@ -123,7 +121,7 @@ jobs:
 
   deploy:
     executor: ros_cli
-    parallelism: 8
+    parallelism: 4
     parameters:
       ros_env:
         type: string
@@ -135,6 +133,9 @@ jobs:
       aws_iam_role:
         type: string
         description: The IAM role to connect to EKS cluster
+      override_feature_set_from_tag:
+        type: boolean
+        default: false
     environment:
       # NOTE: The ROS_ENV var determines into which cluster the application is deployed
       ROS_ENV: << parameters.ros_env >>
@@ -144,6 +145,10 @@ jobs:
           version: 18.09.3
       - checkout
       - docker_login
+      - when:
+          condition: << parameters.override_feature_set_from_tag >>
+          steps:
+            - override_feature_set_from_tag
       - run:
           name: Initialize EKS authenticator and generate kubeconfig
           command: ros be infra init --role-name << parameters.aws_iam_role >>
@@ -170,57 +175,47 @@ jobs:
             fi
 
 workflows:
-  # build_test_and_wish_we_could_publish_api_docs:
-  test:
+  default:
     jobs:
-      # - build:
-      #     name: build_development_images
-      #     ros_env: development
-      # - test:
-      #     requires:
-      #       - build_development_images
       - test:
-          name: test_development_images
-          # ros_env: development
-      # - publish_api_doc:
-      #     requires:
-      #       - build_development_images
-  deploy_uat:
-    jobs:
-      - build:
-          name: build_production_images
-          ros_env: production
-          parallelism: 8
-          filters: &uat_filter
-            branches:
-              ignore: /.*/
+          name: test_and_publish_dev_images
+          filters:
             tags:
-              only: /^enable-api.+/
+              # this enables circleci to trigger on tags
+              only: /.*/
+      - build:
+          name: publish_production_images
+          ros_env: production
+          parallelism: 4
+          filters:
+            branches:
+              only:
+                - xmaster
       - deploy:
           name: deploy_uat
           ros_env: production
           ros_profile: uat
-          aws_iam_role: demo-uat-eks-admin
+          aws_iam_role: whistler-uat-eks-admin
+          override_feature_set_from_tag: true
           requires:
-            - build_production_images
-          filters: *uat_filter
-  deploy_staging:
-    jobs:
-      - build:
-          name: build_production_images
-          ros_env: production
-          parallelism: 8
-          filters: &staging_filter
+            - test_and_publish_dev_images
+          filters:
             branches:
-              only:
-                - master
+              ignore: /.*/
+            tags:
+              only: /^enable-api\..+\..+/
       - deploy:
           name: deploy_staging
           ros_env: production
           ros_profile: staging
-          aws_iam_role: demo-staging-eks-admin
+          aws_iam_role: whistler-staging-eks-admin
+          override_feature_set_from_tag: false
           requires:
-            - build_production_images
-          filters: *staging_filter
+            - test_and_publish_dev_images
+            - publish_production_images
+          filters:
+            branches:
+              only:
+                - xmaster
   # TODO deploy_production
 
