@@ -3,24 +3,24 @@
 # if 'platform owner' account does not exist then create it and initialize credentials file
 initialize = Root.find_by(email: 'root@platform.com').nil?
 
-if initialize
-  create_list = [
-    { email: 'root@platform.com', password: 'asdfjkl;', api: true, alias: 'perx' },
-    { email: 'root@generic.com', password: 'asdfjkl;', alias: 'generic' },
-    { email: 'root@banking.com', password: 'asdfjkl;', alias: 'banking' },
-    { email: 'root@telco.com', password: 'asdfjkl;', alias: 'telco' },
-    { email: 'root@insurance.com', password: 'asdfjkl;', alias: 'insurance' },
-    { email: 'root@retail.com', password: 'asdfjkl;', alias: 'retail' }
-  ]
-else
-  # TODO: We don't need it anymore
-  # id = Root.last.id
-  # create_list = [
-  #   { email: "root@client#{id + 1}.com", password: 'asdfjkl;' },
-  #   { email: "root@client#{id + 2}.com", password: 'asdfjkl;' }
-  # ]
-  create_list = []
-end
+create_list = if initialize
+                [
+                  { email: 'root@platform.com', password: 'asdfjkl;', api: true, alias: 'perx' },
+                  { email: 'root@generic.com', password: 'asdfjkl;', alias: 'generic' },
+                  { email: 'root@banking.com', password: 'asdfjkl;', alias: 'banking' },
+                  { email: 'root@telco.com', password: 'asdfjkl;', alias: 'telco' },
+                  { email: 'root@insurance.com', password: 'asdfjkl;', alias: 'insurance' },
+                  { email: 'root@retail.com', password: 'asdfjkl;', alias: 'retail' }
+                ]
+              else
+                # TODO: We don't need it anymore
+                # id = Root.last.id
+                # create_list = [
+                #   { email: "root@client#{id + 1}.com", password: 'asdfjkl;' },
+                #   { email: "root@client#{id + 2}.com", password: 'asdfjkl;' }
+                # ]
+                []
+              end
 
 @created_list = []
 create_list.each do |account|
