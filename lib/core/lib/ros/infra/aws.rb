@@ -29,7 +29,7 @@ module Ros
       class Mq
         include Ros::Infra::Aws
         include Ros::Infra::Mq
-        attr_accessor :name, :attrs
+        attr_accessor :name, :attrs, :status
 
         def initialize(client_config, config)
           require 'aws-sdk-sqs'
@@ -39,8 +39,13 @@ module Ros
 
           begin
             client.create_queue(queue_name: name, attributes: attrs) if name
+            self.status = :ok
           rescue ::Aws::SQS::Errors::InvalidClientTokenId
             Rails.logger.warn('Configured for SQS but no valid credentials')
+            # TODO: Send exception report to Sentry
+          rescue StandardError => error
+            self.status = error.code
+            Rails.logger.warn("Unkown error creating queue #{name}. #{error}")
             # TODO: Send exception report to Sentry
           end
         end
@@ -51,46 +56,61 @@ module Ros
       class Storage
         include Ros::Infra::Aws
         include Ros::Infra::Storage
-        attr_accessor :name, :notification_configuration
+        attr_accessor :name, :notification_configuration, :status
 
         def initialize(client_config, config)
           require 'aws-sdk-s3'
           self.client = ::Aws::S3::Client.new(credentials.merge(client_config))
           self.name = config.bucket_name
           self.notification_configuration = {}
+          self.status = :not_configured
 
           # We rescue here, report errors and continue because the application
           # should still be able to run even without access to external storage or queue service
           begin
             client.head_bucket(bucket: name)
-          rescue ::Aws::S3::Errors::Forbidden => e
+            self.status = :ok
+          rescue ::Aws::S3::Errors::Forbidden => error
+            self.status = error.code
             Rails.logger.warn('Configured for S3 but no valid credentials')
             # TODO: Send exception report to Sentry
-          rescue ::Aws::S3::Errors::NotFound
-            begin
-              client.create_bucket(bucket: name)
-            rescue ::Aws::S3::Errors::InvalidBucketName
-              # TODO: Get the excpetion type and report it to Sentry
-              Rails.logger.warn("Unable to create bucket #{name}")
-              # TODO: Send exception report to Sentry
-            end
-          # rubocop:disable Lint/HandleExceptions
-          rescue ::Aws::S3::Errors::Http502Error
+          rescue ::Aws::S3::Errors::Http301Error => error
+            self.status = error.code
+            Rails.logger.warn("S3 bucket not found in configured region #{error.context.config.region}")
+          rescue ::Aws::S3::Errors::Http502Error => error
+            self.status = error.code
             Rails.logger.warn("Unable to create bucket #{name}")
             # TODO: Send exception report to Sentry
-            # rubocop:enable Lint/HandleExceptions
-            # swallow
+          # TODO: On not found if the option to create has been passed then this should be good
+          # rescue ::Aws::S3::Errors::NotFound
+          #   begin
+          #     client.create_bucket(bucket: name)
+          #     self.status = :ok
+          #   rescue ::Aws::S3::Errors::InvalidBucketName => error
+          #     # TODO: Get the excpetion type and report it to Sentry
+          #     self.status = error.code
+          #     Rails.logger.warn("Unable to create bucket #{name}")
+          #     # TODO: Send exception report to Sentry
+          #   end
+          rescue StandardError => error
+            self.status = error.code
+            Rails.logger.warn("Unkown error creating/listing bucket #{name}. #{error}")
+            # TODO: Send exception report to Sentry
           end
         end
 
         def enable_notifications
           client.put_bucket_notification_configuration(notification_config)
           Rails.logger.info("Notifications successufully configured #{notification_config}")
-        rescue ::Aws::S3::Errors::InvalidArgument => e
-          Rails.logger.warn("Unable to create notification on bucket #{name}")
+        rescue ::Aws::S3::Errors::InvalidArgument => error
+          Rails.logger.warn("Unable to create notification on bucket #{name}. #{error}")
           # TODO: Send exception report to Sentry
-        rescue ::Aws::S3::Errors::NoSuchBucket
-          Rails.logger.warn("Unable to create notification on bucket #{name}")
+        rescue ::Aws::S3::Errors::NoSuchBucket => error
+          Rails.logger.warn("Unable to create notification on bucket #{name}. #{error}")
+          # TODO: Send exception report to Sentry
+        rescue StandardError => error
+          self.status = error.code
+          Rails.logger.warn("Unkown error creating bucket notification on #{name}. #{error}")
           # TODO: Send exception report to Sentry
         end
 
@@ -111,6 +131,10 @@ module Ros
         end
 
         def ls(pattern = nil)
+          unless status.eql?(:ok)
+            Rails.logger.warn("Attempt list #{pattern} on bucket #{name} when status #{status}")
+            return
+          end
           # NOTE: This should be when using -l
           return client.list_objects(bucket: name) unless pattern
 
@@ -125,15 +149,31 @@ module Ros
         end
 
         def get(path)
+          unless status.eql?(:ok)
+            Rails.logger.warn("Attempt get #{path} on bucket #{name} when status #{status}")
+            return
+          end
           local_path = "#{Rails.root}/tmp/#{File.dirname(path)}"
           FileUtils.mkdir_p(local_path) unless Dir.exist?(local_path)
           resource.object(path).get(response_target: "#{local_path}/#{File.basename(path)}")
+        rescue StandardError => error
+          self.status = error.code
+          Rails.logger.warn("Unkown error getting object #{path} from bucket #{name}. #{error}")
+          # TODO: Send exception report to Sentry
         end
 
         def put(path, local_path = "#{Rails.root}/tmp/#{path}")
+          unless status.eql?(:ok)
+            Rails.logger.warn("Attempt put #{path} on bucket #{name} when status #{status}")
+            return
+          end
           resource.object(path).upload_file(local_path)
         rescue ::Aws::S3::Errors::InvalidAccessKeyId
           Rails.logger.warn('Configured for S3 but no valid credentials')
+          # TODO: Send exception report to Sentry
+        rescue StandardError => error
+          self.status = error.code
+          Rails.logger.warn("Unkown error putting object #{local_path} to bucket #{name}. #{error}")
           # TODO: Send exception report to Sentry
         end
       end

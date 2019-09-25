@@ -8,6 +8,7 @@ components:
           bucket_endpoint_url:
           aws_access_key_id: this_key_from_development_yml
           aws_secret_access_key: this_key_from_development_yml
+          aws_default_region: ap-southeast-1
         config:
           feature_set: aws
           feature_from_branch: no
@@ -18,6 +19,9 @@ components:
               localstack:
                 config:
                   enabled: no
+              sftp:
+                environment:
+                  mount_options: '-o url=https://s3-ap-southeast-1.amazonaws.com'
           platform:
             environment:
               platform:

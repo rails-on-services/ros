@@ -136,6 +136,27 @@ module Ros::Console::Commands
     Ros::PryCommandSet.add_command(self)
   end
 
+  class Infra < Pry::ClassCommand
+    match 'ir'
+    group 'ros'
+    description 'infrastructure resources'
+
+    def process(command, *options)
+      if command.eql?('ls')
+        if options.empty?
+          output.puts Rails.configuration.x.infra.resources.keys
+          return
+        else
+          output.puts Rails.configuration.x.infra.resources[options.first]
+        end
+      elsif Rails.configuration.x.infra.resources.keys.include?(command.to_sym)
+        output.puts Rails.configuration.x.infra.resources[command][options.last].send(options.first)
+      end
+    end
+
+    Ros::PryCommandSet.add_command(self)
+  end
+
   class ToggleLogger < Pry::ClassCommand
     match 'toggle-logger'
     group 'ros'
