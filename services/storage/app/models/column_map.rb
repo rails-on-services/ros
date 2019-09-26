@@ -2,7 +2,7 @@
 
 class ColumnMap < Storage::ApplicationRecord
   belongs_to :transfer_map
-  validate :column_name_is_eligible
+  validate :column_name_is_eligible, if: -> { Ros.api_calls_enabled }
 
   private
 
@@ -10,8 +10,10 @@ class ColumnMap < Storage::ApplicationRecord
     errors.add(:illegible_column_name, "#{name} is illegible column_name") unless service_columns.include?(name)
   end
 
+  # rubocop:disable Rails/FindBy
   def service_columns
     @service_columns ||=
       transfer_map.service_name.constantize.where(model_name: transfer_map.target).first['model_columns']
   end
+  # rubocop:enable Rails/FindBy
 end

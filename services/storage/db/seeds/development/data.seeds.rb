@@ -7,6 +7,7 @@ after 'development:tenants' do
     next if tenant.id.eql? 1
 
     tenant.switch do
+      Settings.api_calls_enabled = false
       TransferMap.create(name: 'New Customer Survey Lists', description: '', service: 'cognito',
                          target: 'user').tap do |map|
         map.column_maps.create(name: 'title', user_name: 'Salutation')
@@ -15,6 +16,7 @@ after 'development:tenants' do
         map.column_maps.create(name: 'primary_identifier', user_name: 'Unique Number')
         map.column_maps.create(name: 'pool_name', user_name: 'Campaign')
       end
+      Settings.api_calls_enabled = true
     end
   end
 end

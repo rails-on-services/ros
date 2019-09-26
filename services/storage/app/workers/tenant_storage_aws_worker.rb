@@ -9,10 +9,8 @@ Rails.application.initialize!
 
 class TenantStorageAwsWorker < TenantStorageWorker
   include Shoryuken::Worker
-  # binding.pry
 
-  shoryuken_options queue: Rails.configuration.x.infra.resources.storage.primary.notifications['storage/sftp/home'],
-                    auto_delete: true
+  shoryuken_options queue: Rails.configuration.x.infra.resources.mq.primary.name, auto_delete: true
 
   # Process a lifecycle event from the S3 bucket
   def perform(_sqs_msg, payload)

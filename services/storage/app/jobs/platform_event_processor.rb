@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: Move to the storage service
+# rubocop:disable Rails/Output
 class PlatformEventProcessor
   # Handle an update to an IAM Credential
   def self.iam_credential(urn:, event:, data:)
@@ -39,3 +40,4 @@ class PlatformEventProcessor
     puts data
   end
 end
+# rubocop:enable Rails/Output
