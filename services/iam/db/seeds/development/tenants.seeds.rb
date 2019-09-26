@@ -5,7 +5,7 @@ initialize = Root.find_by(email: 'root@platform.com').nil?
 
 create_list = if initialize
                 [
-                  { email: 'root@platform.com', password: 'asdfjkl;', api: true, alias: 'perx' },
+                  { email: 'root@platform.com', password: 'asdfjkl;', api: true, alias: 'owner' },
                   { email: 'root@generic.com', password: 'asdfjkl;', alias: 'generic' },
                   { email: 'root@banking.com', password: 'asdfjkl;', alias: 'banking' },
                   { email: 'root@telco.com', password: 'asdfjkl;', alias: 'telco' },
