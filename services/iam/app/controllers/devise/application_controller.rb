@@ -8,11 +8,11 @@ class Devise::ApplicationController < Devise::SessionsController
 
   # POST /resource/sign_in
   def create
-    Apartment::Tenant.switch tenant do
+    Apartment::Tenant.switch tenant_schema do
       return super unless login_user!
 
       @current_jwt = Ros::Jwt.new(current_user.jwt_payload)
-      render json: json_resources(resource_class: user_resource, records: current_user)
+      render json: json_resource(resource_class: user_resource, record: current_user)
     end
   end
 
@@ -26,8 +26,13 @@ class Devise::ApplicationController < Devise::SessionsController
     "#{resource_name.capitalize}Resource".constantize
   end
 
+  def tenant_schema
+    tenant&.schema_name || Apartment::Tenant.current
+  end
+
   def tenant
-    Tenant.schema_name_from(account_id: sign_in_params[:account_id]) || Apartment::Tenant.current
+    Tenant.find_by(schema_name: Tenant.account_id_to_schema(sign_in_params[:account_id])) ||
+      Tenant.find_by(alias: sign_in_params[:account_id])
   end
 end
 # rubocop:enable Style/ClassAndModuleChildren

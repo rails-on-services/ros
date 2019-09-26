@@ -93,10 +93,17 @@ module Ros
         }
       end
 
-      # Custom resource serializer:
+      # Custom Array resource serializer:
       # render json: json_resources(resource_class: SomeResource, records: query.all)
       def json_resources(resource_class:, records:, context: nil)
         resource = Array.wrap(records).map { |record| resource_class.new(record, context) }
+        serialize_resource(resource_class, resource)
+      end
+
+      # Custom Single resource serializer:
+      # render json: json_resource(resource_class: SomeResource, record: query.first)
+      def json_resource(resource_class:, record:, context: nil)
+        resource = resource_class.new(record, context)
         serialize_resource(resource_class, resource)
       end
 
