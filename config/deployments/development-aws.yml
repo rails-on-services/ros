@@ -1,0 +1,41 @@
+---
+components:
+  be:
+    components:
+      application:
+        environment:
+          # This overrdies (removes) bucket_endpoint_url from development.yml
+          bucket_endpoint_url:
+          aws_access_key_id: this_key_from_development_yml
+          aws_secret_access_key: this_key_from_development_yml
+          aws_default_region: ap-southeast-1
+        config:
+          feature_set: aws
+          feature_from_branch: no
+        components:
+          services:
+            components:
+              # disable localstack since we are using AWS
+              localstack:
+                config:
+                  enabled: no
+              sftp:
+                environment:
+                  mount_options: '-o url=https://s3-ap-southeast-1.amazonaws.com'
+          platform:
+            environment:
+              platform:
+                infra:
+                  services:
+                    storage:
+                      aws:
+                        # This removes endpoint and force_path_style that are required for localstack
+                        endpoint:
+                        force_path_style:
+                        region: ap-southeast-1
+                    mq:
+                      aws:
+                        # This removes endpoint and verify_checksums that are required for localstack
+                        endpoint:
+                        verify_checksums:
+                        region: ap-southeast-1

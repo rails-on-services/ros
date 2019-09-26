@@ -3,22 +3,25 @@
 module Ros
   module RequestLogger
     class Fluentd
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
       def self.preprocessor
         lambda { |data|
           # param data is a hash with keys :env, :timestamp, :response_time, :code, :body and :headers
 
           hash = { 'request' => {}, 'response' => {}, 'meta' => {} }
 
-          response_body = data[:body].join.slice(0..65534)
+          response_body = data[:body].join.slice(0..65_534)
 
-          request_header = Hash[*data[:env].select{ |k, v| k.to_s.start_with? 'HTTP_' }
-            .reject{ |k, v| k.to_s.in? %w(HTTP_HOST HTTP_VERSION) } # host is already in request.host
-            .collect { |k, v| [k.to_s.sub(/^HTTP_/, ''), v] }
-            .collect { |k, v| [k.to_s.split('_').collect(&:capitalize).join('-'), v] }
-            .flatten]
+          # host is already in request.host so reject it
+          request_header = Hash[*data[:env].select { |k, _v| k.to_s.start_with? 'HTTP_' }
+                                           .reject { |k, _v| k.to_s.in? %w[HTTP_HOST HTTP_VERSION] }
+                                           .collect { |k, v| [k.to_s.sub(/^HTTP_/, ''), v] }
+                                           .collect { |k, v| [k.to_s.split('_').collect(&:capitalize).join('-'), v] }
+                                           .flatten]
 
-          # some objects inside :env is dropped by Rack::FluentdLogger, so create request.body from rails action_dispatch
-          hash['request']['body']         = data[:env]["action_dispatch.request.request_parameters"]&.to_json
+          # some objects inside :env is dropped by Rack::FluentdLogger so create request.body from rails action_dispatch
+          hash['request']['body']         = data[:env]['action_dispatch.request.request_parameters']&.to_json
           hash['request']['method']       = data[:env]['REQUEST_METHOD']
           hash['request']['path']         = data[:env]['PATH_INFO']&.gsub('%2F', '/') # some case "/" to be %2F.
           hash['request']['query_string'] = data[:env]['QUERY_STRING']
@@ -36,6 +39,8 @@ module Ros
           hash
         }
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

@@ -1,4 +1,4 @@
-# Values defined here override any values defined in platform.yml
+# Values defined here override any values defined in deployment.yml
 ---
 components:
   be:
@@ -13,60 +13,46 @@ components:
           vpc:
             config:
               provider: aws
-              name: ros
-              cidr: 10.100.0.0/16
-          dns:
-            config:
-              provider: aws
-              root_domain: perxtech.org
-              sub_domain: ros
-          cert:
-            config:
-              provider: aws
-              domain_name: ros.perxtech.org
-              subject_alternative_names: ['*.ros.perxtech.org']
+              name: demo-development
+              cidr: "10.8.0.0/16"
           instance:
             config:
               provider: aws
-              name_prefix: ros
-              lb_dns_hostnames: ['api.ros.perxtech.org']
-              ec2_key_pair: perx_admin
-            # NOTE: The instance does not deploy services like the cluster does
-            # components:
-            #   services:
-            #     components:
-            #       fluentd:
-            #         config:
-            #           enabled: no
-            #       grafana:
-            #         config:
-            #           enabled: no
-            #       prometheus:
-            #         config:
-            #           enabled: no
+              name_prefix: dev
+              ec2_key_pair: demo_admin
+          dns:
+            config:
+              root_domain: demo.cnfs.io
+              sub_domain: development
+              root_domain_managed_in_route53: yes
+          cert:
+            config:
+              provider: aws
+              subject_alternative_names: []
       application:
-        # Uncomment and set values to a hostname that is mapped to this machine
-        # to enable public access to this installation
         config:
-          feature_from_branch: no
           feature_set: mounted
+          feature_from_branch: no
         environment:
           bucket_endpoint_url: http://localstack:4572
           aws_access_key_id: this_key_from_development_yml
           aws_secret_access_key: this_key_from_development_yml
-          aws_default_region: ap-southeast-1
-          aws_account_id: 123456789
         components:
           services:
             components:
               fluentd:
                 config:
-                  enabled: yes
+                  enabled: no
               kafkastack:
+                config:
+                  enabled: no
               localstack:
               nginx:
               postgres:
               redis:
+              sftp:
+                environment:
+                  bucket_prefix: storage
               wait:
 
           platform:
@@ -74,19 +60,21 @@ components:
               redis_url: redis://redis:6379
               platform:
                 request_logging:
-                  enabled: yes
+                  enabled: no
                 event_logging:
-                  enabled: yes
+                  enabled: no
                 infra:
                   services:
                     storage:
                       aws:
                         endpoint: http://localstack:4572
                         force_path_style: yes
+                        region: ap-southeast-1
                     mq:
                       aws:
                         endpoint: http://localstack:4576
                         verify_checksums: no
+                        region: ap-southeast-1
                   resources:
                     storage:
                       primary:
@@ -96,14 +84,6 @@ components:
                       primary:
                         provider: aws
             components:
-              storage:
-                environment:
-                  platform:
-                    infra:
-                      resources:
-                        mq:
-                          primary:
-                            enabled: yes
               cognito:
                 config:
                   profiles: ['server']
@@ -116,7 +96,12 @@ components:
               organization:
                 config:
                   profiles: ['server']
-                  # command: ["tail", "-F", "log/development.log"]
-              # storage:
-              #   config:
-              #     profiles: ['server']
+              storage:
+                environment:
+                  platform:
+                    infra:
+                      resources:
+                        mq:
+                          primary:
+                            enabled: yes
+                            queue_name: storage-sftp-home

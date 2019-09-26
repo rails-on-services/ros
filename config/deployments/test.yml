@@ -1,55 +1,93 @@
-# Configuration values defined here override any values defined in development.yml
+# Values defined here override any values defined in deployment.yml
 ---
 components:
   be:
+    environment:
+      nginx_host_port: 3000
     components:
       infra:
         config:
           cluster:
-            type: kubernetes
+            type: instance
         components:
           vpc:
+          instance:
             config:
               provider: aws
-          kubernetes:
-            config:
-              provider: aws
-              name: develop
       application:
         config:
-          dns:
-            root_domain: perxtech.org
-            sub_domain: ros-test
+          feature_set: test
+          feature_from_branch: no
+          feature_from_tag: no
+        environment:
+          bucket_endpoint_url: http://localstack:4572
+          aws_access_key_id: this_key_from_development_yml
+          aws_secret_access_key: this_key_from_development_yml
         components:
           services:
             components:
-              ingress:
-              kafka:
-              kafka-zookeeper:
-              kafka-schema-registry:
-              kafka-connect:
+              fluentd:
+                config:
+                  enabled: no
+              localstack:
               postgres:
               redis:
+              wait:
+
           platform:
-            config:
-              images:
-                rails:
-                  # NOTE: for production set rails_env to production
-                  build_args:
-                    rails_env: development
+            environment:
+              redis_url: redis://redis:6379
+              platform:
+                request_logging:
+                  enabled: no
+                event_logging:
+                  enabled: no
+                infra:
+                  services:
+                    storage:
+                      aws:
+                        endpoint: http://localstack:4572
+                        force_path_style: yes
+                        region: ap-southeast-1
+                    mq:
+                      aws:
+                        endpoint: http://localstack:4576
+                        verify_checksums: no
+                        region: ap-southeast-1
+                  resources:
+                    storage:
+                      primary:
+                        provider: aws
+                        enabled: yes
+                    mq:
+                      primary:
+                        provider: aws
             components:
+              account:
+                config:
+                  mount: no
+                  profiles: ['server']
+              billing:
+                config:
+                  mount: no
+                  profiles: ['server']
               cognito:
                 config:
+                  mount: no
                   profiles: ['server']
               comm:
                 config:
-                  profiles: ['server']
-              organization:
-                config:
+                  mount: no
                   profiles: ['server']
               iam:
                 config:
+                  mount: no
+                  profiles: ['server']
+              organization:
+                config:
+                  mount: no
                   profiles: ['server']
               storage:
                 config:
+                  mount: no
                   profiles: ['server']

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 RSpec.configure do |rspec|
   # This config option will be enabled by default on RSpec 4,
@@ -6,16 +7,16 @@ RSpec.configure do |rspec|
   rspec.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
-  # def real_authentication
-  #   Credential = Struct.new(:type, :access_key_id, :secret_access_key) do
-  #     def to_s
-  #       "#{type} #{access_key_id}:#{secret_access_key}"
-  #     end
-  #   end
-  #   cr = Credential.new('Basic', 'AFJYOBPQKSJFQPKKHRHF', 'Zdl1fD957XvRlyRylFSr2McwZCxJHU36B4j5Ze2kqg8UPkcerz5YgQ')
-  # end
+# def real_authentication
+#   Credential = Struct.new(:type, :access_key_id, :secret_access_key) do
+#     def to_s
+#       "#{type} #{access_key_id}:#{secret_access_key}"
+#     end
+#   end
+#   cr = Credential.new('Basic', 'AFJYOBPQKSJFQPKKHRHF', 'Zdl1fD957XvRlyRylFSr2McwZCxJHU36B4j5Ze2kqg8UPkcerz5YgQ')
+# end
 
-  # Ros::Sdk::Credential.authorization 
+# Ros::Sdk::Credential.authorization
 
 # RSpec.shared_context 'fake authorized user' do
 #   let(:tenant) { create(:tenant, schema_name: '222_222_222') }
@@ -23,7 +24,6 @@ end
 #   let(:request_headers) do
 #     {
 #       'Authorization' => 'Basic invalid_key:invalid_secret',
-#       # 'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaWFtLmxvY2FsaG9zdDozMDAwIiwic3ViIjoidXJuOndoaXN0bGVyOmlhbTo6MjIyMjIyMjIyOnVzZXIvQWRtaW5fMiIsInNjb3BlIjoiKiIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwiaWF0IjoxNTY4NTE2MjQzfQ.75fBdWTaYVEGwSSpht74Mfj-Lt4hIr9hdA7_HWJRmnI',
 #       'Content-Type' => 'application/vnd.api+json'
 #     }
 #   end
@@ -48,8 +48,10 @@ RSpec.shared_context 'jsonapi requests' do
   let(:get_response) { OpenStruct.new(attributes) }
   let(:post_response) { OpenStruct.new(post_attributes) }
 
+  # This method smells of :reek:UncommunicativeMethodName
   def u(url); "#{Ros.dummy_mount_path}#{url}" end
 
+  # rubocop:disable Metrics/AbcSize
   def mock_authentication
     # Return an instance of Ros::IAM::User to ApiTokenStrategy#authenticate!
     allow_any_instance_of(Ros::ApiTokenStrategy).to receive(:authenticate_basic).and_return(authorized_user)
@@ -58,6 +60,7 @@ RSpec.shared_context 'jsonapi requests' do
     allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_basic).and_return(tenant.schema_name)
     allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_bearer).and_return(tenant.schema_name)
   end
+  # rubocop:enable Metrics/AbcSize
 end
 
 RSpec.shared_context 'authorized user' do
@@ -66,7 +69,6 @@ RSpec.shared_context 'authorized user' do
   let(:request_headers) do
     {
       'Authorization' => iam_credential.str,
-      # 'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaWFtLmxvY2FsaG9zdDozMDAwIiwic3ViIjoidXJuOndoaXN0bGVyOmlhbTo6MjIyMjIyMjIyOnVzZXIvQWRtaW5fMiIsInNjb3BlIjoiKiIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwiaWF0IjoxNTY4NTE2MjQzfQ.75fBdWTaYVEGwSSpht74Mfj-Lt4hIr9hdA7_HWJRmnI',
       'Content-Type' => 'application/vnd.api+json'
     }
   end

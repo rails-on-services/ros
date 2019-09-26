@@ -13,7 +13,7 @@ module AssociationResource
   end
 
   def respond_to_missing?(method, include_private = false)
-    !self.class.find_resource(method).blank? || super
+    self.class.find_resource(method).present? || super
   end
 
   # Returns new instance of the resource or nil
@@ -55,7 +55,7 @@ module AssociationResource
     # :resource_name required. Model will respond this name to query external resource
     # :class_name required for non-polymorphic associations. Should respond to `where` and `find`
     def belongs_to_resource(resource_name, class_name: nil, foreign_key: nil, polymorphic: false)
-      return unless find_resource(resource_name).blank?
+      return if find_resource(resource_name).present?
 
       resource_associations << BelongsToResource.new(
         name: resource_name,
@@ -71,8 +71,10 @@ module AssociationResource
     # :as represents polymorphic relation. type will be added to query:
     #   User.has_many_resources(:some_resource, class_name: 'Some::Resource', as: :external) ->
     #      Some::Resource.where(external_type: 'User', external_id: user.id)
+    # rubocop:disable Naming/UncommunicativeMethodParamName
+    # rubocop:disable Naming/PredicateName
     def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
-      return unless find_resource(resource_name).blank?
+      return if find_resource(resource_name).present?
 
       resource_associations << HasManyResources.new(
         name: resource_name,
@@ -81,6 +83,8 @@ module AssociationResource
         associated_name: as
       )
     end
+    # rubocop:enable Naming/PredicateName
+    # rubocop:enable Naming/UncommunicativeMethodParamName
 
     def find_resource(resource_name)
       resource_associations.find { |resource| resource.name == resource_name }

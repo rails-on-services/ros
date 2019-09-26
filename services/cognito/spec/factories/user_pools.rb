@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user_pool do
-    user { nil }
-    pool { nil }
+    user
+    pool
   end
 end

@@ -3,9 +3,9 @@
 class PlatformEventProcessor
   # rubocop:disable Lint/UnusedMethodArgument
   def self.storage_upload(urn:, event:, data:)
-    puts 'XXXXX'
-    puts data
-    puts 'XXXXX'
+    Rails.logger.debug 'XXXXX'
+    Rails.logger.debug data
+    Rails.logger.debug 'XXXXX'
     Ros::Infra.tenant_storage.get(data['remote_path'])
     local_path = "#{Rails.root}/tmp/#{data['remote_path']}"
     # Use abstracted get to get teh file from remote storage

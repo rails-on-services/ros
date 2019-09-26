@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration and setup
 require 'open_api'
 
@@ -8,8 +10,11 @@ FileUtils.mkdir_p('tmp')
 FileUtils.touch('tmp/routes.txt')
 require 'open3'
 ros_task_prefix = Dir['lib/**/engine.rb'].any? ? 'app:' : ''
-stdin, stdout, stderr = Open3.popen3("rails #{ros_task_prefix}routes")
-File.open('tmp/routes.txt', 'w') { |f| f.write(stdout.read); f.close }
+_stdin, stdout, _stderr = Open3.popen3("rails #{ros_task_prefix}routes")
+File.open('tmp/routes.txt', 'w') do |f|
+  f.write(stdout.read)
+  f.close
+end
 
 # Configure the gem
 OpenApi::Config.tap do |config|

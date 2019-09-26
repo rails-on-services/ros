@@ -19,11 +19,11 @@ module AssociationResource
       model.instance_variable_get "@#{name}"
     end
 
-    def persisted_resource?(model)
+    def persisted_resource?(_model)
       false
     end
 
-    def query_resource(model)
+    def query_resource(_model)
       raise NotImplementedError, ':query_resource should be implemented'
     end
   end

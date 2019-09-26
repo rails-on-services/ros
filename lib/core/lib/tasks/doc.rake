@@ -1,9 +1,13 @@
 # frozen_string_literal: true
+
 # See: https://docs.api.getpostman.com/#331ec7d1-6ffd-450b-996b-022afcb692f8
 # See: https://docs.api.getpostman.com/#rate-limits
 # Individual resources in your Postman Account is accessible using its unique id (uid).
-# The uid is a simple concatenation of the resource owner's user-id and the resource-id. For example, a collection's uid is {{owner_id}}-{{collection_id}}
+# The uid is a simple concatenation of the resource owner's user-id and the resource-id.
+# For example, a collection's uid is {{owner_id}}-{{collection_id}}
 
+# rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/AbcSize
 namespace :ros do
   namespace :apidoc do
     desc 'Help'
@@ -33,13 +37,15 @@ namespace :ros do
     desc 'Convert OpenAPI V 3.0 docuementation to Postman'
     task :convert do
       require Ros::Core::Engine.root.join('doc/postman').to_s
-      openapi = Postman::OpenApi.new(file_name: 'ros-api.json', openapi_dir: 'tmp/docs/openapi', postman_dir: 'tmp/docs/postman')
+      openapi = Postman::OpenApi.new(file_name: 'ros-api.json', openapi_dir: 'tmp/docs/openapi',
+                                     postman_dir: 'tmp/docs/postman')
       openapi.convert_to_postman
     end
 
+    # rubocop:disable Metrics/MethodLength
     def modify_payload(item)
       if item.is_a? Array
-        item.each { |item| modify_payload(item) }
+        item.each { |data_item| modify_payload(data_item) }
       elsif item['item']
         modify_payload(item['item'])
       else
@@ -49,9 +55,10 @@ namespace :ros do
           item['request']['body']['raw'].gsub!('xyz_type', 'type')
           item['request']['body']['raw'].gsub!(type, replace_type)
         end
-        item['request']['header'].select{ |k| k['key'].eql?('Authorization') }.first['value'] = '{{authorization}}'
+        item['request']['header'].select { |k| k['key'].eql?('Authorization') }.first['value'] = '{{authorization}}'
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     desc 'Publish docs to Postman'
     task publish: :environment do
@@ -74,3 +81,5 @@ namespace :ros do
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/BlockLength

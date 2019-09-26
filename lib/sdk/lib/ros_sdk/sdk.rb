@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'globalid'
 require_relative '../../../../lib/core/app/policies/ros/application_policy'
 
@@ -11,24 +12,25 @@ module Ros
         configured_services.each_with_object({}) do |service, hash|
           hash[service[0]] = service[1]::Base.site
         end
-      rescue
+      rescue StandardError
         raise ClientConfigurationError
       end
     end
 
     class ClientConfigurationError < StandardError; end
-    class MyPaginator < JsonApiClient::Paginating::Paginator
+
+    class JsonApiPaginator < JsonApiClient::Paginating::Paginator
       self.page_param = 'number'
       self.per_page_param = 'size'
     end
 
-    # JsonApiClient::Paginating::Paginator
+    # rubocop:disable  Lint/DuplicateMethods
     class Base < JsonApiClient::Resource
-      self.paginator = MyPaginator
-      attr_accessor :gid
+      self.paginator = JsonApiPaginator
+      attr_accessor :to_gid
 
       def to_gid
-        @gid ||= GlobalID.new("gid://internal/#{self.class.name}/#{id}")
+        @to_gid ||= GlobalID.new("gid://internal/#{self.class.name}/#{id}")
       end
 
       def to_urn
@@ -58,15 +60,22 @@ module Ros
         end
       end
     end
+    # rubocop:enable  Lint/DuplicateMethods
 
     class Client
       class << self
         attr_accessor :scheme, :host, :domain, :port, :force_path_style, :service
 
-        def configure(scheme: 'https', host: nil, domain: nil, port: nil, force_path_style: false, service: nil, connection_type: 'host', prefix: nil, postfix: nil)
+        # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/ParameterLists
+        # rubocop:disable Lint/UnusedMethodArgument
+        def configure(scheme: 'https', host: nil, domain: nil, port: nil, force_path_style: false,
+                      service: nil, connection_type: 'host', prefix: nil, postfix: nil)
           if descendants.any?
             descendants.map(&:to_s).sort.each do |client|
-              client.constantize.configure(scheme: scheme, host: host, domain: domain, port: port, force_path_style: force_path_style, service: service)
+              client.constantize.configure(scheme: scheme, host: host, domain: domain, port: port,
+                                           force_path_style: force_path_style, service: service)
               port += 1 if connection_type.eql? 'port'
             end
             return
@@ -83,15 +92,21 @@ module Ros
           module_parent::Base.connection.use Ros::Sdk::Middleware
           Ros::Sdk.configured_services[self.service]
         end
+        # rubocop:enable Lint/UnusedMethodArgument
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/ParameterLists
+        # rubocop:enable Metrics/AbcSize
 
+        # rubocop:disable Metrics/AbcSize
         def endpoint
           path = force_path_style ? "/#{service}" : nil
           chost = force_path_style ? host : (host || service)
           chost = [chost, domain].compact.join('.')
-          "URI::#{scheme.upcase}".constantize.build({ host: chost, port: port, path: path }).to_s
-        rescue
+          "URI::#{scheme.upcase}".constantize.build(host: chost, port: port, path: path).to_s
+        rescue StandardError
           raise 'ClientConfigurationError'
         end
+        # rubocop:enable Metrics/AbcSize
       end
     end
 
@@ -104,7 +119,7 @@ module Ros
   end
 end
 
-PryCommandSet = Pry::CommandSet.new
+Ros::Sdk::PryCommandSet = Pry::CommandSet.new
 
 class ConsoleHelp < Pry::ClassCommand
   match 'setup-client'
@@ -126,25 +141,20 @@ class ConsoleHelp < Pry::ClassCommand
   BANNER
 
   def process; end
-  PryCommandSet.add_command(self)
+  Ros::Sdk::PryCommandSet.add_command(self)
 end
 
-=begin
 class RServices < Pry::ClassCommand
-  match 'services'
+  match 'sdk'
   group 'ros'
+  description 'show SDK configured services and endpoints'
 
-  def process; Ros::Sdk.configured_services end
-  PryCommandSet.add_command(self)
+  def process
+    output.puts "Services: #{Ros::Sdk.configured_services}"
+    output.puts "Endpoints: #{Ros::Sdk.service_endpoints}"
+  end
+
+  Ros::Sdk::PryCommandSet.add_command(self)
 end
 
-class REndpoints < Pry::ClassCommand
-  match 'endpoints'
-  group 'ros'
-
-  def process; Ros::Sdk.service_endpoints end
-  PryCommandSet.add_command(self)
-end
-=end
-
-Pry.config.commands.import PryCommandSet
+Pry.config.commands.import Ros::Sdk::PryCommandSet
