@@ -25,6 +25,7 @@ module AssociationResource
         belongs_to resource.to_sym, class_name: 'AssociationResource::Included'
       end
 
+      # rubocop:disable Naming/PredicateName
       def has_many_resources(resources)
         has_many resources.to_sym,
                  class_name: 'AssociationResource::Included',
@@ -32,6 +33,7 @@ module AssociationResource
 
         define_method("records_for_#{resources}") { |_| _model.send(resources.to_sym) }
       end
+      # rubocop:enable Naming/PredicateName
     end
   end
 end

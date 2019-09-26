@@ -8,7 +8,7 @@ module AssociationResource
     return super if association.blank?
 
     association.call(self)
-  rescue JsonApiClient::Errors::ApiError => e
+  rescue JsonApiClient::Errors::ApiError => _e
     nil
   end
 
@@ -33,7 +33,7 @@ module AssociationResource
 
     query = yield resource_klass
     query.find
-  rescue JsonApiClient::Errors::ApiError => e
+  rescue JsonApiClient::Errors::ApiError => _e
     nil
   end
 
