@@ -22,6 +22,7 @@ class User < Cognito::ApplicationRecord
   # User.load_csv('/home/admin/prudential.csv', true)
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Rails/Output
   def self.load_csv(file_name, create = false)
     CSV.foreach(file_name, headers: true, header_converters: ->(name) { convert[name] }) do |row|
       if create
@@ -39,4 +40,5 @@ class User < Cognito::ApplicationRecord
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Rails/Output
 end

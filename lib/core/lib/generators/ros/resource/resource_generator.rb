@@ -6,6 +6,7 @@ module Ros
   class ResourceGenerator < Rails::Generators::NamedBase
     include GeneratorsHelper
 
+    # rubocop: disable Metrics/AbcSize
     def create_files
       create_file "app/resources/#{name}_resource.rb", <<~FILE
         # frozen_string_literal: true
@@ -16,5 +17,6 @@ module Ros
         end
       FILE
     end
+    # rubocop: enable Metrics/AbcSize
   end
 end
