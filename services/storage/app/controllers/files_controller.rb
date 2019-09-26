@@ -17,4 +17,7 @@ class FilesController < Storage::ApplicationController
     current_storage.files_attachments.preload(:blob)
   end
 
+  def current_storage
+    @storage ||= UploadStorage.find_or_create!
+  end
 end
