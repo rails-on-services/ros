@@ -30,6 +30,10 @@ module Ros
 
     # rubocop:disable Metrics/BlockLength
     included do
+      def queue_to_services
+        []
+      end
+
       # urn:partition:service:region:account_id:resource_type/id
       def to_urn; "#{self.class.to_urn}/#{send(self.class.urn_id)}" end
 

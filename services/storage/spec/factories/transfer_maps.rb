@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :transfer_map do
     name { 'MyString' }
     description { 'MyString' }
-    service { 'MyString' }
-    target { 'MyString' }
+    service { 'cognito' }
+    target { 'user' }
   end
 end

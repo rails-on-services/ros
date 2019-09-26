@@ -10,17 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_09_161139) do
+ActiveRecord::Schema.define(version: 2019_09_18_173558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "column_maps", force: :cascade do |t|
     t.bigint "transfer_map_id", null: false
-    t.string "name"
-    t.string "user_name"
+    t.string "name", null: false
+    t.string "user_name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name", "transfer_map_id"], name: "index_column_maps_on_name_and_transfer_map_id"
     t.index ["transfer_map_id"], name: "index_column_maps_on_transfer_map_id"
   end
 
@@ -46,22 +47,16 @@ ActiveRecord::Schema.define(version: 2019_06_09_161139) do
   end
 
   create_table "transfer_maps", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "description"
-    t.string "service"
-    t.string "target"
+    t.string "service", null: false
+    t.string "target", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "uploads", force: :cascade do |t|
-    t.string "name"
-    t.string "etag"
-    t.integer "size"
-    t.integer "transfer_map_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
+# Could not dump table "uploads" because of following StandardError
+#   Unknown type 'uploads_state' for column 'workflow_state'
 
-  add_foreign_key "column_maps", "transfer_maps"
+  add_foreign_key "column_maps", "transfer_maps", on_delete: :cascade
 end

@@ -436,6 +436,10 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
+    workflow (2.0.2)
+    workflow-activerecord (4.1.7)
+      activerecord (>= 3.0, < 6.1)
+      workflow (~> 2.0)
     zeitwerk (2.1.10)
     zero-rails_openapi (2.1.0)
       activesupport (>= 4.1)
@@ -470,6 +474,8 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
+  workflow (~> 2.0)
+  workflow-activerecord (>= 4.1, < 6.0)
 
 BUNDLED WITH
    2.0.2

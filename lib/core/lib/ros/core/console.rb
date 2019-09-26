@@ -198,6 +198,31 @@ module Ros::Console::Commands
     Ros::PryCommandSet.add_command(self)
   end
 
+  class Queues < Pry::ClassCommand
+    match 'show-queue'
+    group 'ros'
+    description 'show list of jobs for the queue (short-cut alias: "lsq")'
+
+    def process(service, command = :size)
+      queue = Sidekiq::Queue.new("#{service}_platform_consumer_events")
+      response = if queue.respond_to?(command)
+        queue.send(command)
+      else
+        case command
+        when 'all'
+          queue.each do |job|
+            output.puts job.to_json
+          end
+        else
+          "command #{command} is not recognized"
+        end
+      end
+      output.puts response
+    end
+
+    Ros::PryCommandSet.add_command(self)
+  end
+
   # TODO: move to a module/class in core for jobs; namesapced on the queue type
   # class RabbitMQ < Pry::ClassCommand
   #   match 'mq-send'
@@ -232,6 +257,7 @@ Pry.config.commands.alias_command 'r', 'reload'
 Pry.config.commands.alias_command 'sc', 'show-shortcuts'
 Pry.config.commands.alias_command 'st', 'select-tenant'
 Pry.config.commands.alias_command 'to', 'toggle-logger'
+Pry.config.commands.alias_command 'lsq', 'show-queue'
 
 Pry.hooks.add_hook(:before_session, 'load_shortcuts') do |output, _binding, _pry|
   unless Rails.const_defined?('Server')
