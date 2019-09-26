@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'globalid'
+require_relative '../../../../lib/core/app/policies/ros/application_policy'
 
 module Ros
   module Sdk
@@ -30,6 +31,10 @@ module Ros
 
       def to_gid
         @to_gid ||= GlobalID.new("gid://internal/#{self.class.name}/#{id}")
+      end
+
+      def to_urn
+        urn
       end
     end
 
@@ -103,6 +108,9 @@ module Ros
         end
         # rubocop:enable Metrics/AbcSize
       end
+    end
+
+    class AppPolicy < Ros::ApplicationPolicy
     end
   end
 

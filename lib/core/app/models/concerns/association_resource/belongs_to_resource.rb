@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Class Represents external association ONE_ONE
 module AssociationResource
   class BelongsToResource
     include ActiveModel::Model
@@ -35,9 +36,11 @@ module AssociationResource
     end
 
     def query_resource(model)
-      resource_klass = extract_resource_klass(model)
+      @class_name = extract_resource_klass(model)
+      return unless _resource_class
+
       resource_id = extract_resource_id(model)
-      resource_klass.constantize.where(id: resource_id).first
+      _resource_class.where(id: resource_id).find.first
     end
   end
 end

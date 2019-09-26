@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Class Represents external association ONE_MANY
 module AssociationResource
   class HasManyResources
     include ActiveModel::Model
@@ -10,7 +11,6 @@ module AssociationResource
       @name = name
       @class_name = class_name || name.to_s.classify
       @foreign_key = foreign_key
-
       @associated_name = associated_name
     end
 
