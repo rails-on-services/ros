@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe PolicyPolicy do
-  subject { PolicyPolicy.new(user, policy) }
+  subject { described_class.new(user, policy) }
 
-  let(:policy) { FactoryBot.create(:policy) }
+  let(:policy) { create(:policy) }
 
   context 'for a visitor' do
     let(:user) { nil }
@@ -19,7 +19,7 @@ RSpec.describe PolicyPolicy do
 
   context 'for a user' do
     context 'root' do
-      let(:user) { FactoryBot.create(:root) }
+      let(:user) { create(:root) }
 
       it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }
@@ -29,7 +29,7 @@ RSpec.describe PolicyPolicy do
     end
 
     context 'with the AdministratorAccess' do
-      let(:user) { FactoryBot.create(:user, :administrator_access) }
+      let(:user) { create(:user, :administrator_access) }
 
       it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }
@@ -40,9 +40,9 @@ RSpec.describe PolicyPolicy do
 
     context 'with the IamFullAccess' do
       let(:policy) do
-        FactoryBot.create :policy, name: 'IamFullAccess'
+        create :policy, name: 'IamFullAccess'
       end
-      let(:user) { FactoryBot.create(:user, policies: [policy]) }
+      let(:user) { create(:user, policies: [policy]) }
 
       it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }
@@ -53,9 +53,9 @@ RSpec.describe PolicyPolicy do
 
     context 'with the IamReadOnlyAccess' do
       let(:policy) do
-        FactoryBot.create :policy, name: 'IamReadOnlyAccess'
+        create :policy, name: 'IamReadOnlyAccess'
       end
-      let(:user) { FactoryBot.create(:user, policies: [policy]) }
+      let(:user) { create(:user, policies: [policy]) }
 
       it { is_expected.to permit(:index)   }
       it { is_expected.to permit(:show)    }
