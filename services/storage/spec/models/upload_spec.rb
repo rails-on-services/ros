@@ -10,7 +10,7 @@ RSpec.describe Upload, type: :model do
   let(:file_name) { 'text5.txt' }
 
   # TODO: Create fixtures for CSV files for Users
-  it 'can upload and download a file to/from the SFTP server' do
+  it 'can upload and download a file to/from the SFTP server', skip: true do
     File.open(file_name, 'w') { |file| file.write('test text') }
     expect(File).not_to exist("#{file_name}.download")
 

@@ -31,4 +31,4 @@ AllCops:
     - '**/Guardfile'
     - '**/Rakefile'
     - '**/Gemfile'
-    - 'services/storage/sqs_test.rb'
+    - '**/sqs_test.rb'

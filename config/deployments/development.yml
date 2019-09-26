@@ -51,6 +51,8 @@ components:
               postgres:
               redis:
               sftp:
+                environment:
+                  bucket_prefix: storage
               wait:
 
           platform:
@@ -58,9 +60,9 @@ components:
               redis_url: redis://redis:6379
               platform:
                 request_logging:
-                  enabled: yes
+                  enabled: no
                 event_logging:
-                  enabled: yes
+                  enabled: no
                 infra:
                   services:
                     storage:
@@ -91,7 +93,6 @@ components:
               iam:
                 config:
                   profiles: ['server']
-                  # command: ["tail", "-F", "log/development.log"]
               organization:
                 config:
                   profiles: ['server']
@@ -103,3 +104,4 @@ components:
                         mq:
                           primary:
                             enabled: yes
+                            queue_name: storage-sftp-home

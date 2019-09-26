@@ -54,7 +54,9 @@ module Ros
       end
     end
 
-    def api_calls_enabled; Settings.dig(:api_calls_enabled) || !Rails.env.test? end
+    def api_calls_enabled
+      Settings.dig(:api_calls_enabled).nil? ? !Rails.env.test? : Settings.dig(:api_calls_enabled)
+    end
 
     # By default all services exclude only the Tenant model from schemas
     def excluded_models; %w[Tenant] end
