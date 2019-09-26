@@ -1,0 +1,8 @@
+Description:
+    Generates model
+
+Example:
+    rails generate ros:model Thing
+
+    This will create:
+        app/models/thing.rb

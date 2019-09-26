@@ -1,0 +1,8 @@
+Description:
+    Updates config/routes
+
+Example:
+    rails generate ros:route Thing
+
+    This will update:
+        config/routes by adding 'jsonapi_resources :things' to the file

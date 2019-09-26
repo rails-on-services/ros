@@ -1,0 +1,8 @@
+Description:
+    Generates request spec
+
+Example:
+    rails generate ros:request_spec Thing
+
+    This will create:
+        spec/requests/things_spec.rb

@@ -1,0 +1,8 @@
+Description:
+    Generates model spec
+
+Example:
+    rails generate ros:model_spec Thing
+
+    This will create:
+        spec/models/thing_spec.rb
