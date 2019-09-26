@@ -74,7 +74,7 @@ RSpec.shared_context 'authorized user' do
   end
 end
 
-RSpec.shared_context 'cognito_user' do
+RSpec.shared_context 'cognito user' do
   let(:authorized_user) { build(:iam_user, :with_administrator_policy) }
   let(:cognito_user_id) { 1 }
   let(:current_jwt) do
