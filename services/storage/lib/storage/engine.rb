@@ -49,9 +49,22 @@ module Storage
     end
 
     initializer 'service.set_factory_paths', after: 'ros_core.set_factory_paths' do
-      if defined?(FactoryBot) && !Rails.env.production?
+    if defined?(FactoryBot) && !Rails.env.production?
         FactoryBot.definition_file_paths.prepend(Pathname.new(__FILE__).join('../../../spec/factories'))
       end
     end
+
+    initializer 'service.configure_event_logging' do |_app|
+      if Settings.event_logging.enabled
+        Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
+      end
+    end
+
+    # initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
+    #   if Rails.env.development? and Rails.const_defined?('Console')
+    #     Ros.config.factory_paths += Dir[Pathname.new(__FILE__).join('../../../../spec/factories')]
+    #     Ros.config.model_paths += config.paths['app/models'].expanded
+    #   end
+    # end
   end
 end
