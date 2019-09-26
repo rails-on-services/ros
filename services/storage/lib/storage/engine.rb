@@ -27,7 +27,7 @@ module Storage
           filter_rules: [{ name: 'prefix', value: 'storage/sftp/home' }, { name: 'suffix', value: '.csv' }]
         )
         Rails.configuration.x.infra.resources.storage.primary.enable_notifications
-      # elsif defined?(GcpQueueWorker)
+        # elsif defined?(GcpQueueWorker)
       end
     end
 
