@@ -74,6 +74,23 @@ RSpec.shared_context 'authorized user' do
   end
 end
 
+RSpec.shared_context 'cognito_user' do
+  let(:authorized_user) { build(:iam_user, :with_administrator_policy) }
+  let(:cognito_user_id) { 1 }
+  let(:current_jwt) do
+    jwt = Ros::Jwt.new(authorized_user.jwt_payload)
+    jwt.add_claims('sub_cognito' => "urn:perx:cognito::222222222:user/#{cognito_user_id}")
+    jwt.add_claims('act_cognito' => 'act_hello')
+  end
+
+  let(:request_headers) do
+    {
+      'Authorization' => "Bearer #{current_jwt.encode}",
+      'Content-Type' => 'application/vnd.api+json'
+    }
+  end
+end
+
 RSpec.shared_context 'unauthorized user' do
   let(:request_headers) do
     {
