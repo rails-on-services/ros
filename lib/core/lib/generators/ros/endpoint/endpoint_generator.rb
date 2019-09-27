@@ -18,6 +18,7 @@ module Ros
       generate_api_doc
       generate_model
       generate_model_specs
+      generate_factory
       generate_and_modify_controller
     end
 
@@ -66,6 +67,10 @@ module Ros
 
     def generate_model_specs
       Ros::ModelSpecGenerator.new([name]).invoke_all
+    end
+
+    def generate_factory
+      Ros::FactoryGenerator.new([name]).invoke_all
     end
   end
 end

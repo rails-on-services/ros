@@ -2,6 +2,8 @@
 
 module Ros
   class ApiDocGenerator < Rails::Generators::NamedBase
+    # TODO: Files created by this generator is improperly indented. Find out why.
+
     def create_files
       create_file "doc/resources/#{name}_resource_doc.rb", <<-FILE
         # frozen_string_literal: true

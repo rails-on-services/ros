@@ -11,7 +11,7 @@ module Ros
         RSpec.describe #{name.classify}, type: :model do
           include_examples 'application record concern' do
             let(:tenant) { Tenant.first }
-            let!(:subject) { create(:#{name}) }
+            let!(:subject) { create(factory_name) }
           end
 
           pending "add more examples here or delete this line"

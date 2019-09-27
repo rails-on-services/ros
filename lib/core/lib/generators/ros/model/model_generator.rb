@@ -10,7 +10,7 @@ module Ros
       create_file "app/models/#{name}.rb", <<~FILE
         # frozen_string_literal: true
 
-        class Entity < #{parent_module}ApplicationRecord
+        class #{name.classify} < #{parent_module}ApplicationRecord
         end
       FILE
     end
