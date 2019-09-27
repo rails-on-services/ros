@@ -14,7 +14,7 @@ after 'development:tenants' do
       end
       next if User.count.positive?
 
-      user = User.create(username: "Admin_#{tenant.id}", console: true, api: true, time_zone: 'Asia/Singapore',
+      user = User.create(username: 'Admin', console: true, api: true, time_zone: 'Asia/Singapore',
                          password: 'asdfjkl;')
       User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
       # user.locale: 'en-US'
