@@ -5,5 +5,5 @@ class OrgResource < Organization::ApplicationResource
 
   has_many :branches
 
-  filter :name, apply: ->(records, value, _options) { records.where('lower(name) like ?', "%#{value[0].downcase}%") }
+  filter :name, apply: ->(records, value, _options) { records.where('name ILIKE ?', "%#{value[0]}%") }
 end
