@@ -6,5 +6,5 @@ class DocumentResource < Storage::ApplicationResource
 
   def bucket_name; @model.class.bucket_name end
 
-  def blob; @model.file.blob end
+  def blob; JSON.parse(@model.file.blob.to_json) end
 end

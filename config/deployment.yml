@@ -69,6 +69,10 @@ components:
                   host: api
                 sftp:
                   host: sftp
+          object_storage:
+            components: {}
+          cdn:
+            components: {}
           kubernetes:
             config:
               provider: aws
