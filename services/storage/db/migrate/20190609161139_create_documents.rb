@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class CreateUploads < ActiveRecord::Migration[6.0]
+class CreateDocuments < ActiveRecord::Migration[6.0]
   def change
-    create_table :uploads do |t|
+    create_table :documents do |t|
       t.string :name
       t.string :etag
       t.integer :size

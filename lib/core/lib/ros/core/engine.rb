@@ -62,17 +62,17 @@ module Ros
             require "ros/infra/#{config.keys[0]}"
           end
           Rails.configuration.x.infra.resources = ActiveSupport::OrderedOptions.new
-          Settings.infra.resources.each_pair do |service, resources|
-            Rails.configuration.x.infra.resources[service] = ActiveSupport::OrderedOptions.new
-            resources.each_pair do |name, config|
-              next unless config.enabled
+          # Settings.infra.resources.each_pair do |service, resources|
+          #   Rails.configuration.x.infra.resources[service] = ActiveSupport::OrderedOptions.new
+          #   resources.each_pair do |name, config|
+          #     next unless config.enabled
 
-              Rails.configuration.x.infra.resources[service][name] =
-                Object.const_get("Ros::Infra::#{config.provider.capitalize}::#{service.capitalize}").new(
-                  Settings.infra.services[service][config.provider], config
-                )
-            end
-          end
+          #     Rails.configuration.x.infra.resources[service][name] =
+          #       Object.const_get("Ros::Infra::#{config.provider.capitalize}::#{service.capitalize}").new(
+          #         Settings.infra.services[service][config.provider], config
+          #       )
+          #   end
+          # end
         end
       end
 
