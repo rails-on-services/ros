@@ -1,4 +1,5 @@
-local:
+---
+localstack:
   service: s3
   bucket: home
   access_key_id: hello
@@ -7,6 +8,13 @@ local:
   region: 'ap-southeast-1'
   force_path_style: true
 
+amazon:
+  service: s3
+  bucket: test
+  access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+  secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+  region: 'ap-southeast-1'
+
 test:
   service: Disk
-  root: <%= Rails.root.join("tmp","storage") %>
+  root: <%= Rails.root.join('tmp', 'test', 'active_storage') %>

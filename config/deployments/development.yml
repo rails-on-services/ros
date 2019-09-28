@@ -29,6 +29,23 @@ components:
             config:
               provider: aws
               subject_alternative_names: []
+          cdn:
+            config:
+              provider: aws
+            components:
+              # name will be used to compose the full dns name
+              cdn:
+                enabled: yes
+                bucket: cdn
+                url: https://cdn.uat.whistler.perxtech.io
+          object_storage:
+            config:
+              provider: aws
+            components:
+              app:
+                services: ['documents', 'reports', 'sftp']
+              cdn:
+                services: ['images']
       application:
         config:
           feature_set: mounted
@@ -75,14 +92,14 @@ components:
                         endpoint: http://localstack:4576
                         verify_checksums: no
                         region: ap-southeast-1
-                  resources:
-                    storage:
-                      primary:
-                        provider: aws
-                        enabled: yes
-                    mq:
-                      primary:
-                        provider: aws
+                  # resources:
+                  #   storage:
+                  #     primary:
+                  #       provider: aws
+                  #       enabled: yes
+                  #   mq:
+                  #     primary:
+                  #       provider: aws
             components:
               cognito:
                 config:

@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-class Upload < Storage::ApplicationRecord
+class Document < Storage::ApplicationRecord
+  include HasAttachment
   belongs_to :transfer_map, optional: true
 
-  before_create :assign_transfer_map
+  def self.modifier; 'uploads' end
+
+  # before_create :assign_transfer_map
 
   def assign_transfer_map
     self.transfer_map_id ||= begin
@@ -26,6 +29,8 @@ class Upload < Storage::ApplicationRecord
   def put; Rails.configuration.x.infra.resources.storage.primary.put(remote_path) end
 
   def column_map
+    return [] unless transfer_map
+
     transfer_map.column_maps.pluck(:user_name, :name).each_with_object({}) do |a, h|
       h[a[0].to_sym] = a[1]
     end
@@ -34,7 +39,7 @@ class Upload < Storage::ApplicationRecord
   def as_json(*)
     super.merge(
       'urn' => to_urn,
-      'target' => transfer_map.target,
+      'target' => transfer_map&.target,
       'remote_path' => remote_path,
       'column_map' => column_map
     )

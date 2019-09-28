@@ -5,7 +5,12 @@ module Storage
     config.generators.api_only = true
     config.generators do |g|
       g.test_framework :rspec, fixture: true
-      g.fixture_replacement :factory_bot
+      g.fixture_replacement :factory_bot, dir: 'spec/factories'
+    end
+
+    initializer 'service.storage_thing' do |_app|
+      ActiveStorage::Service.module_eval { attr_writer :bucket }
+      ActiveStorage::Service.class_eval { include Storage::Methods }
     end
 
     initializer 'service.set_platform_config', before: 'ros_core.load_platform_config' do |_app|

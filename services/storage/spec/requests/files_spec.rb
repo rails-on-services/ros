@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Files requests', type: :request do
-
   describe 'POST /files' do
     let(:url) { '/files' }
     let(:tenant) { Tenant.first }
@@ -14,7 +13,7 @@ RSpec.describe 'Files requests', type: :request do
 
     include_context 'jsonapi requests'
 
-    context 'Authorized user' do
+    xcontext 'Authorized user' do
       include_context 'authorized user'
 
       before do
@@ -24,7 +23,7 @@ RSpec.describe 'Files requests', type: :request do
       end
 
       context 'Image upload' do
-        let(:file) { fixture_file_upload(Rails.root.join('../', 'fixtures', 'image_fixture.jpg'), 'image/png') }
+        let(:file) { fixture_file_upload(Rails.root.join('..', 'fixtures', 'image_fixture.jpg'), 'image/png') }
 
         it 'returns successfull response' do
           expect(response).to be_successful
@@ -36,7 +35,7 @@ RSpec.describe 'Files requests', type: :request do
       end
 
       context 'Document upload' do
-        let(:file) { fixture_file_upload(Rails.root.join('../', 'fixtures', 'csv_fixture.csv'), 'text/csv') }
+        let(:file) { fixture_file_upload(Rails.root.join('..', 'fixtures', 'csv_fixture.csv'), 'text/csv') }
 
         it 'returns successfull response' do
           expect(response).to be_successful

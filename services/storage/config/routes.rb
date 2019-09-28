@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 Storage::Engine.routes.draw do
-  jsonapi_resources :uploads
+  jsonapi_resources :reports, only: %i[index show]
+  jsonapi_resources :images, only: %i[index show create]
+  jsonapi_resources :documents, only: %i[index show create]
   jsonapi_resources :column_maps
   jsonapi_resources :transfer_maps
-  jsonapi_resources :files, only: %i[index create]
 end
