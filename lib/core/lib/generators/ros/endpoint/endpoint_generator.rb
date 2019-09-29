@@ -19,6 +19,7 @@ module Ros
       generate_model
       generate_model_specs
       generate_factory
+      generate_route
       generate_and_modify_controller
     end
 
