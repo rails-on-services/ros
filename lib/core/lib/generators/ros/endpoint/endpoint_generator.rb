@@ -54,7 +54,7 @@ module Ros
     end
 
     def generate_and_modify_controller
-      invoke(:controller)
+      invoke(:controller, [plural_name])
       gsub_file(
         "app/controllers/#{plural_name}_controller.rb",
         'ApplicationController',
