@@ -17,10 +17,8 @@ module Ros
       generate_policy_spec
       generate_api_doc
       generate_model
-      generate_model_specs
-      generate_factory
       generate_route
-      generate_and_modify_controller
+      generate_controller
     end
 
     private
@@ -53,7 +51,7 @@ module Ros
       Ros::RouteGenerator.new([name]).invoke_all
     end
 
-    def generate_and_modify_controller
+    def generate_controller
       invoke(:controller, [plural_name])
       gsub_file(
         "app/controllers/#{plural_name}_controller.rb",
@@ -64,14 +62,6 @@ module Ros
 
     def generate_model
       Ros::ModelGenerator.new([name]).invoke_all
-    end
-
-    def generate_model_specs
-      Ros::ModelSpecGenerator.new([name]).invoke_all
-    end
-
-    def generate_factory
-      Ros::FactoryGenerator.new([name]).invoke_all
     end
   end
 end
