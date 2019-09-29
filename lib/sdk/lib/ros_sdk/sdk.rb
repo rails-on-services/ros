@@ -24,10 +24,9 @@ module Ros
       self.per_page_param = 'size'
     end
 
-    # rubocop:disable  Lint/DuplicateMethods
     class Base < JsonApiClient::Resource
       self.paginator = JsonApiPaginator
-      attr_accessor :to_gid
+      attr_writer :to_gid
 
       def to_gid
         @to_gid ||= GlobalID.new("gid://internal/#{self.class.name}/#{id}")
@@ -40,7 +39,8 @@ module Ros
 
     class Credential
       class << self
-        attr_accessor :access_key_id, :secret_access_key, :partition, :region, :authorization, :request_headers
+        attr_accessor :access_key_id, :secret_access_key, :region
+        attr_writer :partition, :authorization, :request_headers
 
         def configure(access_key_id: nil, secret_access_key: nil)
           self.access_key_id = access_key_id
@@ -60,7 +60,6 @@ module Ros
         end
       end
     end
-    # rubocop:enable  Lint/DuplicateMethods
 
     class Client
       class << self
