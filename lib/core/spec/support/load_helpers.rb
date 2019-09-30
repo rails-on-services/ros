@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-if defined?(Devise)
-  RSpec.configure do |config|
+RSpec.configure do |config|
+  config.include ApiJsonSpecHelper
+  if defined?(Devise)
     config.include LoginSpecHelper
     config.include Devise::Test::IntegrationHelpers, type: :request
   end
