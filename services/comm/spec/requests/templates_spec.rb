@@ -48,16 +48,6 @@ RSpec.describe 'Templates', type: :request do
       context 'Authenticated user' do
         include_context 'authorized user'
 
-        def jsonapi_data(object, remove = false, *except_attributes)
-          except_attributes.append(:id, :created_at, :updated_at) if remove
-          {
-            data: {
-              type: object.class.name.underscore.pluralize,
-              attributes: object.attributes.except(*except_attributes.map(&:to_s))
-            }
-          }.to_json
-        end
-
         context 'correct params' do
           it 'returns the correct response and payload' do
             mock_authentication if mock

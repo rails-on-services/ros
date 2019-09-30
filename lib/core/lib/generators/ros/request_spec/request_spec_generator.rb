@@ -74,18 +74,6 @@ module Ros
               context 'Authenticated user' do
                 include_context 'authorized user'
 
-                # NOTE: Extract and make this a helper method on lib/core/spec/support/helpers/json_helper.rb
-                def jsonapi_data(object, remove = false, *except_attributes)
-                  args = %i[id created_at updated_at]
-                  except_attributes.append(*args) if remove
-                  {
-                    data: {
-                      type: object.class.name.underscore.pluralize,
-                      attributes: object.attributes.except(*except_attributes.map(&:to_s))
-                    }
-                  }.to_json
-                end
-
                 let(:model_data) { build(:#{name}) }
 
                 before do
