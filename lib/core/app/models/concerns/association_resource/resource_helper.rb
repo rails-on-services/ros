@@ -26,11 +26,8 @@ module AssociationResource
       end
 
       # rubocop:disable Naming/PredicateName
-      # NOTE: explain eager load on include....
       def has_many_resources(resources)
-        has_many resources.to_sym,
-                 class_name: 'AssociationResource::Included',
-                 eager_load_on_include: false
+        has_many resources.to_sym, class_name: 'AssociationResource::Included'
 
         define_method("records_for_#{resources}") { |_| _model.send(resources.to_sym) }
       end
