@@ -6,9 +6,8 @@ module Ros
       def include_has_many_resource(source_record:, record_class:)
         source_class = source_record.class
         inner_associations = source_class.reflect_on_all_associations(:has_many).map(&:class_name)
-        return unless inner_associations.include? related_record.class.name
+        return unless inner_associations.include? record_class.class.name
 
-        binding.pry
         super
       end
 

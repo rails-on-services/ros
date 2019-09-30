@@ -15,6 +15,14 @@ module AssociationResource
       super
     end
 
+    # TODO: Would be nice that this generates the link to the remote
+    # service that the class is connecting to.
+    exclude_links [:self]
+
+    def self._model_class
+      _type
+    end
+
     private
 
     def extract_attributes(model)

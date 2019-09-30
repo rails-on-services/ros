@@ -22,10 +22,11 @@ module AssociationResource
       end
 
       def belongs_to_resource(resource)
-        belongs_to resource.to_sym, class_name: 'AssociationResource::Included'
+        has_one resource.to_sym, class_name: 'AssociationResource::Included'
       end
 
       # rubocop:disable Naming/PredicateName
+      # NOTE: explain eager load on include....
       def has_many_resources(resources)
         has_many resources.to_sym,
                  class_name: 'AssociationResource::Included',
