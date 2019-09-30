@@ -108,9 +108,6 @@ module Ros
         # rubocop:enable Metrics/AbcSize
       end
     end
-
-    class AppPolicy < Ros::ApplicationPolicy
-    end
   end
 
   module Platform
