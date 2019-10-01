@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class CloudEventSubjectsController < ApplicationController
+  skip_before_action :authenticate_it!, only: [:index]
+  skip_after_action :set_headers!, only: [:index]
+
   def index
     render json: json_resources(resource_class: CloudEventSubjectResource, records: resources)
   end
