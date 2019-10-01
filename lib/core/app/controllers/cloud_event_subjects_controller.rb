@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class CloudEventSubjectsController < ApplicationController
   def index
-    render json: json_resources(resource_class: CloudEventSubjectResource, records: resources.compact)
+    render json: json_resources(resource_class: CloudEventSubjectResource, records: resources)
   end
 
   private
@@ -11,7 +13,7 @@ class CloudEventSubjectsController < ApplicationController
       next unless file_name.end_with?('.avsc')
 
       CloudEventSubject.new(name(file_name))
-    end
+    end.compact
   end
 
   def name(file_name)
