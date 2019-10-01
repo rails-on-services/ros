@@ -1,0 +1,8 @@
+Description:
+    Updates spec/models/thing.rb
+
+Example:
+    rails generate ros:model_spec Thing
+
+    This will update:
+        spec/models/thing.rb by including 'application record concern' test suite into the file
