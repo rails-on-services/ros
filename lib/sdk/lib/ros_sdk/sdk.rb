@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'globalid'
-require_relative '../../../../lib/core/app/policies/ros/application_policy'
 
 module Ros
   module Sdk
@@ -107,9 +106,6 @@ module Ros
         end
         # rubocop:enable Metrics/AbcSize
       end
-    end
-
-    class AppPolicy < Ros::ApplicationPolicy
     end
   end
 

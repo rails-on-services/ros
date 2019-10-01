@@ -22,14 +22,12 @@ module AssociationResource
       end
 
       def belongs_to_resource(resource)
-        belongs_to resource.to_sym, class_name: 'AssociationResource::Included'
+        has_one resource.to_sym, class_name: 'AssociationResource::Included'
       end
 
       # rubocop:disable Naming/PredicateName
       def has_many_resources(resources)
-        has_many resources.to_sym,
-                 class_name: 'AssociationResource::Included',
-                 eager_load_on_include: false
+        has_many resources.to_sym, class_name: 'AssociationResource::Included'
 
         define_method("records_for_#{resources}") { |_| _model.send(resources.to_sym) }
       end

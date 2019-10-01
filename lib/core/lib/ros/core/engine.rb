@@ -174,6 +174,10 @@ module Ros
           config.default_processor_klass = JSONAPI::Authorization::AuthorizingProcessor
           config.exception_class_whitelist = [Pundit::NotAuthorizedError]
         end
+
+        JSONAPI::Authorization.configure do |config|
+          config.authorizer = Ros::JsonapiAuthorization::Authorizer
+        end
       end
 
       initializer 'ros.core.configure_platform_services_connections' do |_app|
