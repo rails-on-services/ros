@@ -3,11 +3,11 @@
 class CloudEventSubject
   include ActiveModel::Model
 
-  attr_reader :id, :model_name
+  attr_reader :id, :name
 
-  def initialize(model_name)
+  def initialize(name)
     @id = SecureRandom.uuid
-    @model_name = model_name
+    @name = name
   end
 
   def readonly?

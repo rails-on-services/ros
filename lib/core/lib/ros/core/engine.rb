@@ -135,10 +135,6 @@ module Ros
         app.config.hosts = app.config.hosts | Settings.hosts.split(',') if Settings.hosts
       end
 
-      # initializer 'ros.set_avro_path' do |app|
-      #   binding.pry
-      # end
-
       initializer 'ros_core.configure_apartment' do |_app|
         Apartment.configure do |config|
           if Settings.dig(:service, :name) # then we are in a service

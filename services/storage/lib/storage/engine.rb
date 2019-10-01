@@ -36,6 +36,12 @@ module Storage
       end
     end
 
+    initializer 'service.configure_event_logging' do |_app|
+      if Settings.event_logging.enabled
+        Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
+      end
+    end
+
     # Adds this gem's db/migrations path to the enclosing application's migraations_path array
     # if the gem has been included in an application, i.e. it is not running in the dummy app
     # https://github.com/rails/rails/issues/22261
