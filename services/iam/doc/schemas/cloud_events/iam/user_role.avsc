@@ -1,0 +1,38 @@
+{
+  "name": "iam.user_role",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "user_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "role_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

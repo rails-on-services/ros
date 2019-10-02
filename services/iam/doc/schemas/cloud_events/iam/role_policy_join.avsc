@@ -1,0 +1,38 @@
+{
+  "name": "iam.role_policy_join",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "role_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "policy_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

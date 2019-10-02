@@ -11,9 +11,10 @@ class AvroGenerator < Rails::Generators::Base
   def create_files
     Ros.table_names.each do |name|
       @name = name
+      singular_name = name.singularize
 
-      create_file "doc/schemas/cloud_events/#{service_name}/#{name}.avsc" do
-        JSON.pretty_generate build_model_name_and_type(name)
+      create_file "doc/schemas/cloud_events/#{service_name}/#{singular_name}.avsc" do
+        JSON.pretty_generate build_model_name_and_type(singular_name)
       end
     end
   end

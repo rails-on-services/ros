@@ -1,5 +1,5 @@
 {
-  "name": "cognito.user",
+  "name": "cognito.identifier",
   "type": "record",
   "fields": [
     {
@@ -7,45 +7,24 @@
       "type": "int"
     },
     {
-      "name": "primary_identifier",
+      "name": "name",
       "type": [
         "null",
         "string"
       ]
     },
     {
-      "name": "title",
+      "name": "value",
       "type": [
         "null",
         "string"
       ]
     },
     {
-      "name": "first_name",
+      "name": "user_id",
       "type": [
         "null",
-        "string"
-      ]
-    },
-    {
-      "name": "last_name",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "phone_number",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "email_address",
-      "type": [
-        "null",
-        "string"
+        "int"
       ]
     },
     {

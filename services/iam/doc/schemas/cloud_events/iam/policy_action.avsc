@@ -1,0 +1,38 @@
+{
+  "name": "iam.policy_action",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "policy_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "action_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

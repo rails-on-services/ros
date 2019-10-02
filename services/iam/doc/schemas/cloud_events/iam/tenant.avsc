@@ -1,5 +1,5 @@
 {
-  "name": "cognito.user",
+  "name": "iam.tenant",
   "type": "record",
   "fields": [
     {
@@ -7,49 +7,18 @@
       "type": "int"
     },
     {
-      "name": "primary_identifier",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "title",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "first_name",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "last_name",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "phone_number",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "email_address",
-      "type": [
-        "null",
-        "string"
-      ]
+      "name": "schema_name",
+      "type": "string"
     },
     {
       "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "platform_properties",
       "type": [
         "null",
         "string"
@@ -64,6 +33,41 @@
     },
     {
       "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "root_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "alias",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "name",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "state",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "display_properties",
       "type": [
         "null",
         "string"
