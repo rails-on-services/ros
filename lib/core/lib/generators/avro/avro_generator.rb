@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AvroGenerator < Rails::Generators::NamedBase
+class AvroGenerator < Rails::Generators::Base
   DICTIONARY = {
     integer: 'int',
     string: 'string',
@@ -9,18 +9,22 @@ class AvroGenerator < Rails::Generators::NamedBase
   }.freeze
 
   def create_files
-    create_file "doc/schemas/cloud_events/#{service_name}/#{name}.avsc" do
-      JSON.pretty_generate build_model_name_and_type
+    Ros.table_names.each do |name|
+      @name = name
+
+      create_file "doc/schemas/cloud_events/#{service_name}/#{name}.avsc" do
+        JSON.pretty_generate build_model_name_and_type(name)
+      end
     end
   end
 
   private
 
   def model
-    name.classify.constantize
+    @name.classify.constantize
   end
 
-  def build_model_name_and_type
+  def build_model_name_and_type(name)
     {
       "name": "#{service_name}.#{name}",
       "type": 'record',
