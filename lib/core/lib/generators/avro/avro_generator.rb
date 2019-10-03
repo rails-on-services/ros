@@ -9,8 +9,8 @@ class AvroGenerator < Rails::Generators::Base
 
       service_name ||= Settings.service.name
       singular_name = name.singularize
-      
-      create_file "doc/schemas/cloud_events/#{service_name}/#{singular_name}.avsc" do
+
+      create_file "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{singular_name}.avsc" do
         avro_builder = AvroBuilder.new(singular_name, service_name)
         JSON.pretty_generate avro_builder.build_model_attributes
       end
