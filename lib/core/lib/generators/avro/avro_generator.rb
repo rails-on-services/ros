@@ -10,24 +10,29 @@ class AvroGenerator < Rails::Generators::Base
 
   def create_files
     Ros.table_names.each do |name|
-      @name = name
-      singular_name = name.singularize
+      next unless Object.const_defined?(name.classify)
 
-      create_file "doc/schemas/cloud_events/#{service_name}/#{singular_name}.avsc" do
-        JSON.pretty_generate build_model_name_and_type(singular_name)
+      @name = name
+
+      create_file "doc/schemas/cloud_events/#{service_name}/#{name.singularize}.avsc" do
+        JSON.pretty_generate build_model_name_and_type
       end
     end
   end
 
   private
 
+  def model_defined?(name)
+    Object.const_defined?(name)
+  end
+
   def model
     @name.classify.constantize
   end
 
-  def build_model_name_and_type(name)
+  def build_model_name_and_type
     {
-      "name": "#{service_name}.#{name}",
+      "name": "#{service_name}.#{@name.singularize}",
       "type": 'record',
       "fields": build_attributes_json
     }
