@@ -17,4 +17,8 @@ class PolicyUser
   def attached_actions
     @iam_user.attached_actions
   end
+
+  def root?
+    @iam_user.class.name.eql? 'Root'
+  end
 end
