@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './avro_builder.rb'
+
 class AvroGenerator < Rails::Generators::Base
   DICTIONARY = {
     integer: 'int',
@@ -10,12 +12,14 @@ class AvroGenerator < Rails::Generators::Base
 
   def create_files
     Ros.table_names.each do |name|
-      next unless Object.const_defined?(name.classify)
+      next unless model_defined?(name.classify)
 
-      @name = name
+      service_name ||= Settings.service.name
+      singular_name = name.singularize
 
-      create_file "doc/schemas/cloud_events/#{service_name}/#{name.singularize}.avsc" do
-        JSON.pretty_generate build_model_name_and_type
+      create_file "doc/schemas/cloud_events/#{service_name}/#{singular_name}.avsc" do
+        avro_builder = AvroBuilder.new(singular_name, service_name)
+        JSON.pretty_generate avro_builder.build_model_attributes
       end
     end
   end
@@ -24,47 +28,5 @@ class AvroGenerator < Rails::Generators::Base
 
   def model_defined?(name)
     Object.const_defined?(name)
-  end
-
-  def model
-    @name.classify.constantize
-  end
-
-  def build_model_name_and_type
-    {
-      "name": "#{service_name}.#{@name.singularize}",
-      "type": 'record',
-      "fields": build_attributes_json
-    }
-  end
-
-  def build_attributes_json
-    model_columns.map do |column|
-      data_type = DICTIONARY[column.sql_type_metadata.type] || 'string'
-      type = column_required(column.name) ? data_type : ['null', data_type]
-
-      {
-        "name": column.name,
-        "type": type
-      }
-    end
-  end
-
-  def model_columns
-    model.columns
-  end
-
-  def service_name
-    @service_name ||= Settings.service.name
-  end
-
-  def column_required(column_name)
-    return true if column_name == 'id'
-
-    model.validators_on(column_name.to_sym).map(&:class).include? presence_validator
-  end
-
-  def presence_validator
-    ActiveRecord::Validations::PresenceValidator
   end
 end
