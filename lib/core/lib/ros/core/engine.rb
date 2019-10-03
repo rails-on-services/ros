@@ -235,11 +235,11 @@ module Ros
         end
       end
 
-      # initializer 'ros_core.configure_event_logging' do |_app|
-      #   if Settings.event_logging.enabled
-      #     Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
-      #   end
-      # end
+      initializer 'ros_core.configure_event_logging' do |_app|
+        if Settings.event_logging.enabled
+          Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
+        end
+      end
 
       config.after_initialize do
         require_relative 'console' unless Rails.const_defined?('Server')
