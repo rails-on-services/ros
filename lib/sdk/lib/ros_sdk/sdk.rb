@@ -31,6 +31,12 @@ module Ros
         @to_gid ||= GlobalID.new("gid://internal/#{self.class.name}/#{id}")
       end
 
+      def url
+        return unless links.respond_to? :self
+
+        links.self
+      end
+
       def to_urn
         urn
       end
