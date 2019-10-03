@@ -12,9 +12,9 @@ module Ros
 
     def modify_files
       insert_into_file "app/models/#{name}.rb", after: "ApplicationRecord\n" do
-        "  # organize your model code in the following sequence\n"\
+        "  # NOTE: organize your model code in the following sequence\n"\
         "  # includes/extends, constants, gems related, serialized attributes, associations, attr_accessible\n" \
-        "  # scopes, class methods, validations, instance methods, other methods, private methods, attr_accessible\n"
+        "  # scopes, class methods, validations, instance methods, other methods, private methods\n"
       end
     end
 
