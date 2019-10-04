@@ -9,6 +9,7 @@ Ros::Core::Engine.routes.draw do
      { 'Content-Type' => 'application/vnd.api+json' },
      [{ errors: [{ status: '404', title: 'Not found' }] }.to_json]]
   }
+  resources :currencies, only: :index
   jsonapi_resources :tenants
   jsonapi_resources :file_fingerprints, only: [:index]
 end
