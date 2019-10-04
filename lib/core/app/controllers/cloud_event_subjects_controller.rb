@@ -12,9 +12,7 @@ class CloudEventSubjectsController < ApplicationController
 
   def resources
     path = "#{Settings.event_logging.config.schemas_path}/#{Settings.service.name}"
-    Dir.foreach(path).map do |file_name|
-      next unless file_name.end_with?('.avsc')
-
+    Dir["#{path}/*.avsc"].map do |file_name|
       CloudEventSubject.new(name(file_name))
     end.compact
   end

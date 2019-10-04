@@ -11,5 +11,5 @@ Ros::Core::Engine.routes.draw do
   }
   jsonapi_resources :tenants
   jsonapi_resources :file_fingerprints, only: [:index]
-  jsonapi_resources :cloud_event_subjects, only: %i[index show]
+  jsonapi_resources :cloud_event_subjects, only: [:index]
 end
