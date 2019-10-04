@@ -1,0 +1,52 @@
+{
+  "name": "cognito.endpoint",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "url",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "target_type",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "target_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

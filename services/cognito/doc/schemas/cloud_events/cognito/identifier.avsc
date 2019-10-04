@@ -1,0 +1,52 @@
+{
+  "name": "cognito.identifier",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "name",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "value",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "user_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "name": "iam.user",
+  "name": "cognito.user",
   "type": "record",
   "fields": [
     {
@@ -7,35 +7,42 @@
       "type": "int"
     },
     {
-      "name": "console",
+      "name": "primary_identifier",
       "type": [
         "null",
         "string"
       ]
     },
     {
-      "name": "api",
+      "name": "title",
       "type": [
         "null",
         "string"
       ]
     },
     {
-      "name": "time_zone",
+      "name": "first_name",
       "type": [
         "null",
         "string"
       ]
     },
     {
-      "name": "attached_policies",
+      "name": "last_name",
       "type": [
         "null",
         "string"
       ]
     },
     {
-      "name": "attached_actions",
+      "name": "phone_number",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "email_address",
       "type": [
         "null",
         "string"
@@ -43,45 +50,6 @@
     },
     {
       "name": "properties",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "display_properties",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "username",
-      "type": "string"
-    },
-    {
-      "name": "encrypted_password",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "reset_password_token",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "reset_password_sent_at",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "remember_created_at",
       "type": [
         "null",
         "string"

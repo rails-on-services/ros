@@ -1,0 +1,38 @@
+{
+  "name": "iam.group_policy_join",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "group_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "policy_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

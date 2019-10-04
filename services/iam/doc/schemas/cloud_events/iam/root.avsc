@@ -1,17 +1,10 @@
 {
-  "name": "iam.user",
+  "name": "iam.root",
   "type": "record",
   "fields": [
     {
       "name": "id",
       "type": "int"
-    },
-    {
-      "name": "console",
-      "type": [
-        "null",
-        "string"
-      ]
     },
     {
       "name": "api",
@@ -28,35 +21,7 @@
       ]
     },
     {
-      "name": "attached_policies",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "attached_actions",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "properties",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "display_properties",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "name": "username",
+      "name": "email",
       "type": "string"
     },
     {

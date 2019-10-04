@@ -1,0 +1,77 @@
+{
+  "name": "iam.tenant",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "schema_name",
+      "type": "string"
+    },
+    {
+      "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "platform_properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "root_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "alias",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "name",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "state",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "display_properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}
