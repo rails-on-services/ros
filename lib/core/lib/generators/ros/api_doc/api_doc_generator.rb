@@ -3,7 +3,7 @@
 module Ros
   class ApiDocGenerator < Rails::Generators::NamedBase
     def create_files
-      create_file "doc/resources/#{name}_resource_doc.rb", <<-FILE
+      create_file "doc/resources/#{name}_resource_doc.rb", <<~FILE
         # frozen_string_literal: true
 
         class #{name.classify}ResourceDoc < ApplicationDoc

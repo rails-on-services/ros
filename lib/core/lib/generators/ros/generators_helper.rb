@@ -7,7 +7,7 @@ module Ros
     end
 
     def parent_module
-      engine? ? "#{Dir.pwd.split('/').last.remove('ros-').classify}::" : ''
+      engine? ? "#{Settings.service.name.classify}::" : ''
     end
 
     private

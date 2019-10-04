@@ -7,22 +7,6 @@ module Ros
   class EndpointGenerator < Rails::Generators::NamedBase
     include GeneratorsHelper
 
-    source_root File.expand_path('templates', __dir__)
-
-    def create_files
-      generate_resource
-      generate_request_spec
-      generate_resource_spec
-      generate_policy
-      generate_policy_spec
-      generate_api_doc
-      generate_model
-      generate_model_specs
-      generate_and_modify_controller
-    end
-
-    private
-
     def generate_request_spec
       Ros::RequestSpecGenerator.new([name]).invoke_all
     end
@@ -51,8 +35,8 @@ module Ros
       Ros::RouteGenerator.new([name]).invoke_all
     end
 
-    def generate_and_modify_controller
-      invoke(:controller)
+    def generate_controller
+      invoke(:controller, [plural_name])
       gsub_file(
         "app/controllers/#{plural_name}_controller.rb",
         'ApplicationController',

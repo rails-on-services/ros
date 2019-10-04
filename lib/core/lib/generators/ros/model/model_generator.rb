@@ -7,12 +7,23 @@ module Ros
     include GeneratorsHelper
 
     def create_files
-      create_file "app/models/#{name}.rb", <<~FILE
-        # frozen_string_literal: true
+      invoke(:model)
+    end
 
-        class Entity < #{parent_module}ApplicationRecord
-        end
-      FILE
+    def modify_files
+      insert_into_file "app/models/#{name}.rb", after: "ApplicationRecord\n" do
+        "  # NOTE: organize your model code in the following sequence\n"\
+        "  # includes/extends, constants, gems related, serialized attributes, associations, attr_accessible\n" \
+        "  # scopes, class methods, validations, instance methods, other methods, private methods\n"
+      end
+    end
+
+    def gsub_created_file
+      gsub_file(
+        "app/models/#{name}.rb",
+        'ApplicationRecord',
+        "#{parent_module}ApplicationRecord"
+      )
     end
   end
 end
