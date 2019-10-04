@@ -11,11 +11,11 @@ class PolicyUser
   end
 
   def attached_policies
-    @iam_user.attached_policies
+    @iam_user&.attached_policies || {}
   end
 
   def attached_actions
-    @iam_user.attached_actions
+    @iam_user&.attached_actions || {}
   end
 
   def root?

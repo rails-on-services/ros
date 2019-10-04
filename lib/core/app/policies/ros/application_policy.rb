@@ -103,8 +103,8 @@ module Ros
     def check_action(action)
       return true if user.root?
 
-      user_policies = user&.attached_policies || {}
-      user_actions = user&.attached_actions || {}
+      user_policies = user.attached_policies
+      user_actions = user.attached_actions
 
       (user_policies.keys & accepted_policies(action)).any? ||
         (user_actions.keys & accepted_actions(action)).any?

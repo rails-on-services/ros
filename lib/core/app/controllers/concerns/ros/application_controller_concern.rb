@@ -13,7 +13,6 @@ module Ros
       before_action :authenticate_it!
       after_action :set_headers!
 
-
       def authenticate_it!
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
 
