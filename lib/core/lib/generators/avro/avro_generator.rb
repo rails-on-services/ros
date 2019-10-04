@@ -2,18 +2,15 @@
 
 require_relative './avro_builder.rb'
 
-class AvroGenerator < Rails::Generators::Base
+class AvroGenerator < Rails::Generators::NamedBase
   def create_files
-    Ros.table_names.each do |name|
-      next unless model_defined?(name.classify)
+    return unless model_defined?(name.classify)
 
-      service_name ||= Settings.service.name
-      singular_name = name.singularize
+    service_name ||= Settings.service.name
 
-      create_file "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{singular_name}.avsc" do
-        avro_builder = AvroBuilder.new(singular_name, service_name)
-        JSON.pretty_generate avro_builder.build_model_attributes
-      end
+    create_file "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{name}.avsc" do
+      avro_builder = AvroBuilder.new(name, service_name)
+      JSON.pretty_generate avro_builder.build_model_attributes
     end
   end
 
