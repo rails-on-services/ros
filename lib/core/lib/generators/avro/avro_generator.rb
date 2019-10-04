@@ -6,7 +6,7 @@ class AvroGenerator < Rails::Generators::NamedBase
   def create_files
     return unless model_defined?(name.classify)
 
-    service_name ||= Settings.service.name
+    service_name = Settings.service.name
 
     create_file "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{name}.avsc" do
       avro_builder = AvroBuilder.new(name, service_name)
