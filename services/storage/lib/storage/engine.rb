@@ -59,11 +59,5 @@ module Storage
         FactoryBot.definition_file_paths.prepend(Pathname.new(__FILE__).join('../../../spec/factories'))
       end
     end
-
-    initializer 'service.configure_event_logging' do |_app|
-      if Settings.event_logging.enabled
-        Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
-      end
-    end
   end
 end
