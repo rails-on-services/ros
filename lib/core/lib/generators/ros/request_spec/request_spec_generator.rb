@@ -82,7 +82,7 @@ module Ros
 
                 context 'correct params' do
                   it 'returns a successful response with proper serialized response' do
-                    post_data = jsonapi_data(model_data, true)
+                    post_data = jsonapi_data(model_data, remove: true)
                     post url, headers: request_headers, params: post_data
 
                     expect(response).to be_created
@@ -94,7 +94,7 @@ module Ros
 
                 context 'incorrect params' do
                   it 'returns a failure response and' do
-                    post_data = jsonapi_data(model_data, false)
+                    post_data = jsonapi_data(model_data, remove: false)
                     post url, headers: request_headers, params: post_data
 
                     expect(errors.size).to be_positive
