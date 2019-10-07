@@ -8,7 +8,7 @@ FactoryBot.define do
     api { true }
 
     trait :administrator_access do
-      policies { [FactoryBot.create(:policy, :administrator_access)] }
+      policies { [create(:policy, :administrator_access)] }
     end
 
     trait :within_schema do

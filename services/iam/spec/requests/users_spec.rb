@@ -17,10 +17,10 @@ RSpec.describe 'users requests', type: :request do
 
     context 'authenticated user' do
       before do
-        tenant = FactoryBot.create :tenant
+        tenant = create :tenant
         cr = {}
         tenant.switch do
-          user = FactoryBot.create(:user, :administrator_access)
+          user = create(:user, :administrator_access)
           login(user)
           cr = user.credentials.create
         end
@@ -57,10 +57,10 @@ RSpec.describe 'users requests', type: :request do
 
     context 'authenticated user' do
       before do
-        tenant = FactoryBot.create :tenant
+        tenant = create :tenant
         cr = {}
         tenant.switch do
-          user = FactoryBot.create(:user, :administrator_access)
+          user = create(:user, :administrator_access)
           login(user)
           cr = user.credentials.create
         end
