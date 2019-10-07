@@ -18,14 +18,8 @@ module RuboCop
         end
 
         def autocorrect(node)
-          action = node.children[1]
-          model_name = node.children[2].to_s
-          model_name.slice!('sym ')
-
-          replacement = String.new("#{action}#{model_name}")
           lambda do |corrector|
-            corrector.insert_before(node.source_range, replacement)
-            corrector.remove(node.source_range)
+            corrector.remove_leading(node.source_range, 'FactoryBot.'.length)
           end
         end
 
