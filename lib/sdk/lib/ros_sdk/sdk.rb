@@ -59,7 +59,6 @@ module Ros
         end
       end
     end
-    # rubocop:enable  Lint/DuplicateMethods
 
     class Client
       class << self
