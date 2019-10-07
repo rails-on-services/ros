@@ -17,9 +17,10 @@ module RuboCop
           end
         end
 
-        def autocorrect(_node)
-          lambda do |_corrector|
-            # https://medium.com/@DmytroVasin/how-to-add-a-custom-cop-to-rubocop-47abf82f820a
+        def autocorrect(node)
+          factory_bot_class_name = node.children[0]
+          lambda do |corrector|
+            corrector.remove(factory_bot_class_name.source_range)
           end
         end
 

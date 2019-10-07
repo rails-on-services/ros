@@ -33,6 +33,3 @@ AllCops:
     - '**/Rakefile'
     - '**/Gemfile'
     - '**/sqs_test.rb'
-
-require:
-  - ./linters/spec/remove_factory_bot_classname.rb
