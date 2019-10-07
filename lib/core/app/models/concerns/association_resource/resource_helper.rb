@@ -4,7 +4,7 @@ module AssociationResource
   module ResourceHelper
     extend ActiveSupport::Concern
 
-    # Overrided relationschip method to return desired resource type
+    # Overrided relationship method to return desired resource type
     # rubocop:disable Style/ClassAndModuleChildren
     class JSONAPI::Relationship
       def type_for_source(source)

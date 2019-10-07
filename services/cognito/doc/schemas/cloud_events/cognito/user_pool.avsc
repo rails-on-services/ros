@@ -1,0 +1,38 @@
+{
+  "name": "cognito.user_pool",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "user_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "pool_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

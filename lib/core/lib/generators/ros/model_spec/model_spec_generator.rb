@@ -2,21 +2,13 @@
 
 module Ros
   class ModelSpecGenerator < Rails::Generators::NamedBase
-    def create_files
-      create_file "spec/models/#{name}_spec.rb", <<~FILE
-        # frozen_string_literal: true
-
-        require 'rails_helper'
-
-        RSpec.describe #{name.classify}, type: :model do
-          include_examples 'application record concern' do
-            let(:tenant) { Tenant.first }
-            let!(:subject) { create(:#{name}) }
-          end
-
-          pending "add more examples here or delete this line"
-        end
-      FILE
+    def modify_files
+      insert_into_file "spec/models/#{name}_spec.rb", after: ":model do\n" do
+        "  include_examples 'application record concern' do\n"\
+        "    let(:tenant) { Tenant.first }\n"\
+        "    let!(:subject) { create(factory_name) }\n"\
+        "  end\n\n"
+      end
     end
   end
 end

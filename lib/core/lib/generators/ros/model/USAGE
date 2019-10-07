@@ -6,3 +6,6 @@ Example:
 
     This will create:
         app/models/thing.rb
+        spec/models/thing_spec.rb
+        spec/factories/things.rb
+        db/migrate/XXXXXXXXXXXX_create_things.rb

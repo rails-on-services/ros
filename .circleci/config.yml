@@ -87,7 +87,23 @@ jobs:
           name: Run tests
           command: |
             echo "Test services: ${PLATFORM_SERVICES[@]}"
-            ros be test -v --build --fail-fast --push ${PLATFORM_SERVICES[@]}
+            ros be test -v --build --fail-fast ${PLATFORM_SERVICES[@]}
+      - run:
+          # CircleCI sometimes times out when doing push, so separate the push
+          # with retry
+          name: Push docker images
+          command: |
+            echo "Pushing images: ${PLATFORM_SERVICES[@]}"
+            n=0
+            while true; do
+              ros be push -v ${PLATFORM_SERVICES[@]} && break
+              n=$[$n+1]
+              if [ $n -ge 3 ]; then
+                echo "Failed to push images"
+                exit 1
+              fi
+              sleep 5
+            done
 
   publish_api_doc:
     executor: ros_cli
