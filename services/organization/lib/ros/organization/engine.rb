@@ -34,18 +34,18 @@ module Ros
         end
       end
 
+      initializer 'service.configure_event_logging' do |_app|
+        if Settings.event_logging.enabled
+          Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
+        end
+      end
+
       # initializer 'service.initialize_infra_services', after: 'ros_core.initialize_infra_services' do |app|
       # end
 
       initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
         if Rails.env.development? && !Rails.const_defined?('Server') && File.exist?('console.rb')
           require_relative 'console'
-        end
-      end
-
-      initializer 'service.configure_event_logging' do |_app|
-        if Settings.event_logging.enabled
-          Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
         end
       end
     end
