@@ -55,7 +55,7 @@ module AssociationResource
       # Dynamically define resource class for each external resource
       def define_new_resource(resource_name)
         name = resource_name.singularize
-        resource_klass_name = name.to_s.capitalize
+        resource_klass_name = name.to_s.camelcase
         klass_name = "#{resource_klass_name}Resource"
         return if AssociationResource.const_defined? klass_name
 
