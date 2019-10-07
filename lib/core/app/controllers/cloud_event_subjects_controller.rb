@@ -12,12 +12,13 @@ class CloudEventSubjectsController < ApplicationController
 
   def resources
     path = "#{Settings.event_logging.config.schemas_path}/#{Settings.service.name}"
-    Dir["#{path}/*.avsc"].map do |file_name|
-      CloudEventSubject.new(name(file_name))
+    Dir["#{path}/*.avsc"].map do |file_path|
+      CloudEventSubject.new(name(file_path))
     end.compact
   end
 
-  def name(file_name)
+  def name(file_path)
+    file_name = file_path.split('/').last
     file_name.slice!('.avsc')
     "#{Settings.service.name}.#{file_name}"
   end
