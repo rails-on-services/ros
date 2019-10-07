@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 module JsonApiSpecHelper
-  def jsonapi_data(object, remove = false, *except_attributes)
+  def jsonapi_data(object, remove = false, except_attributes = [], method = :get)
     args = %i[id created_at updated_at]
     except_attributes.append(*args) if remove
-    {
-      data: {
-        type: object.class.name.underscore.pluralize,
-        attributes: object.attributes.except(*except_attributes.map(&:to_s))
-      }
-    }.to_json
+
+    data = {
+      type: object.class.name.underscore.pluralize,
+      attributes: object.attributes.except(*except_attributes.map(&:to_s))
+    }
+    data[:id] = object.id if %i[put patch].include?(method.downcase.to_sym)
+
+    { data: data }.to_json
   end
 
   def jsonapi_data_with_nested_resources(object, nested_resource, remove = false)
