@@ -18,9 +18,8 @@ module JsonApiSpecHelper
     { data: data }.to_json
   end
 
-  def jsonapi_data_with_nested_resources(object, nested_resource, remove = false)
-    invalid_params = remove ? {} : { invalid: :param }
-    model_jsonapi = JSON.parse(jsonapi_data(object, extra_attributes: invalid_params))
+  def jsonapi_data_with_nested_resources(object, nested_resource, extra_attributes = {})
+    model_jsonapi = JSON.parse(jsonapi_data(object, extra_attributes: extra_attributes))
     model_jsonapi['data']['attributes'].merge!(nested_resource)
     model_jsonapi.to_json
   end
