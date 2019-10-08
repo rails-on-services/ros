@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Style/ClassAndModuleChildren
-class Users::SessionsController < Devise::ApplicationController
+class Users::SessionsController < Iam::SessionsController
   protected
 
   def login_user!

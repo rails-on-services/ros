@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Style/ClassAndModuleChildren
-class Devise::ApplicationController < Devise::SessionsController
+class Iam::SessionsController < Devise::SessionsController
   skip_before_action :authenticate_it!, on: :create
 
   respond_to :json
