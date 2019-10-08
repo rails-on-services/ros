@@ -7,10 +7,10 @@ RSpec.describe 'tenants requests', type: :request do
 
   # rubocop:disable Metrics/MethodLength
   def auth_headers
-    tenant = FactoryBot.create :tenant
+    tenant = create :tenant
     cr = {}
     tenant.switch do
-      user = FactoryBot.create(:user, :administrator_access)
+      user = create(:user, :administrator_access)
       login(user)
       cr = user.credentials.create
     end
@@ -57,7 +57,7 @@ RSpec.describe 'tenants requests', type: :request do
     context 'authenticated user' do
       context 'with correct params' do
         xit 'returns a successful response' do
-          tenant = FactoryBot.create :tenant
+          tenant = create :tenant
 
           params = {
             "data": {
@@ -87,8 +87,8 @@ RSpec.describe 'tenants requests', type: :request do
 
       context 'trying to set readonly root_id param' do
         xit 'returns a successful response' do
-          tenant = FactoryBot.create :tenant
-          root = FactoryBot.create :root
+          tenant = create :tenant
+          root = create :root
 
           params = {
             "data": {

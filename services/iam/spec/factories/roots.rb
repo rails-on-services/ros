@@ -7,7 +7,7 @@ FactoryBot.define do
 
     trait :with_tenant do
       after(:create) do |root, _|
-        FactoryBot.create(:tenant, root: root)
+        create(:tenant, root: root)
       end
     end
   end

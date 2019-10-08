@@ -28,7 +28,7 @@ module Ros
     module Methods
       # These methods will be available in the Rails console
       def fbc(type, *options)
-        options.empty? ? FactoryBot.create(type) : FactoryBot.create(type, *options)
+        options.empty? ? create(type) : create(type, *options)
       end
 
       def fbp; FactoryBot.definition_file_paths end

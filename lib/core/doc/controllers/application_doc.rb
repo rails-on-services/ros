@@ -116,12 +116,12 @@ class ApplicationDoc
   class << self
     # TODO: Provide various contexts rather than default to nil; maybe
     def resource
-      model = model_class.first || FactoryBot.create(model_name.underscore.to_sym)
+      model = model_class.first || create(model_name.underscore.to_sym)
       resource_class.new(model, nil)
     end
 
     def resources
-      2.times { FactoryBot.create(model_name.underscore.to_sym) } if model_class.count.zero?
+      2.times { create(model_name.underscore.to_sym) } if model_class.count.zero?
       model_class.all.limit(2).map { |record| resource_class.new(record, nil) }
     end
 

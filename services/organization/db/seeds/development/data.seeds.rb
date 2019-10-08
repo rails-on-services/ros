@@ -7,8 +7,8 @@ after 'development:tenants' do
     next if tenant.id.eql? 1
 
     tenant.switch do
-      first_org = FactoryBot.create(:org)
-      FactoryBot.create(:branch, org: first_org)
+      first_org = create(:org)
+      create(:branch, org: first_org)
     end
   end
 end

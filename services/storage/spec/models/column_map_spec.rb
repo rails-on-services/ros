@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ColumnMap, type: :model do
   let(:file_fingerprint) { double(where: [{ 'model_columns' => ['doesntcare'] }]) }
-  let(:transfer_map) { FactoryBot.create(:transfer_map) }
+  let(:transfer_map) { create(:transfer_map) }
 
   it 'can be created' do
     stub_const 'Ros::Whatever::FileFingerprint', file_fingerprint
