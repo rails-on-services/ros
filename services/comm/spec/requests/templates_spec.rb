@@ -54,7 +54,7 @@ RSpec.describe 'Templates', type: :request do
             # create an item in DB, duplicate its attributes and create a new one via API
             subject
             model_data = build(:template, content: 'hello mr tambourine')
-            post_data = jsonapi_data(model_data, remove: true, skip_attributes: [:status])
+            post_data = jsonapi_data(model_data, skip_attributes: [:status])
             post url, params: post_data, headers: request_headers
             expect(response).to be_created
             expect(model_data.content).to eq(post_response.content)
@@ -66,7 +66,7 @@ RSpec.describe 'Templates', type: :request do
             mock_authentication if mock
             subject
             model_data = build(:template, content: 'hello mr tambourine')
-            post_data = jsonapi_data(model_data)
+            post_data = jsonapi_data(model_data, extra_attributes: { invalid: :param })
             post url, params: post_data, headers: request_headers
             expect(errors.size).to be_positive
             expect(response).to be_bad_request
