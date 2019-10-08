@@ -1,18 +1,26 @@
 # frozen_string_literal: true
 
+require_relative '../generators_helper.rb'
+
 module Ros
   class LocustGenerator < Rails::Generators::NamedBase
-    def create_files
-      source = 'ros/lib/core/lib/template/locust.yml.erb'
-      destination = "../../lib/sre/lib/#{Settings.service.name}/#{name}.py"
+    include GeneratorsHelper
 
+    def create_files
+      source = if engine?
+                 'lib/core/lib/template/locust.yml.erb'
+               else
+                 'ros/lib/core/lib/template/locust.yml.erb'
+               end
+
+      destination = Ros.root.join("lib/sre/lib/#{Settings.service.name}/#{name}.py")
       template(source, destination, values)
     end
 
     private
 
     def source_paths
-      [ Rails.root.join('../..') ]
+      [Ros.root]
     end
 
     def values
