@@ -54,7 +54,7 @@ RSpec.describe 'Events', type: :request do
             # create an item in DB, duplicate its attributes and create a new one via API
             subject
             model_data = build(:event, provider_id: subject.provider_id, template_id: subject.template_id)
-            post_data = jsonapi_data(model_data, true, :status)
+            post_data = jsonapi_data(model_data, skip_attributes: [:status])
             post url, params: post_data, headers: request_headers
             expect(response).to be_created
             expect(model_data.channel).to eq(post_response.channel)
@@ -66,7 +66,7 @@ RSpec.describe 'Events', type: :request do
             mock_authentication if mock
             subject
             model_data = build(:event, provider_id: subject.provider_id, template_id: subject.template_id)
-            post_data = jsonapi_data(model_data, false, :status)
+            post_data = jsonapi_data(model_data, extra_attributes: { invalid: :param }, skip_attributes: [:status])
             post url, params: post_data, headers: request_headers
             expect(errors.size).to be_positive
             expect(response).to be_bad_request
