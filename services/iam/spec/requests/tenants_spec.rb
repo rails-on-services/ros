@@ -5,10 +5,7 @@ require 'rails_helper'
 RSpec.describe 'tenants requests', type: :request do
   let(:body) { JSON.parse(response.body) }
 
-  # rubocop:disable Metrics/MethodLength
   def auth_headers
-    tenant = create :tenant
-    cr = {}
     user = create(:user, :administrator_access)
     login(user)
     cr = user.credentials.create
@@ -18,7 +15,6 @@ RSpec.describe 'tenants requests', type: :request do
       'Authorization' => "Basic #{cr.access_key_id}:#{cr.secret_access_key}"
     }
   end
-  # rubocop:enable Metrics/MethodLength
 
   describe 'GET /tenants' do
     context 'unauthenticated user' do
