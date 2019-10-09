@@ -3,14 +3,23 @@
 require_relative '../generators_helper.rb'
 
 module Ros
-  class LocustGenerator < Rails::Generators::NamedBase
+  class LocustEndpointGenerator < Rails::Generators::NamedBase
     include GeneratorsHelper
 
     def create_files
-      template(source, destination, values)
+      template(source, "#{destination}/#{name}.py", values)
+      create_file "#{destination}/#{python_init_file_name}" unless python_init_file?(destination)
     end
 
     private
+
+    def python_init_file_name
+      '__init__.py'
+    end
+
+    def python_init_file?(destination)
+      File.exist? destination.join(python_init_file_name)
+    end
 
     def source_paths
       [Ros.root, Ros.root.join('ros')]
@@ -21,7 +30,7 @@ module Ros
     end
 
     def destination
-      Ros.root.join("lib/sre/lib/#{Settings.service.name}/#{name}.py")
+      Ros.root.join("lib/sre/lib/#{Settings.service.name}")
     end
 
     def values
