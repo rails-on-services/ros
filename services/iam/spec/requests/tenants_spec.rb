@@ -9,11 +9,9 @@ RSpec.describe 'tenants requests', type: :request do
   def auth_headers
     tenant = create :tenant
     cr = {}
-    tenant.switch do
-      user = create(:user, :administrator_access)
-      login(user)
-      cr = user.credentials.create
-    end
+    user = create(:user, :administrator_access)
+    login(user)
+    cr = user.credentials.create
 
     {
       'Content-Type' => 'application/vnd.api+json',

@@ -11,7 +11,7 @@ RSpec.describe 'Templates', type: :request do
   let(:mock) { true }
 
   let(:url) { u('/templates') }
-  let(:subject) { tenant.switch { create(:template) } }
+  let(:subject) { create(:template) }
 
   context 'all' do
     include_context 'jsonapi requests'

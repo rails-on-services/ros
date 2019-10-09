@@ -14,10 +14,6 @@ RSpec.shared_examples 'application record concern' do
     expect { create(factory_name) }.not_to raise_error(KeyError)
   end
 
-  before do
-    tenant.switch!
-  end
-
   # TODO: find the right place
   # context 'after created' do
   #   it 'enqueued job' do

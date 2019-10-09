@@ -19,11 +19,9 @@ RSpec.describe 'users requests', type: :request do
       before do
         tenant = create :tenant
         cr = {}
-        tenant.switch do
-          user = create(:user, :administrator_access)
-          login(user)
-          cr = user.credentials.create
-        end
+        user = create(:user, :administrator_access)
+        login(user)
+        cr = user.credentials.create
 
         headers = {
           'Content-Type' => 'application/vnd.api+json',
@@ -59,11 +57,9 @@ RSpec.describe 'users requests', type: :request do
       before do
         tenant = create :tenant
         cr = {}
-        tenant.switch do
-          user = create(:user, :administrator_access)
-          login(user)
-          cr = user.credentials.create
-        end
+        user = create(:user, :administrator_access)
+        login(user)
+        cr = user.credentials.create
         headers = {
           'Content-Type' => 'application/vnd.api+json',
           'Authorization' => "Basic #{cr.access_key_id}:#{cr.secret_access_key}"
