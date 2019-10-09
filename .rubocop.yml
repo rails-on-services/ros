@@ -10,6 +10,9 @@ Rails/NotNullColumn:
 Rails/Output:
   Exclude:
     - '**/rails_helper.rb'
+Ros/RedundantFactoryBot:
+  Include:
+    - '**/spec/**/*.rb'
 Metrics/LineLength:
   Max: 120
 Style/Documentation:
