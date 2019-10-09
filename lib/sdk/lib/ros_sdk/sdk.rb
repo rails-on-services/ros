@@ -87,7 +87,7 @@ module Ros
           # VoucherService => voucher-service
           # InstantOutcome => instant-outcome
           # Relates to https://github.com/rails-on-services/ros/issues/88
-          self.service = (service || module_parent.name.split('::').last.split(/(?=[A-Z])/).join('-')).downcase
+          self.service = (service || module_parent.name.split('::').last.split(/(?=[A-Z][a-z].+)/).join('-')).downcase
           Ros::Sdk.configured_services ||= {}
           Ros::Sdk.configured_services[self.service] = module_parent
           module_parent::Base.site = endpoint
