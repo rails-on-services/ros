@@ -17,8 +17,6 @@ RSpec.describe 'users requests', type: :request do
 
     context 'authenticated user' do
       before do
-        tenant = create :tenant
-        cr = {}
         user = create(:user, :administrator_access)
         login(user)
         cr = user.credentials.create

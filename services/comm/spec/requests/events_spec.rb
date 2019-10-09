@@ -11,7 +11,7 @@ RSpec.describe 'Events', type: :request do
   let(:mock) { true }
 
   let(:url) { u('/events') }
-  let(:subject) { tenant.switch { create(:event) } }
+  let(:subject) { create(:event) }
   let(:pool) { double(Ros::Cognito::Pool, id: 1) }
 
   before do
