@@ -7,8 +7,6 @@ module Ros
     include GeneratorsHelper
 
     def create_files
-      source = 'lib/core/lib/template/locust.yml.erb'
-      destination = Ros.root.join("lib/sre/lib/#{Settings.service.name}/#{name}.py")
       template(source, destination, values)
     end
 
@@ -16,6 +14,14 @@ module Ros
 
     def source_paths
       [Ros.root, Ros.root.join('ros')]
+    end
+
+    def source
+      'lib/core/lib/template/locust.yml.erb'
+    end
+
+    def destination
+      Ros.root.join("lib/sre/lib/#{Settings.service.name}/#{name}.py")
     end
 
     def values
