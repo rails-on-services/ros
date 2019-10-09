@@ -15,8 +15,10 @@ end
 RSpec.configure do |config|
   config.before(:all) do
     @as = create(:tenant, schema_name: '222_222_222')
+    Apartment::Tenant.switch! @as.schema_name
   end
   config.after(:all) do
+    Apartment::Tenant.switch! 'public'
     @as.destroy
     @as.root.destroy if @as.try(:root) # IAM only
   end
