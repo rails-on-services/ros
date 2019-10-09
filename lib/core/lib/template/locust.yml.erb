@@ -1,12 +1,19 @@
-import json
+import helper
+import base
+from locust import HttpLocust, task, TaskSet, TaskSequence
 
-def get_all_<%=values.service_name%>_<%=values.plural_name%>(self):
-  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', headers=self.header)
+# import endpoint libaries with from lib.service_name import model_name
 
-def get_<%=values.service_name%>_<%=values.name%>(self, id):
-  path = ('<%=values.service_name%>/<%=values.plural_name%>/%s' %(id))
-  self.client.get(path, headers=self.header)
+class <%=values.service_name%>(TaskSet):
+  def on_start(self):
+    helper.create_and_login_as_cognito_user(self)
 
-def create_<%=values.service_name%>_<%=values.plural_name%>(self, <%=values.extra_args%>):
-  payload = <%=payload%>
-  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=self.header)
+  # @task(2)
+  # def create_task(self):
+  # endpoint_library_method(self)
+
+class <%=values.service_name%>Service(HttpLocust):
+  task_set = <%=values.service_name%>
+  host = 'http://localhost:3000/'
+  max_weight = 500
+  min_weight = 500

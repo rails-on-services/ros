@@ -26,7 +26,7 @@ module Ros
     end
 
     def source
-      'lib/core/lib/template/locust.yml.erb'
+      'lib/core/lib/template/locust_endpoint.yml.erb'
     end
 
     def destination
