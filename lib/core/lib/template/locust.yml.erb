@@ -1,35 +1,12 @@
 import json
-import pdb
-from locust import HttpLocust, task, TaskSet, TaskSequence
 
-from base import login
+def get_all_<%=values.service_name%>_<%=values.plural_name%>(self):
+  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', headers=self.header)
 
-class <%=values.class_name%>(TaskSet):
-  def on_start(self):
-    login.setup(self)
+def get_<%=values.service_name%>_<%=values.name%>(self, id):
+  path = ('<%=values.service_name%>/<%=values.plural_name%>/%s' %(id))
+  self.client.get(path, headers=self.header)
 
-    self.get_all_<%=values.service_name%>_<%=values.plural_name%>()
-    self.get_<%=values.service_name%>_<%=values.name%>(1)
-
-  @task(2)
-  def get_all_<%=values.service_name%>_<%=values.plural_name%>(self):
-    self.client.get('<%=values.service_name%>/<%=values.plural_name%>', headers=self.header)
-
-  @task(2)
-  def get_<%=values.service_name%>_<%=values.name%>(self, id):
-    path = ('<%=values.service_name%>/<%=values.plural_name%>/%s' %(id))
-    self.client.get(path, headers=self.header)
-
-  @task(2)
-  def create_<%=values.service_name%>_<%=values.plural_name%>(self, <%=values.extra_args%>):
-    payload = <%=payload%>
-    self.client.get('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=self.header)
-
-class <%=values.class_name%>Service(HttpLocust):
-  task_set = <%=values.class_name%>
-  # NOTE: Running it locally
-  host = 'http://localhost:3000/'
-  # NOTE: Running it on uat environment with load-test tag
-  # host = 'https://api-load-test.uat.whistler.perxtech.io/'
-  max_weight = 500
-  min_weight = 500
+def create_<%=values.service_name%>_<%=values.plural_name%>(self, <%=values.extra_args%>):
+  payload = <%=payload%>
+  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=self.header)
