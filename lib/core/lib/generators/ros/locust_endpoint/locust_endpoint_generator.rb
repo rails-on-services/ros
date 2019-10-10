@@ -7,11 +7,17 @@ module Ros
     include GeneratorsHelper
 
     def create_files
+      return unless model_defined?(name.classify)
+
       template(source, "#{destination}/#{name}.py", values)
       create_file "#{destination}/#{python_init_file_name}" unless python_init_file?(destination)
     end
 
     private
+
+    def model_defined?(name)
+      Object.const_defined?(name)
+    end
 
     def python_init_file_name
       '__init__.py'
@@ -68,12 +74,18 @@ module Ros
 
     def payload
       string_attributes = required_attributes.map do |key, value|
-        next "'#{key}': #{value.to_json}" unless key.end_with? '_id'
+        next "'#{key}': #{key}" if key.end_with? '_id'
+        next "'#{key}': #{value.to_s.capitalize}" if boolean?(value)
+        next "'#{key}': None" if value.nil?
 
-        "'#{key}': #{key}"
+        "'#{key}': #{value.to_json}"
       end
 
       build_json_string(string_attributes)
+    end
+
+    def boolean?(value)
+      [true, false].include? value
     end
   end
 end
