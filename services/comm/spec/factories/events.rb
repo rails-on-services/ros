@@ -4,9 +4,11 @@ FactoryBot.define do
   factory :event do
     send_at { Time.zone.now + 10.minutes }
     channel { 'sms' }
-    campaign_entity_id { 10 }
+    sequence(:campaign_entity_id)
     template
     association :provider, factory: :provider_aws
+    sequence(:target_id)
+    target_type { 'Ros::Cognito::Pool' }
 
     # trait :within_schema do
     #   transient do

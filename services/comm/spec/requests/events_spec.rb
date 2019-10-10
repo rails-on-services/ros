@@ -12,6 +12,11 @@ RSpec.describe 'Events', type: :request do
 
   let(:url) { u('/events') }
   let(:subject) { tenant.switch { create(:event) } }
+  let(:pool) { double(Ros::Cognito::Pool, id: 1) }
+
+  before do
+    allow(Ros::Cognito::Pool).to receive(:where).and_return [pool]
+  end
 
   context 'all' do
     include_context 'jsonapi requests'
