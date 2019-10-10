@@ -1,26 +1,52 @@
 # frozen_string_literal: true
 
 class Event < Comm::ApplicationRecord
-  # belongs_to :campaign
+  # - includes/extends
+
+  # - constants
+
+  # - gems and related
+
+  # - serialized attributes
+
+  # - associations
   belongs_to :template
   belongs_to :provider
   # maybe target should be cognito_pool_id
   belongs_to_resource :target, polymorphic: true
-  # api_has_many :users, through: :target
 
   has_many :messages, as: :owner
+  # api_has_many :users, through: :target
 
-  before_validation :set_defaults, on: :create
+  # - attr_accessible
 
+  # - scopes
+
+  # - class methods
+
+  # - validations
   validate :provider_channel
+  # NOTE: if there channel is not weblink, then target is mandatory
+  validates :target, presence: true, if: -> { channel != 'weblink' }
 
+  # - callbacks
+  before_validation :set_defaults, on: :create
   after_save :queue_job, if: :published?
+
+  # - instance methods
+  # TODO: replace this with enum
+  def published?; status.eql?('published') end
 
   # TODO: Decide if the target is always a Pool or not
   # TODO: Implement as api_has_many :users, through: :target
   def users
     Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
   end
+
+  # - other methods
+
+  # - private
+  private
 
   def set_defaults
     self.status ||= :pending
@@ -32,8 +58,6 @@ class Event < Comm::ApplicationRecord
 
     errors.add(:channel, "must be one of: #{provider.class.services.join(' ')}")
   end
-
-  def published?; status.eql?('published') end
 
   # TODO: These are still commented out
   def queue_job

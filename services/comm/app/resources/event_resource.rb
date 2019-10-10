@@ -3,9 +3,19 @@
 class EventResource < Comm::ApplicationResource
   attributes :name, :send_at, :provider_id, :campaign_entity_id, :template_id, :channel
   attributes :target_type, :target_id
-  # has_one :campaign
+
   has_one :provider
   has_one :template
 
   filter :campaign_entity_id
+
+  def pool_id=(pool_id)
+    @model.target_type = 'Ros::Cognito::Pool'
+    @model.target_id = pool_id
+  end
+
+  before_save do
+    # TODO: Make this a valid provider
+    @model.provider_id ||= 1
+  end
 end
