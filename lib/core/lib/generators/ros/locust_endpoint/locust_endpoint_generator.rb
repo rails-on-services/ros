@@ -6,10 +6,15 @@ module Ros
       return unless model_defined?(name.classify)
 
       template(source, "#{destination}/#{name}.py", values)
-      create_file "#{destination}/#{python_init_file_name}" unless python_init_file?(destination)
+      create_python_init_file(destination) unless python_init_file?(destination)
+      create_python_init_file(lib_folder) unless python_init_file?(lib_folder)
     end
 
     private
+
+    def create_python_init_file(destination)
+      create_file "#{destination}/#{python_init_file_name}"
+    end
 
     def model_defined?(name)
       Object.const_defined?(name)
@@ -33,6 +38,10 @@ module Ros
 
     def destination
       Ros.root.join("sre/lib/#{Settings.service.name}")
+    end
+
+    def lib_folder
+      Ros.root.join('sre/lib')
     end
 
     def values
