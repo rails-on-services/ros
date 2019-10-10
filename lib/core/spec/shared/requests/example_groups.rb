@@ -64,6 +64,7 @@ RSpec.shared_context 'jsonapi requests' do
 end
 
 RSpec.shared_context 'authorized user' do
+  # build and not create as we otherwise violate the unique constraint on email
   let(:authorized_user) { build(:iam_user, :with_administrator_policy) }
   let(:iam_credential) { create(:iam_credential) }
   let(:request_headers) do

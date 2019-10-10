@@ -26,6 +26,10 @@ class User < Iam::ApplicationRecord
 
   def self.urn_id; :username end
 
+  def password_update!(params)
+    update!(password: params[:password]) if params[:password] == params[:password_confirmation]
+  end
+
   # def action_permitted?(action)
   #   return actions.exists?(id: action.id) || group_actions.exists?(id: action.id)
   # end
@@ -34,7 +38,8 @@ class User < Iam::ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable,
          # :registerable,
-         # :recoverable, :rememberable, :validatable,
+         :recoverable,
+         # :rememberable, :validatable,
          # :jwt_authenticatable, # jwt_revocation_strategy: self
          # authentication_keys: [:username],
          authentication_keys: [:username]
