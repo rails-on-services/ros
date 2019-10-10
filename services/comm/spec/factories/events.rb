@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :event do
     send_at { Time.zone.now + 10.minutes }
     channel { 'sms' }
-    campaign_entity_id { 10 }
+    campaign
     template
     association :provider, factory: :provider_aws
 

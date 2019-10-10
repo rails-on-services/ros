@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Event < Comm::ApplicationRecord
-  # belongs_to :campaign
+  belongs_to :campaign, foreign_key: :campaign_entity_id, optional: true
   belongs_to :template
   belongs_to :provider
   # maybe target should be cognito_pool_id

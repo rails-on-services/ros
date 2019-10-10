@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :template do
-    campaign_entity_id { 1 }
+    campaign
     content { Faker::ChuckNorris.fact }
     status { 'N/a' }
 

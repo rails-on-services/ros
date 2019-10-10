@@ -2,7 +2,7 @@
 
 class Template < Comm::ApplicationRecord
   attr_accessor :properties
-  # belongs_to :campaign
+  belongs_to :campaign, foreign_key: :campaign_entity_id, optional: true
 
   after_initialize :initialize_properties
 
