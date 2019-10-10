@@ -1,17 +1,15 @@
 import json
 import pdb
 import rootpath
+import os
 from faker import Faker
 
-# NOTE: Running load test in development
 ROOT_PATH = rootpath.detect()
-
-# NOTE: Running load test in live environment
-# FILE = '../tmp/runtime/production/be/application/load-test/platform/credentials.json'
+ENV = os.environ.get('RAILS_ENV') or 'development'
 
 def file():
   root = ROOT_PATH[:-4] if ROOT_PATH.endswith("/ros") else ROOT_PATH
-  return ('%s/tmp/runtime/development/be/application/mounted/platform/credentials.json' %(root))
+  return ('%s/tmp/runtime/%s/be/application/mounted/platform/credentials.json' %(root, ENV))
 
 def config():
   return json.loads(open(file()).read())
