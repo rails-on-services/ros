@@ -19,7 +19,7 @@ module Ros
 
             describe 'GET index' do
               let(:models_count) { rand(1..5) }
-              let!(:models) { tenant.switch { create_list(:#{name}, models_count) } }
+              let!(:models) { create_list(:#{name}, models_count) }
 
               context 'Unauthenticated user' do
                 include_context 'unauthorized user'
@@ -42,7 +42,7 @@ module Ros
             end
 
             describe 'GET show' do
-              let!(:model) { tenant.switch { create(:#{name}) } }
+              let!(:model) { create(:#{name}) }
               let(:show_url) { url + '/' + model.id.to_s }
 
               context 'Unauthenticated user' do
@@ -127,7 +127,7 @@ module Ros
               context 'Authenticated user' do
                 include_context 'authorized user'
 
-                let!(:model) { tenant.switch { create(:#{name}) } }
+                let!(:model) { create(:#{name}) }
                 let(:delete_url) { url + '/' + model.id.to_s }
 
                 before do
