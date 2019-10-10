@@ -2,10 +2,15 @@
 
 class Event < Comm::ApplicationRecord
   # - includes/extends
+  include AASM
 
   # - constants
 
   # - gems and related
+  aasm whiny_transitions: true, column: :status do
+    state :draft, initial: true
+    state :scheduled, :active, :paused, :ended
+  end
 
   # - serialized attributes
 
@@ -61,9 +66,8 @@ class Event < Comm::ApplicationRecord
     errors.add(:channel, "must be one of: #{channels.join(' ')}")
   end
 
-  # TODO: These are still commented out
   def queue_job
-    # EventJob.set(wait_until: send_at).perform_later(self, current_tenant.id)
+    EventJob.set(wait_until: send_at).perform_later(self, current_tenant.id)
     # EventJob.perform_now(self, current_tenant.id)
   end
 end
