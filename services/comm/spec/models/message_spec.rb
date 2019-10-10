@@ -3,6 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Message, type: :model do
+  let(:pool) { double(Ros::Cognito::Pool, id: 1) }
+
+  before do
+    allow(Ros::Cognito::Pool).to receive(:where).and_return [pool]
+  end
+
   include_examples 'application record concern' do
     let(:tenant) { Tenant.first }
     let!(:subject) { create(factory_name) }
