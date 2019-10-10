@@ -1,8 +1,9 @@
 import helper
 import base
+import os
 from locust import HttpLocust, task, TaskSet, TaskSequence
 
-# import endpoint libaries with from lib.service_name import model_name
+# from lib.service_name import model_name
 
 class <%=values.service_name%>(TaskSet):
   def on_start(self):
@@ -10,10 +11,10 @@ class <%=values.service_name%>(TaskSet):
 
   # @task(2)
   # def create_task(self):
-  # endpoint_library_method(self)
+  # model_name.endpoint_library_method(self)
 
 class <%=values.service_name%>Service(HttpLocust):
   task_set = <%=values.service_name%>
-  host = 'http://localhost:3000/'
+  host = os.environ.get('API_HOST') or 'http://localhost:3000/'
   max_weight = 500
   min_weight = 500
