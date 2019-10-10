@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros
-  class LocustGenerator < Rails::Generators::Base
+  class IntegrationTestGenerator < Rails::Generators::Base
     def create_files
       template(source, "#{destination}/#{Settings.service.name}.py", values)
     end
