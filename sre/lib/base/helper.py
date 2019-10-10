@@ -28,7 +28,7 @@ def create_iam_user(self):
 
 def login_as_iam_user(self):
   payload = { "data": { "attributes": { "account_id": "telco", "username": "Admin", "password": "asdfjkl;" } } }
-  self.client.post('iam/users/sign_in', data=json.dumps(payload), headers={"authorization": authorization(), 'content-type': 'application/vnd.api+json'})
+  self.client.post('iam/users/sign_in', data=json.dumps(payload), headers={'content-type': 'application/vnd.api+json'})
 
 def create_cognito_user(self, identifier):
   payload =  { "data": { "type": "users", "attributes": { "primary_identifier": identifier } } }
