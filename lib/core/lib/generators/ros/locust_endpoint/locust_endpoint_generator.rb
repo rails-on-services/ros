@@ -36,7 +36,7 @@ module Ros
     end
 
     def destination
-      Ros.root.join("lib/sre/lib/#{Settings.service.name}")
+      Ros.root.join("sre/lib/#{Settings.service.name}")
     end
 
     def values

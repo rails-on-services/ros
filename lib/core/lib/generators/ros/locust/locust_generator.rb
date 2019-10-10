@@ -21,7 +21,7 @@ module Ros
     end
 
     def destination
-      Ros.root.join('lib/sre/integration_test')
+      Ros.root.join('sre/integration_test')
     end
 
     def values

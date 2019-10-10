@@ -5,18 +5,22 @@ from faker import Faker
 
 # NOTE: Running load test in development
 ROOT_PATH = rootpath.detect()
-FILE = ('%s/tmp/runtime/development/be/application/mounted/platform/credentials.json' %(ROOT_PATH))
 
 # NOTE: Running load test in live environment
 # FILE = '../tmp/runtime/production/be/application/load-test/platform/credentials.json'
 
+def file():
+  root = ROOT_PATH[:-4] if ROOT_PATH.endswith("/ros") else ROOT_PATH
+  return ('%s/tmp/runtime/development/be/application/mounted/platform/credentials.json' %(root))
+
 def config():
-  return json.loads(open(FILE).read())
+  return json.loads(open(file()).read())
 
 def authorization():
-  access_key_id = config()[2]['credential']['access_key_id']
-  secret_access_key = config()[2]['secret']
-  # return 'Basic %s:%s' %(access_key_id, secret_access_key)
+  access_key_id = config()[8]['credential']['access_key_id']
+  secret_access_key = config()[8]['secret']
+  authorization_key = 'Basic %s:%s' %(access_key_id, secret_access_key)
+  # return authorization_key
   return 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2lhbS5hcGkud2hpc3RsZXIucGVyeHRlY2gubmV0Iiwic3ViIjoidXJuOnBlcng6aWFtOjo0NDQ0NDQ0NDQ6dXNlci9BZG1pbiIsImF1ZCI6WyJodHRwczovL2FwaS53aGlzdGxlci5wZXJ4dGVjaC5uZXQiXSwiaWF0IjoxNTcwNjA3NTMzfQ.jSILb36czn0HODR0ePU38-wu56ZmPL--TEP3gtNTrT0'
 
 def create_iam_user(self):
