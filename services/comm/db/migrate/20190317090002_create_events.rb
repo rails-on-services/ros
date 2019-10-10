@@ -4,7 +4,7 @@ class CreateEvents < ActiveRecord::Migration[6.0]
   def change
     create_table :events do |t|
       t.string :name
-      t.references :campaign, foreign_key: true
+      t.references :campaign_entity, foreign_key: { to_table: :campaigns }
       t.references :template, foreign_key: true
       t.references :target, polymorphic: true
       t.references :provider, foreign_key: true

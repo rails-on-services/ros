@@ -6,5 +6,6 @@ class UpdateTenants < ActiveRecord::Migration[6.0]
     add_column :tenants, :alias, :string, null: true, index: { unique: true }
     add_column :tenants, :name, :string
     add_column :tenants, :state, :string
+    add_column :tenants, :display_properties, :jsonb, default: {}
   end
 end
