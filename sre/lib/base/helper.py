@@ -20,8 +20,7 @@ def authorization():
   access_key_id = config()[8]['credential']['access_key_id']
   secret_access_key = config()[8]['secret']
   authorization_key = 'Basic %s:%s' %(access_key_id, secret_access_key)
-  # return authorization_key
-  return 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2lhbS5hcGkud2hpc3RsZXIucGVyeHRlY2gubmV0Iiwic3ViIjoidXJuOnBlcng6aWFtOjo0NDQ0NDQ0NDQ6dXNlci9BZG1pbiIsImF1ZCI6WyJodHRwczovL2FwaS53aGlzdGxlci5wZXJ4dGVjaC5uZXQiXSwiaWF0IjoxNTcwNjA3NTMzfQ.jSILb36czn0HODR0ePU38-wu56ZmPL--TEP3gtNTrT0'
+  return authorization_key
 
 def create_iam_user(self):
   payload =  { "data": { "type": "users", "attributes": { "username": Faker().name(), "time_zone": "SGT" } } }
