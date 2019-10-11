@@ -22,28 +22,11 @@ class Template < Comm::ApplicationRecord
   private
 
   def key_map
-    {
-      "salutation": {
-        property: :user,
-        value: :title
-      },
-      "userFirstName": {
-        property: :user,
-        value: :first_name
-      },
-      "userLastName": {
-        property: :user,
-        value: :last_name
-      },
-      "userId": {
-        property: :user,
-        value: :primary_identifier
-      },
-      "campaignUrl": {
-        property: :campaign,
-        value: :base_url
-      }
-    }
+    { 'salutation' => { property: :user, value: :title },
+      'userFirstName' => { property: :user, value: :first_name },
+      'userLastName' => { property: :user, value: :last_name },
+      'userId' => { property: :user, value: :primary_identifier },
+      'campaignUrl' => { property: :campaign, value: :base_url } }
   end
 
   def value_for(key)

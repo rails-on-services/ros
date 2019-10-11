@@ -4,7 +4,9 @@ class Campaign < Comm::ApplicationRecord
   has_many :events
   has_many :templates
 
-  def base_url
-    @base_url || current_tenant.properties.campaign_base_url
+  before_save :set_base_url
+
+  def set_base_url
+    self.base_url ||= current_tenant.properties.fetch(:campaign_base_url, '')
   end
 end
