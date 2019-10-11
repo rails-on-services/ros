@@ -13,6 +13,8 @@ class Event < Comm::ApplicationRecord
     state :pending, initial: true
     state :processing, :published
 
+    after_all_transitions :log_status_change
+
     event :process do
       transitions from: :pending, to: :processing
     end
@@ -48,13 +50,17 @@ class Event < Comm::ApplicationRecord
   # - callbacks
   after_commit :queue_job, on: :create
 
+  # - other methods
+
   # TODO: Decide if the target is always a Pool or not
   # TODO: Implement as api_has_many :users, through: :target
   def users
     Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
   end
 
-  # - other methods
+  def log_status_change
+    Rails.logger.info("changing from #{aasm.from_state} to #{aasm.to_state} (event: #{aasm.current_event})")
+  end
 
   # - private
   private
