@@ -4,7 +4,7 @@ class CreateCampaigns < ActiveRecord::Migration[6.0]
       t.string :name
       t.string :description
       t.references :owner, polymorphic: true
-      t.integer :cognito_endpoint_id
+      t.string :base_url
 
       t.timestamps
     end

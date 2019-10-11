@@ -7,6 +7,7 @@ class CreateEvents < ActiveRecord::Migration[6.0]
       t.references :campaign, foreign_key: true
       t.references :template, foreign_key: true
       t.references :target, polymorphic: true
+      t.references :owner, polymorphic: true
       t.references :provider, foreign_key: true
       t.string :status, null: false
       t.string :channel

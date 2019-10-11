@@ -3,7 +3,6 @@ class CreateTemplates < ActiveRecord::Migration[6.0]
     create_table :templates do |t|
       t.string :name
       t.string :description
-      t.references :campaign, foreign_key: true
       t.text :content
       t.string :status
 
