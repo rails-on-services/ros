@@ -13,7 +13,7 @@ class EventJob < Comm::ApplicationJob
     tenant.switch do
       event.process!
       event.users.each do |user|
-        content = build_message_content(user, campaign)
+        content = template.render(user, campaign)
         event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
       end
       event.publish!
@@ -22,16 +22,16 @@ class EventJob < Comm::ApplicationJob
 
   private
 
-  def build_message_content(user, campaign)
-    template.properties.user = user
-    template.properties.campaign = campaign
-    template.render(user, campaign)
-  rescue NoMethodError => e
-    # TODO: Some kind of 'cloudwatch' event reporting situation
-    # so that events are logged that the tenant user can view
-    Rails.logger.warn "error rendering template #{e.message}"
-    nil
-  end
+  # def build_message_content(user, campaign)
+  #   template.properties.user = user
+  #   template.properties.campaign = campaign
+  #   template.render(user, campaign)
+  # rescue NoMethodError => e
+  #   # TODO: Some kind of 'cloudwatch' event reporting situation
+  #   # so that events are logged that the tenant user can view
+  #   Rails.logger.warn "error rendering template #{e.message}"
+  #   nil
+  # end
 
   def tenant
     @tenant ||= Tenant.find(@tenant_id)

@@ -10,7 +10,10 @@ class Template < Comm::ApplicationRecord
   end
 
   # See: https://www.stuartellis.name/articles/erb/
-  def render
+  def render(user, campaign)
+    properties.user = user
+    properties.campaign = campaign
+
     final_content = content.dup
     keys_to_replace = content.scan(/\[[A-z0-9]+\]/)
     keys_to_replace.each do |key|
