@@ -2,18 +2,37 @@
 
 class Event < Comm::ApplicationRecord
   # - includes/extends
+  include AASM
 
   # - constants
 
   # - gems and related
+  # TODO: we should have an extra status that informs us that all the messages
+  # for this event have been scheduled
+  aasm whiny_transitions: true, column: :status do
+    state :pending, initial: true
+    state :processing, :published
+
+    after_all_transitions :log_status_change
+
+    event :process do
+      transitions from: :pending, to: :processing
+    end
+
+    event :publish do
+      transitions from: :processing, to: :published
+    end
+  end
 
   # - serialized attributes
 
   # - associations
   belongs_to :template
   belongs_to :provider
+  belongs_to :campaign, optional: true
   # maybe target should be cognito_pool_id
   belongs_to_resource :target, polymorphic: true
+  belongs_to_resource :owner, polymorphic: true
 
   has_many :messages, as: :owner
   # api_has_many :users, through: :target
@@ -30,12 +49,9 @@ class Event < Comm::ApplicationRecord
   validates :target, presence: true, if: -> { channel != 'weblink' }
 
   # - callbacks
-  before_validation :set_defaults, on: :create
-  after_save :queue_job, if: :published?
+  after_commit :queue_job, on: :create
 
-  # - instance methods
-  # TODO: replace this with enum
-  def published?; status.eql?('published') end
+  # - other methods
 
   # TODO: Decide if the target is always a Pool or not
   # TODO: Implement as api_has_many :users, through: :target
@@ -43,14 +59,12 @@ class Event < Comm::ApplicationRecord
     Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
   end
 
-  # - other methods
+  def log_status_change
+    Rails.logger.info("changing from #{aasm.from_state} to #{aasm.to_state} (event: #{aasm.current_event})")
+  end
 
   # - private
   private
-
-  def set_defaults
-    self.status ||= :pending
-  end
 
   def provider_channel
     return unless provider
@@ -61,9 +75,7 @@ class Event < Comm::ApplicationRecord
     errors.add(:channel, "must be one of: #{channels.join(' ')}")
   end
 
-  # TODO: These are still commented out
   def queue_job
-    # EventJob.set(wait_until: send_at).perform_later(self, current_tenant.id)
-    # EventJob.perform_now(self, current_tenant.id)
+    EventJob.set(wait_until: send_at).perform_later(id, current_tenant)
   end
 end

@@ -47,6 +47,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.0.6)
+      concurrent-ruby (~> 1.0)
     actioncable (6.0.0.rc2)
       actionpack (= 6.0.0.rc2)
       nio4r (~> 2.0)
@@ -442,6 +444,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aasm
   airborne
   awesome_print
   brakeman

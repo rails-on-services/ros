@@ -2,33 +2,37 @@
 
 # TODO: Handle the tenant switch in Ros::ApplicationJob
 class EventJob < Comm::ApplicationJob
-  queue_as :default
+  queue_as :comm_default
 
   # MessagesController receives a POST request to create a message (sms) with details of from, to and body
   # After the record is created, a Job is created to send to the destination
   # This means that the correct tenant must be selected by apartment
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
-  def perform(event, tenant_id)
-    tenant = Tenant.find(tenant_id)
-    tenant.switch do
-      template = event.template
-      event.users.each do |user|
-        template.properties.user = user
-        template.properties.endpoint = event.campaign.cognito_endpoint
-        begin
-          content = template.render
-          event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
-        rescue NoMethodError => e
-          # TODO: Some kind of 'cloudwatch' event reporting situation
-          # so that events are logged that the tenant user can view
-          Rails.logger.warn "error rendering template #{e.message}"
-          nil
-        end
-      end
-      Rails.logger.info('performed job')
+  def perform(event_id, tenant)
+    Apartment::Tenant.switch!(tenant)
+    event = Event.find(event_id)
+    if event
+      process_event(event)
+    else
+      Rails.logger.info "{EventJob} Can't find event (#{event_id}) for tenant (#{tenant.schema_name})"
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
+
+  private
+
+  def process_event(event)
+    event.process!
+    event.users.each do |user|
+      content = template.render(user, campaign)
+      event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
+    end
+    event.publish!
+  end
+
+  def template
+    @template ||= @event.template
+  end
+
+  def campaign
+    @campaign ||= @event.campaign
+  end
 end

@@ -16,6 +16,6 @@ class Message < Comm::ApplicationRecord
   end
 
   def send_message
-    # MessageJob.perform_now(self, current_tenant.id)
+    MessageJob.perform_later(self, current_tenant.id)
   end
 end

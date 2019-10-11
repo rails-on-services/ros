@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_05_031621) do
+ActiveRecord::Schema.define(version: 2019_03_17_114527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2019_09_05_031621) do
     t.string "description"
     t.string "owner_type"
     t.bigint "owner_id"
-    t.integer "cognito_endpoint_id"
+    t.string "base_url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["owner_type", "owner_id"], name: "index_campaigns_on_owner_type_and_owner_id"
@@ -28,16 +28,20 @@ ActiveRecord::Schema.define(version: 2019_09_05_031621) do
 
   create_table "events", force: :cascade do |t|
     t.string "name"
+    t.bigint "campaign_id"
     t.bigint "template_id"
     t.string "target_type"
     t.bigint "target_id"
+    t.string "owner_type"
+    t.bigint "owner_id"
     t.bigint "provider_id"
     t.string "status", null: false
     t.string "channel"
     t.datetime "send_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "campaign_entity_id"
+    t.index ["campaign_id"], name: "index_events_on_campaign_id"
+    t.index ["owner_type", "owner_id"], name: "index_events_on_owner_type_and_owner_id"
     t.index ["provider_id"], name: "index_events_on_provider_id"
     t.index ["target_type", "target_id"], name: "index_events_on_target_type_and_target_id"
     t.index ["template_id"], name: "index_events_on_template_id"
@@ -85,7 +89,6 @@ ActiveRecord::Schema.define(version: 2019_09_05_031621) do
     t.string "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "campaign_entity_id"
   end
 
   create_table "tenant_events", force: :cascade do |t|
@@ -119,6 +122,7 @@ ActiveRecord::Schema.define(version: 2019_09_05_031621) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "events", "campaigns"
   add_foreign_key "events", "providers"
   add_foreign_key "events", "templates"
   add_foreign_key "messages", "providers"
