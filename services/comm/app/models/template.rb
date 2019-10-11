@@ -2,7 +2,6 @@
 
 class Template < Comm::ApplicationRecord
   attr_accessor :properties
-  # belongs_to :campaign
 
   after_initialize :initialize_properties
 

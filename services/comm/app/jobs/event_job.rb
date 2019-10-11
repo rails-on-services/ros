@@ -11,11 +11,13 @@ class EventJob < Comm::ApplicationJob
   # rubocop:disable Metrics/AbcSize
   def perform(event, tenant_id)
     tenant = Tenant.find(tenant_id)
+    iam_tenant = Ros::IAM::Tenant.where(schema_name: tenant.schema_name).first
     tenant.switch do
+      event.process!
       template = event.template
       event.users.each do |user|
         template.properties.user = user
-        template.properties.endpoint = event.campaign.cognito_endpoint
+        template.properties.endpoint = tenant.
         begin
           content = template.render
           event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
@@ -26,6 +28,7 @@ class EventJob < Comm::ApplicationJob
           nil
         end
       end
+      event.publish!
       Rails.logger.info('performed job')
     end
   end

@@ -7,3 +7,5 @@ end
 
 # Include any gems specific to this service
 gemspec
+
+gem 'aasm'
