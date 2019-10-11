@@ -4,9 +4,11 @@ FactoryBot.define do
   factory :event do
     send_at { Time.zone.now + 10.minutes }
     channel { 'sms' }
-    sequence(:campaign_entity_id)
-    template
+    sequence(:owner_id)
+    owner_type { 'Perx::Campaign::Entity' }
     association :provider, factory: :provider_aws
+    association :campaign
+    template
     sequence(:target_id)
     target_type { 'Ros::Cognito::Pool' }
 
