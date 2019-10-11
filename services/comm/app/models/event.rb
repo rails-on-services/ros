@@ -29,6 +29,7 @@ class Event < Comm::ApplicationRecord
   # - associations
   belongs_to :template
   belongs_to :provider
+  belongs_to :campaign, optional: true
   # maybe target should be cognito_pool_id
   belongs_to_resource :target, polymorphic: true
   belongs_to_resource :owner, polymorphic: true
