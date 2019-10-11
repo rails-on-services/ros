@@ -7,6 +7,7 @@ class Campaign < Comm::ApplicationRecord
   before_save :set_base_url
 
   def set_base_url
+    # https://{{tenant}}-blackcomb-sales.uat.whistler.perxtech.io/
     self.base_url ||= current_tenant.properties.fetch(:campaign_base_url, '')
   end
 end

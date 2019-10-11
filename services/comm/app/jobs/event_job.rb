@@ -2,39 +2,30 @@
 
 # TODO: Handle the tenant switch in Ros::ApplicationJob
 class EventJob < Comm::ApplicationJob
-  queue_as :default
+  queue_as :comm_default
 
   # MessagesController receives a POST request to create a message (sms) with details of from, to and body
   # After the record is created, a Job is created to send to the destination
   # This means that the correct tenant must be selected by apartment
-  def perform(event, tenant_id)
-    @tenant_id = tenant_id
-    @event = event
-    tenant.switch do
-      event.process!
-      event.users.each do |user|
-        content = template.render(user, campaign)
-        event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
-      end
-      event.publish!
+  def perform(event_id, tenant)
+    Apartment::Tenant.switch!(tenant)
+    event = Event.find(event_id)
+    if event
+      process_event(event)
+    else
+      Rails.logger.info "{EventJob} Can't find event (#{event_id}) for tenant (#{tenant.schema_name})"
     end
   end
 
   private
 
-  # def build_message_content(user, campaign)
-  #   template.properties.user = user
-  #   template.properties.campaign = campaign
-  #   template.render(user, campaign)
-  # rescue NoMethodError => e
-  #   # TODO: Some kind of 'cloudwatch' event reporting situation
-  #   # so that events are logged that the tenant user can view
-  #   Rails.logger.warn "error rendering template #{e.message}"
-  #   nil
-  # end
-
-  def tenant
-    @tenant ||= Tenant.find(@tenant_id)
+  def process_event(event)
+    event.process!
+    event.users.each do |user|
+      content = template.render(user, campaign)
+      event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
+    end
+    event.publish!
   end
 
   def template

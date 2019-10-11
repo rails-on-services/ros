@@ -75,6 +75,6 @@ class Event < Comm::ApplicationRecord
   end
 
   def queue_job
-    EventJob.set(wait_until: send_at).perform_later(self, current_tenant.id)
+    EventJob.set(wait_until: send_at).perform_later(id, current_tenant)
   end
 end
