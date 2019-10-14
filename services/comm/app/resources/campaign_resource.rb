@@ -7,4 +7,6 @@ class CampaignResource < Comm::ApplicationResource
   attributes :name, :description, :owner_type, :owner_id, :base_url
   has_many :events
   has_many :templates
+
+  filters :owner_type, :owner_id
 end
