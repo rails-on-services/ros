@@ -13,7 +13,12 @@ module ActAsStackTraceableConcern
       on = options.fetch(:on)
       _condition = options.fetch(:if, -> { true })
       send("after_#{on}") do
-        send(action) unless send(as).nil?
+        unless send(as).nil?
+          payload = send(as)
+          res = send(action)
+          ActAsStackTraceable.create(resource_type: self.class.name, resource_id: id, target_resource: as,
+                                     payload: payload, response: res)
+        end
       end
     end
   end
