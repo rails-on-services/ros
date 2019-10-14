@@ -24,9 +24,12 @@ RSpec.describe 'users requests', type: :request do
         get url
       end
 
-      it 'returns unauthenticated' do
-        expect(response).to be_unauthorized
-      end
+  include_context 'jsonapi requests'
+
+  describe 'GET index' do
+    context 'Unauthenticated user' do
+      include_context 'unauthorized user'
+      include_examples 'unauthenticated get'
     end
 
     context 'authenticated user' do
