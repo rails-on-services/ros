@@ -62,6 +62,10 @@ module Ros
     end
 
     class FluentdAvroLogger
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
+
+      attr_accessor :avro
 
       # source: source field for event, also used as tag of fluentd record
       # options: hash of configurations
@@ -77,21 +81,20 @@ module Ros
         @tag_prefix = options[:name]
 
         fluentd_logger_options = {
-          :host => @host,
-          :port => @port,
-          :logger => @logger
+          host: @host,
+          port: @port,
+          logger: @logger
         }
-        if @transport.eql?('http')
-          @fluentd_logger = FluentHttpLogger.new(@tag_prefix, fluentd_logger_options)
-        else
-          @fluentd_logger = Fluent::Logger::FluentLogger.new(@tag_prefix, fluentd_logger_options)
-        end
+
+        @fluentd_logger = if @transport.eql?('http')
+                            FluentHttpLogger.new(@tag_prefix, fluentd_logger_options)
+                          else
+                            Fluent::Logger::FluentLogger.new(@tag_prefix, fluentd_logger_options)
+                          end
 
         @avro = AvroTurf::Messaging.new(registry_url: @schema_registry_url, schemas_path: @schemas_path)
       end
 
-      # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/AbcSize
       def log_event(type, id, data, subject: nil, time: Time.now)
         event = Event.new
         event.source = @source
