@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-Rails.application.initialize! unless Rails.application.initialized?
-
 namespace :ros do
   namespace :avro do
     desc 'Register Avro schemas'
     task :register do
+      Rails.application.initialize! unless Rails.application.initialized?
+
       # binding.pry
       Dir['./doc/schemas/**/*.avsc'].each do |schema|
         parsed_content = JSON.parse(File.read(schema))
