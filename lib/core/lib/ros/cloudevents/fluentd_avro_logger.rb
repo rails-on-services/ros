@@ -110,10 +110,6 @@ module Ros
       end
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
-
-      def register_schema schema_name
-
-      end
     end
   end
 end
