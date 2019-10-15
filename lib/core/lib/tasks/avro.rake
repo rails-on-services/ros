@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Rails.application.initialize!
+Rails.application.initialize! unless Rails.application.initialized?
 
 namespace :ros do
   namespace :avro do
