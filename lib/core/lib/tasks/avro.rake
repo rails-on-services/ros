@@ -6,7 +6,6 @@ namespace :ros do
     task :register do
       Rails.application.initialize! unless Rails.application.initialized?
 
-      # binding.pry
       Dir['./doc/schemas/**/*.avsc'].each do |schema|
         parsed_content = JSON.parse(File.read(schema))
         avro = Rails.configuration.x.event_logger.avro
