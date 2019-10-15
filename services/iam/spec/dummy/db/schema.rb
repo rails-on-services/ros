@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_24_091536) do
+ActiveRecord::Schema.define(version: 2019_10_11_150000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "act_as_stack_traceable", force: :cascade do |t|
+    t.string "resource_type", null: false
+    t.integer "resource_id", null: false
+    t.string "target_resource", null: false
+    t.jsonb "payload", null: false
+    t.jsonb "response", null: false
+    t.datetime "created_at", null: false
+  end
 
   create_table "actions", force: :cascade do |t|
     t.string "name", null: false

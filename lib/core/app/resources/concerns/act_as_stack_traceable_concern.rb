@@ -11,13 +11,13 @@ module ActAsStackTraceableConcern
     def logged_action(action, options = {})
       as = options.fetch(:as)
       on = options.fetch(:on)
-      _condition = options.fetch(:if, -> { true })
+      condition = options.fetch(:if, -> { true })
       send("after_#{on}") do
-        unless send(as).nil?
+        if instance_exec(&condition)
           payload = send(as)
           res = send(action)
           ActAsStackTraceable.create(resource_type: self.class.name, resource_id: id, target_resource: as,
-                                     payload: payload, response: res)
+                                     payload: payload, response: res.first)
         end
       end
     end
