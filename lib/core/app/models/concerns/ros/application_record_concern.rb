@@ -40,7 +40,7 @@ module Ros
       after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
 
       def stream_cloud_event
-        Ros::StreamCloudEventJob.perform_now(self)
+        Ros::StreamCloudEventJob.perform_later(self)
       end
 
       def enqueue_after_commit_jobs
