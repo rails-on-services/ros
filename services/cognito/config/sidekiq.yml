@@ -4,3 +4,4 @@
   - cognito_platform_consumer_events
   - cognito_tenant_producer_events
   - cognito_tenant_consumer_events
+  - cognito_stream_cloud_event
