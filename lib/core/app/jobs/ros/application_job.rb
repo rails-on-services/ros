@@ -7,5 +7,11 @@ module Ros
 
     # Most jobs are safe to ignore if the underlying records are no longer available
     # discard_on ActiveJob::DeserializationError
+
+    before_perform do
+      schema_name = Apartment::Tenant.current
+      tenant = Tenant.find_by(schema_name: schema_name)
+      tenant.set_role_credential
+    end
   end
 end
