@@ -22,20 +22,16 @@ module Ros
       [Ros.root, Ros.root.join('ros')]
     end
 
-    def lib_folder_name
-      engine? ? 'ros_lib' : 'lib'
-    end
-
     def source
       'lib/core/lib/template/locust_endpoint.yml.erb'
     end
 
     def destination
-      Ros.root.join("sre/#{lib_folder_name}/#{Settings.service.name}")
+      Ros.root.join("sre/lib/#{Settings.service.name}")
     end
 
     def lib_folder
-      Ros.root.join("sre/#{lib_folder_name}")
+      Ros.root.join('sre/lib')
     end
 
     def values
