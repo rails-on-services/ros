@@ -11,3 +11,4 @@ gemspec
 gem 'aasm'
 gem 'trailblazer-activity'
 gem 'trailblazer-activity-dsl-linear'
+gem 'trailblazer-developer'

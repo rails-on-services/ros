@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # NOTE: Might be more worthy to implement this using TRB operation instead
-class EventProcess < Trailblazer::Activity::Railway
+class EventProcess < Trailblazer::Activity::FastTrack
   # rubocop:disable Style/SignalException
   step :find_event
   fail :event_not_found, fail_fast: true
@@ -14,7 +14,7 @@ class EventProcess < Trailblazer::Activity::Railway
   end
 
   def event_not_found(_ctx, params)
-    Rails.logger.info "{EventProcess} Can't find event (#{params}) for tenant"
+    ctx[:errors] << "{EventProcess} Can't find event (#{params}) for tenant"
   end
 
   def setup_context(ctx, _params)
