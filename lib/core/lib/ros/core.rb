@@ -50,9 +50,11 @@ module Ros
 
     # TODO: Tenant events and platform events are skipped for now; these will support callbacks
     def table_names
-      @table_names ||= begin
-        ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata tenant_events platform_events]
-      end
+      @table_names ||= ActiveRecord::Base.connection.tables - excluded_table_names
+    end
+
+    def excluded_table_names
+      %w[schema_migrations ar_internal_metadata tenant_events platform_events]
     end
 
     def api_calls_enabled
@@ -90,16 +92,19 @@ module Ros
     def default_payload
       issued_at = Time.now.to_i
       token = (expires_in = Settings.dig(:jwt, :token_expires_in_seconds)) ? { exp: issued_at + expires_in } : {}
-      token.merge(aud: aud, iat: issued_at)
+      token.merge(iss: iss, aud: aud, iat: issued_at)
     end
 
-    def add_claims(claims)
-      claims.each_pair { |k, v| @claims[k] = k.in?(Settings.dig(:jwt, :valid_claims)) ? v : [] }
+    def add_claims(claims = {})
+      @claims.merge!(claims.select{ |k, v| k.to_s.in?(valid_claims) })
       self
     end
 
+    def valid_claims; @valid_claims ||= (Settings.dig(:jwt, :valid_claims) || []) end
+
     # TODO: Set audience from the issuer's domain name
-    def aud; [Settings.jwt.aud || 'undefined'] end
+    def aud; Settings.jwt.aud end
+    def iss; Settings.jwt.iss end
 
     def encode
       @token = JWT.encode(claims, encryption_key, alg)
@@ -109,9 +114,9 @@ module Ros
       @claims = JWT.decode(token, encryption_key, alg).first
     end
 
-    def alg; Settings.jwt.alg end
-
     def encryption_key; Settings.jwt.encryption_key end
+
+    def alg; Settings.jwt.alg end
   end
 
   Urn = Struct.new(:txt, :partition_name, :service_name, :region, :account_id, :resource) do

@@ -107,7 +107,7 @@ module Ros::Console::Commands
     # rubocop:disable Metrics/AbcSize
     def process(id = nil)
       if id.nil?
-        columns = Tenant.column_names.include?('name') ? %i[id schema_name name] : %i[id schema_name]
+        columns = Tenant.column_names.include?('alias') ? %i[id schema_name alias] : %i[id schema_name]
         output.puts Tenant.order(:id).pluck(*columns).each_with_object([]) { |a, ary| ary << a.join(' ') }
         return
       end
@@ -115,7 +115,7 @@ module Ros::Console::Commands
       Ros::Console::Methods.reset_shortcuts
       Apartment::Tenant.switch! Tenant.schema_name_for(id: id)
       Rails.configuration.x.memoized_shortcuts[:ct] = Tenant.find_by(schema_name: Apartment::Tenant.current)
-      Rails.configuration.x.memoized_shortcuts[:ct]&.set_root_credential
+      Rails.configuration.x.memoized_shortcuts[:ct]&.set_role_credential
     end
     # rubocop:enable Metrics/AbcSize
 
@@ -141,16 +141,24 @@ module Ros::Console::Commands
     group 'ros'
     description 'infrastructure resources'
 
-    def process(command, *options)
-      if command.eql?('ls')
-        if options.empty?
-          output.puts Rails.configuration.x.infra.resources.keys
-          return
-        else
-          output.puts Rails.configuration.x.infra.resources[options.first]
-        end
-      elsif Rails.configuration.x.infra.resources.keys.include?(command.to_sym)
-        output.puts Rails.configuration.x.infra.resources[command][options.last].send(options.first)
+    def process(resource_type = nil, name = nil, *options)
+      if resource_type.nil?
+        output.puts Ros::Infra.resources.keys
+        return
+      elsif Ros::Infra.resources[resource_type].nil?
+        output.puts 'Unknown resource'
+        return
+      elsif name.nil?
+        output.puts Ros::Infra.resources[resource_type].keys
+        return
+      end
+      resource = Ros::Infra.resources[resource_type][name]
+      if options.size == 0
+        output.puts resource
+      elsif options.size == 1
+        output.puts resource.send(options.shift)
+      else
+        output.puts resource.send(options.shift, options)
       end
     end
 

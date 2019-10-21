@@ -6,10 +6,6 @@ module Ros
 
     # rubocop:disable Metrics/BlockLength
     class_methods do
-      def excluded_models
-        %w[Tenant]
-      end
-
       def urn_id; :account_id end
 
       def public_schema_endpoints; [] end
@@ -75,15 +71,14 @@ module Ros
         end
       end
 
-      # NOTE: *** WARNING ***
-      # These next three methods are only for use in the console in development mode
-      # DO NOT use these methods to set/use credentials in request handling!
-      def set_root_credential; set_user_credential(root_id, 'root') end
+      # TODO: Create IAM Roles in the public schema
+      def set_role_credential(type = 'user', uid = 'Admin')
+        jwt = role_jwt(type, uid)
+        Ros::Sdk::Credential.authorization = "Bearer #{jwt.encode}"
+      end
 
-      def set_user_credential(uid = nil, type = 'user')
-        return unless Rails.env.development?
-
-        Ros::Sdk::Credential.authorization = Settings.tenant[id].try(:[], type).try(:[], uid)
+      def role_jwt(type, uid)
+        @role_jwt ||= Ros::Jwt.new(sub: "#{self.class.urn_base}:#{account_id}:#{type}/#{uid}")
       end
 
       def clear_credential; Ros::Sdk::Credential.authorization = nil end
