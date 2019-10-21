@@ -13,7 +13,7 @@ module Ros
     end
 
     def source
-      'lib/core/lib/template/locust.yml.erb'
+      'lib/core/lib/template/integration_test.yml.erb'
     end
 
     def destination
