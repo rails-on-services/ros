@@ -10,8 +10,6 @@ module Ros
       engine? ? "#{Settings.service.name.classify}::" : ''
     end
 
-    private
-
     def engine?
       Dir["#{Dir.pwd}/lib/**/engine.rb"].any?
     end

@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require_relative '../generators_helper.rb'
+
 module Ros
   class LocustEndpointGenerator < Rails::Generators::NamedBase
+    include GeneratorsHelper
+
     def create_files
       return unless model_defined?(name.classify)
 
@@ -32,16 +36,20 @@ module Ros
       [Ros.root, Ros.root.join('ros')]
     end
 
+    def lib_folder_name
+      engine? ? 'ros_lib' : 'lib'
+    end
+
     def source
       'lib/core/lib/template/locust_endpoint.yml.erb'
     end
 
     def destination
-      Ros.root.join("sre/lib/#{Settings.service.name}")
+      Ros.root.join("sre/#{lib_folder_name}/#{Settings.service.name}")
     end
 
     def lib_folder
-      Ros.root.join('sre/lib')
+      Ros.root.join("sre/#{lib_folder_name}")
     end
 
     def values
@@ -70,7 +78,9 @@ module Ros
 
     def extra_args
       associations_attributes = model.attributes.select { |attribute| attribute.end_with?('_id') }
-      associations_attributes.keys.join(', ')
+      return if associations_attributes.keys.empty?
+
+      associations_attributes.keys.join(', ').prepend(', ')
     end
 
     def build_json_string(attributes)
