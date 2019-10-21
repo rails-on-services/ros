@@ -1,7 +1,3 @@
 ---
 :queues:
-  - comm_platform_producer_events
-  - comm_platform_consumer_events
-  - comm_tenant_producer_events
-  - comm_tenant_consumer_events
   - comm_default

@@ -9,8 +9,6 @@ module Ros
   # Then call a method on PlatformEventProcessor that is named <producer_service>+<resource_type>
   # TODO: Implement PlatformEventProcessor class in each service
   class PlatformConsumerEventJob < Ros::ApplicationJob
-    queue_as "#{Settings.service.name}_platform_consumer_events"
-
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def perform(record)
