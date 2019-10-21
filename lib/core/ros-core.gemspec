@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'grpc', '1.23.0'
   spec.add_dependency 'prometheus_exporter', '0.4.13'
   spec.add_dependency 'sidekiq', '6.0.0'
+  spec.add_dependency 'apartment-sidekiq', '1.2.0'
   spec.add_dependency 'seedbank', '0.5.0'
   spec.add_dependency 'sentry-raven', '2.11.1'
   spec.add_dependency 'attr_encrypted', '~> 3.1.0'
