@@ -1,7 +1,4 @@
 ---
 :queues:
-  - iam_platform_producer_events
-  - iam_platform_consumer_events
-  - iam_tenant_producer_events
-  - iam_tenant_consumer_events
+  - iam_default
 

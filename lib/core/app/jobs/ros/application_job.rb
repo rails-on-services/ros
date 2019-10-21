@@ -8,6 +8,8 @@ module Ros
     # Most jobs are safe to ignore if the underlying records are no longer available
     # discard_on ActiveJob::DeserializationError
 
+    queue_as "#{Settings.service.name}_default"
+
     attr_accessor :tenant
 
     before_perform do
@@ -16,6 +18,5 @@ module Ros
 
       @tenant.set_role_credential
     end
-
   end
 end

@@ -5,8 +5,6 @@ module Ros
   # If any event listeners have been configured for this object+event combination then
   # enque a PlatformConsumerEventJob on the listening service's platform_consumer_events queue
   class PlatformProducerEventJob < Ros::ApplicationJob
-    queue_as "#{Settings.service.name}_platform_producer_events"
-
     def perform(object)
       # binding.pry
       data = { event: object.persisted?, data: object }.to_json

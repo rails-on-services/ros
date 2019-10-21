@@ -1,6 +1,3 @@
 ---
 :queues:
-  - cognito_platform_producer_events
-  - cognito_platform_consumer_events
-  - cognito_tenant_producer_events
-  - cognito_tenant_consumer_events
+  - cognito_default
