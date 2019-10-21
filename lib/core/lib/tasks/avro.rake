@@ -5,6 +5,7 @@ namespace :ros do
     desc 'Register Avro schemas'
     task :register do
       Rails.application.initialize! unless Rails.application.initialized?
+      next unless Settings.event_logging.enabled
 
       Dir['./doc/schemas/**/*.avsc'].each do |schema|
         parsed_content = JSON.parse(File.read(schema))
