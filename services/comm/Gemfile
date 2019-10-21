@@ -9,3 +9,4 @@ end
 gemspec
 
 gem 'aasm'
+gem 'trailblazer-activity'
