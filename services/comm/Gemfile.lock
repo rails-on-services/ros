@@ -426,6 +426,8 @@ GEM
     thread_safe (0.3.6)
     trailblazer-activity (0.10.0)
       trailblazer-context (>= 0.2.0, < 0.3.0)
+    trailblazer-activity-dsl-linear (0.2.1)
+      trailblazer-activity (>= 0.9.1, < 1.0.0)
     trailblazer-context (0.2.0)
     twilio-ruby (5.27.0)
       faraday (~> 0.9)
@@ -480,6 +482,7 @@ DEPENDENCIES
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
   trailblazer-activity
+  trailblazer-activity-dsl-linear
 
 BUNDLED WITH
    2.0.2

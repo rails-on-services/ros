@@ -6,8 +6,10 @@ module Comm
     # handling the jobs and invoking the operations
     queue_as :comm_default
 
-    def perform(*args)
-      operation_class.call(args)
+    # NOTE: perform, in order to interact with TRB operation, needs to
+    # pass the params as an hash
+    def perform(params)
+      operation_class.call(params)
     end
 
     private
