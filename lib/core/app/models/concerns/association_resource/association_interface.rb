@@ -11,7 +11,7 @@ module AssociationResource
       model_resource(model)
     end
 
-    def _resource_class
+    def _resource_class(_model)
       class_name.safe_constantize
     end
 
