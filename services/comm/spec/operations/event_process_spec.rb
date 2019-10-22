@@ -8,14 +8,13 @@ RSpec.describe EventProcess, type: :operation do
   let(:result) { Result.new(*operation) }
 
   context 'when the event has been setup properly' do
-    let(:event) { create :event, target_id: 1, target_type: 'Ros::Cognito::Pool' }
-    let(:op_params) { { id: event.id } }
     let(:users) { create_list :user, 5 }
+    # let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: [OpenStruct.new(users: users)]) }
+    let(:event) { create :event, target_type: 'Ros::Cognito::Pool', target_id: 1 }
+    let(:op_params) { { id: event.id } }
 
     before do
-      # TODO: Figure out how to mock the results of the users
       stub_resource(model: Event, resource: :target, attributes: {})
-
       fake_query = double(Ros::Cognito::Pool, find: [OpenStruct.new(users: users)])
       allow(Ros::Cognito::Pool).to receive(:includes).and_return fake_query
       event

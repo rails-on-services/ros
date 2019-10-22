@@ -60,8 +60,6 @@ class Event < Comm::ApplicationRecord
       query.includes(:users).find(target_id)
     end
     final_query.map(&:users).flatten
-    # TODO: Find out why this does not work: `target.users`
-    # Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
   end
 
   def log_status_change
