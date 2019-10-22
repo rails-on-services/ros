@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe EventProcess, type: :operation do
   let(:op_params) { { id: 1 } }
   let(:operation) { described_class.call(params: op_params) }
-  let(:result) { Result.new(*operation) }
+  let(:result) { OperationResult.new(*operation) }
 
   context 'when the event has been setup properly' do
     let(:users) { create_list :user, 5 }

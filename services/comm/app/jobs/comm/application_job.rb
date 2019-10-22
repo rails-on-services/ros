@@ -9,7 +9,7 @@ module Comm
     # NOTE: perform, in order to interact with TRB operation, needs to
     # pass the params as an hash
     def perform(params)
-      Result.new(*operation_class.call(params))
+      OperationResult.new(*operation_class.call(params))
     end
 
     private
