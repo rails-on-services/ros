@@ -84,6 +84,7 @@ module AssociationResource
         associated_name: as
       )
     end
+
     # rubocop:enable Naming/PredicateName
     # rubocop:enable Naming/UncommunicativeMethodParamName
 
