@@ -96,15 +96,15 @@ module Ros
               # Including Sidekiq metrics:
               config.server_middleware do |chain|
                 require 'prometheus_exporter/instrumentation'
-                chain.add PrometheusExporter::Instrumentation::Sidekiq
+                chain.add ::PrometheusExporter::Instrumentation::Sidekiq
               end
               config.death_handlers << PrometheusExporter::Instrumentation::Sidekiq.death_handler
               # monitor Sidekiq process info:
-              PrometheusExporter::Instrumentation::Process.start type: 'sidekiq'
+              ::PrometheusExporter::Instrumentation::Process.start type: 'sidekiq'
               # Sometimes Sidekiq shuts down before it can send metrics generated right before shutdown to collector
               # If you care about the sidekiq_restarted_jobs_total metric it is a good idea to explicitly stop the client:
               at_exit do
-                PrometheusExporter::Client.default.stop(wait_timeout_seconds: 10)
+                ::PrometheusExporter::Client.default.stop(wait_timeout_seconds: 10)
               end
             end
           end
