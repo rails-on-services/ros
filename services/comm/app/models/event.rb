@@ -56,7 +56,12 @@ class Event < Comm::ApplicationRecord
   # TODO: Decide if the target is always a Pool or not
   # TODO: Implement as api_has_many :users, through: :target
   def users
-    Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
+    final_query = query_resource(:target) do |query|
+      query.includes(:users).find(target_id)
+    end
+    final_query.map(&:users).flatten
+    # TODO: Find out why this does not work: `target.users`
+    # Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
   end
 
   def log_status_change

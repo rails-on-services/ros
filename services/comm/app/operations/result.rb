@@ -1,9 +1,9 @@
+# frozen_string_literal: true
 
-# TODO: This has to be moved somewhere else. If we don't want to use the
-# TRB activity's multiple outcomes capabilities, we can rely on the
-# TRB operation that already provides a result class that handles all
-# the logic for this. Nevertheless I think it might be useful to have our
-# operations using activity rather than
+# TODO: If we don't want to use the TRB activity's multiple outcomes
+# capabilities, we can rely on the TRB operation that already provides a result
+# class that handles all the logic for this. Nevertheless I think it might be
+# useful to have our operations using activity rather than Operation
 class Result
   attr_reader :errors
 
