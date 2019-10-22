@@ -15,7 +15,10 @@ module AssociationResource
     end
 
     def _resource_class(model)
-      extract_resource_klass(model).safe_constantize
+      resource_klass = extract_resource_klass model
+      return unless resource_klass
+
+      resource_klass.safe_constantize
     end
 
     def query_resource(model)
