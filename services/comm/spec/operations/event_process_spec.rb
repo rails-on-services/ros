@@ -17,9 +17,12 @@ RSpec.describe EventProcess, type: :operation do
       expect(result.success?).to eq true
     end
 
-    # TODO: This is dependent on the mock to be defined in the before block
     it 'creates one message per user' do
       expect { result }.to change { Message.count }.by(users.length)
     end
+  end
+
+  context 'when event does not exist' do
+
   end
 end

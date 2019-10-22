@@ -22,12 +22,12 @@ module Providers
     # TODO: Get from provider
     def from; '+12565308753' end
 
-    def sms(message)
+    def sms(to, body)
       # Rails.logger.warn('No Twilio client configured for tenant.account_id') and return unless client
-      message.update(from: from)
+      # message.update(from: from)
       # binding.pry
       # TODO: toggle sending on and off
-      client.messages.create(from: from, to: message.to, body: message.body)
+      client.messages.create(from: from, to: to, body: body)
       Rails.logger.debug message
     end
 

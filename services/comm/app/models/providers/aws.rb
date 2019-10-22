@@ -31,12 +31,12 @@ module Providers
     end
 
     # TODO: toggle sending on and off
-    def sms(message)
+    def sms(to, body)
       return unless Settings.active
 
-      message.update(from: from)
+      # message.update(from: from)
       client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
-      client.publish(phone_number: message.to, message: message.body)
+      client.publish(phone_number: to, message: body)
       # rescue
       # Rails.logger.warn('No AWS client configured for tenant.account_id') and return if client.nil?
     end

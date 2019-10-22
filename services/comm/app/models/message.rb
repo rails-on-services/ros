@@ -7,15 +7,9 @@ class Message < Comm::ApplicationRecord
 
   validate :provider_channel
 
-  after_create :send_message
-
   def provider_channel
     return if channel.in? provider.class.services
 
     errors.add(:channel, "must be one of: #{provider.class.services.join(' ')}")
-  end
-
-  def send_message
-    MessageJob.perform_later(self, current_tenant.id)
   end
 end

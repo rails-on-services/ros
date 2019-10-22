@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# NOTE: Might be more worthy to implement this using TRB operation instead
 class EventProcess < ActivityBase
   # rubocop:disable Style/SignalException
   step :find_event
@@ -25,6 +24,8 @@ class EventProcess < ActivityBase
     event.process!
     event.users.each do |user|
       content = template.render(user, campaign)
+
+      # res = MessageCreate.call(params: { user: user, content: content })
       event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
     end
     event.publish!
