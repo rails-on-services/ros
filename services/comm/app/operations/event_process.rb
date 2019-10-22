@@ -12,7 +12,7 @@ class EventProcess < ActivityBase
     event = ::Event.find_by(params)
     return false unless event
 
-    ctx[:model] = event
+    ctx[:event] = event
     ctx[:template] = event.template
     ctx[:campaign] = event.campaign
   end
@@ -21,7 +21,7 @@ class EventProcess < ActivityBase
     errors.add(:event, "not found for tenant (#{params})")
   end
 
-  def create_messages_for_pool(_ctx, model:, template:, campaign:, **)
+  def create_messages_for_pool(_ctx, event:, template:, campaign:, **)
     event.process!
     event.users.each do |user|
       content = template.render(user, campaign)
