@@ -6,10 +6,16 @@ from locust import HttpLocust, task, seq_task, TaskSet, TaskSequence
 
 # from lib.service_name import model_name
 
-class <%=values.service_name%>(TaskSet):
+class <%=values.service_name%>(TaskSequence):
   def on_start(self):
     helper.create_and_login_as_cognito_user(self)
 
+  # @seq_task(1)
+  # @task(2)
+  # def create_task(self):
+  # model_name.endpoint_library_method(self)
+
+  # @seq_task(2)
   # @task(2)
   # def create_task(self):
   # model_name.endpoint_library_method(self)
