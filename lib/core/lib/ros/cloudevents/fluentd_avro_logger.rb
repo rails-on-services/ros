@@ -105,11 +105,6 @@ module Ros
         event.datacontenttype = 'application/avro'
         event.datacontentencoding = 'Base64'
         event.time = time.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
-        data.each do |key, value|
-          next unless value.is_a?(Hash) || value.is_a?(Array)
-
-          data[key] = value.to_s
-        end
         event.data = Base64.encode64(@avro.encode(data, schema_name: type, subject: type + '-value'))
         @fluentd_logger.post_with_time(@source, event.to_h, time)
       end

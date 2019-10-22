@@ -41,7 +41,7 @@ module Ros
 
       def stream_cloud_event
         type = "#{Settings.service.name}.#{self.class.name.downcase}"
-        Ros::StreamCloudEventJob.perform_later(type, id, as_json)
+        Ros::StreamCloudEventJob.perform_later(type, id, cloud_event_data)
       end
 
       def enqueue_after_commit_jobs
@@ -87,6 +87,16 @@ module Ros
 
       def as_json(*)
         super.merge('urn' => to_urn)
+      end
+
+      def cloud_event_data
+        data = as_json
+        as_json.each do |key, value|
+          next unless column_for_attribute(key).type == :jsonb
+
+          data[key] = value.to_s
+        end
+        data
       end
     end
     # rubocop:enable Metrics/BlockLength
