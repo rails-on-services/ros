@@ -7,7 +7,7 @@ require 'prometheus_exporter/middleware'
 module Ros
   module PrometheusExporter
     class Middleware < ::PrometheusExporter::Middleware
-      def call(_env)
+      def call(env)
         queue_time = measure_queue_time(env)
 
         MethodProfiler.start
