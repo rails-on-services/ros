@@ -1,0 +1,42 @@
+{
+  "name": "organization.tenant",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "schema_name",
+      "type": "string"
+    },
+    {
+      "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "platform_properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "organization.branch",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "org_id",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "name",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "created_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "updated_at",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}
