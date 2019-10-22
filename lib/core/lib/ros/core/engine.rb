@@ -98,7 +98,7 @@ module Ros
                 require 'prometheus_exporter/instrumentation'
                 chain.add ::PrometheusExporter::Instrumentation::Sidekiq
               end
-              config.death_handlers << PrometheusExporter::Instrumentation::Sidekiq.death_handler
+              config.death_handlers << ::PrometheusExporter::Instrumentation::Sidekiq.death_handler
               # monitor Sidekiq process info:
               ::PrometheusExporter::Instrumentation::Process.start type: 'sidekiq'
               # Sometimes Sidekiq shuts down before it can send metrics generated right before shutdown to collector
