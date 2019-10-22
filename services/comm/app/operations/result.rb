@@ -5,14 +5,20 @@
 # class that handles all the logic for this. Nevertheless I think it might be
 # useful to have our operations using activity rather than Operation
 class Result
+  # extend ActiveModel::Naming
+
   attr_reader :errors
 
   def initialize(*args)
     @end_signal = args[0]
     @ctx = args[1][0]
     @flow_props = args[1][1]
-    @errors = []
+    @errors = ActiveModel::Errors.new(self)
     parse_errors
+  end
+
+  def model
+    @ctx[:model]
   end
 
   def failure?
@@ -26,11 +32,9 @@ class Result
   private
 
   def parse_errors
-    @errors += @ctx[:errors] if @ctx[:errors].present?
-
-    if (errors = @ctx[:model]&.errors&.full_messages)
-      @errors += errors
+    @ctx[:errors].each do |error|
+      key = error.keys.first
+      @errors.add(key, error[key])
     end
-    @errors.compact
   end
 end

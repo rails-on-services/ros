@@ -1,28 +1,28 @@
 # frozen_string_literal: true
 
 # NOTE: Might be more worthy to implement this using TRB operation instead
-class EventProcess < Trailblazer::Activity::FastTrack
+class EventProcess < Trailblazer::Activity::Railway
   # rubocop:disable Style/SignalException
   step :find_event
-  fail :event_not_found, fail_fast: true
-  step :process_event
+  fail :event_not_found
+  step :create_messages_for_pool
   # rubocop:enable Style/SignalException
 
-  def find_event(ctx, params:)
+  def find_event(ctx, params:, **)
     event = ::Event.find_by(params)
     return false unless event
 
-    ctx[:event] = event
+    ctx[:model] = event
     ctx[:template] = event.template
     ctx[:campaign] = event.campaign
   end
 
-  def event_not_found(ctx, params:)
+  def event_not_found(ctx, params:, **)
     ctx[:errors] ||= []
-    ctx[:errors] << "{EventProcess} Can't find event (#{params}) for tenant"
+    ctx[:errors] << { event: "not found for tenant (#{params})" }
   end
 
-  def process_event(_ctx, event:, template:, campaign:, **)
+  def create_messages_for_pool(_ctx, model:, template:, campaign:, **)
     event.process!
     event.users.each do |user|
       content = template.render(user, campaign)
