@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../generators_helper.rb'
-
 module Ros
   class LocustEndpointGenerator < Rails::Generators::NamedBase
-    include GeneratorsHelper
-
     def create_files
       return unless model_defined?(name.classify)
 

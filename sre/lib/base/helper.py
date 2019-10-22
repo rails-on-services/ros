@@ -26,7 +26,7 @@ def create_and_login_as_cognito_user(self):
   iam_login_response = login_as_iam_user(self)
   self.token = iam_login_response.headers['Authorization']
 
-  identifier = Faker().name()
+  identifier = Faker().pystr()
   create_cognito_user(self, identifier)
 
   login_response = login_cognito_user(self, identifier)
