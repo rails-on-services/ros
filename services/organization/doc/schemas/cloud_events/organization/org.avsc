@@ -40,6 +40,13 @@
         "null",
         "string"
       ]
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
+        "string"
+      ]
     }
   ]
 }
