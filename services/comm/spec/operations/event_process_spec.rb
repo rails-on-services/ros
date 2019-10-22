@@ -9,16 +9,9 @@ RSpec.describe EventProcess, type: :operation do
 
   context 'when the event has been setup properly' do
     let(:users) { create_list :user, 5 }
-    # let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: [OpenStruct.new(users: users)]) }
-    let(:event) { create :event, target_type: 'Ros::Cognito::Pool', target_id: 1 }
+    let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new(users: users)) }
+    let!(:event) { create :event, target_type: 'Ros::Cognito::Pool', target_id: 1 }
     let(:op_params) { { id: event.id } }
-
-    before do
-      stub_resource(model: Event, resource: :target, attributes: {})
-      fake_query = double(Ros::Cognito::Pool, find: [OpenStruct.new(users: users)])
-      allow(Ros::Cognito::Pool).to receive(:includes).and_return fake_query
-      event
-    end
 
     it 'runs successfully' do
       expect(result.success?).to eq true

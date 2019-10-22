@@ -56,10 +56,7 @@ class Event < Comm::ApplicationRecord
   # TODO: Decide if the target is always a Pool or not
   # TODO: Implement as api_has_many :users, through: :target
   def users
-    final_query = query_resource(:target) do |query|
-      query.includes(:users).find(target_id)
-    end
-    final_query.map(&:users).flatten
+    query_resource(:target) { |query| query.includes(:users) }.users
   end
 
   def log_status_change
