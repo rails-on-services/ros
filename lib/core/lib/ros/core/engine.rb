@@ -76,6 +76,48 @@ module Ros
         end
       end
 
+      # Initialize sane defaults for smtp that will works with mailcatcher unless overridden
+      initializer 'ros_core.initialize_smtp' do |_app|
+        Settings.smtp.tap do |t|
+          t.domain ||= 'example.com'
+          t.host_name ||= 'localhost'
+          t.port ||= 1025
+          # one of: nil, :plain, :login, :cram_md5
+          t.authentication ||= nil
+          t.starttls_auto ||= true
+          t.ssl ||= false
+          t.tls ||= false
+          t.from ||= "no-reply@#{t.domain}"
+        end if Settings.smtp.enabled
+      end
+
+      # Configure ActionMailer (used by Devise) based on our Settings.smtp
+      initializer 'ros_core.initialize_action_mailer' do |app|
+        app.config.action_mailer.delivery_method = :smtp
+        app.config.action_mailer.perform_deliveries = true
+        app.config.action_mailer.raise_delivery_errors = true
+
+        app.config.action_mailer.default_options = {
+          from: Settings.smtp.from
+        }
+
+        # Needed for the URL helpers to be able to construct proper links in
+        # emails to the frontend
+        app.config.action_mailer.default_url_options = {
+          host: 'http://localhost'
+        }
+
+        app.config.action_mailer.smtp_settings = {
+          address: Settings.smtp.host,
+          port: Settings.smtp.port,
+          domain: Settings.smtp.domain,
+          authentication: Settings.smtp.authentication,
+          user_name: Settings.smtp.user_name,
+          password: Settings.smtp.password,
+          enable_starttls_auto: Settings.smtp.starttls_auto,
+        }
+      end
+
       initializer 'ros_core.initialize_platform_metrics' do |app|
         app.config.middleware.insert_after(ActionDispatch::RequestId, Ros::DtraceMiddleware)
         if Settings.metrics.enabled
