@@ -35,25 +35,27 @@ class AvroBuilder
     all_attributes = model_columns.map do |column|
       next { name: column.name, type: 'int' } if column.name == 'id'
 
-      data_type = DICTIONARY[column.sql_type_metadata.type] || 'string'
-      attribute_hash(column.name, data_type)
+      attribute_hash(column.name, data_type(column))
     end
 
     all_attributes.push(attribute_hash('urn', 'string'))
+  end
+
+  def data_type(column)
+    if column.sql_type_metadata.type == :datetime
+      {
+        "type": DICTIONARY[column.sql_type_metadata.type],
+        "logicalType": 'timestamp-millis'
+      }
+    else
+      DICTIONARY[column.sql_type_metadata.type] || 'string'
+    end
   end
 
   def attribute_hash(column_name, data_type)
     {
       "name": column_name,
       "type": ['null', data_type],
-      "default": nil
-    }
-  end
-
-  def urn
-    {
-      "name": 'urn',
-      "type": %w[null string],
       "default": nil
     }
   end
