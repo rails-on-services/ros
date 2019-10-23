@@ -52,8 +52,8 @@ module Ros
           #     # TODO: Send exception report to Sentry
           #   end
           rescue StandardError => error
-            self.status = error.messge
-            Rails.logger.warn("Unkown error creating/listing bucket #{name}. #{error}")
+            self.status = error.message
+            Rails.logger.warn("Unkown error creating/listing bucket '#{name}'\nError: #{error}")
             # TODO: Send exception report to Sentry
           end
         end
