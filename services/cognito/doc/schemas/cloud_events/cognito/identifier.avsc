@@ -11,42 +11,56 @@
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "value",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "user_id",
       "type": [
         "null",
         "int"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "properties",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "created_at",
       "type": [
         "null",
-        "string"
-      ]
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "updated_at",
       "type": [
         "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
         "string"
-      ]
+      ],
+      "default": null
     }
   ]
 }
