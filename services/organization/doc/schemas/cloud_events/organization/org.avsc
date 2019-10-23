@@ -34,10 +34,7 @@
       "name": "created_at",
       "type": [
         "null",
-        {
-          "type": "long",
-          "logicalType": "timestamp-millis"
-        }
+        "long"
       ],
       "default": null
     },
@@ -45,10 +42,7 @@
       "name": "updated_at",
       "type": [
         "null",
-        {
-          "type": "long",
-          "logicalType": "timestamp-millis"
-        }
+        "long"
       ],
       "default": null
     },

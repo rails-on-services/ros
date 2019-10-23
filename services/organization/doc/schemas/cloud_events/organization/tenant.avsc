@@ -8,35 +8,51 @@
     },
     {
       "name": "schema_name",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "properties",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "platform_properties",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "created_at",
       "type": [
         "null",
-        "string"
-      ]
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "updated_at",
       "type": [
         "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
         "string"
-      ]
+      ],
+      "default": null
     }
   ]
 }
