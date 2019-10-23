@@ -32,7 +32,7 @@ module HasAttachment
       owner.file.attach(upload)
       owner.after_attach(io)
       owner
-    rescue Aws::S3::Errors::NoSuchBucket => error
+    rescue Aws::S3::Errors::NoSuchBucket
       Rails.logger.warn("Bucket not found #{bucket_name}")
     end
 
@@ -54,7 +54,7 @@ module HasAttachment
     # Examples: uploads, downloads; used on sftp service
     def object_dir; nil end
 
-    def bucket_name; bucket.name end
+    delegate :name, to: :bucket, prefix: true
 
     def bucket; Settings.infra.resources.storage.buckets[bucket_service] end
 
