@@ -90,13 +90,18 @@ module Ros
       end
 
       def cloud_event_data
-        data = as_json
-        as_json.each do |key, value|
-          next unless column_for_attribute(key).type == :jsonb
+        attributes_to_modify = %i[jsonb datetime]
+        avro_attributes = attributes.map do |name, value|
+          next [name, value] unless attributes_to_modify.include? column_for_attribute(name).type
 
-          data[key] = value.to_s
+          if column_for_attribute(name).type == :jsonb
+            [name, value.to_s]
+          elsif column_for_attribute(name).type == :datetime
+            [name, (value.to_f * 1000).to_i]
+          end
         end
-        data
+
+        avro_attributes.to_h.merge('urn' => to_urn)
       end
     end
     # rubocop:enable Metrics/BlockLength
