@@ -17,7 +17,7 @@ class EventProcess < ActivityBase
   end
 
   def event_not_found(_ctx, params:, errors:, **)
-    errors.add(:event, "not found for tenant (#{params})")
+    errors.add(:event, "not found for tenant (params: #{params})")
   end
 
   def create_messages_for_pool(_ctx, event:, template:, campaign:, **)
