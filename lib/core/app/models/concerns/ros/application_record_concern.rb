@@ -94,14 +94,18 @@ module Ros
         avro_attributes = attributes.map do |name, value|
           next [name, value] unless attributes_to_modify.include? column_for_attribute(name).type
 
-          if column_for_attribute(name).type == :jsonb
-            [name, value.to_s]
-          elsif column_for_attribute(name).type == :datetime
-            [name, (value.to_f * 1000).to_i]
-          end
+          convert_attributes(name, value)
         end
 
         avro_attributes.to_h.merge('urn' => to_urn)
+      end
+
+      def convert_attributes(name, value)
+        if column_for_attribute(name).type == :jsonb
+          [name, value.to_s]
+        elsif column_for_attribute(name).type == :datetime
+          [name, (value.to_f * 1000).to_i]
+        end
       end
     end
     # rubocop:enable Metrics/BlockLength
