@@ -10,96 +10,121 @@
       "name": "console",
       "type": [
         "null",
-        "string"
-      ]
+        "boolean"
+      ],
+      "default": null
     },
     {
       "name": "api",
       "type": [
         "null",
-        "string"
-      ]
+        "boolean"
+      ],
+      "default": null
     },
     {
       "name": "time_zone",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "attached_policies",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "attached_actions",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "properties",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "display_properties",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "username",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "encrypted_password",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "reset_password_token",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "reset_password_sent_at",
       "type": [
         "null",
-        "string"
-      ]
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "remember_created_at",
       "type": [
         "null",
-        "string"
-      ]
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "created_at",
       "type": [
         "null",
-        "string"
-      ]
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "updated_at",
       "type": [
         "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
         "string"
-      ]
+      ],
+      "default": null
     }
   ]
 }

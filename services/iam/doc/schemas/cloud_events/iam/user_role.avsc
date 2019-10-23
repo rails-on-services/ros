@@ -11,28 +11,40 @@
       "type": [
         "null",
         "int"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "role_id",
       "type": [
         "null",
         "int"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "created_at",
       "type": [
         "null",
-        "string"
-      ]
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "updated_at",
       "type": [
         "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
         "string"
-      ]
+      ],
+      "default": null
     }
   ]
 }
