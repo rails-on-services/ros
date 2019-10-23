@@ -13,6 +13,7 @@ class EventProcess < ActivityBase
     event = ::Event.find_by(params)
     return false unless event
 
+    # TODO: What if campaign is not set? This returns nil and fails
     ctx[:event] = event
     ctx[:template] = event.template
     ctx[:campaign] = event.campaign

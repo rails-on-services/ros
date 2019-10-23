@@ -3,12 +3,35 @@
 class MessageCreate < ActivityBase
   # rubocop:disable Style/SignalException
   # rubocop:disable Lint/UnreachableCode
+  step :valid_send_at
+  fail :invalid_send_at, Output(:failure) => End(:failure)
   step :setup_message
   fail :invalid_message
   step :save_sms
-  setp :send_to_provider
+  step :send_to_provider
   # rubocop:enable Lint/UnreachableCode
   # rubocop:enable Style/SignalException
+
+  # NOTE: Ensures that if send_at was sent then it is a valid date/datetime
+  # If send_at is sent and valid, we store it in context, else we jump
+  # to the error track.
+  # If send_at is not sent we will not delay the sms sending and instead send
+  # it immediately
+  def valid_send_at(ctx, params:, **)
+    return true if params[:send_at].blank?
+
+    begin
+      ctx[:send_at] = Time.zone.parse(params[:send_at])
+    rescue ArgumentError
+      ctx[:send_at] = nil
+    end
+
+    !ctx[:send_at].nil?
+  end
+
+  def invalid_send_at(ctx, params:, **)
+    ctx[:errors].add(:send_at, "is not a valid date format (send_at: #{params[:send_at]})")
+  end
 
   def setup_message(ctx, params:, **)
     # Params shuld have something like:
@@ -25,7 +48,11 @@ class MessageCreate < ActivityBase
     model.save
   end
 
-  def send_to_provider(_ctx, model:, **)
-    model.provider.send(model.channel, model.to, model.from)
+  def send_to_provider(ctx, params:, model:, **)
+    if ctx[:send_at].present?
+      MessageJob.set(wait_until: params[:send_at]).perform_later(id: model.id)
+    else
+      model.provider.send(model.channel, model.to, model.from)
+    end
   end
 end

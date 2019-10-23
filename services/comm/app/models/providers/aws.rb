@@ -12,9 +12,11 @@ module Providers
     def client
       return unless x_access_key_id && x_secret_access_key
 
+      # TODO: Determine if dev or prod (prod should not have endpoint seti)
       @client ||= ::Aws::SNS::Client.new(region: 'ap-southeast-1',
                                          access_key_id: access_key_id,
-                                         secret_access_key: secret_access_key)
+                                         secret_access_key: secret_access_key,
+                                         endpoint: 'http://localstack:4575')
     end
 
     def x_access_key_id
@@ -32,6 +34,7 @@ module Providers
 
     # TODO: toggle sending on and off
     def sms(to, body)
+      # TODO: toggle sending on and off
       return unless Settings.active
 
       # message.update(from: from)
