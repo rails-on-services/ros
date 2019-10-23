@@ -21,6 +21,5 @@ class Iam::PasswordsController < Devise::PasswordsController
     Tenant.find_by(schema_name: Tenant.account_id_to_schema(password_params[:account_id])) ||
       Tenant.find_by(alias: password_params[:account_id])
   end
-
 end
 # rubocop:enable Style/ClassAndModuleChildren
