@@ -18,6 +18,15 @@ module AssociationResource
       extract_resource_klass(model).safe_constantize
     end
 
+    def query_resource(model)
+      query = _resource_class(model)
+      return unless query
+
+      query = yield query if block_given?
+      resource_id = extract_resource_id(model)
+      query.where(id: resource_id).find.first
+    end
+
     private
 
     def persisted_resource?(model)
@@ -37,14 +46,6 @@ module AssociationResource
       return model.send(foreign_key) unless polymorphic
 
       model.send("#{name}_id")
-    end
-
-    def query_resource(model)
-      resource_klass = _resource_class(model)
-      return unless resource_klass
-
-      resource_id = extract_resource_id(model)
-      resource_klass.where(id: resource_id).first
     end
   end
 end

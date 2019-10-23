@@ -28,11 +28,12 @@ module AssociationResource
   # yields query for a given resource
   # @model.query_resource(:resource) {|query| query.where(some: 'hing')}
   def query_resource(name)
-    resource_klass = _resource_class(name)
+    resource_klass = self.class.find_resource(name)
     return unless resource_klass
 
-    query = yield resource_klass
-    query.find
+    resource_klass.query_resource(self) do |query|
+      yield query
+    end
   rescue JsonApiClient::Errors::ApiError => _e
     nil
   end
