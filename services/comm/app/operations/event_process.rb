@@ -2,9 +2,11 @@
 
 class EventProcess < ActivityBase
   # rubocop:disable Style/SignalException
+  # rubocop:disable Lint/UnreachableCode
   step :find_event
   fail :event_not_found
   step :create_messages_for_pool
+  # rubocop:enable Lint/UnreachableCode
   # rubocop:enable Style/SignalException
 
   def find_event(ctx, params:, **)
