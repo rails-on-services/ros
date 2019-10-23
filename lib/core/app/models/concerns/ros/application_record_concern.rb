@@ -35,55 +35,12 @@ module Ros
 
       def current_tenant; self.class.current_tenant end
 
-      after_commit :enqueue_after_commit_jobs
-
       after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
 
       def stream_cloud_event
         type = "#{Settings.service.name}.#{self.class.name.downcase}"
         Ros::StreamCloudEventJob.perform_later(type, id, as_json)
       end
-
-      def enqueue_after_commit_jobs
-        Ros::PlatformProducerEventJob.perform_now(self)
-        # perform(self)
-        # Ros::TenantProducerEventJob.perform_now(self)
-      end
-
-      def perform(record)
-        data = { event: record.persisted?, data: record }.to_json
-        queues = ['storage']
-        queues.each do |queue|
-          _queue_name = "#{queue}_platform_consumer_events".to_sym
-          # Ros::PlatformConsumerEventJob.set(queue: queue_name).perform_later(data)
-          perform_later(data)
-        end
-      end
-
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/MethodLength
-      def perform_later(record)
-        Rails.logger.debug record
-        payload = JSON.parse(record)
-        event = payload['event']
-        data = payload['data']
-        urn = Ros::Urn.from_urn(data['urn'])
-        if urn.is_platform_urn?
-          # PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
-          return
-        end
-
-        schema_name = Tenant.account_id_to_schema(urn.account_id)
-        Rails.logger.debug("Schema name #{schema_name}")
-        tenant = Tenant.find_by(schema_name: schema_name)
-        # raise InvalidTenantError unless tenant
-        tenant.switch do
-          method = "#{urn.service_name}_#{urn.resource_type}"
-          PlatformEventProcessor.send(method, urn: urn, event: event, data: data)
-        end
-      end
-      # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/AbcSize
 
       def as_json(*)
         super.merge('urn' => to_urn)

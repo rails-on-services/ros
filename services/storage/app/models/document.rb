@@ -2,46 +2,78 @@
 
 class Document < Storage::ApplicationRecord
   include HasAttachment
+
   belongs_to :transfer_map, optional: true
 
-  def self.modifier; 'uploads' end
+  def self.object_dir; 'uploads' end
 
-  # before_create :assign_transfer_map
+  def self.blob_key(_owner, blob)
+    blob.filename
+  end
 
-  def assign_transfer_map
-    self.transfer_map_id ||= begin
-      file_columns = File.readlines(local_path).first.chomp.split(',').sort
-      TransferMap.match(file_columns)&.id
+  # Takes array of events from SQS worker with keys to attached files. For each event/file it:
+  # creates an A/S blob and a Document record to attach the blob to
+  # It then downloads the blob, extracts the header and calls identify_transfer_map
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def self.attach_from_storage_events(events)
+    events.each do |event|
+      Rails.logger.debug { "Document received event #{event}" }
+      if event.type.eql?('created') && event.size.positive?
+        Rails.logger.debug { 'Processing created event' }
+        Tenant.find_by(schema_name: event.schema_name).switch do
+          blob = ActiveStorage::Blob.create(key: event.key, filename: File.basename(event.key),
+                                            content_type: 'text/csv', byte_size: event.size, checksum: event.etag)
+          document = Document.create
+          document.file.attach(blob)
+          # download the blob, write it to a temp file and read the header
+          header = Tempfile.create do |f|
+            f << document.file.download
+            f.rewind
+            f.readline
+          end.chomp
+          document.update(header: header)
+          document.identify_transfer_map
+        end
+      elsif event.type.eql? 'download'
+        Rails.logger.debug { 'Processing download event' }
+      else
+        Rails.logger.debug { 'NOT Processing unknown event' }
+      end
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
-  def remote_path
-    # "home/222222222/uploads/#{name}"
-    "home/#{current_tenant.schema_name.gsub('_', '')}/uploads/#{name}"
+  # For an HTTP upload the uploaded file is already on the local filesystem referenced by the io param
+  # so we just need to open the io object and read the first line
+  def after_attach(io)
+    update(header: File.open(io.tempfile, &:readline).chomp)
+    identify_transfer_map
   end
 
-  def local_path
-    "#{Rails.root}/tmp/#{remote_path}"
+  def identify_transfer_map
+    file_columns = header.split(',').sort
+    return unless (transfer_map_id = TransferMap.match(file_columns)&.id)
+
+    update(transfer_map_id: transfer_map_id)
+    enqueue
   end
 
-  def get; Rails.configuration.x.infra.resources.storage.primary.get(remote_path) end
+  def enqueue
+    Ros::StorageDocumentProcessJob.set(queue: target_service_queue).perform_later(job_payload.to_json)
+  end
 
-  def put; Rails.configuration.x.infra.resources.storage.primary.put(remote_path) end
+  # Service name where the job will be enqueued
+  def target_service_queue; "#{transfer_map.service}_default" end
+
+  def job_payload; attributes.slice('id') end
 
   def column_map
     return [] unless transfer_map
 
-    transfer_map.column_maps.pluck(:user_name, :name).each_with_object({}) do |a, h|
-      h[a[0].to_sym] = a[1]
+    transfer_map.column_maps.pluck(:user_name, :name).each_with_object({}) do |(key, value), hash|
+      hash[key.to_sym] = value
     end
-  end
-
-  def as_json(*)
-    super.merge(
-      'urn' => to_urn,
-      'target' => transfer_map&.target,
-      'remote_path' => remote_path,
-      'column_map' => column_map
-    )
   end
 end

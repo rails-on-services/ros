@@ -156,7 +156,8 @@ class RServices < Pry::ClassCommand
 
   def process
     output.puts "Services: #{Ros::Sdk.configured_services}"
-    output.puts "Endpoints: #{Ros::Sdk.service_endpoints}"
+    output.puts "\nEndpoints: #{Ros::Sdk.service_endpoints}"
+    output.puts "\nCurrent Credential: #{Ros::Sdk::Credential.authorization}"
   end
 
   Ros::Sdk::PryCommandSet.add_command(self)

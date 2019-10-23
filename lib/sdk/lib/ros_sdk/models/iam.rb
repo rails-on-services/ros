@@ -8,6 +8,7 @@ module Ros
     class Tenant < Base; end
     class FileFingerprint < Base; end
     class Credential < Base; end
+    class PublicKey < Base; end
     class User < Base
       def self.find_by_urn(username); where(username: username).first end
     end

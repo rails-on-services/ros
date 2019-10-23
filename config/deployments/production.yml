@@ -104,23 +104,6 @@ components:
                   name: demo
                   node_type: "cache.r5.large"
                   number_cache_clusters: 1
-          cdn:
-            config:
-              provider: aws
-            components:
-              # name will be used to compose the full dns name
-              cdn:
-                enabled: yes
-                bucket: cdn
-                url: https://cdn.uat.whistler.perxtech.io
-          object_storage:
-            config:
-              provider: aws
-            components:
-              app:
-                services: ['documents', 'reports', 'sftp']
-              cdn:
-                services: ['images']
       application:
         config:
           feature_from_branch: no

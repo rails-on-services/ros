@@ -15,20 +15,10 @@ class Root < Iam::ApplicationRecord
   #         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
   def jwt_payload
-    @jwt_payload ||= { iss: Settings.jwt.iss, sub: to_urn, scope: '*' }
+    @jwt_payload ||= { sub: to_urn, scope: '*' }
   end
 
   def current_tenant
     tenant
   end
-
-  # def self.find_for_jwt_authentication(warden_conditions)
-  #   binding.pry
-  #   super
-  # end
-
-  # def on_jwt_dispatch(token, payload)
-  #   binding.pry
-  #   super
-  # end
 end

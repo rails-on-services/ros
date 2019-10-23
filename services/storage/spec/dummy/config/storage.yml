@@ -1,20 +1,28 @@
 ---
-localstack:
+localstack: &localstack
   service: s3
-  bucket: home
+  bucket: test
   access_key_id: hello
   secret_access_key: hello
   endpoint: http://localstack:4572
-  region: 'ap-southeast-1'
+  region: localstack
   force_path_style: true
 
-amazon:
+amazon: &amazon
   service: s3
-  bucket: test
+  bucket: <%= ENV['PLATFORM__INFRA__RESOURCES__MQ__QUEUES__STORAGE_DATA__BUCKET_NAME'] %>
   access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
   secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
-  region: 'ap-southeast-1'
+  region: <%= ENV['AWS_DEFAULT_REGION'] %>
+
+disk: &disk
+  service: Disk
+  root: <%= Rails.root.join('tmp', 'active_storage') %>
+
+development:
+  # <<: *localstack
+  # <<: *disk
+  <<: *amazon
 
 test:
-  service: Disk
-  root: <%= Rails.root.join('tmp', 'test', 'active_storage') %>
+  <<: *disk

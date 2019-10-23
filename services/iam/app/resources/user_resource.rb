@@ -7,6 +7,7 @@ class UserResource < Iam::ApplicationResource
 
   has_many :groups
   has_many :credentials
+  has_many :public_keys
 
   filter :username
 
