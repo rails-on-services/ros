@@ -63,14 +63,14 @@ components:
                       primary:
                         provider: aws
             components:
-              account:
-                config:
-                  mount: no
-                  profiles: ['server']
-              billing:
-                config:
-                  mount: no
-                  profiles: ['server']
+              # account:
+              #   config:
+              #     mount: no
+              #     profiles: ['server']
+              # billing:
+              #   config:
+              #     mount: no
+              #     profiles: ['server']
               cognito:
                 config:
                   mount: no

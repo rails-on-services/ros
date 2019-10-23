@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe "public_keys requests", type: :request do
+RSpec.describe 'public_keys requests', type: :request do
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:url) { "/public_keys" }
+  let(:url) { '/public_keys' }
 
   context 'all' do
     include_context 'jsonapi requests'

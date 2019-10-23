@@ -18,7 +18,8 @@ module Ros
           next unless resources = resources_settings.dig(service)
           @resources[service] = ActiveSupport::OrderedOptions.new
           resource_type = "Ros::Infra::#{service.to_s.classify}".constantize.resource_type
-          resources.dig(resource_type).each_pair do |name, config|
+          next unless (resource = resources.dig(resource_type))
+          resource.each_pair do |name, config|
             require "ros/infra/#{config.provider}/#{service}"
             klass = "Ros::Infra::#{config.provider.capitalize}::#{service.capitalize}".constantize
             @resources[service][name] = klass.new(config)

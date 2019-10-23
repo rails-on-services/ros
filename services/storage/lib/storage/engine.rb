@@ -30,7 +30,7 @@ module Storage
           config.sqs_client = Ros::Infra.resources.mq.storage_data.client
           Rails.logger.debug("Configured SQS worker with #{config.options}")
         end
-      # elsif defined?(GcpQueueWorker)
+        # elsif defined?(GcpQueueWorker)
       end
     end
 

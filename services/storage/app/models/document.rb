@@ -7,34 +7,43 @@ class Document < Storage::ApplicationRecord
 
   def self.object_dir; 'uploads' end
 
-  def self.blob_key(owner, blob)
+  def self.blob_key(_owner, blob)
     blob.filename
   end
 
   # Takes array of events from SQS worker with keys to attached files. For each event/file it:
   # creates an A/S blob and a Document record to attach the blob to
   # It then downloads the blob, extracts the header and calls identify_transfer_map
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def self.attach_from_storage_events(events)
     events.each do |event|
       Rails.logger.debug { "Document received event #{event}" }
-      if event.type.eql? 'created' and event.size.positive?
-        Rails.logger.debug { "Processing created event" }
+      if event.type.eql?('created') && event.size.positive?
+        Rails.logger.debug { 'Processing created event' }
         Tenant.find_by(schema_name: event.schema_name).switch do
           blob = ActiveStorage::Blob.create(key: event.key, filename: File.basename(event.key),
                                             content_type: 'text/csv', byte_size: event.size, checksum: event.etag)
           document = Document.create
           document.file.attach(blob)
           # download the blob, write it to a temp file and read the header
-          document.update(header: Tempfile.create { |f| f << document.file.download; f.rewind; f.readline }.chomp)
+          header = Tempfile.create do |f|
+            f << document.file.download
+            f.rewind
+            f.readline
+          end.chomp
+          document.update(header: header)
           document.identify_transfer_map
         end
       elsif event.type.eql? 'download'
-        Rails.logger.debug { "Processing download event" }
+        Rails.logger.debug { 'Processing download event' }
       else
-        Rails.logger.debug { "NOT Processing unknown event" }
+        Rails.logger.debug { 'NOT Processing unknown event' }
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   # For an HTTP upload the uploaded file is already on the local filesystem referenced by the io param
   # so we just need to open the io object and read the first line
@@ -45,7 +54,8 @@ class Document < Storage::ApplicationRecord
 
   def identify_transfer_map
     file_columns = header.split(',').sort
-    return unless transfer_map_id = TransferMap.match(file_columns)&.id
+    return unless (transfer_map_id = TransferMap.match(file_columns)&.id)
+
     update(transfer_map_id: transfer_map_id)
     enqueue
   end

@@ -20,6 +20,7 @@ module Storage
     # rubocop:disable Naming/AccessorMethodName
     def set_bucket(bucket)
       return unless @client
+
       @bucket = @client.bucket(bucket)
     end
     # rubocop:enable Naming/AccessorMethodName

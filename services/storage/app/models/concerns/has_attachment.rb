@@ -14,6 +14,9 @@ module HasAttachment
     self.class.upload(io: io, owner: self)
   end
 
+  # rubocop:disable Metrics/BlockLength
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   class_methods do
     def upload(io:, owner: nil)
       owner ||= create
@@ -31,7 +34,7 @@ module HasAttachment
       owner
     end
 
-    def blob_key(owner, blob)
+    def blob_key(_owner, blob)
       blob.class.generate_unique_secure_token
     end
 
@@ -49,7 +52,7 @@ module HasAttachment
     # Examples: uploads, downloads; used on sftp service
     def object_dir; nil end
 
-    def bucket_name; bucket.name end
+    delegate :name, to: :bucket, prefix: true
 
     def bucket; Settings.infra.resources.storage.buckets[bucket_service] end
 
@@ -59,4 +62,7 @@ module HasAttachment
 
     def service; ActiveStorage::Blob.service end
   end
+  # rubocop:enable Metrics/BlockLength
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 end
