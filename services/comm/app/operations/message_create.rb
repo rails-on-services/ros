@@ -2,10 +2,12 @@
 
 class MessageCreate < ActivityBase
   # rubocop:disable Style/SignalException
+  # rubocop:disable Lint/UnreachableCode
   step :setup_message
   fail :invalid_message
   step :save_sms
   setp :send_to_provider
+  # rubocop:enable Lint/UnreachableCode
   # rubocop:enable Style/SignalException
 
   def setup_message(ctx, params:, **)
