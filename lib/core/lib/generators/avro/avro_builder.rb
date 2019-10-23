@@ -32,29 +32,33 @@ class AvroBuilder
   end
 
   def build_attributes_json
-    model_columns.map do |column|
-      data_type = DICTIONARY[column.sql_type_metadata.type] || 'string'
-      type = column_required(column.name) ? data_type : ['null', data_type]
+    all_attributes = model_columns.map do |column|
+      next { name: column.name, type: 'int' } if column.name == 'id'
 
-      {
-        "name": column.name,
-        "type": type,
-        "default": "null"
-      }
+      data_type = DICTIONARY[column.sql_type_metadata.type] || 'string'
+      attribute_hash(column.name, data_type)
     end
+
+    all_attributes.push(attribute_hash('urn', 'string'))
+  end
+
+  def attribute_hash(column_name, data_type)
+    {
+      "name": column_name,
+      "type": ['null', data_type],
+      "default": nil
+    }
+  end
+
+  def urn
+    {
+      "name": 'urn',
+      "type": %w[null string],
+      "default": nil
+    }
   end
 
   def model_columns
     model.columns
-  end
-
-  def column_required(column_name)
-    return true if column_name == 'id'
-
-    model.validators_on(column_name.to_sym).map(&:class).include? presence_validator
-  end
-
-  def presence_validator
-    ActiveRecord::Validations::PresenceValidator
   end
 end
