@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class DocumentResource < Storage::ApplicationResource
-  attributes :name, :etag, :size, :transfer_map_id
-  attributes :bucket_name, :blob
+  attributes :transfer_map, :target, :column_map, :blob, :platform_event_state
 
-  def bucket_name; @model.class.bucket_name end
+  def transfer_map; @model.transfer_map.name end
+  def target; @model.transfer_map.target end
+  def column_map; @model.column_map end
 
   def blob; JSON.parse(@model.file.blob.to_json) end
 end

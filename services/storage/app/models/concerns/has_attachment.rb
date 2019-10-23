@@ -7,18 +7,32 @@ module HasAttachment
     has_one_attached :file
   end
 
+  def after_attach(io); end
+
+  def upload(io:)
+    file.purge # ensure any existing attachment is removed
+    self.class.upload(io: io, owner: self)
+  end
+
   class_methods do
-    def upload(io:)
-      owner = create
-      service.set_bucket(bucket_name)
+    def upload(io:, owner: nil)
+      owner ||= create
+      io_filename = io.path if io.respond_to?(:path)
+      io_filename = io.original_filename if io.respond_to?(:original_filename)
       upload = ActiveStorage::Blob.new.tap do |blob|
-        blob.filename = io.original_filename
-        blob.key = "#{object_root}/#{blob.class.generate_unique_secure_token}"
+        blob.filename = io_filename
+        blob.key = "#{object_root}/#{blob_key(owner, blob)}"
         blob.upload(io)
         blob.save!
       end
+      service.set_bucket(bucket_name)
       owner.file.attach(upload)
+      owner.after_attach(io)
       owner
+    end
+
+    def blob_key(owner, blob)
+      blob.class.generate_unique_secure_token
     end
 
     def object_root
@@ -35,7 +49,9 @@ module HasAttachment
     # Examples: uploads, downloads; used on sftp service
     def object_dir; nil end
 
-    def bucket_name; Settings.infra.resources.storage.buckets[bucket_service] end
+    def bucket_name; bucket.name end
+
+    def bucket; Settings.infra.resources.storage.buckets[bucket_service] end
 
     def bucket_service; Settings.infra.resources.storage.services[service_name] end
 

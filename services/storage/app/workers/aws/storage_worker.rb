@@ -7,7 +7,8 @@ module Aws
   class StorageWorker
     include Shoryuken::Worker
 
-    shoryuken_options queue: Ros::Infra.resources.mq.storage_sftp_home.name, auto_delete: true
+    shoryuken_options queue: Ros::Infra.resources.mq.storage_data.name, auto_delete: true
+    Rails.logger.debug("Configured to receive events from queue: #{Ros::Infra.resources.mq.storage_data.name}")
 
     # Process a lifecycle event from the S3 bucket
     def perform(_sqs_msg, payload)

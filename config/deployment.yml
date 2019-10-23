@@ -69,10 +69,25 @@ components:
                   host: api
                 sftp:
                   host: sftp
-          object_storage:
-            components: {}
           cdn:
-            components: {}
+            config:
+              provider: aws
+            components:
+              # name will be used to compose the full dns name
+              cdn:
+                enabled: yes
+                bucket: cdn
+                url: https://cdn.uat.demo.cnfs.io
+          object_storage:
+            config:
+              provider: aws
+            components:
+              app:
+                services: ['documents', 'reports', 'sftp']
+                provider: aws
+              cdn:
+                services: ['images']
+                provider: aws
           kubernetes:
             config:
               provider: aws
@@ -146,18 +161,18 @@ components:
                     port: 24224
                     schema_registry_url: http://kafkastack:8081
             components:
-              account:
-                config:
-                  enabled: no
-                  mount: yes
-                  profiles: ['server', 'worker']
-                  ros: yes
-              billing:
-                config:
-                  enabled: no
-                  mount: yes
-                  profiles: ['server', 'worker']
-                  ros: yes
+              # account:
+              #   config:
+              #     enabled: no
+              #     mount: yes
+              #     profiles: ['server', 'worker']
+              #     ros: yes
+              # billing:
+              #   config:
+              #     enabled: no
+              #     mount: yes
+              #     profiles: ['server', 'worker']
+              #     ros: yes
               cognito:
                 config:
                   mount: yes

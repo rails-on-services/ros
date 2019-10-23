@@ -32,8 +32,7 @@ Rails.application.configure do
 
   config.reload_classes_only_on_change = false
 
-  # config.active_storage.service = :local
-  config.active_storage.service = :amazon
+  config.active_storage.service = Rails.env.to_sym
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load

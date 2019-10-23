@@ -60,7 +60,7 @@ module Ros
 
         def configure_notifications
           client.put_bucket_notification_configuration(notification_configuration)
-          Rails.logger.info("Notifications successufully configured notifications for #{name}")
+          Rails.logger.info("Notifications successufully configured notifications for #{name} with #{notification_configuration}")
         rescue ::Aws::S3::Errors::InvalidArgument => error
           Rails.logger.warn("Unable to create notification on bucket #{name}. #{error}")
           # TODO: Send exception report to Sentry
@@ -102,21 +102,25 @@ module Ros
           end
         end
 
+        def head_object(path)
+          client.head_object(bucket: name, key: path)
+        end
+
         # Ros::Infra.resources.storage.app.cp(source, target)
         # by default source is 'storage' unless the prefix 'fs:' is part of the source name
         # cp('this/file.txt') # => Copies storage:this/file.txt to fs:file.txt
         # cp('this/file.txt', 'that/name') If 
         # cp('fs:this/file') # 
         # cp('fs:this/file', 'that/name')
-        def cp(source, target = nil)
+        def cp(source, target = nil, metadata = {})
           storage = source.start_with?('fs:') ? :target : :source
           cmd = storage.eql?(:source) ? :get : :put
-          source.gsub!(/^fs:/, '')
+          source = source.gsub(/^fs:/, '')
           target ||= File.basename(source)
-          exec(cmd, source, target)
+          exec(cmd, source, target, metadata)
         end
 
-        def exec(cmd, source, target)
+        def exec(cmd, source, target, metadata = {})
           unless status.eql?(:ok)
             Rails.logger.warn("#{cmd} #{source} on bucket #{name} not attempted due to status #{status}")
             return
@@ -125,7 +129,7 @@ module Ros
           if cmd.eql?(:get)
             resource.object(source).get(response_target: "#{local_prefix}/#{target}")
           elsif cmd.eql?(:put)
-            resource.object(target).upload_file("#{local_prefix}/#{source}")
+            resource.object(target).upload_file("#{local_prefix}/#{source}", metadata: metadata)
           end
         rescue ::Aws::S3::Errors::InvalidAccessKeyId
           self.status = error.code

@@ -1,3 +1,3 @@
+---
 queues:
-  # - sftp-events
-  - storage-sftp-home
+  - <%= ENV['PLATFORM__INFRA__RESOURCES__MQ__QUEUES__STORAGE_DATA__BUCKET_NAME'] %>-<%= ENV['PLATFORM__FEATURE_SET'] %>-storage-data
