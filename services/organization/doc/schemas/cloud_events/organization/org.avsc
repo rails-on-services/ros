@@ -12,7 +12,7 @@
         "null",
         "string"
       ],
-      "default": "null"
+      "default": null
     },
     {
       "name": "description",
@@ -20,7 +20,7 @@
         "null",
         "string"
       ],
-      "default": "null"
+      "default": null
     },
     {
       "name": "properties",
@@ -28,7 +28,7 @@
         "null",
         "string"
       ],
-      "default": "null"
+      "default": null
     },
     {
       "name": "created_at",
@@ -39,7 +39,7 @@
           "logicalType": "timestamp-millis"
         }
       ],
-      "default": "null"
+      "default": null
     },
     {
       "name": "updated_at",
@@ -50,7 +50,7 @@
           "logicalType": "timestamp-millis"
         }
       ],
-      "default": "null"
+      "default": null
     },
     {
       "name": "urn",
@@ -58,7 +58,7 @@
         "null",
         "string"
       ],
-      "default": "null"
+      "default": null
     }
   ]
 }
