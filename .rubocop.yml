@@ -36,3 +36,4 @@ AllCops:
     - '**/Rakefile'
     - '**/Gemfile'
     - '**/sqs_test.rb'
+    - '.github/**/*'
