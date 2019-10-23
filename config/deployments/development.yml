@@ -87,7 +87,6 @@ components:
                         mq:
                           queues:
                             storage_data:
-                              # name: 'storage-sftp-data'
                               # endpoint: http://localstack:4576
                               # verify_checksums: no
                               region: ap-southeast-1

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'public_keys requests', type: :request do
+RSpec.describe 'public_keys requests', type: :request, exclude: true do
   let(:tenant) { Tenant.first }
   let(:mock) { true }
   let(:url) { '/public_keys' }

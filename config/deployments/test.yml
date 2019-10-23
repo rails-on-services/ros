@@ -43,25 +43,17 @@ components:
                 event_logging:
                   enabled: no
                 infra:
-                  services:
-                    storage:
-                      aws:
-                        endpoint: http://localstack:4572
-                        force_path_style: yes
-                        region: ap-southeast-1
-                    mq:
-                      aws:
-                        endpoint: http://localstack:4576
-                        verify_checksums: no
-                        region: ap-southeast-1
                   resources:
                     storage:
-                      primary:
-                        provider: aws
-                        enabled: yes
-                    mq:
-                      primary:
-                        provider: aws
+                      config: &infra_services_object_storage
+                        endpoint: http://localstack:4572
+                        force_path_style: yes
+                        # region: ap-southeast-1
+                      buckets:
+                        app:
+                          <<: *infra_services_object_storage
+                        cdn:
+                          <<: *infra_services_object_storage
             components:
               # account:
               #   config:
@@ -91,3 +83,15 @@ components:
                 config:
                   mount: no
                   profiles: ['server']
+                environment:
+                  platform:
+                    infra:
+                      resources:
+                        mq:
+                          queues:
+                            storage_data:
+                              endpoint: http://localstack:4576
+                              verify_checksums: no
+                              # region: ap-southeast-1
+                              provider: aws
+                              bucket_name: app-development-demo-cnfs-io

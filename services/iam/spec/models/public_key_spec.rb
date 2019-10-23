@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe PublicKey, type: :model do
+RSpec.describe PublicKey, type: :model, exclude: true do
   include_examples 'application record concern' do
     let(:tenant) { Tenant.first }
     let!(:subject) { create(factory_name) }
