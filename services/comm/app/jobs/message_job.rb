@@ -5,6 +5,6 @@ class MessageJob < Comm::ApplicationJob
   # After the record is created, a Job is created to send to the destination
   # This means that the correct tenant must be selected by apartment
   def perform(message)
-    message.provider.send(message.channel, message)
+    message.provider.send(message.channel, message.to, message.from)
   end
 end

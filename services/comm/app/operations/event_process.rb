@@ -28,8 +28,10 @@ class EventProcess < ActivityBase
     event.users.each do |user|
       content = template.render(user, campaign)
 
-      # res = MessageCreate.call(params: { user: user, content: content })
-      event.messages.create(provider: event.provider, channel: event.channel, to: user.phone_number, body: content)
+      MessageCreate.call(params: { to: user.phone_number,
+                                   provider: event.provider,
+                                   channel: event.channel,
+                                   body: content })
     end
     event.publish!
   end
