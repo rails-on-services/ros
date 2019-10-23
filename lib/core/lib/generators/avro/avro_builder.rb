@@ -2,10 +2,14 @@
 
 class AvroBuilder
   DICTIONARY = {
+    bigint: 'int',
     integer: 'int',
     string: 'string',
-    datetime: 'string',
-    jsonb: 'string'
+    text: 'string',
+    datetime: 'long',
+    jsonb: 'string',
+    float: 'double',
+    boolean: 'boolean'
   }.freeze
 
   def initialize(name, service_name)
@@ -34,7 +38,8 @@ class AvroBuilder
 
       {
         "name": column.name,
-        "type": type
+        "type": type,
+        "default": "null"
       }
     end
   end
