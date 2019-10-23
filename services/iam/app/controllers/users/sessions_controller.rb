@@ -10,7 +10,7 @@ class Users::SessionsController < Iam::SessionsController
   end
 
   def sign_in_params
-    jsonapi_params.permit(%i[username password account_id])
+    jsonapi_params.permit(%i[email username password account_id])
   end
 end
 # rubocop:enable Style/ClassAndModuleChildren
