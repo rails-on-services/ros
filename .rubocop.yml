@@ -26,6 +26,7 @@ Metrics/BlockLength:
     - '**/spec/policies/**/*.rb'
     - '**/spec/requests/**/*.rb'
 AllCops:
+  TargetRubyVersion: 2.6
   Exclude:
     - '**/schema.rb'
     - '**/db/migrate/*.rb'
