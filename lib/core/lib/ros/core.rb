@@ -81,15 +81,18 @@ module Ros
     attr_reader :claims, :token
 
     def initialize(payload)
-      if payload.is_a? Hash # From IAM::User, IAM::Root
-        @claims = payload.merge(default_payload)
-      else # From a bearer token
+      # From IAM::User, IAM::Root
+      if payload.is_a? Hash
+        # Ensure that any token passed in via the payload is overwritten by the proper token
+        @claims = payload.merge(valid_token)
+      # From a bearer token
+      else
         @token = payload.gsub('Bearer ', '')
         decode
       end
     end
 
-    def default_payload
+    def valid_token
       issued_at = Time.now.to_i
       token = (expires_in = Settings.dig(:jwt, :token_expires_in_seconds)) ? { exp: issued_at + expires_in } : {}
       token.merge(iss: iss, aud: aud, iat: issued_at)
