@@ -35,6 +35,10 @@ module Ros
       Ros::RouteGenerator.new([name]).invoke_all
     end
 
+    def generate_sdk_endpoint
+      Ros::SdkEndpointGenerator.new([name]).invoke_all
+    end
+
     def generate_controller
       invoke(:controller, [plural_name])
       insert_into_file "app/controllers/#{plural_name}_controller.rb", before: 'class' do
