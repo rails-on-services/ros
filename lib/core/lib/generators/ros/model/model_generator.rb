@@ -10,7 +10,11 @@ module Ros
       invoke(:model)
     end
 
-    def gsub_created_file
+    def modify_files
+      insert_into_file "app/models/#{name}.rb", before: 'class' do
+        "# frozen_string_literal: true\n\n"
+      end
+
       gsub_file(
         "app/models/#{name}.rb",
         'ApplicationRecord',
