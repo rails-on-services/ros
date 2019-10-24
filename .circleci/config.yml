@@ -84,10 +84,27 @@ jobs:
           command: |
             echo "export PLATFORM_SERVICES=($(ros be ls platform --enabled | circleci tests split))" >> $BASH_ENV
       - run:
+          # without running the services, the container will be deleted after execution
+          # we need to have the container be live to copy out the test results
+          name: Up selected services
+          command: |
+            echo "Up services: ${PLATFORM_SERVICES[@]}"
+            ros be up -dbv ${PLATFORM_SERVICES[@]}
+      - run:
           name: Run tests
           command: |
             echo "Test services: ${PLATFORM_SERVICES[@]}"
-            ros be test -v --build --fail-fast ${PLATFORM_SERVICES[@]}
+            ros be test -v --fail-fast --rspec-options='--format documentation --format RspecJunitFormatter -o /tmp/rspec_junit/rspec.xml' ${PLATFORM_SERVICES[@]}
+      - run:
+          name: Save test result
+          when: always
+          command: |
+            mkdir rspec_junit
+            for service in ${PLATFORM_SERVICES[@]}; do
+              ros be copy_service_file ${service} /tmp/rspec_junit/rspec.xml "rspec_junit/${service}.xml"
+            done
+      - store_test_results:
+          path: ~/project/rspec_junit
       - run:
           # CircleCI sometimes times out when doing push, so separate the push
           # with retry
