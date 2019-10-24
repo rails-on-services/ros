@@ -40,16 +40,7 @@ module Ros
     end
 
     def generate_controller
-      invoke(:controller, [plural_name])
-      insert_into_file "app/controllers/#{plural_name}_controller.rb", before: 'class' do
-        "# frozen_string_literal: true\n\n"
-      end
-
-      gsub_file(
-        "app/controllers/#{plural_name}_controller.rb",
-        'ApplicationController',
-        "#{parent_module}ApplicationController"
-      )
+      Ros::ControllerGenerator.new([name]).invoke_all
     end
 
     def generate_model
