@@ -13,6 +13,8 @@ class Tenant < Storage::ApplicationRecord
     Apartment::Tenant.switch('public') do
       SftpFile.find_or_create_by!(key: 'config/users.conf').upload(io: File.open(sftp_user_content))
     end
+  rescue StandardError
+    Rails.logger.warn('error')
   end
 
   def self.sftp_user_content
