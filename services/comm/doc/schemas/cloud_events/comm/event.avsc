@@ -1,5 +1,5 @@
 {
-  "name": "cognito.endpoint",
+  "name": "comm.event",
   "type": "record",
   "fields": [
     {
@@ -7,10 +7,26 @@
       "type": "int"
     },
     {
-      "name": "url",
+      "name": "name",
       "type": [
         "null",
         "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "campaign_id",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "template_id",
+      "type": [
+        "null",
+        "int"
       ],
       "default": null
     },
@@ -31,10 +47,53 @@
       "default": null
     },
     {
-      "name": "properties",
+      "name": "owner_type",
       "type": [
         "null",
         "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "owner_id",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "provider_id",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "status",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "channel",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "send_at",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
       ],
       "default": null
     },

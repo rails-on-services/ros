@@ -1,26 +1,10 @@
 {
-  "name": "cognito.pool",
+  "name": "storage.image",
   "type": "record",
   "fields": [
     {
       "name": "id",
       "type": "int"
-    },
-    {
-      "name": "name",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "properties",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
     },
     {
       "name": "created_at",

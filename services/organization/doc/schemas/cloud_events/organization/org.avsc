@@ -11,35 +11,54 @@
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "description",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "properties",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "default": null
     },
     {
       "name": "created_at",
       "type": [
         "null",
-        "string"
-      ]
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
     },
     {
       "name": "updated_at",
       "type": [
         "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
         "string"
-      ]
+      ],
+      "default": null
     }
   ]
 }

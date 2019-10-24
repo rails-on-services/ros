@@ -1,5 +1,5 @@
 {
-  "name": "cognito.pool",
+  "name": "organization.tenant",
   "type": "record",
   "fields": [
     {
@@ -7,7 +7,7 @@
       "type": "int"
     },
     {
-      "name": "name",
+      "name": "schema_name",
       "type": [
         "null",
         "string"
@@ -16,6 +16,14 @@
     },
     {
       "name": "properties",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "platform_properties",
       "type": [
         "null",
         "string"

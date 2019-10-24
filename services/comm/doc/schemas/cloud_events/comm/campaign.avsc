@@ -1,5 +1,5 @@
 {
-  "name": "cognito.pool",
+  "name": "comm.campaign",
   "type": "record",
   "fields": [
     {
@@ -15,7 +15,31 @@
       "default": null
     },
     {
-      "name": "properties",
+      "name": "description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "owner_type",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "owner_id",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "base_url",
       "type": [
         "null",
         "string"

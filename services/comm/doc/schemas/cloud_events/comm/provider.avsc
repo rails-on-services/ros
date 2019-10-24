@@ -1,5 +1,5 @@
 {
-  "name": "cognito.user",
+  "name": "comm.provider",
   "type": "record",
   "fields": [
     {
@@ -7,7 +7,7 @@
       "type": "int"
     },
     {
-      "name": "primary_identifier",
+      "name": "name",
       "type": [
         "null",
         "string"
@@ -15,7 +15,7 @@
       "default": null
     },
     {
-      "name": "title",
+      "name": "type",
       "type": [
         "null",
         "string"
@@ -23,7 +23,7 @@
       "default": null
     },
     {
-      "name": "first_name",
+      "name": "encrypted_credentials",
       "type": [
         "null",
         "string"
@@ -31,7 +31,7 @@
       "default": null
     },
     {
-      "name": "last_name",
+      "name": "encrypted_credentials_iv",
       "type": [
         "null",
         "string"
@@ -39,7 +39,7 @@
       "default": null
     },
     {
-      "name": "phone_number",
+      "name": "encrypted_credential_1",
       "type": [
         "null",
         "string"
@@ -47,7 +47,7 @@
       "default": null
     },
     {
-      "name": "email_address",
+      "name": "encrypted_credential_1_iv",
       "type": [
         "null",
         "string"
@@ -55,7 +55,31 @@
       "default": null
     },
     {
-      "name": "properties",
+      "name": "encrypted_credential_2",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "encrypted_credential_2_iv",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "encrypted_credential_3",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "encrypted_credential_3_iv",
       "type": [
         "null",
         "string"

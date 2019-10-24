@@ -1,5 +1,5 @@
 {
-  "name": "cognito.user",
+  "name": "comm.whatsapp",
   "type": "record",
   "fields": [
     {
@@ -7,7 +7,7 @@
       "type": "int"
     },
     {
-      "name": "primary_identifier",
+      "name": "sms_message_sid",
       "type": [
         "null",
         "string"
@@ -15,7 +15,7 @@
       "default": null
     },
     {
-      "name": "title",
+      "name": "num_media",
       "type": [
         "null",
         "string"
@@ -23,7 +23,7 @@
       "default": null
     },
     {
-      "name": "first_name",
+      "name": "sms_sid",
       "type": [
         "null",
         "string"
@@ -31,7 +31,7 @@
       "default": null
     },
     {
-      "name": "last_name",
+      "name": "sms_status",
       "type": [
         "null",
         "string"
@@ -39,7 +39,7 @@
       "default": null
     },
     {
-      "name": "phone_number",
+      "name": "body",
       "type": [
         "null",
         "string"
@@ -47,7 +47,7 @@
       "default": null
     },
     {
-      "name": "email_address",
+      "name": "to",
       "type": [
         "null",
         "string"
@@ -55,7 +55,39 @@
       "default": null
     },
     {
-      "name": "properties",
+      "name": "num_segments",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "message_sid",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "account_sid",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "from",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "api_version",
       "type": [
         "null",
         "string"

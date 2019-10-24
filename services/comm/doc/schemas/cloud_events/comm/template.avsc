@@ -1,5 +1,5 @@
 {
-  "name": "cognito.pool",
+  "name": "comm.template",
   "type": "record",
   "fields": [
     {
@@ -15,7 +15,23 @@
       "default": null
     },
     {
-      "name": "properties",
+      "name": "description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "content",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "status",
       "type": [
         "null",
         "string"
