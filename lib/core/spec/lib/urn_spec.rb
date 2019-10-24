@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Ros::Urn do
-  let(:urn) { 'urn:perx:campaign::222222222:entity/1' }
+  let(:urn) { 'urn:ros:campaign::222222222:entity/1' }
   let(:urn_object) { Ros::Urn.new(*urn.split(':')) }
 
   context 'class methods' do
@@ -14,7 +14,7 @@ RSpec.describe Ros::Urn do
     it 'correctly parse `from_urn`' do
       from_urn = Ros::Urn.from_urn(urn)
       expect(from_urn.txt).to eq('urn')
-      expect(from_urn.partition_name).to eq('perx')
+      expect(from_urn.partition_name).to eq('ros')
       expect(from_urn.service_name).to eq('campaign')
       expect(from_urn.region).to eq('')
       expect(from_urn.account_id).to eq('222222222')
