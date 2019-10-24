@@ -6,26 +6,12 @@ module Ros
       return unless model_defined?(name.classify)
 
       template(source, "#{destination}/#{name}.py", values)
-      create_python_init_file(destination) unless python_init_file?(destination)
-      create_python_init_file(lib_folder) unless python_init_file?(lib_folder)
     end
 
     private
 
-    def create_python_init_file(destination)
-      create_file "#{destination}/#{python_init_file_name}"
-    end
-
     def model_defined?(name)
       Object.const_defined?(name)
-    end
-
-    def python_init_file_name
-      '__init__.py'
-    end
-
-    def python_init_file?(destination)
-      File.exist? destination.join(python_init_file_name)
     end
 
     def source_paths
@@ -70,7 +56,9 @@ module Ros
 
     def extra_args
       associations_attributes = model.attributes.select { |attribute| attribute.end_with?('_id') }
-      associations_attributes.keys.join(', ')
+      return if associations_attributes.keys.empty?
+
+      associations_attributes.keys.join(', ').prepend(', ')
     end
 
     def build_json_string(attributes)
