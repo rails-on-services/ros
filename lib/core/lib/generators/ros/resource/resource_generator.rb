@@ -8,6 +8,8 @@ module Ros
 
     # rubocop: disable Metrics/AbcSize
     def create_files
+      args = @_initializer[1]
+
       create_file "app/resources/#{name}_resource.rb", <<~FILE
         # frozen_string_literal: true
 

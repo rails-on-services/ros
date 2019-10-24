@@ -12,7 +12,7 @@ module Ros
     end
 
     def generate_resource
-      Ros::ResourceGenerator.new([name]).invoke_all
+      Ros::ResourceGenerator.new([name], @args).invoke_all
     end
 
     def generate_resource_spec
