@@ -7,8 +7,6 @@ module Ros
     include GeneratorsHelper
 
     def create_files
-      binding.pry
-
       template(source, "app/controllers/#{plural_name}_controller.rb", values)
     end
 
