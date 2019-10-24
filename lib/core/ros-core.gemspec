@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'zero-rails_openapi', '2.1.0'
   spec.add_dependency 'config', '1.7.1'
   spec.add_dependency 'rack-cors'
-  spec.add_dependency 'rack-fluentd-logger', '0.1.4'
+  spec.add_dependency 'rack-fluentd-logger', '0.1.5'
   spec.add_dependency 'avro_turf', '~> 0.9.0'
   # spec.add_dependency 'ros_sdk', '~> 0.1.0'
 
