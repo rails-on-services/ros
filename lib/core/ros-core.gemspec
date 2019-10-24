@@ -40,4 +40,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'factory_bot_rails', '~> 5.0.2'
   spec.add_development_dependency 'rspec-rails', '~> 3.8.2'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
 end
