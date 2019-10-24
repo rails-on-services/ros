@@ -89,7 +89,8 @@ jobs:
           name: Up selected services
           command: |
             echo "Up services: ${PLATFORM_SERVICES[@]}"
-            ros be up -dbv ${PLATFORM_SERVICES[@]}
+            ros be build -v ${PLATFORM_SERVICES[@]}
+            ros be up -dv ${PLATFORM_SERVICES[@]}
       - run:
           name: Run tests
           command: |
