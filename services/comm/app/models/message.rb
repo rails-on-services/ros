@@ -5,7 +5,7 @@ class Message < Comm::ApplicationRecord
   belongs_to :owner, polymorphic: true
   # api_belongs_to :cognito_user_id, class_name: 'Ros::Cognito::User'
 
-  validate :provider_channel
+  validate :provider_channel, if: :provider
 
   def provider_channel
     return if channel.in? provider.class.services

@@ -4,7 +4,8 @@ class MessageCreate < ActivityBase
   # rubocop:disable Style/SignalException
   # rubocop:disable Lint/UnreachableCode
   step :valid_send_at
-  fail :invalid_send_at, Output(:failure) => End(:failure)
+  # NOTE: Fail fast is not available in a Railway activity
+  fail :invalid_send_at, Output(:failure) => End(:failure), Output(:success) => End(:failure)
   step :setup_message
   fail :invalid_message
   step :save_sms
@@ -21,9 +22,12 @@ class MessageCreate < ActivityBase
     return true if ctx[:send_at].blank?
 
     begin
-      ctx[:send_at] = Time.zone.parse(ctx[:send_at])
+      parsed_send_at = Time.zone.parse(ctx[:send_at])
+      return false if parsed_send_at.nil?
+
+      ctx[:send_at] = parsed_send_at
     rescue ArgumentError
-      ctx[:send_at] = nil
+      return false
     end
 
     !ctx[:send_at].nil?
@@ -50,7 +54,7 @@ class MessageCreate < ActivityBase
     if ctx[:send_at].present?
       MessageJob.set(wait_until: ctx[:send_at]).perform_later(id: model.id)
     else
-      model.provider.send(model.channel, model.to, model.from)
+      MessageJob.perform_now(id: model.id)
     end
   end
 end
