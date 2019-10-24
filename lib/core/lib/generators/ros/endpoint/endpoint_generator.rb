@@ -45,7 +45,7 @@ module Ros
     end
 
     def generate_model
-      Ros::ModelGenerator.new([name]).invoke_all
+      Ros::ModelGenerator.new(ARGV).invoke_all
     end
 
     def generate_model_specs
