@@ -50,7 +50,7 @@ class MessageCreate < ActivityBase
     if ctx[:send_at].present?
       MessageJob.set(wait_until: ctx[:send_at]).perform_later(id: model.id)
     else
-      MessageJob.perform_now(id: model.id)
+      model.provider.send(model.channel, model.to, model.from)
     end
   end
 end

@@ -6,10 +6,14 @@ RSpec.describe EventProcess, type: :operation do
   let(:operation) { described_class.call(params: op_params) }
   let(:result) { OperationResult.new(*operation) }
 
+  before do
+    allow(MessageCreate).to receive(:call).and_return true
+  end
+
   context 'when the event has been setup properly' do
     let(:users) { create_list :user, 5 }
     let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new(users: users)) }
-    let!(:event) { create :event, target_type: 'Ros::Cognito::Pool', target_id: 1 }
+    let!(:event) { create :event }
     let(:op_params) { { id: event.id } }
 
     it 'runs successfully' do
@@ -17,7 +21,9 @@ RSpec.describe EventProcess, type: :operation do
     end
 
     it 'creates one message per user' do
-      expect { result }.to change { Message.count }.by(users.length)
+      result
+      # TODO: Check that params are passed properly
+      expect(MessageCreate).to have_received(:call).exactly(users.length).times
     end
   end
 
@@ -30,7 +36,8 @@ RSpec.describe EventProcess, type: :operation do
     end
 
     it 'does not create messages for any users' do
-      expect { result }.to_not(change { Message.count })
+      result
+      expect(MessageCreate).to_not have_received(:call)
     end
   end
 end

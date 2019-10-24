@@ -5,11 +5,14 @@ require 'rails_helper'
 RSpec.describe MessageCreate, type: :operation do
   let(:operation) { described_class.call(params: op_params) }
   let(:result) { OperationResult.new(*operation) }
+  # NOTE: an event needs a valid target
+  let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   # TODO: Who should be the owner of a message?
-  let!(:message_owner) { create :event }
+  let(:provider) { create :provider_aws }
+  let!(:message_owner) { create :event, provider: provider }
   let(:op_params) do
     {
-      provider_id: message_owner.provider.id,
+      provider_id: message_owner.provider_id,
       channel: 'sms',
       owner_type: message_owner.class.name,
       owner_id: message_owner.id,
@@ -17,6 +20,10 @@ RSpec.describe MessageCreate, type: :operation do
       to: '+6587173612',
       body: 'hello'
     }
+  end
+
+  before do
+    allow_any_instance_of(Providers::Aws).to receive(:sms).and_return true
   end
 
   context 'when all attributes are valid' do

@@ -31,7 +31,8 @@ class EventProcess < ActivityBase
       MessageCreate.call(params: { to: user.phone_number,
                                    provider: event.provider,
                                    channel: event.channel,
-                                   body: content })
+                                   body: content,
+                                   owner: event })
     end
     event.publish!
   end
