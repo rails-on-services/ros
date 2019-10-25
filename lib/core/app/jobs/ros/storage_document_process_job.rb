@@ -2,5 +2,8 @@
 
 module Ros
   class StorageDocumentProcessJob < Ros::ApplicationJob
+    def perform(*params)
+      operation_class(*params).new.call(*params)
+    end
   end
 end
