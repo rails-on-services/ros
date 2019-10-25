@@ -37,6 +37,7 @@ components:
           bucket_endpoint_url: http://localstack:4572
           aws_access_key_id: this_key_from_development_yml
           aws_secret_access_key: this_key_from_development_yml
+          aws_default_region: localstack
         components:
           services:
             components:
