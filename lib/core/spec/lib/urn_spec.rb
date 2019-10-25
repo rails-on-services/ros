@@ -12,7 +12,7 @@ RSpec.describe Ros::Urn do
     end
 
     it 'correctly parse `from_urn`' do
-      from_urn = Ros::Urn.from_urn(urn)
+      from_urn = described_class.from_urn(urn)
       expect(from_urn.txt).to eq('urn')
       expect(from_urn.partition_name).to eq('ros')
       expect(from_urn.service_name).to eq('campaign')
@@ -23,6 +23,38 @@ RSpec.describe Ros::Urn do
 
     it 'responds to `from_jwt`' do
       expect(described_class.respond_to?(:from_jwt)).to be_truthy
+    end
+  end
+
+  context 'urn flattenning' do
+    it 'flattens normal urn' do
+      flatten_urn = described_class.flatten('urn:ros:campaign::222222222:entity')
+      expect(flatten_urn).to eq('urn:ros:campaign::222222222:entity')
+    end
+
+    it 'flattens urn with one wildcarded segmet in the end' do
+      flatten_urn = described_class.flatten('urn:ros:campaign::222222222:*')
+      expect(flatten_urn).to eq('urn:ros:campaign::222222222:*')
+    end
+
+    it 'flattens urn with several wildcarded segmets in the end' do
+      flatten_urn = described_class.flatten('urn:ros:*')
+      expect(flatten_urn).to eq('urn:ros:*:*:*:*')
+    end
+
+    it 'flattens urn with one wildcarded segmet in the middle' do
+      flatten_urn = described_class.flatten('urn:ros:campaign::*:entity')
+      expect(flatten_urn).to eq('urn:ros:campaign::*:entity')
+    end
+
+    it 'flattens urn with several wildcarded segmets in the middle' do
+      # flatten_urn = described_class.flatten('urn:*:entity')
+      # expect(flatten_urn).to eq('urn:*:*:*:*:entity')
+      expect { described_class.flatten('urn:*:entity') }.to raise_error(NotImplementedError)
+    end
+
+    it 'throws an error when try to flatten urn with several wildcarded segmets' do
+      expect { described_class.flatten('urn:*::*:entity') }.to raise_error(ArgumentError)
     end
   end
 
