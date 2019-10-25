@@ -26,7 +26,7 @@ RSpec.describe Ros::Urn do
     end
   end
 
-  context 'urn flattenning' do
+  context 'urn flattening' do
     it 'flattens normal urn' do
       flatten_urn = described_class.flatten('urn:ros:campaign::222222222:entity')
       expect(flatten_urn).to eq('urn:ros:campaign::222222222:entity')
