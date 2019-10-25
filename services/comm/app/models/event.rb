@@ -27,7 +27,7 @@ class Event < Comm::ApplicationRecord
   # - serialized attributes
 
   # - associations
-  belongs_to :template
+  belongs_to :template, optional: true
   belongs_to :provider
   belongs_to :campaign, optional: true
   # maybe target should be cognito_pool_id
