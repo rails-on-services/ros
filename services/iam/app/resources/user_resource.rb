@@ -9,7 +9,7 @@ class UserResource < Iam::ApplicationResource
   has_many :credentials
   has_many :public_keys
 
-  filter :username
+  filters :username, :groups
 
   def self.creatable_fields(context)
     super - %i[attached_policies attached_actions jwt_payload]
