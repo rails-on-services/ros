@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MessageCreate < ActivityBase
+class MessageCreate < Ros::ActivityBase
   # rubocop:disable Style/SignalException
   # rubocop:disable Lint/UnreachableCode
   step :valid_send_at

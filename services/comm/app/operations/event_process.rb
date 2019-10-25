@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EventProcess < ActivityBase
+class EventProcess < Ros::ActivityBase
   # rubocop:disable Style/SignalException
   # rubocop:disable Lint/UnreachableCode
   step :find_event
