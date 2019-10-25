@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe EventProcess, type: :operation do
   let(:operation) { described_class.call(params: op_params) }
-  let(:result) { OperationResult.new(*operation) }
+  let(:result) { Ros::OperationResult.new(*operation) }
 
   before do
     allow(MessageCreate).to receive(:call).and_return true

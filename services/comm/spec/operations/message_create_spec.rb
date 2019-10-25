@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe MessageCreate, type: :operation do
   let(:operation) { described_class.call(op_params) }
-  let(:result) { OperationResult.new(*operation) }
+  let(:result) { Ros::OperationResult.new(*operation) }
   # NOTE: an event needs a valid target
   let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   # TODO: Who should be the owner of a message?
