@@ -35,9 +35,9 @@ module Ros
       def post_with_time(tag, map, time)
         record = @msgpack_factory.dump(map)
         tag = "#{@tag_prefix}.#{tag}" if @tag_prefix
-        connection.post("/#{tag}", _body = record) { |req|
+        connection.post("/#{tag}", _body = record) do |req|
           req.params['time'] = time.to_f
-        }
+        end
       end
 
       private
