@@ -60,16 +60,22 @@ module Ros
           rescue ::Aws::SQS::Errors::InvalidClientTokenId
             Rails.logger.warn('Invalid credentials')
             # TODO: Send exception report to Sentry
-          rescue StandardError => error
-            self.status = error.message
+          rescue StandardError => e
+            self.status = e.message
             Rails.logger.warn("Unkown error creating queue #{name}. #{status}")
             # TODO: Send exception report to Sentry
           end
         end
 
         def get; client.receive_message(queue_url: resource.queue_url) end
-        def put(message); client.send_message(queue_url: resource.queue_url, message_body: message) end
-        def purge; client.purge_queue(queue_url: resource.queue_url) end
+
+        def put(message)
+          client.send_message(queue_url: resource.queue_url, message_body: message)
+        end
+
+        def purge
+          client.purge_queue(queue_url: resource.queue_url)
+        end
 
         def attributes
           @attributes ||= create_attributes.merge(policy_attributes)
@@ -84,18 +90,18 @@ module Ros
         end
 
         def policy
-          { Version: "2008-10-17",
+          { Version: '2008-10-17',
             Id: "#{arn}/SQSDefaultPolicy",
             Statement: [{
-              Sid: "__default_statement_ID",
-              Effect: "Allow",
+              Sid: '__default_statement_ID',
+              Effect: 'Allow',
               Principal: {
-                AWS: "*"
+                AWS: '*'
               },
-              Action: ["SQS:SendMessage"],
+              Action: ['SQS:SendMessage'],
               Resource: arn,
               Condition: {
-                ArnLike: { "AWS:SourceArn": bucket_arn }
+                ArnLike: { 'AWS:SourceArn': bucket_arn }
               }
             }]
           }
@@ -105,7 +111,9 @@ module Ros
         def bucket_arn; "arn:aws:s3:*:*:#{bucket_name}" end
 
         def arn; "arn:aws:sqs:#{region}:#{account_id}:#{name}" end
+
         def region; URI(resource.queue_url).hostname.split('.')[1] end
+
         def account_id; URI(resource.queue_url).path.split('/')[1] end
       end
     end
