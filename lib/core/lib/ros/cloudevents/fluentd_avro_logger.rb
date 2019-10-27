@@ -20,7 +20,7 @@ module Ros
 
     # A fluentd logger send reocrds using fluentd's HTTP input protocol
     class FluentHttpLogger < Fluent::Logger::LoggerBase
-      def initialize(tag_prefix = nil, options)
+      def initialize(tag_prefix = nil, options = {})
         super()
 
         @tag_prefix = tag_prefix
@@ -28,36 +28,41 @@ module Ros
         @port = options[:port] || 9880
 
         @msgpack_factory = MessagePack::Factory.new
-
-        if options[:logger]
-          @logger = options[:logger]
-        else
-          @logger = ::Logger.new(STDERR)
-          if options[:debug]
-            @logger.level = ::Logger::DEBUG
-          else
-            @logger.level = ::Logger::INFO
-          end
-        end
-
-        @conn = Faraday.new(
-          "http://#{@host}:#{@port}",
-          {
-            headers: {'Content-Type' => 'application/msgpack'},
-            request: {
-              open_timeout: 2,   # opening a connection
-              timeout: 5         # waiting for response
-            }
-          }
-        )
+        @logger = options[:logger]
+        @debug = options[:debug]
       end
 
       def post_with_time(tag, map, time)
         record = @msgpack_factory.dump(map)
         tag = "#{@tag_prefix}.#{tag}" if @tag_prefix
-        @conn.post("/#{tag}", body=record) {|req|
+        connection.post("/#{tag}", _body = record) { |req|
           req.params['time'] = time.to_f
         }
+      end
+
+      private
+
+      def logger
+        return @logger if @logger
+
+        @logger = ::Logger.new(STDERR)
+        @logger.level = if @debug
+                          ::Logger::DEBUG
+                        else
+                          ::Logger::INFO
+                        end
+        @logger
+      end
+
+      def connection
+        @connection ||= Faraday.new(
+          "http://#{@host}:#{@port}",
+          headers: { 'Content-Type' => 'application/msgpack' },
+          request: {
+            open_timeout: 2,   # opening a connection
+            timeout: 5         # waiting for response
+          }
+        )
       end
     end
 
