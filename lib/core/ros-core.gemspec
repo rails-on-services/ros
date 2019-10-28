@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'prometheus_exporter', '0.4.13'
   spec.add_dependency 'pry-rails', '0.3.9'
   spec.add_dependency 'rack-cors'
-  spec.add_dependency 'rack-fluentd-logger', '0.1.4'
+  spec.add_dependency 'rack-fluentd-logger', '0.1.5'
   spec.add_dependency 'rails', '~> 6.0.0.rc2'
   spec.add_dependency 'seedbank', '0.5.0'
   spec.add_dependency 'sentry-raven', '2.11.1'
@@ -40,4 +40,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'factory_bot_rails', '~> 5.0.2'
   spec.add_development_dependency 'rspec-rails', '~> 3.8.2'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
 end

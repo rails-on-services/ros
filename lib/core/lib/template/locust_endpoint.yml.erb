@@ -7,6 +7,6 @@ def get_<%=values.service_name%>_<%=values.name%>(self, id):
   path = ('<%=values.service_name%>/<%=values.plural_name%>/%s' %(id))
   self.client.get(path, headers=self.header)
 
-def create_<%=values.service_name%>_<%=values.plural_name%>(self, <%=values.extra_args%>):
+def create_<%=values.service_name%>_<%=values.plural_name%>(self<%=values.extra_args%>):
   payload = <%=payload%>
-  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=self.header)
+  return self.client.post('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=self.header)

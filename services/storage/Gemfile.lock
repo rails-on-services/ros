@@ -16,7 +16,7 @@ PATH
       prometheus_exporter (= 0.4.13)
       pry-rails (= 0.3.9)
       rack-cors
-      rack-fluentd-logger (= 0.1.4)
+      rack-fluentd-logger (= 0.1.5)
       rails (~> 6.0.0.rc2)
       seedbank (= 0.5.0)
       sentry-raven (= 2.11.1)
@@ -39,6 +39,7 @@ PATH
   remote: .
   specs:
     ros-storage (0.1.0)
+      aasm
       aws-sdk-sqs
       net-sftp
       rails (~> 6.0.0.rc2)
@@ -49,6 +50,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.0.6)
+      concurrent-ruby (~> 1.0)
     actioncable (6.0.0.rc2)
       actionpack (= 6.0.0.rc2)
       nio4r (~> 2.0)
@@ -314,7 +317,7 @@ GEM
       rspec-rails (>= 3.0.0)
     rack (2.0.7)
     rack-cors (1.0.3)
-    rack-fluentd-logger (0.1.4)
+    rack-fluentd-logger (0.1.5)
       concurrent-ruby (~> 1.0)
       fluent-logger (~> 0.7)
     rack-protection (2.0.7)
@@ -385,6 +388,8 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.2)
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
     rubocop (0.74.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -468,6 +473,7 @@ DEPENDENCIES
   ros-storage!
   ros_sdk!
   rspec-rails
+  rspec_junit_formatter
   rubocop
   rubocop-rails
   shoulda-matchers

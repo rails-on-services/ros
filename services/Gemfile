@@ -31,6 +31,7 @@ group :development, :test do
   gem 'rubocop-rails'
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
+  gem 'rspec_junit_formatter'
 end
 
 group :production do

@@ -139,10 +139,6 @@ module Ros
     end
     # rubocop:enable Lint/HandleExceptions
 
-    # rubocop:disable Naming/PredicateName
-    def is_platform_urn?; account_id.eql?('platform') end
-    # rubocop:enable Naming/PredicateName
-
     def resource_type; resource.split('/').first end
 
     def resource_id; resource.split('/').last end

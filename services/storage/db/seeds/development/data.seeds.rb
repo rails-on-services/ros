@@ -8,8 +8,7 @@ after 'development:tenants' do
 
     tenant.switch do
       Settings.api_calls_enabled = false
-      TransferMap.create(name: 'New Customer Survey Lists', description: '', service: 'cognito',
-                         target: 'user').tap do |map|
+      TransferMap.create(name: 'Customer List', description: '', service: 'cognito', target: 'user').tap do |map|
         map.column_maps.create(name: 'title', user_name: 'Salutation')
         map.column_maps.create(name: 'last_name', user_name: 'Last Name')
         map.column_maps.create(name: 'phone_number', user_name: 'Mobile')

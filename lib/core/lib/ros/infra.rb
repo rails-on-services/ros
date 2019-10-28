@@ -1,19 +1,31 @@
 # frozen_string_literal: true
 
+require 'ros/infra/storage'
+require 'ros/infra/mq'
+
 module Ros
+  class << self
+    attr_accessor :infra
+  end
+
   module Infra
-    module Storage
-      extend ActiveSupport::Concern
+    class << self
+      attr_accessor :resources
 
-      def ls(_path = ''); raise NotImplementedError end
-
-      def get(_path); raise NotImplementedError end
-
-      def put(_path); raise NotImplementedError end
-    end
-
-    module Mq
-      extend ActiveSupport::Concern
+      def initialize(resources_settings)
+        @resources = ActiveSupport::OrderedOptions.new
+        %i(mq storage).each do |service|
+          next unless resources = resources_settings.dig(service)
+          @resources[service] = ActiveSupport::OrderedOptions.new
+          resource_type = "Ros::Infra::#{service.to_s.classify}".constantize.resource_type
+          next unless (resource = resources.dig(resource_type))
+          resource.each_pair do |name, config|
+            require "ros/infra/#{config.provider}/#{service}"
+            klass = "Ros::Infra::#{config.provider.capitalize}::#{service.capitalize}".constantize
+            @resources[service][name] = klass.new(config)
+          end
+        end
+      end
     end
   end
 end

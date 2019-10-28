@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_27_074408) do
+ActiveRecord::Schema.define(version: 2019_09_29_005520) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,10 +46,9 @@ ActiveRecord::Schema.define(version: 2019_09_27_074408) do
   end
 
   create_table "documents", force: :cascade do |t|
-    t.string "name"
-    t.string "etag"
-    t.integer "size"
     t.integer "transfer_map_id"
+    t.string "header"
+    t.string "platform_event_state"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -67,6 +66,13 @@ ActiveRecord::Schema.define(version: 2019_09_27_074408) do
 
   create_table "reports", force: :cascade do |t|
     t.string "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "sftp_files", force: :cascade do |t|
+    t.string "name"
+    t.string "key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

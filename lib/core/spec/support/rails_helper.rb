@@ -13,6 +13,7 @@ end
 # Create tenant once per suite is 25% faster than creating a tenant (and schema) once per test
 # To enable tenant per test, comment out below and swap the let(:tenant) statements below
 RSpec.configure do |config|
+  config.filter_run_excluding exclude: true
   config.before(:all) do
     @as = create(:tenant, schema_name: '222_222_222')
     Apartment::Tenant.switch! @as.schema_name

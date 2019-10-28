@@ -27,7 +27,7 @@ class Event < Comm::ApplicationRecord
   # - serialized attributes
 
   # - associations
-  belongs_to :template
+  belongs_to :template, optional: true
   belongs_to :provider
   belongs_to :campaign, optional: true
   # maybe target should be cognito_pool_id
@@ -56,7 +56,7 @@ class Event < Comm::ApplicationRecord
   # TODO: Decide if the target is always a Pool or not
   # TODO: Implement as api_has_many :users, through: :target
   def users
-    Ros::Cognito::Pool.includes(:users).find(target_id).map(&:users).flatten
+    query_resource(:target) { |query| query.includes(:users) }.users
   end
 
   def log_status_change
@@ -76,6 +76,6 @@ class Event < Comm::ApplicationRecord
   end
 
   def queue_job
-    EventJob.set(wait_until: send_at).perform_later(id, current_tenant)
+    EventProcessJob.set(wait_until: send_at).perform_later(id: id)
   end
 end

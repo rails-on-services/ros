@@ -8,14 +8,17 @@ module Storage
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
     end
 
-    initializer 'service.storage_thing' do |_app|
+    initializer 'service.set_storage_config' do |app|
       ActiveStorage::Service.module_eval { attr_writer :bucket }
       ActiveStorage::Service.class_eval { include Storage::Methods }
+      # binding.pry
+      # Read a block from config/storage.yml for the storage adapter to use
+      app.config.active_storage.service = Rails.env.to_sym if Rails.env.development?
     end
 
     initializer 'service.set_platform_config', before: 'ros_core.load_platform_config' do |_app|
-      settings_path = root.join('config/settings.yml')
-      Settings.prepend_source!(settings_path) if File.exist? settings_path
+      settings_path = root.join('config/settings.yml').to_s
+      Settings.prepend_source!(settings_path) if File.exist?(settings_path)
       name = self.class.module_parent.name.demodulize.underscore
       Settings.prepend_source!(service: { name: name, policy_name: name.capitalize })
     end
@@ -24,14 +27,9 @@ module Storage
       # AWS SQS Workers
       if defined?(Shoryuken)
         Shoryuken.configure_server do |config|
-          config.sqs_client = Rails.configuration.x.infra.resources.mq.primary.client
+          config.sqs_client = Ros::Infra.resources.mq.storage_data.client
+          Rails.logger.debug("Configured SQS worker with #{config.options}")
         end
-        Rails.configuration.x.infra.resources.storage.primary.add_queue_notification(
-          queue_name: Rails.configuration.x.infra.resources.mq.primary.name,
-          events: ['s3:ObjectCreated:*'],
-          filter_rules: [{ name: 'prefix', value: 'storage/sftp/home' }, { name: 'suffix', value: '.csv' }]
-        )
-        Rails.configuration.x.infra.resources.storage.primary.enable_notifications
         # elsif defined?(GcpQueueWorker)
       end
     end

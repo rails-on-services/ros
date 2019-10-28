@@ -29,23 +29,6 @@ components:
             config:
               provider: aws
               subject_alternative_names: []
-          cdn:
-            config:
-              provider: aws
-            components:
-              # name will be used to compose the full dns name
-              cdn:
-                enabled: yes
-                bucket: cdn
-                url: https://cdn.uat.whistler.perxtech.io
-          object_storage:
-            config:
-              provider: aws
-            components:
-              app:
-                services: ['documents', 'reports', 'sftp']
-              cdn:
-                services: ['images']
       application:
         config:
           feature_set: mounted
@@ -54,6 +37,7 @@ components:
           bucket_endpoint_url: http://localstack:4572
           aws_access_key_id: this_key_from_development_yml
           aws_secret_access_key: this_key_from_development_yml
+          aws_default_region: localstack
         components:
           services:
             components:
@@ -69,9 +53,12 @@ components:
               redis:
               sftp:
                 environment:
-                  bucket_prefix: storage
+                  aws_region: ap-southeast-1
+                  platform:
+                    bucket:
+                      name: app-development-demo-cnfs-io
+                      feature_set: mounted
               wait:
-
           platform:
             environment:
               redis_url: redis://redis:6379
@@ -81,44 +68,28 @@ components:
                 event_logging:
                   enabled: no
                 infra:
-                  services:
+                  resources:
                     storage:
-                      aws:
-                        endpoint: http://localstack:4572
-                        force_path_style: yes
+                      config: &infra_services_object_storage
+                        # endpoint: http://localstack:4572
+                        # force_path_style: yes
                         region: ap-southeast-1
-                    mq:
-                      aws:
-                        endpoint: http://localstack:4576
-                        verify_checksums: no
-                        region: ap-southeast-1
-                  # resources:
-                  #   storage:
-                  #     primary:
-                  #       provider: aws
-                  #       enabled: yes
-                  #   mq:
-                  #     primary:
-                  #       provider: aws
+                      buckets:
+                        app:
+                          <<: *infra_services_object_storage
+                        cdn:
+                          <<: *infra_services_object_storage
             components:
-              cognito:
-                config:
-                  profiles: ['server']
-              comm:
-                config:
-                  profiles: ['server']
-              iam:
-                config:
-                  profiles: ['server']
-              organization:
-                config:
-                  profiles: ['server']
               storage:
                 environment:
                   platform:
                     infra:
                       resources:
                         mq:
-                          primary:
-                            enabled: yes
-                            queue_name: storage-sftp-home
+                          queues:
+                            storage_data:
+                              # endpoint: http://localstack:4576
+                              # verify_checksums: no
+                              region: ap-southeast-1
+                              provider: aws
+                              bucket_name: app-development-demo-cnfs-io

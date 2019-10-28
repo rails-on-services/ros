@@ -25,6 +25,7 @@ Metrics/BlockLength:
     - '**/spec/models/**/*.rb'
     - '**/spec/policies/**/*.rb'
     - '**/spec/requests/**/*.rb'
+    - '**/spec/operations/**/*.rb'
 AllCops:
   TargetRubyVersion: 2.6
   Exclude:

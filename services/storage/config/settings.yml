@@ -1,0 +1,19 @@
+---
+infra:
+  resources:
+    mq:
+      queues:
+        storage_data:
+          name: <%= ENV['PLATFORM__INFRA__RESOURCES__MQ__QUEUES__STORAGE_DATA__BUCKET_NAME'] %>-<%= ENV['PLATFORM__FEATURE_SET'] %>-storage-data
+    storage:
+      buckets:
+        app:
+          notifications:
+            queue_configurations:
+              - queue_arn: arn:aws:sqs:<%= ENV['AWS_DEFAULT_REGION'] %>:<%= ENV['AWS_ACCOUNT_ID'] %>:<%= ENV['PLATFORM__INFRA__RESOURCES__MQ__QUEUES__STORAGE_DATA__BUCKET_NAME'] %>-<%= ENV['PLATFORM__FEATURE_SET'] %>-storage-data
+                events: ['s3:ObjectCreated:*']
+                filter:
+                  key:
+                    filter_rules:
+                      - { name: 'prefix', value: '<%= ENV['PLATFORM__FEATURE_SET'] %>/services/storage/tenants' }
+                      - { name: 'suffix', value: '.csv' }

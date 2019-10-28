@@ -12,9 +12,7 @@ module Providers
     def client
       return unless x_access_key_id && x_secret_access_key
 
-      @client ||= ::Aws::SNS::Client.new(region: 'ap-southeast-1',
-                                         access_key_id: access_key_id,
-                                         secret_access_key: secret_access_key)
+      @client ||= ::Aws::SNS::Client.new(client_params)
     end
 
     def x_access_key_id
@@ -25,20 +23,36 @@ module Providers
       secret_access_key || current_tenant.platform_aws_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
     end
 
-    # TODO: Get from provider
     def from
-      'Prudential'
+      current_tenant.properties.from || 'Perx'
     end
 
-    # TODO: toggle sending on and off
-    def sms(message)
+    def sms(to, body)
+      # TODO: toggle sending on and off
       return unless Settings.active
 
-      message.update(from: from)
       client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
-      client.publish(phone_number: message.to, message: message.body)
+      client.publish(phone_number: to, message: body)
       # rescue
       # Rails.logger.warn('No AWS client configured for tenant.account_id') and return if client.nil?
+    end
+
+    private
+
+    # TODO: Cleanup this logic. This should probably live in an initializer.
+    # The problem might be that a tenant uses Perx SNS credentials for sending
+    # the sms but then wants to use his own credentials for storing the assets
+    # in the S3. We should have the configuration being picked up from
+    # 1. settings, env variables, our defaults
+    def client_params
+      params = { region: 'ap-southeast-1',
+                 access_key_id: access_key_id,
+                 secret_access_key: secret_access_key }
+
+      return params if Rails.env.production?
+
+      params[:endpoint] = 'http://localstack:4575'
+      params
     end
   end
 end
