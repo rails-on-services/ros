@@ -21,6 +21,8 @@ PATH
       seedbank (= 0.5.0)
       sentry-raven (= 2.11.1)
       sidekiq (= 6.0.0)
+      trailblazer-activity (~> 0.10.0)
+      trailblazer-activity-dsl-linear (~> 0.2.1)
       warden (= 1.2.8)
       zero-rails_openapi (= 2.1.0)
 
@@ -164,8 +166,6 @@ GEM
     connection_pool (2.2.2)
     crass (1.0.4)
     debug_inspector (0.0.3)
-    declarative (0.0.10)
-    declarative-option (0.1.0)
     deep_merge (1.2.1)
     diff-lcs (1.3)
     domain_name (0.5.20190701)
@@ -212,7 +212,7 @@ GEM
       regexp_parser (~> 1.2)
     encryptor (3.0.0)
     erubi (1.8.0)
-    excon (0.67.0)
+    excon (0.68.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
     factory_bot_rails (5.0.2)
@@ -359,10 +359,6 @@ GEM
       ffi (~> 1.0)
     redis (4.1.3)
     regexp_parser (1.6.0)
-    representable (3.0.4)
-      declarative (< 0.1.0)
-      declarative-option (< 0.2.0)
-      uber (< 0.2.0)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -435,17 +431,12 @@ GEM
     trailblazer-activity-dsl-linear (0.2.1)
       trailblazer-activity (>= 0.9.1, < 1.0.0)
     trailblazer-context (0.2.0)
-    trailblazer-developer (0.0.8)
-      representable
-      trailblazer-activity (>= 0.10.0, < 1.0.0)
-      trailblazer-activity-dsl-linear
     twilio-ruby (5.27.0)
       faraday (~> 0.9)
       jwt (>= 1.5, <= 2.5)
       nokogiri (>= 1.6, < 2.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    uber (0.1.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
@@ -492,9 +483,6 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
-  trailblazer-activity
-  trailblazer-activity-dsl-linear
-  trailblazer-developer
 
 BUNDLED WITH
    2.0.2
