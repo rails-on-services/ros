@@ -227,8 +227,10 @@ module Ros
         if Settings.event_logging.enabled
           if Settings.event_logging.provider.eql? 'fluentd'
             require_relative '../cloudevents/fluentd_avro_logger'
-            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(Settings.service.name,
-              Settings.event_logging.config)
+            Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(
+              Settings.service.name,
+              Settings.event_logging.config
+            )
           end
         end
       end
