@@ -43,32 +43,17 @@ module Ros
     end
 
     # UserPolicy.new({ policies: ['IamFullAccess'] }, nil).index?
-    def index?
-      check_action(:index?)
+    def method_missing(m, *args, &blocks)
+      binding.pry
+      if m.to_s.ends_with?('?')
+        check_action("#{m}?")
+      else
+        super
+      end
     end
 
-    def show?
-      check_action(:show?)
-    end
-
-    def create?
-      check_action(:create?)
-    end
-
-    def new?
-      create?
-    end
-
-    def update?
-      check_action(:update?)
-    end
-
-    def edit?
-      update?
-    end
-
-    def destroy?
-      check_action(:destroy?)
+    def respond_to_missing?(m, include_private = false)
+      m.to_s.ends_with?('?') || super
     end
 
     class Scope
