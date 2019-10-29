@@ -4,6 +4,8 @@ FactoryBot.define do
   factory :user do
     username { Faker::Internet.username }
     password { Faker::Internet.password }
+    email { Faker::Internet.email }
+    confirmed_at { DateTime.now }
     console { true }
     api { true }
 
