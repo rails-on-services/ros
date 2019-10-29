@@ -21,6 +21,13 @@ RSpec.describe 'User Authentication', type: :request do
       end
     end
 
+    context 'without :account_id or :alias' do
+      let(:params) { { data: { attributes: valid_attributes } } }
+      it 'returns error status' do
+        expect(response.status).to eq 401
+      end
+    end
+
     context 'with :account_id' do
       let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.account_id) } } }
       it 'returns success status' do
