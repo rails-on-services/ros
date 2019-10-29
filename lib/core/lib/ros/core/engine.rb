@@ -82,29 +82,33 @@ module Ros
 
       # Configure ActionMailer (used by Devise) based on our Settings.smtp
       initializer 'ros_core.initialize_action_mailer' do |app|
-        app.config.action_mailer.delivery_method = :smtp
-        app.config.action_mailer.perform_deliveries = true
-        app.config.action_mailer.raise_delivery_errors = true
+        # NOTE: Enabling the smtp is not enough. The service that enables
+        # it needs to require 'action_mailer/railtie'
+        if Settings.dig(:smtp, :enabled)
+          app.config.action_mailer.delivery_method = :smtp
+          app.config.action_mailer.perform_deliveries = true
+          app.config.action_mailer.raise_delivery_errors = true
 
-        app.config.action_mailer.default_options = {
-          from: Settings.smtp.from
-        }
+          app.config.action_mailer.default_options = {
+            from: Settings.smtp.from
+          }
 
-        # Needed for the URL helpers to be able to construct proper links in
-        # emails to the frontend
-        app.config.action_mailer.default_url_options = {
-          host: 'http://localhost'
-        }
+          # Needed for the URL helpers to be able to construct proper links in
+          # emails to the frontend
+          app.config.action_mailer.default_url_options = {
+            host: 'http://localhost'
+          }
 
-        app.config.action_mailer.smtp_settings = {
-          address: Settings.smtp.host,
-          port: Settings.smtp.port,
-          domain: Settings.smtp.domain,
-          authentication: Settings.smtp.authentication,
-          user_name: Settings.smtp.user_name,
-          password: Settings.smtp.password,
-          enable_starttls_auto: Settings.smtp.starttls_auto
-        }
+          app.config.action_mailer.smtp_settings = {
+            address: Settings.smtp.host,
+            port: Settings.smtp.port,
+            domain: Settings.smtp.domain,
+            authentication: Settings.smtp.authentication,
+            user_name: Settings.smtp.user_name,
+            password: Settings.smtp.password,
+            enable_starttls_auto: Settings.smtp.starttls_auto
+          }
+        end
       end
 
       initializer 'ros_core.initialize_platform_metrics' do |app|
