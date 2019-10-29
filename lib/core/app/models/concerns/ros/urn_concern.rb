@@ -23,7 +23,7 @@ module Ros
       def to_urn; "#{self.class.to_urn}/#{send(self.class.urn_id)}" end
 
       def urn_match?(urn_to_compare)
-        params = [:txt, :partition_name, :service_name, :region, :account_id, :resource]
+        params = %i[txt partition_name service_name region account_id resource]
         record_urn = Ros::Urn.from_urn(self.class.to_urn)
         urn_to_compare = Ros::Urn.from_urn(Ros::Urn.flatten(urn_to_compare))
         matches = []
