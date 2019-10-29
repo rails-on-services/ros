@@ -19,6 +19,8 @@ module Ros
     included do
       def current_tenant; self.class.current_tenant end
 
+      after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
+
       def stream_cloud_event
         type = "#{Settings.service.name}.#{self.class.name.underscore}"
         Ros::StreamCloudEventJob.perform_later(type, id, cloud_event_data)
