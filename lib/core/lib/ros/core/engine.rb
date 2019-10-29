@@ -65,17 +65,19 @@ module Ros
 
       # Initialize sane defaults for smtp that will works with mailcatcher unless overridden
       initializer 'ros_core.initialize_smtp' do |_app|
-        Settings.smtp.tap do |t|
-          t.domain ||= 'example.com'
-          t.host_name ||= 'localhost'
-          t.port ||= 1025
-          # one of: nil, :plain, :login, :cram_md5
-          t.authentication ||= nil
-          t.starttls_auto ||= true
-          t.ssl ||= false
-          t.tls ||= false
-          t.from ||= "no-reply@#{t.domain}"
-        end if Settings.smtp.enabled
+        if Settings.dig(:smtp, :enabled)
+          Settings.smtp.tap do |t|
+            t.domain ||= 'example.com'
+            t.host_name ||= 'localhost'
+            t.port ||= 1025
+            # one of: nil, :plain, :login, :cram_md5
+            t.authentication ||= nil
+            t.starttls_auto ||= true
+            t.ssl ||= false
+            t.tls ||= false
+            t.from ||= "no-reply@#{t.domain}"
+          end
+        end
       end
 
       # Configure ActionMailer (used by Devise) based on our Settings.smtp
@@ -101,13 +103,13 @@ module Ros
           authentication: Settings.smtp.authentication,
           user_name: Settings.smtp.user_name,
           password: Settings.smtp.password,
-          enable_starttls_auto: Settings.smtp.starttls_auto,
+          enable_starttls_auto: Settings.smtp.starttls_auto
         }
       end
 
       initializer 'ros_core.initialize_platform_metrics' do |app|
         app.config.middleware.insert_after(ActionDispatch::RequestId, Ros::DtraceMiddleware)
-        if Settings.metrics.enabled
+        if Settings.dig(:metrics, :enabled)
           require 'prometheus_exporter'
           # binding.pry
           require_relative '../prometheus_exporter/web_collector'
@@ -143,7 +145,7 @@ module Ros
       end
 
       initializer 'ros_core.initialize_request_logging' do |_app|
-        if Settings.request_logging.enabled
+        if Settings.dig(:request_logging, :enabled)
           if Settings.request_logging.provider.eql? 'fluentd'
             require 'rack/fluentd_logger'
             require_relative '../request_logger/fluentd'

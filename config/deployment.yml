@@ -160,6 +160,8 @@ components:
                     host: fluentd
                     port: 24224
                     schema_registry_url: http://kafkastack:8081
+                smtp:
+                  enabled: no
             components:
               # account:
               #   config:
