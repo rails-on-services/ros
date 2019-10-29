@@ -13,6 +13,8 @@ require 'config'
 require 'sidekiq'
 require 'sidekiq/web'
 require 'ros_sdk'
+require 'trailblazer/activity'
+require 'trailblazer/activity/dsl/linear'
 # require 'pry-remote'
 
 require_relative 'tenant_middleware'
