@@ -44,9 +44,8 @@ module Ros
 
     # UserPolicy.new({ policies: ['IamFullAccess'] }, nil).index?
     def method_missing(m, *args, &blocks)
-      binding.pry
       if m.to_s.ends_with?('?')
-        check_action("#{m}?")
+        check_action(m.to_s.gsub(/\?$/, ''))
       else
         super
       end
@@ -88,11 +87,17 @@ module Ros
     def check_action(action)
       return true if user.root?
 
-      user_policies = user.attached_policies
-      user_actions = user.attached_actions
+      allowed = user.iam_user.actions.where(name: action, effect: 'allow').each do |allowed_action|
+        return true if record.urn_match?(allowed_action['resource'])
+      end
 
-      (user_policies.keys & accepted_policies(action)).any? ||
-        (user_actions.keys & accepted_actions(action)).any?
+      allowed
+
+      # user_policies = user.attached_policies
+      # user_actions = user.attached_actions
+
+      # (user_policies.keys & accepted_policies(action)).any? ||
+      #   (user_actions.keys & accepted_actions(action)).any?
     end
 
     def accepted_policies(action)
