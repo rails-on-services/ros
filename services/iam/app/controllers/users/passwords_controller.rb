@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/ClassAndModuleChildren
-class Users::PasswordsController < Iam::PasswordsController
-  protected
+module Users
+  class PasswordsController < Iam::PasswordsController
+    protected
 
-  def password_params
-    jsonapi_params.permit(%i[email username password password_confirmation account_id])
+    def password_params
+      jsonapi_params.permit(%i[email username password password_confirmation account_id])
+    end
   end
 end
-# rubocop:enable Style/ClassAndModuleChildren
