@@ -12,7 +12,7 @@ module Ros
     end
 
     def generate_resource
-      Ros::ResourceGenerator.new([name]).invoke_all
+      Ros::ResourceGenerator.new([name], @args).invoke_all
     end
 
     def generate_resource_spec
@@ -35,17 +35,16 @@ module Ros
       Ros::RouteGenerator.new([name]).invoke_all
     end
 
+    def generate_sdk_endpoint
+      Ros::SdkEndpointGenerator.new([name]).invoke_all
+    end
+
     def generate_controller
-      invoke(:controller, [plural_name])
-      gsub_file(
-        "app/controllers/#{plural_name}_controller.rb",
-        'ApplicationController',
-        "#{parent_module}ApplicationController"
-      )
+      Ros::ControllerGenerator.new([name]).invoke_all
     end
 
     def generate_model
-      Ros::ModelGenerator.new([name]).invoke_all
+      Ros::ModelGenerator.new(ARGV).invoke_all
     end
 
     def generate_model_specs
