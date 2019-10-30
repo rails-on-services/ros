@@ -21,7 +21,7 @@ module Ros
         elsif auth_type.bearer?
           @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
           if (sub_cognito = current_jwt.claims['sub_cognito'])
-            @cognito_user_urn = Ros::Urn.new(*sub_cognito.split(':'))
+            @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
             @cognito_user_id = cognito_user_urn.resource_id
           end
         end
@@ -44,7 +44,7 @@ module Ros
             @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
             @current_jwt.add_claims('act' => current_user.to_json)
             if (sub_cognito = current_jwt.claims['sub_cognito'])
-              @cognito_user_urn = Ros::Urn.new(*sub_cognito.split(':'))
+              @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
               @cognito_user_id = cognito_user_urn.resource_id
             end
           end
