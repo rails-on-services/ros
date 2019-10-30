@@ -62,4 +62,12 @@ RSpec.shared_examples 'application record concern' do
       expect(subject.current_tenant).to eq(tenant)
     end
   end
+
+  context 'urn matching' do
+    it 'matches to wildcard' do
+      expect(subject.urn_match?('urn:*')).to be_truthy
+    end
+
+    pending 'add all urn matching tests'
+  end
 end
