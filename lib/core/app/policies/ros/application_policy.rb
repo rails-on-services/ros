@@ -43,16 +43,8 @@ module Ros
     end
 
     # UserPolicy.new({ policies: ['IamFullAccess'] }, nil).index?
-    def method_missing(m, *args, &blocks)
-      if m.to_s.ends_with?('?')
-        check_action(m.to_s.gsub(/\?$/, ''))
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(m, include_private = false)
-      m.to_s.ends_with?('?') || super
+    %i[new index show create update edit destroy].each do |method|
+      define_method("#{method}?") { check_action(method) } # or send("#{method}?")
     end
 
     class Scope
