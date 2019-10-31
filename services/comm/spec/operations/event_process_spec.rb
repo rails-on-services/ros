@@ -3,8 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe EventProcess, type: :operation do
-  let(:operation) { described_class.call(params: op_params) }
-  let(:result) { Ros::OperationResult.new(*operation) }
+  let(:op_result) { described_class.call(params: op_params) }
 
   before do
     allow(MessageCreate).to receive(:call).and_return true
@@ -17,11 +16,11 @@ RSpec.describe EventProcess, type: :operation do
     let(:op_params) { { id: event.id } }
 
     it 'runs successfully' do
-      expect(result.success?).to eq true
+      expect(op_result.success?).to eq true
     end
 
     it 'creates one message per user' do
-      result
+      op_result
       # TODO: Check that params are passed properly
       expect(MessageCreate).to have_received(:call).exactly(users.length).times
     end
@@ -31,12 +30,12 @@ RSpec.describe EventProcess, type: :operation do
     let(:op_params) { { id: 1000 } }
 
     it 'fails the operation' do
-      expect(result.success?).to eq false
-      expect(result.errors.full_messages).to eq ['Event not found for tenant (params: {:id=>1000})']
+      expect(op_result.success?).to eq false
+      expect(op_result.errors.full_messages).to eq ['Event not found for tenant (params: {:id=>1000})']
     end
 
     it 'does not create messages for any users' do
-      result
+      op_result
       expect(MessageCreate).to_not have_received(:call)
     end
   end

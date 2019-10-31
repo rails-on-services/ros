@@ -20,10 +20,10 @@ module Ros
     end
 
     def perform(*params)
-      Ros::OperationResult.new(*operation_class.call(params))
+      operation_class.call(params)
     end
 
-    def operation_class(_params)
+    def operation_class
       self.class.name.gsub('Job', '').constantize
     end
   end

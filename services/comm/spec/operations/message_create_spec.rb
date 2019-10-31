@@ -3,8 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe MessageCreate, type: :operation do
-  let(:operation) { described_class.call(op_params) }
-  let(:result) { Ros::OperationResult.new(*operation) }
+  let(:op_result) { described_class.call(op_params) }
   # NOTE: an event needs a valid target
   let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   # TODO: Who should be the owner of a message?
@@ -29,17 +28,17 @@ RSpec.describe MessageCreate, type: :operation do
 
   context 'when all attributes are valid' do
     it 'returns successful operation' do
-      expect(result.success?).to eq true
+      expect(op_result.success?).to eq true
     end
 
     it 'creates the message' do
-      expect { result }.to change { Message.count }.by(1)
+      expect { op_result }.to change { Message.count }.by(1)
     end
 
     context 'when send_at is nil' do
       before do
         allow(MessageJob).to receive(:perform_now).and_return true
-        result
+        op_result
       end
       it 'sends the message to the provider' do
         expect(MessageJob).to have_received(:perform_now).once
@@ -63,7 +62,7 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       it 'enqueues the the message to be sent to the provider' do
-        expect { result }.to have_enqueued_job
+        expect { op_result }.to have_enqueued_job
       end
     end
   end
@@ -83,12 +82,12 @@ RSpec.describe MessageCreate, type: :operation do
     end
 
     it 'returns unsuccessful operation with error' do
-      expect(result.success?).to eq false
-      expect(result.errors.full_messages).to eq ['Provider must exist']
+      expect(op_result.success?).to eq false
+      expect(op_result.errors.full_messages).to eq ['Provider must exist']
     end
 
     it 'does not create the message' do
-      expect { result }.to_not(change { Message.count })
+      expect { op_result }.to_not(change { Message.count })
     end
 
     context 'when send_at is not a date time' do
@@ -108,12 +107,12 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       it 'returns unsuccessful operation with error' do
-        expect(result.success?).to eq false
-        expect(result.errors.full_messages).to eq ['Send at is not a valid date format (send_at: bananas)']
+        expect(op_result.success?).to eq false
+        expect(op_result.errors.full_messages).to eq ['Send at is not a valid date format (send_at: bananas)']
       end
 
       it 'does not create the message' do
-        expect { result }.to_not(change { Message.count })
+        expect { op_result }.to_not(change { Message.count })
       end
     end
   end
