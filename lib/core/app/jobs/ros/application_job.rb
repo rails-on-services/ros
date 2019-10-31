@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # NOTE:
 # Automatically retry jobs that encountered a deadlock:
 #   retry_on ActiveRecord::Deadlocked

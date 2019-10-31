@@ -23,7 +23,7 @@ module Ros
 
       def stream_cloud_event
         type = "#{Settings.service.name}.#{self.class.name.dasherize.downcase}"
-        Ros::StreamCloudEventJob.perform_later(type, id, cloud_event_data)
+        Ros::CloudEventStreamJob.perform_later(type: type, id: id, as_json: as_json)
       end
 
       def cloud_event_data
