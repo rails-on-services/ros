@@ -7,30 +7,6 @@ RSpec.configure do |rspec|
   rspec.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
-# def real_authentication
-#   Credential = Struct.new(:type, :access_key_id, :secret_access_key) do
-#     def to_s
-#       "#{type} #{access_key_id}:#{secret_access_key}"
-#     end
-#   end
-#   cr = Credential.new('Basic', 'AFJYOBPQKSJFQPKKHRHF', 'Zdl1fD957XvRlyRylFSr2McwZCxJHU36B4j5Ze2kqg8UPkcerz5YgQ')
-# end
-
-# Ros::Sdk::Credential.authorization
-
-# RSpec.shared_context 'fake authorized user' do
-#   let(:tenant) { create(:tenant, schema_name: '222_222_222') }
-#   let(:authorized_user) { build(:iam_user, :with_administrator_policy) }
-#   let(:request_headers) do
-#     {
-#       'Authorization' => 'Basic invalid_key:invalid_secret',
-#       'Content-Type' => 'application/vnd.api+json'
-#     }
-#   end
-# end
-
-# List of http codes to symbols: response.methods.grep(/\?/)
-
 RSpec.shared_context 'jsonapi requests' do
   let(:body) { JSON.parse(response.body) }
   let(:data) { body['data'] }
@@ -94,7 +70,6 @@ end
 RSpec.shared_context 'unauthorized user' do
   let(:request_headers) do
     {
-      # 'Authorization' => 'Basic invalid_key:invalid_secret',
       'Authorization' => 'Bearer invalid_key:invalid_secret',
       'Content-Type' => 'application/vnd.api+json'
     }
@@ -111,6 +86,20 @@ end
 RSpec.shared_examples 'unauthenticated post' do
   it 'returns unauthorized' do
     post url, params: params, headers: request_headers
+    expect(response).to be_unauthorized
+  end
+end
+
+RSpec.shared_examples 'unauthenticated patch' do
+  it 'returns unauthorized' do
+    patch url, params: params, headers: request_headers
+    expect(response).to be_unauthorized
+  end
+end
+
+RSpec.shared_examples 'unauthenticated delete' do
+  it 'returns unauthorized' do
+    delete url, params: params, headers: request_headers
     expect(response).to be_unauthorized
   end
 end
