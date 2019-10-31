@@ -11,8 +11,6 @@ module Ros
       puts ">>> data: #{type}"
       res = Rails.configuration.x.event_logger.log_event(type, message_id, data)
       puts "<<< #{res}"
-      puts "<<< #{res.to_json}"
-      puts "<<< #{res.inspect}"
       true
     end
 
