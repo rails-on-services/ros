@@ -79,7 +79,7 @@ module Ros
     def check_action(action)
       return true if user.root?
 
-      allowed = user.iam_user.actions.where(name: action, effect: 'allow').each do |allowed_action|
+      allowed = user.attached_actions.where(name: action, effect: :allow).each do |allowed_action|
         return true if record.urn_match?(allowed_action['resource'])
       end
 

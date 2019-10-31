@@ -15,7 +15,7 @@ class PolicyUser
   end
 
   def attached_actions
-    @iam_user&.attached_actions || {}
+    @iam_user&.actions || []
   end
 
   def root?
