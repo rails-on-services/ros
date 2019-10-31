@@ -6,6 +6,9 @@ module Ros
     # fail :log_error
 
     def log_event(_ctx, type:, message_id:, data:, **)
+      puts ">>> type: #{type}"
+      puts ">>> message_id: #{type}"
+      puts ">>> data: #{type}"
       res = Rails.configuration.x.event_logger.log_event(type, message_id, data)
       puts "<<< #{res}"
       puts "<<< #{res.to_json}"
