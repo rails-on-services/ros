@@ -56,7 +56,22 @@ module Ros
       end
 
       def resolve
-        scope.all
+
+        actions = if user.attached_actions.is_a?(String)
+                    JSON.parse(user.attached_actions)
+                  else
+                    JSON.parse(user.attached_actions.to_json)
+                  end
+
+        scopes = []
+
+        actions.select { |i| i['effect'] == 'allow' && i['name'] == user.params['action'] }.each do |allowed_action|
+          scopes << allowed_action['segment'] if scope.urn_match?(allowed_action['target_resource'])
+        end
+
+        # binding.pry
+
+        scopes.inject(scope, :send)
       end
     end
 
@@ -79,11 +94,19 @@ module Ros
     def check_action(action)
       return true if user.root?
 
-      user.attached_actions.where(name: action, effect: :allow).each do |allowed_action|
-        return true if record.urn_match?(allowed_action['resource'])
+      actions = if user.attached_actions.is_a?(String)
+                  JSON.parse(user.attached_actions)
+                else
+                  JSON.parse(user.attached_actions.to_json)
+                end
+
+      arr = []
+
+      actions.select { |i| i['effect'] == 'allow' && i['name'] == action.to_s }.each do |allowed_action|
+        arr << record.urn_match?(allowed_action['target_resource'])
       end
 
-      false
+      arr.any?
 
       # user_policies = user.attached_policies
       # user_actions = user.attached_actions

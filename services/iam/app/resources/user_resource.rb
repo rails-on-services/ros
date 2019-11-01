@@ -20,6 +20,6 @@ class UserResource < Iam::ApplicationResource
   end
 
   def actions
-    @model.actions
+    @model.actions.to_json
   end
 end

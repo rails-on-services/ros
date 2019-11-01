@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2019_10_21_220135) do
   create_table "actions", force: :cascade do |t|
     t.string "name", null: false
     t.string "effect", null: false
-    t.string "resource", null: false
+    t.string "target_resource", null: false
     t.string "segment", default: "all", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

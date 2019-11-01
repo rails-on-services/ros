@@ -5,7 +5,7 @@ class CreateActions < ActiveRecord::Migration[6.0]
     create_table :actions do |t|
       t.string :name, null: false
       t.string :effect, null: false
-      t.string :resource, null: false
+      t.string :target_resource, null: false
       t.string :segment, null: false, default: :all
 
       t.timestamps null: false
