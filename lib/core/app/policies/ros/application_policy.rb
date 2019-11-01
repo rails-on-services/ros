@@ -71,8 +71,8 @@ module Ros
 
         # binding.pry
 
-        scopes.inject do |scope_name|
-          scope.send(scope_name, user)
+        scopes.inject(scope) do |current_scope, scope_name|
+          current_scope.send(scope_name, user)
         end
       end
     end
@@ -107,6 +107,8 @@ module Ros
       actions.select { |i| i['effect'] == 'allow' && i['name'] == action.to_s }.each do |allowed_action|
         arr << record.urn_match?(allowed_action['target_resource'])
       end
+
+      # binding.pry
 
       arr.any?
 

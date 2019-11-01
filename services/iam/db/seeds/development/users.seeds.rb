@@ -23,8 +23,9 @@ after 'development:tenants' do
                            secret: credential.secret_access_key)
 
       policy = user.policies.create(name: 'Basic Policy')
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:credential', segment: :all)
-      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :all)
+      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:credential', segment: :all_records)
+      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :all_records)
+      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)
       policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:voucher-service::222222222:*', segment: :owned)
 
       # Create a Group
