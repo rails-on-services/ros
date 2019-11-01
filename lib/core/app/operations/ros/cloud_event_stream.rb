@@ -9,7 +9,6 @@ module Ros
 
     # rubocop:disable Lint/UnreachableCode
     def log_event(ctx, type:, message_id:, data:, **)
-      # binding.pry
       ctx[:res] = Rails.configuration.x.event_logger.log_event(type, message_id, data) # => Faraday::Response
       ctx[:res].success?
     rescue Faraday::Error => e
