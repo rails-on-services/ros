@@ -22,7 +22,6 @@ ActiveRecord::Schema.define(version: 2019_10_21_220135) do
     t.string "segment", default: "all", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["name"], name: "index_actions_on_name", unique: true
   end
 
   create_table "credentials", force: :cascade do |t|

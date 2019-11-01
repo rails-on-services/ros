@@ -22,6 +22,9 @@ after 'development:tenants' do
       @created_list.append(type: 'user', owner: user, tenant: tenant, credential: credential,
                            secret: credential.secret_access_key)
 
+      policy = user.policies.create(name: 'Basic Policy')
+      policy.actions.create(name: :index, effect: :allow, resource: 'urn:perx:iam::222222222:credential', segment: :all)
+
       # Create a Group
       group_admin = Group.create(name: 'Admin')
 
