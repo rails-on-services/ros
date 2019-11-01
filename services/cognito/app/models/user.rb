@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < Cognito::ApplicationRecord
+  include Ros::ScopableConcern
+
   attribute :anonymous, :boolean, default: false
 
   has_many :user_pools
@@ -14,6 +16,10 @@ class User < Cognito::ApplicationRecord
 
   def self.file_fingerprint_attributes
     column_names + %i[pool_name]
+  end
+
+  def self.owned(user_context)
+    where(id: user_context.cognito_user_id)
   end
 
   # rubocop:disable Rails/Output

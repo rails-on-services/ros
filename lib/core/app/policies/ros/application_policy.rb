@@ -71,7 +71,9 @@ module Ros
 
         # binding.pry
 
-        scopes.inject(scope, :send)
+        scopes.inject do |scope_name|
+          scope.send(scope_name, user)
+        end
       end
     end
 
