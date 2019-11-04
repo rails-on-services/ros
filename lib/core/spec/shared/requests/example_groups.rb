@@ -27,7 +27,10 @@ RSpec.shared_context 'jsonapi requests' do
   let(:post_response) { OpenStruct.new(post_attributes) }
 
   # This method smells of :reek:UncommunicativeMethodName
-  def u(url); "#{Ros.dummy_mount_path}#{url}" end
+  def u(url)
+    puts 'Reconsider the use of this'
+    "#{Ros.dummy_mount_path}#{url}"
+  end
 
   # rubocop:disable Metrics/AbcSize
   def mock_authentication

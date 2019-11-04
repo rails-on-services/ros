@@ -6,7 +6,8 @@ RSpec.describe 'users merge requests', type: :request do
   include_context 'jsonapi requests'
 
   let(:mock) { true }
-  let(:url) { "/users/#{user_id}/merge" }
+  # TODO: Figure out why this does not work in local without u method
+  let(:url) { u("/users/#{user_id}/merge") }
   let(:params) { { merge_ids: [anonymous_user_id] } }
   let(:user_id) { 1 }
   let(:anonymous_user_id) { 2 }
