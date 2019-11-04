@@ -5,7 +5,7 @@ module Ros
     extend ActiveSupport::Concern
 
     class_methods do
-      def all_records(_user_context)
+      def everything(_user_context)
         all
       end
 

@@ -6,12 +6,6 @@ after 'development:tenants' do
     next if tenant.id.eql? 1
 
     tenant.switch do
-      if Policy.count.zero?
-        # Add IAM Policies
-        Policy.create(name: 'AdministratorAccess')
-        Policy.create(name: 'IamUserFullAccess')
-        Policy.create(name: 'IamUserReadOnlyAccess')
-      end
       next if User.count.positive?
 
       user = User.create(username: 'Admin', console: true, api: true, time_zone: 'Asia/Singapore',
@@ -23,10 +17,12 @@ after 'development:tenants' do
                            secret: credential.secret_access_key)
 
       policy = user.policies.create(name: 'Basic Policy')
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:credential', segment: :all_records)
-      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :all_records)
-      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:voucher-service::222222222:*', segment: :owned)
+      policy.actions.create(name: '*', effect: :allow, target_resource: 'urn:perx:*', segment: :everything)
+      
+      # policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:credential', segment: :everything)
+      # policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :everything)
+      # policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)
+      # policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:voucher-service::222222222:*', segment: :owned)
 
       # Create a Group
       group_admin = Group.create(name: 'Admin')
