@@ -41,5 +41,14 @@ RSpec.describe 'User Authentication', type: :request do
         expect(response.status).to eq 200
       end
     end
+
+    context 'when logged in' do
+      let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.account_id) } } }
+
+      it "allows fetching user's own details", wip: true do
+        get '/users/show', params: valid_attributes, as: :json
+        expect(response.status).to eq 200
+      end
+    end
   end
 end

@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'users requests', type: :request do
-  let(:mock) { true }
   let(:url) { '/users' }
   let(:tenant) { create(:tenant) }
   let(:admin_user) { create(:user, :administrator_access) }
