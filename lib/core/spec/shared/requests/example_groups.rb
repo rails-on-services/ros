@@ -8,6 +8,8 @@ RSpec.configure do |rspec|
 end
 
 RSpec.shared_context 'jsonapi requests' do
+  let(:mock) { false }
+  let(:tenant) { Tenant.first }
   let(:body) { JSON.parse(response.body) }
   let(:data) { body['data'] }
   let(:attributes) { data[0]['attributes'] }
@@ -37,6 +39,10 @@ RSpec.shared_context 'jsonapi requests' do
     allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_bearer).and_return(tenant.schema_name)
   end
   # rubocop:enable Metrics/AbcSize
+
+  before do
+    mock_authentication if mock
+  end
 end
 
 RSpec.shared_context 'authorized user' do
@@ -68,6 +74,7 @@ RSpec.shared_context 'cognito user' do
 end
 
 RSpec.shared_context 'unauthorized user' do
+  let(:authorized_user) { nil }
   let(:request_headers) do
     {
       'Authorization' => 'Bearer invalid_key:invalid_secret',
@@ -86,6 +93,7 @@ end
 RSpec.shared_examples 'unauthenticated post' do
   it 'returns unauthorized' do
     post url, params: params, headers: request_headers
+
     expect(response).to be_unauthorized
   end
 end
