@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
 class UsersController < Cognito::ApplicationController
+  # TODO: Should this be in a separate controller nested under users?
   def merge
-    binding.pry
-    # TODO: Should this be in a separate controller nested under users?
-    # TODO: recieve set of params that are accepted for merging:
-    # - {user id} to keep
-    # - {list of user ids} to merge
-    # - Ensure that user id is confirmed while all the other users are not
-    # confirmed
-    # - Which permissions should this require?
-    # - For now, requesting user (identified via token), has to match the
-    # id passed in the params
-    render :ok
+    res = UsersMerge.call(params: merge_params, id: params[:id], current_user: current_user)
+    if res.success?
+      render json: json_resource(resource_class: TransactionResource, record: res.model)
+    else
+      resource = ApplicationResource.new(res, nil)
+      handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
+    end
+  end
+
+  private
+
+  def merge_params
+    params.permit_all!
   end
 end
