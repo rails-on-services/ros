@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Password management', type: :request do
   context :update do
-    let(:mock) { true }
+    let(:mock) { false }
     let(:url) { '/users/password' }
     let(:tenant) { create(:tenant) }
     let(:user) do
@@ -46,7 +46,7 @@ RSpec.describe 'Password management', type: :request do
       context 'with valid password_confirmation' do
         let(:params) { valid_params }
 
-        it 'returns success status' do
+        it 'returns success status', wip: true do
           mock_authentication if mock
           put url, params: params, headers: request_headers, as: :json
           expect(response.status).to eq 200
