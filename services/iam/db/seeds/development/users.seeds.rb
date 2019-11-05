@@ -18,7 +18,7 @@ after 'development:tenants' do
 
       policy = user.policies.create(name: 'Basic Policy')
       policy.actions.create(name: '*', effect: :allow, target_resource: 'urn:perx:*', segment: :everything)
-      
+
       # policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:credential', segment: :everything)
       # policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :everything)
       # policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)

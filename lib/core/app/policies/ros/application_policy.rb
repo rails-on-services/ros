@@ -56,7 +56,6 @@ module Ros
       end
 
       def resolve
-
         actions = if user.attached_actions.is_a?(String)
                     JSON.parse(user.attached_actions)
                   else
