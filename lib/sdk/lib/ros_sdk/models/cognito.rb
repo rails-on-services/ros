@@ -11,5 +11,6 @@ module Ros
     class User < Base; end
     class Identifier < Base; end
     class FileFingerprint < Base; end
+    class MergeRequest < Base; end
   end
 end

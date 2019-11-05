@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_17_073328) do
+ActiveRecord::Schema.define(version: 2019_11_05_100356) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,13 @@ ActiveRecord::Schema.define(version: 2019_03_17_073328) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_identifiers_on_user_id"
+  end
+
+  create_table "merge_requests", force: :cascade do |t|
+    t.bigint "final_user_id"
+    t.jsonb "ids_to_merge", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "platform_events", force: :cascade do |t|
