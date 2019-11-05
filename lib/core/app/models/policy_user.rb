@@ -21,4 +21,8 @@ class PolicyUser
   def root?
     @iam_user.class.name.eql? 'Root'
   end
+
+  def schema_name
+    Tenant.account_id_to_schema(Ros::Urn.from_urn(iam_user.to_urn).account_id)
+  end
 end
