@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2019_11_05_100356) do
   create_table "merge_requests", force: :cascade do |t|
     t.bigint "final_user_id"
     t.jsonb "ids_to_merge", null: false
+    t.string "status", default: "pending"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
