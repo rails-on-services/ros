@@ -9,9 +9,14 @@ class UsersMerge < Ros::ActivityBase
   # - Which permissions should this require?
   # - For now, requesting user (identified via token), has to match the
   # id passed in the params
+
+  # rubocop:disable Style/SignalException
+  # rubocop:disable Lint/UnreachableCode
   step :validate_user_permissions
   fail :invalid_permissions
   step :enqueue_ownership_change
+  # rubocop:enable Lint/UnreachableCode
+  # rubocop:enable Style/SignalException
 
   private
 
@@ -26,7 +31,7 @@ class UsersMerge < Ros::ActivityBase
   # TODO: This should be an async process where this publishes the merging action
   # and each service knows its internals how to proceed with the merging
   # e.g. queue.publish(action: 'merge', params: { cognito_uid: 10, merge_ids: [] })
-  def find_user_transactions(ctx, id:, merge_params:, **)
+  def find_user_transactions(_ctx, id:, merge_params:, **)
     %w[survey game instant-outcome voucher outcome].each do |service|
       Ros::ChownJob.set(queue: "#{service}_default").perform_later(id: id, merge_params: merge_params)
     end
