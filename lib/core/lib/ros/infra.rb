@@ -20,7 +20,6 @@ module Ros
           resource_type = "Ros::Infra::#{service.to_s.classify}".constantize.resource_type
           next unless (resource = resources.dig(resource_type))
           resource.each_pair do |name, config|
-            next
             require "ros/infra/#{config.provider}/#{service}"
             klass = "Ros::Infra::#{config.provider.capitalize}::#{service.capitalize}".constantize
             @resources[service][name] = klass.new(config)
