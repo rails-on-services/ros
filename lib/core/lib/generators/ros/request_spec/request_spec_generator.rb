@@ -30,7 +30,6 @@ module Ros
                 include_context 'authorized user'
 
                 before do
-                  mock_authentication if mock
                   get url, headers: request_headers
                 end
 
@@ -54,7 +53,6 @@ module Ros
                 include_context 'authorized user'
 
                 before do
-                  mock_authentication if mock
                   get show_url, headers: request_headers
                 end
 
@@ -75,10 +73,6 @@ module Ros
                 include_context 'authorized user'
 
                 let(:model_data) { build(:#{name}) }
-
-                before do
-                  mock_authentication if mock
-                end
 
                 context 'correct params' do
                   it 'returns a successful response with proper serialized response' do
@@ -131,7 +125,6 @@ module Ros
                 let(:delete_url) { url + '/' + model.id.to_s }
 
                 before do
-                  mock_authentication if mock
                   delete delete_url, headers: request_headers
                 end
 

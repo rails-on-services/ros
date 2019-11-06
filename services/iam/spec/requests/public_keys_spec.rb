@@ -23,7 +23,7 @@ RSpec.describe 'public_keys requests', type: :request, exclude: true do
         include_context 'authorized user'
 
         before do
-          mock_authentication if mock
+
           get url, headers: request_headers
         end
 
@@ -47,7 +47,7 @@ RSpec.describe 'public_keys requests', type: :request, exclude: true do
         include_context 'authorized user'
 
         before do
-          mock_authentication if mock
+
           get show_url, headers: request_headers
         end
 
@@ -70,7 +70,7 @@ RSpec.describe 'public_keys requests', type: :request, exclude: true do
         let(:model_data) { build(:public_key) }
 
         before do
-          mock_authentication if mock
+
         end
 
         context 'correct params' do
@@ -124,7 +124,7 @@ RSpec.describe 'public_keys requests', type: :request, exclude: true do
         let(:delete_url) { url + '/' + model.id.to_s }
 
         before do
-          mock_authentication if mock
+
           delete delete_url, headers: request_headers
         end
 

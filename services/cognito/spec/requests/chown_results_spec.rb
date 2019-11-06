@@ -22,7 +22,7 @@ RSpec.describe 'Chown Results', type: :request do
       include_context 'authorized user'
 
       before do
-        mock_authentication if mock
+
         existing_request
         get url, headers: request_headers
       end
@@ -47,7 +47,7 @@ RSpec.describe 'Chown Results', type: :request do
       include_context 'authorized user'
 
       before do
-        mock_authentication if mock
+
         get show_url, headers: request_headers
       end
 
@@ -70,7 +70,7 @@ RSpec.describe 'Chown Results', type: :request do
       let(:model_data) { build(:chown_result) }
 
       before do
-        mock_authentication if mock
+
         post url, headers: request_headers, params: post_data
       end
 
@@ -128,7 +128,7 @@ RSpec.describe 'Chown Results', type: :request do
       let(:delete_url) { url + '/' + model.id.to_s }
 
       before do
-        mock_authentication if mock
+
         delete delete_url, headers: request_headers
       end
 

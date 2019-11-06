@@ -25,7 +25,7 @@ RSpec.describe 'Templates', type: :request do
       include_context 'authorized user'
 
       before do
-        mock_authentication if mock
+
         template
         get url, headers: request_headers
       end
@@ -53,7 +53,7 @@ RSpec.describe 'Templates', type: :request do
       let(:model_data) { build(:template, content: 'hello mr tambourine') }
 
       before do
-        mock_authentication if mock
+
         template
         post url, params: post_data, headers: request_headers
       end

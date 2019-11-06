@@ -30,7 +30,7 @@ RSpec.describe 'Events', type: :request do
       include_context 'authorized user'
 
       before do
-        mock_authentication if mock
+
         event
         get url, headers: request_headers
       end
@@ -58,7 +58,7 @@ RSpec.describe 'Events', type: :request do
       let(:model_data) { build(:event, provider_id: event.provider_id, template_id: event.template_id) }
 
       before do
-        mock_authentication if mock
+
         event
         post url, params: post_data, headers: request_headers
       end
