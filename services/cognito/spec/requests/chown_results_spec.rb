@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe "chown_results requests", type: :request do
+RSpec.describe 'chown_results requests', type: :request do
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:url) { "/chown_results" }
+  let(:url) { '/chown_results' }
 
   context 'all' do
     include_context 'jsonapi requests'

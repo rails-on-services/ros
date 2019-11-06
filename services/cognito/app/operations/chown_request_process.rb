@@ -5,7 +5,7 @@ class ChownRequestProcess < Ros::ActivityBase
   # - {from_ids} list of user ids to merge
   # - {to_id} Final user id to receive all the data
 
-  # TODO:
+  # TODO: Needs improvement
   # - Ensure that user id is confirmed while all the other users are not
   # confirmed
   # - Which permissions should this require?
