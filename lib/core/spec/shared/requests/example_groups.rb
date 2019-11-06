@@ -28,7 +28,7 @@ RSpec.shared_context 'jsonapi requests' do
 
   # This method smells of :reek:UncommunicativeMethodName
   def u(url)
-    puts 'Reconsider the use of this'
+    Rails.logger.debug 'Reconsider the use of this'
     "#{Ros.dummy_mount_path}#{url}"
   end
 
