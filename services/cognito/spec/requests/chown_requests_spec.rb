@@ -76,7 +76,7 @@ RSpec.describe 'Chown Request', type: :request do
       context 'correct params' do
         let(:post_data) { jsonapi_data(model_data) }
 
-        it 'returns a successful response with proper serialized response' d
+        it 'returns a successful response with proper serialized response' do
           expect(response).to be_created
           # NOTE: Test if model data attribute matches response attributes
           # expect(model_data.attribute1).to eq(post_response.attribute1)
