@@ -13,7 +13,6 @@ module Ros
     queue_as "#{Settings.service.name}_default"
 
     before_perform do
-      # Apartment::Tenant.switch!('222_222_222')
       schema_name = Apartment::Tenant.current
       next unless (@tenant = Tenant.find_by(schema_name: schema_name))
 

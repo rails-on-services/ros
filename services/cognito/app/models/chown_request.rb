@@ -8,6 +8,6 @@ class ChownRequest < Cognito::ApplicationRecord
   private
 
   def create_chown_results
-    ChownRequestProcess.call(id: id, from_ids: from_ids, to_id: to_ids)
+    ChownRequestProcess.call(id: id, from_ids: from_ids, to_id: to_id)
   end
 end

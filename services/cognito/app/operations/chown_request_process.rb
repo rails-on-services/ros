@@ -12,13 +12,13 @@ class ChownRequestProcess < Ros::ActivityBase
   # - For now, requesting user (identified via token), has to match the
   # id passed in the params
 
-  step :enqueue_ownership_change
+  step :create_chown_results
 
   private
 
-  def enqueue_ownership_change(_ctx, id:, from_ids:, to_id:, **)
+  def create_chown_results(_ctx, id:, from_ids:, to_id:, **)
     from_ids.each do |from_id|
-      %w[survey game instant-outcome voucher outcome].each do |service|
+      %w[game].each do |service|
         ChownResult.create(chown_request_id: id, service_name: service,
                            from_id: from_id, to_id: to_id, status: 'pending')
       end
