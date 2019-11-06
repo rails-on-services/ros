@@ -16,7 +16,7 @@ class AvroGenerator < Rails::Generators::NamedBase
 
   private
 
-  def model_defined?(name)
-    Object.const_defined?(name)
+  def model_defined?(classified_name)
+    Ros.table_names.include?(plural_name) && Object.const_defined?(classified_name)
   end
 end

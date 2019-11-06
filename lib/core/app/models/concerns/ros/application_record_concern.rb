@@ -22,7 +22,7 @@ module Ros
       after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
 
       def stream_cloud_event
-        type = "#{Settings.service.name}.#{self.class.name.dasherize.downcase}"
+        type = "#{Settings.service.name}.#{self.class.name.underscore.downcase}"
         Ros::CloudEventStreamJob.perform_later(type: type, message_id: id, data: as_json)
       end
 
