@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class ChownRequest < Cognito::ApplicationRecord
-  after_commit :enqueue_processing_job, on: :create
+  after_commit :spawn_chown_jobs, on: :create
 
   private
 
-  def enqueue_processing_job
-    ChownRequestProcessJob.perform_later(id: id)
+  def spawn_chown_jobs
+    ChownRequestProcess.call(id: id, from_ids: from_ids, to_id: to_ids)
   end
 end
