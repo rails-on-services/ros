@@ -11,5 +11,7 @@ module Ros
     class User < Base; end
     class Identifier < Base; end
     class FileFingerprint < Base; end
+    class ChownRequest < Base; end
+    class ChownResult < Base; end
   end
 end

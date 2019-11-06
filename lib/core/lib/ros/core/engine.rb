@@ -12,7 +12,9 @@ module Ros
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
       end
 
-      initializer 'ros_core.sidekiq' do |app|
+      initializer 'ros_core.sidekiq' do |_app|
+        require 'apartment-sidekiq'
+        Apartment::Sidekiq::Middleware.run
       end
 
       # NOTE: ENV vars indicate hierarchy with two underscores '__'

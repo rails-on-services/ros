@@ -35,7 +35,7 @@ module Ros
       end
 
       initializer 'service.configure_event_logging' do |_app|
-        if Settings.event_logging.enabled
+        if Settings.dig(:event_logging, :enabled)
           Settings.event_logging.config.schemas_path = root.join(Settings.event_logging.config.schemas_path)
         end
       end
