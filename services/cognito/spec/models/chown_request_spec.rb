@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe MergeRequest, type: :model do
+RSpec.describe ChownRequest, type: :model do
   include_examples 'application record concern' do
     let(:tenant) { Tenant.first }
     let!(:subject) { create(factory_name) }

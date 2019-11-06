@@ -2,17 +2,17 @@
 
 require 'rails_helper'
 
-RSpec.describe "merge_requests requests", type: :request do
+RSpec.describe 'Chown Request requests', type: :request do
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:url) { "/merge_requests" }
+  let(:url) { '/chown_request' }
 
   context 'all' do
     include_context 'jsonapi requests'
 
     describe 'GET index' do
       let(:models_count) { rand(1..5) }
-      let!(:models) { create_list(:merge_request, models_count) }
+      let!(:models) { create_list(:chown_request, models_count) }
 
       context 'Unauthenticated user' do
         include_context 'unauthorized user'
@@ -35,7 +35,7 @@ RSpec.describe "merge_requests requests", type: :request do
     end
 
     describe 'GET show' do
-      let!(:model) { create(:merge_request) }
+      let!(:model) { create(:chown_request) }
       let(:show_url) { url + '/' + model.id.to_s }
 
       context 'Unauthenticated user' do
@@ -67,7 +67,7 @@ RSpec.describe "merge_requests requests", type: :request do
       context 'Authenticated user' do
         include_context 'authorized user'
 
-        let(:model_data) { build(:merge_request) }
+        let(:model_data) { build(:chown_request) }
 
         before do
           mock_authentication if mock
@@ -120,7 +120,7 @@ RSpec.describe "merge_requests requests", type: :request do
       context 'Authenticated user' do
         include_context 'authorized user'
 
-        let!(:model) { create(:merge_request) }
+        let!(:model) { create(:chown_request) }
         let(:delete_url) { url + '/' + model.id.to_s }
 
         before do

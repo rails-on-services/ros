@@ -36,10 +36,9 @@ ActiveRecord::Schema.define(version: 2019_11_05_100356) do
     t.index ["user_id"], name: "index_identifiers_on_user_id"
   end
 
-  create_table "merge_requests", force: :cascade do |t|
-    t.bigint "final_user_id"
-    t.jsonb "ids_to_merge", null: false
-    t.string "status", default: "pending"
+  create_table "chown_requests", force: :cascade do |t|
+    t.bigint "to_id"
+    t.jsonb "from_ids", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
