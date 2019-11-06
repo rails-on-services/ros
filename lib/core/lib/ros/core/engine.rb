@@ -198,7 +198,7 @@ module Ros
             allow do
               origins Settings.cors.origins
               resource Settings.cors.resource, headers: :any,
-                                               methods: %i[get post delete put patch options head]
+                       methods: %i[get post delete put patch options head]
             end
           end
         end
@@ -215,6 +215,16 @@ module Ros
 
       initializer 'ros_core.set_factory_paths', after: 'factory_bot.set_factory_paths' do
         FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories')) if defined?(FactoryBot) && !Rails.env.production?
+      end
+
+      initializer 'ros_core.configure_global_id', after: 'ros.core.configure_platform_services_connections' do
+        Ros::Sdk.configured_services.each do |name, connection|
+          next if Settings.service.name == name
+
+          GlobalID::Locator.use name do |gid|
+            connection.const_get(gid.model_name).find(gid.model_id)
+          end
+        end
       end
 
       config.after_initialize do
