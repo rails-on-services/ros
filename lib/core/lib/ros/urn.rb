@@ -13,19 +13,19 @@ module Ros
       @resource = resource
     end
 
-    def self.merge_urns(urns)
+    def self.merge(urns)
       output = []
-      while true do
-        for a in urns do
-          for b in urns do
-            merged = Ros::Urn.campare_urns(a, b)
+      loop do
+        urns.each do |a|
+          urns.each do |b|
+            merged = Ros::Urn.compare(a, b)
             unless merged.nil?
-              output.reject!{|i| i == a}
+              output.reject! { |i| i == a }
               a = merged
             end
             output << a
             output.uniq!
-            output.reject!{|i| i.nil? }
+            output.reject!(&:nil?)
           end
         end
         break if urns.sort == output.sort
@@ -36,7 +36,7 @@ module Ros
       output
     end
 
-    def self.campare_urns(left, right)
+    def self.compare(left, right)
       urn_breakdown = [
         { txt: 1 },
         { partition_name: 2 },
@@ -46,14 +46,17 @@ module Ros
         { resource: 6 }
       ]
 
-      left, right = Ros::Urn.from_urn(Ros::Urn.flatten(left)), Ros::Urn.from_urn(Ros::Urn.flatten(right))
+      left = Ros::Urn.from_urn(Ros::Urn.flatten(left))
+      right = Ros::Urn.from_urn(Ros::Urn.flatten(right))
       camparing_results = []
       consumer, wildcard_position = nil
       return nil if left.to_s == right.to_s
+
       urn_breakdown.each do |i|
         key = i.keys.first
         position = i.values.first
-        left_value, right_value = left.send(key), right.send(key)
+        left_value = left.send(key)
+        right_value = right.send(key)
 
         if consumer.nil?
           if left_value != right_value && [left_value, right_value].include?('*')
@@ -63,14 +66,12 @@ module Ros
         end
         camparing_results << (left_value == right_value || [left_value, right_value].include?('*'))
       end
-      if camparing_results.all?
-        if consumer.nil?
-          nil
-        else
-          consumer.to_s
-        end
-      else
+      return unless camparing_results.all?
+
+      if consumer.nil?
         nil
+      else
+        consumer.to_s
       end
     end
 
