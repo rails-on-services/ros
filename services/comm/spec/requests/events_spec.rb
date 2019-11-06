@@ -36,8 +36,6 @@ RSpec.describe 'Events', type: :request do
       end
 
       it 'returns correct payload' do
-        binding.pry
-
         # TODO: move the tests from data.0 into get and show shared examples
         expect_json_types(data: :array)
         expect_json_types('data.0.attributes', :object) # Hash
@@ -69,7 +67,6 @@ RSpec.describe 'Events', type: :request do
         let(:post_data) { jsonapi_data(model_data, skip_attributes: [:status]) }
 
         it 'returns the correct response and payload' do
-          # create an item in DB, duplicate its attributes and create a new one via API
           expect(response).to be_created
           expect(model_data.channel).to eq(post_response.channel)
         end
