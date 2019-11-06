@@ -18,8 +18,7 @@ class ChownRequestProcess < Ros::ActivityBase
 
   def create_chown_results(_ctx, id:, from_ids:, to_id:, **)
     from_ids.each do |from_id|
-      # %w[survey game instant-outcome voucher outcome]
-      %w[game].each do |service|
+      %w[game instant-outcome voucher-service].each do |service|
         ChownResult.create(chown_request_id: id, service_name: service,
                            from_id: from_id, to_id: to_id, status: 'pending')
       end
