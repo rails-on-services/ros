@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe UserPolicy, type: :policy do
-  subject { described_class.new(user, User) }
   let(:iam_user) { create(:iam_user, :with_administrator_policy) }
   let(:cognito_user_id) { nil }
   let(:params) { {} }
