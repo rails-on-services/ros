@@ -86,6 +86,23 @@ RSpec.describe 'users requests', type: :request do
                       email_address: model_data.email_address,
                       anonymous: false)
         end
+
+        describe 'when anonymous is passed as true' do
+          let(:post_data) { jsonapi_data(model_data, extra_attributes: { anonymous: true }) }
+
+          it 'returns a successful response with proper serialized response' do
+            expect(response).to be_created
+            expect_json_types('data.attributes', :object)
+            expect_json('data.attributes',
+                        primary_identifier: model_data.primary_identifier,
+                        title: model_data.title,
+                        first_name: model_data.first_name,
+                        last_name: model_data.last_name,
+                        phone_number: model_data.phone_number,
+                        email_address: model_data.email_address,
+                        anonymous: true)
+          end
+        end
       end
 
       context 'incorrect params' do
