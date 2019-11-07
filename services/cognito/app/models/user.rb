@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < Cognito::ApplicationRecord
+  attribute :anonymous, :boolean, default: false
+
   has_many :user_pools
   has_many :pools, through: :user_pools
 
@@ -16,7 +18,6 @@ class User < Cognito::ApplicationRecord
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Rails/Output
   def self.load_document(file_name, column_map = nil, create = false)
     column_map ||= default_headers
     column_map = column_map.invert.symbolize_keys.invert
@@ -37,7 +38,6 @@ class User < Cognito::ApplicationRecord
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Rails/Output
 
   def self.default_headers
     { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number,
