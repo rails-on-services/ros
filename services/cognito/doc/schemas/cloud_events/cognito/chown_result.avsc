@@ -1,5 +1,5 @@
 {
-  "name": "cognito.user",
+  "name": "cognito.chown_result",
   "type": "record",
   "fields": [
     {
@@ -7,7 +7,15 @@
       "type": "int"
     },
     {
-      "name": "primary_identifier",
+      "name": "chown_request_id",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "service_name",
       "type": [
         "null",
         "string"
@@ -15,55 +23,23 @@
       "default": null
     },
     {
-      "name": "title",
+      "name": "from_id",
       "type": [
         "null",
-        "string"
+        "int"
       ],
       "default": null
     },
     {
-      "name": "first_name",
+      "name": "to_id",
       "type": [
         "null",
-        "string"
+        "int"
       ],
       "default": null
     },
     {
-      "name": "last_name",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "phone_number",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "email_address",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "anonymous",
-      "type": [
-        "null",
-        "boolean"
-      ],
-      "default": null
-    },
-    {
-      "name": "properties",
+      "name": "status",
       "type": [
         "null",
         "string"
