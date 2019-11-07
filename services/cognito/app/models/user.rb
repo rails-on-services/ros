@@ -18,6 +18,7 @@ class User < Cognito::ApplicationRecord
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Rails/Output
   def self.load_document(file_name, column_map = nil, create = false)
     column_map ||= default_headers
     column_map = column_map.invert.symbolize_keys.invert
@@ -36,6 +37,7 @@ class User < Cognito::ApplicationRecord
     end
     true
   end
+  # rubocop:enable Rails/Output
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
