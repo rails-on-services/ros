@@ -8,5 +8,15 @@ RSpec.describe User, type: :model do
     let(:subject) { create(factory_name) }
   end
 
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe 'associations' do
+    it { is_expected.to have_many(:user_pools) }
+    it { is_expected.to have_many(:pools).through(:user_pools) }
+  end
+
+  describe 'anonymous' do
+    it 'defaults to false' do
+      user = described_class.new
+      expect(user.anonymous).to eq false
+    end
+  end
 end

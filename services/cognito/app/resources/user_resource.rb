@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class UserResource < Cognito::ApplicationResource
-  attributes :title, :first_name, :last_name, :phone_number, :email_address, :primary_identifier, :properties
+  attributes :title, :first_name, :last_name, :phone_number, :email_address,
+             :primary_identifier, :properties, :anonymous
   filter :primary_identifier
 
   filter :query, apply: lambda { |records, value, _options|

@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(version: 2019_11_06_023315) do
     t.string "last_name"
     t.string "phone_number"
     t.string "email_address"
+    t.boolean "anonymous", default: false
     t.jsonb "properties"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

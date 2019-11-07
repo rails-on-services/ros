@@ -9,6 +9,7 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.string :last_name
       t.string :phone_number
       t.string :email_address
+      t.boolean :anonymous, default: false
       t.jsonb :properties
 
       t.timestamps
