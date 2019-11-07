@@ -72,10 +72,12 @@ RSpec.shared_examples 'application record concern' do
   end
 
   context 'avro file' do
-    let!(:service_name) { Settings.service.name }
-    let(:avro_file) { "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{factory_name}.avsc" }
+    let(:service_name) { Settings.service.name }
 
     it 'matches the field names of its avro file' do
+      avsc_file_name = subject.class.to_s.include?('::') ? subject.class.superclass.to_s.downcase : factory_name
+      avro_file = "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{avsc_file_name}.avsc"
+
       avro_json = JSON.parse(File.read(avro_file))
       avro_field_names = avro_json['fields'].map { |column| column['name'] }
       model_column_names = subject.class.columns.map(&:name).push('urn')
