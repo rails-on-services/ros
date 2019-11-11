@@ -8,5 +8,6 @@
 **/spec/dummy/tmp/
 **/tmp/
 config/environments
+lib/iron_hide
 .env
 erd.pdf
