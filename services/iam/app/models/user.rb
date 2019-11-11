@@ -41,5 +41,38 @@ class User < Iam::ApplicationRecord
     where(id: user_context.iam_user.id)
   end
 
+  def all_policy_actions
+    # delete duplication and group by name, effect and segment
+    merged = (actions + group_actions + role_actions).uniq.group_by do |i|
+      { name: i.name, effect: i.effect, segment: i.segment }
+    end
+
+    # convert to neat format
+    merged.map do |k, v|
+      # shrink overlaping resources
+      resources = v.map(&:target_resource)
+      k.merge(resources: shrink_resources(resources))
+    end
+  end
+
   def jwt_payload; @jwt_payload ||= { sub: to_urn } end
+
+  def recalculate_attached_actions
+    # do nothing
+    true
+  end
+
+  private
+
+  def shrink_resources(resources)
+    arr = []
+    resources.each do |resource|
+      added = false
+      arr.each do |item|
+        added = true if item == resource
+      end
+      arr << resource unless added
+    end
+    arr
+  end
 end

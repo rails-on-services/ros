@@ -68,8 +68,6 @@ module Ros
           scopes << allowed_action['segment'] if scope.urn_match?(allowed_action['target_resource'])
         end
 
-        # binding.pry
-
         scopes.inject(scope) do |current_scope, scope_name|
           current_scope.send(scope_name, user)
         end
