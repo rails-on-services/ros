@@ -14,9 +14,6 @@ module HasAttachment
     self.class.upload(io: io, owner: self)
   end
 
-  # rubocop:disable Metrics/BlockLength
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   class_methods do
     def upload(io:, owner: nil)
       owner ||= create
@@ -64,7 +61,4 @@ module HasAttachment
 
     def service; ActiveStorage::Blob.service end
   end
-  # rubocop:enable Metrics/BlockLength
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 end

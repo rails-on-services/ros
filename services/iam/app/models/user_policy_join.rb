@@ -13,11 +13,9 @@ class UserPolicyJoin < ApplicationRecord
     user.save
   end
 
-  # rubocop:disable Metrics/AbcSize
   def remove_policy_from_user
     user.attached_policies[policy.name] -= 1
     user.attached_policies.delete(policy.name) if user.attached_policies[policy.name].zero?
     user.save
   end
-  # rubocop:enable Metrics/AbcSize
 end

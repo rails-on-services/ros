@@ -16,7 +16,6 @@ class Credential < Iam::ApplicationRecord
     find_by(access_key_id: access_key_id) || new(access_key_id: access_key_id)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.validate(access_key_id, secret_access_key)
     # Root Credentials validation
     # NOTE: Call to this method MUST begin in the 'public' schema
@@ -36,7 +35,6 @@ class Credential < Iam::ApplicationRecord
       credential.authenticate_secret_access_key(secret_access_key).try(:owner)
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def generate_values
     # TODO: Refactor to get from RequestStore
@@ -48,7 +46,6 @@ class Credential < Iam::ApplicationRecord
     owner_type.eql?('Root') ? "A#{(1..19).map { rand(65..90).chr }.join}" : access_key_id_from_schema_name
   end
 
-  # rubocop:disable Metrics/AbcSize
   def access_key_id_from_schema_name
     schema_name = Apartment::Tenant.current
     account_id = schema_name.remove('_')
@@ -60,7 +57,6 @@ class Credential < Iam::ApplicationRecord
       a.append(rand(65..90).chr)
     end.join
   end
-  # rubocop:enable Metrics/AbcSize
 
   # access_key_id = 'AFJBLNJJFGFRFSOINUHB'
   # if Credential.find_by(access_key_id: access_key_id).try(:schema_name) ||
@@ -69,7 +65,6 @@ class Credential < Iam::ApplicationRecord
     @schema_name ||= owner_type.eql?('Root') ? owner.tenant.schema_name : schema_name_from_access_key_id
   end
 
-  # rubocop:disable Metrics/AbcSize
   def schema_name_from_access_key_id
     offset = access_key_id[1].ord - 65
     salt = Settings.credential&.salt.to_s.split('')
@@ -79,7 +74,6 @@ class Credential < Iam::ApplicationRecord
       d.append((char.ord - salt.shift.to_i - offset - 65).to_s)
     end.join.scan(/.{3}/).join('_')
   end
-  # rubocop:enable Metrics/AbcSize
 
   def self.urn_id; :access_key_id end
 end

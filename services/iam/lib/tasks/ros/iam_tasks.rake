@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 namespace :ros do
   namespace :iam do
     namespace :db do
@@ -50,4 +49,3 @@ namespace :ros do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

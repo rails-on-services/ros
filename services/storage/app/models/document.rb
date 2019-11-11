@@ -14,8 +14,6 @@ class Document < Storage::ApplicationRecord
   # Takes array of events from SQS worker with keys to attached files. For each event/file it:
   # creates an A/S blob and a Document record to attach the blob to
   # It then downloads the blob, extracts the header and calls identify_transfer_map
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def self.attach_from_storage_events(events)
     events.each do |event|
       Rails.logger.debug { "Document received event #{event}" }
@@ -42,8 +40,6 @@ class Document < Storage::ApplicationRecord
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 
   # For an HTTP upload the uploaded file is already on the local filesystem referenced by the io param
   # so we just need to open the io object and read the first line
