@@ -1,3 +1,5 @@
 inherit_gem:
   perx-rubocop:
     - default.yml
+
+inherit_from: .rubocop_todo.yml
