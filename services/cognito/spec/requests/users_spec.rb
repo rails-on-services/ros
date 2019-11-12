@@ -37,10 +37,13 @@ RSpec.describe 'users requests', type: :request do
 
       let(:models_count) { rand(1..5) }
       let!(:models) { create_list :user, models_count }
+      let!(:filtered_model) { models.last }
 
       context 'based on ID' do
+        let(:url) { "#{base_url}?filter[query]=#{filtered_model.id}" }
+
         before do
-          get url + "?filter[query]=#{models.last.id}", headers: request_headers
+          get url, headers: request_headers
         end
 
         it 'returns and ok response with the user ID queried' do
@@ -50,11 +53,12 @@ RSpec.describe 'users requests', type: :request do
       end
 
       context 'based on primary_identifier' do
-        let(:model_primary_identifier) { models.last.primary_identifier }
+        let(:model_primary_identifier) { filtered_model.primary_identifier }
         let(:response_count) { models.select { |model| model.primary_identifier == model_primary_identifier }.length }
+        let(:url) { "#{base_url}?filter[query]=#{model_primary_identifier}" }
 
         before do
-          get url + "?filter[query]=#{model_primary_identifier}", headers: request_headers
+          get url, headers: request_headers
         end
 
         it 'returns and ok response with the user attribute queried' do
