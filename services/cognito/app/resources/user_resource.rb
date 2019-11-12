@@ -17,8 +17,8 @@ class UserResource < Cognito::ApplicationResource
 
   def query_non_id_atrributes(value)
     %w[primary_identifier first_name last_name email_address]
-    .map { |field| "#{field} ILIKE '%#{value}%'" }
-    .join(' OR ')
+      .map { |field| "#{field} ILIKE '%#{value}%'" }
+      .join(' OR ')
   end
 
   def query_id(value)
