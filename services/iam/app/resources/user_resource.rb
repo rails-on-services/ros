@@ -3,7 +3,7 @@
 class UserResource < Iam::ApplicationResource
   attributes :username, :api, :console, :time_zone
   attributes :properties, :display_properties
-  attributes :jwt_payload, :attached_policies, :attached_actions, :actions
+  attributes :jwt_payload, :attached_policies, :attached_actions
 
   has_many :groups
   has_many :credentials
@@ -17,9 +17,5 @@ class UserResource < Iam::ApplicationResource
 
   def self.updatable_fields(context)
     super - %i[attached_policies attached_actions jwt_payload]
-  end
-
-  def actions
-    @model.actions.to_json
   end
 end

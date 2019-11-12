@@ -7,6 +7,6 @@ class RolePolicyJoin < Iam::ApplicationRecord
   after_commit :update_policy_actions, on: %i[create destroy]
 
   def update_policy_actions
-    user.recalculate_attached_actions
+    role.users.each(&:recalculate_attached_actions)
   end
 end

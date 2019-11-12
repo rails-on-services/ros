@@ -58,8 +58,7 @@ class User < Iam::ApplicationRecord
   def jwt_payload; @jwt_payload ||= { sub: to_urn } end
 
   def recalculate_attached_actions
-    # do nothing
-    true
+    update(attached_actions: all_policy_actions)
   end
 
   private
