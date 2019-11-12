@@ -20,7 +20,7 @@ module AssociationResource
       yield query if block_given?
       query = query.where(type_column => model.class.resource_name) if type_column.present?
 
-      query.find
+      query.all
     end
 
     private
