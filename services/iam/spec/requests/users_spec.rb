@@ -29,7 +29,7 @@ RSpec.describe 'users requests', type: :request do
         get '/users', headers: headers
       end
 
-      xit 'returns a successful response' do
+      it 'returns a successful response' do
         expect(response).to be_successful
         # TODO: improve reponse test coverage
         expect(body['data']).to_not be_nil
@@ -76,7 +76,7 @@ RSpec.describe 'users requests', type: :request do
           }'
         end
 
-        xit 'returns a successful response' do
+        it 'returns a successful response' do
           expect(response).to be_successful
           # TODO: improve reponse test coverage
           expect(response.code).to eq '201'
@@ -98,7 +98,7 @@ RSpec.describe 'users requests', type: :request do
           }'
         end
 
-        xit 'returns a successful response' do
+        it 'returns a successful response' do
           expect(response).to_not be_successful
           expect(response.code).to eq '400'
           # TODO: improve reponse test coverage

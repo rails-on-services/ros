@@ -16,16 +16,17 @@ after 'development:tenants' do
       @created_list.append(type: 'user', owner: user, tenant: tenant, credential: credential,
                            secret: credential.secret_access_key)
 
-      policy = user.policies.create(name: 'Basic Policy')
+      admin_policy = user.policies.create(name: 'Admin Policy')
       # policy.actions.create(name: '*', effect: :allow, target_resource: 'urn:perx:*', segment: :everything)
 
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:credential', segment: :everything)
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :owned)
-      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:iam::222222222:user', segment: :owned)
-      policy.actions.create(name: :show, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)
-      policy.actions.create(name: :create, effect: :allow, target_resource: 'urn:perx:cognito::222222222:user', segment: :owned)
-      policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:voucher-service::222222222:*', segment: :owned)
+      admin_policy.actions.create(name: '*', effect: :allow, target_resource: "urn:#{Settings.partition_name}:iam::#{tenant.account_id}:*", segment: :everything)
+      admin_policy.actions.create(name: '*', effect: :allow, target_resource: "urn:#{Settings.partition_name}:iam::platform:tenant", segment: :everything)
+
+      # policy.actions.create(name: :show, effect: :allow, target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:user", segment: :owned)
+      # policy.actions.create(name: :index, effect: :allow, target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:user", segment: :owned)
+      # policy.actions.create(name: :create, effect: :allow, target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:user", segment: :owned)
+
+      # policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:voucher-service::222222222:*', segment: :owned)
 
       # Create a Group
       group_admin = Group.create(name: 'Admin')
@@ -41,9 +42,6 @@ after 'development:tenants' do
       Group.create(name: 'Customer Support')
       Group.create(name: 'Manager')
       Group.create(name: 'Viewer')
-
-      # Role.create(name: 'PerxServiceRoleForIAM')
-      # Role.create(name: 'PerxUserReadOnlyAccess')
     end
   end
 

@@ -19,7 +19,7 @@ FactoryBot.define do
       { iss: 'http://iam.localhost:3000', sub: 'urn:whistler:iam::222222222:user/Admin_2', scope: '*' }
     end
     attached_policies { { AdministratorAccess: 1 } }
-    attached_actions { {} }
+    attached_actions { [] }
     # end
 
     # factory :iam_user, class: OpenStruct do
@@ -27,7 +27,28 @@ FactoryBot.define do
     #   attached_policies { {} }
 
     trait :with_administrator_policy do
-      attached_policies { { 'AdministratorAccess' => 1 } }
+      attached_actions do
+        [
+          {
+            name: '*',
+            effect: :allow,
+            segment: :everything,
+            resources: [
+              "urn:#{Settings.partition_name}:cognito::" \
+              "#{Tenant.find_by(schema_name: Apartment::Tenant.current).account_id}:*"
+            ]
+          },
+          {
+            name: '*',
+            effect: :allow,
+            segment: :everything,
+            resources: [
+              "urn:#{Settings.partition_name}:comm::" \
+              "#{Tenant.find_by(schema_name: Apartment::Tenant.current).account_id}:*"
+            ]
+          }
+        ]
+      end
     end
   end
 end

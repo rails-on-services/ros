@@ -26,7 +26,7 @@ RSpec.describe 'tenants requests', type: :request do
     end
 
     context 'authenticated user' do
-      xit 'returns a successful response' do
+      it 'returns a successful response' do
         get '/tenants', headers: auth_headers
 
         expect(response).to be_successful
@@ -51,17 +51,14 @@ RSpec.describe 'tenants requests', type: :request do
     context 'authenticated user' do
       context 'with correct params' do
         xit 'returns a successful response' do
-          tenant = create :tenant
+          tenant = create(:tenant)
 
           params = {
             "data": {
               "id": tenant.id.to_s,
               "type": 'tenants',
               "attributes": {
-                "name": 'Some Name',
-                "properties": {
-                  "custom_1": 'cust_111'
-                }
+                "name": 'Some Name'
               }
             }
           }.to_json
@@ -80,7 +77,7 @@ RSpec.describe 'tenants requests', type: :request do
       end
 
       context 'trying to set readonly root_id param' do
-        xit 'returns a successful response' do
+        it 'returns a successful response' do
           tenant = create :tenant
           root = create :root
 

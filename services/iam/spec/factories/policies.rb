@@ -5,7 +5,8 @@ FactoryBot.define do
     name { Faker::Internet.username }
 
     trait :administrator_access do
-      name { 'AdministratorAccess' }
+      name { "AdministratorAccess #{Faker::Internet.username}" }
+      actions { [create(:action, :admin), create(:action, :tenant)] }
     end
   end
 end
