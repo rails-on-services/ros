@@ -19,14 +19,36 @@ after 'development:tenants' do
       admin_policy = user.policies.create(name: 'Admin Policy')
       # policy.actions.create(name: '*', effect: :allow, target_resource: 'urn:perx:*', segment: :everything)
 
-      admin_policy.actions.create(name: '*', effect: :allow, target_resource: "urn:#{Settings.partition_name}:iam::#{tenant.account_id}:*", segment: :everything)
-      admin_policy.actions.create(name: '*', effect: :allow, target_resource: "urn:#{Settings.partition_name}:iam::platform:tenant", segment: :everything)
+      actions = [
+        {
+          name: '*',
+          effect: :allow,
+          target_resource: "urn:#{Settings.partition_name}:iam::#{tenant.account_id}:*",
+          segment: :everything
+        },
+        {
+          name: '*',
+          effect: :allow,
+          target_resource: "urn:#{Settings.partition_name}:iam::platform:tenant",
+          segment: :everything
+        },
+        {
+          name: '*',
+          effect: :allow,
+          target_resource: "urn:#{Settings.partition_name}:comm::#{tenant.account_id}:*",
+          segment: :everything
+        },
+        {
+          name: '*',
+          effect: :allow,
+          target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:*",
+          segment: :everything
+        }
+      ]
 
-      # policy.actions.create(name: :show, effect: :allow, target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:user", segment: :owned)
-      # policy.actions.create(name: :index, effect: :allow, target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:user", segment: :owned)
-      # policy.actions.create(name: :create, effect: :allow, target_resource: "urn:#{Settings.partition_name}:cognito::#{tenant.account_id}:user", segment: :owned)
-
-      # policy.actions.create(name: :index, effect: :allow, target_resource: 'urn:perx:voucher-service::222222222:*', segment: :owned)
+      actions.each do |action|
+        admin_policy.actions.create(action)
+      end
 
       # Create a Group
       group_admin = Group.create(name: 'Admin')
