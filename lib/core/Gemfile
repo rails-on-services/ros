@@ -11,7 +11,4 @@ group :development, :test do
   gem 'brakeman', require: false
   gem 'spring-commands-rspec'
   gem 'database_cleaner'
-  gem 'solargraph'
-  gem 'yard-rails'
-  gem 'yard-rspec'
 end
