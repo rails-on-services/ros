@@ -12,8 +12,7 @@ class UserResource < Cognito::ApplicationResource
 
   has_many :pools
 
-
-  private 
+  private
 
   def query_non_id_atrributes(value)
     %w[primary_identifier first_name last_name email_address]
