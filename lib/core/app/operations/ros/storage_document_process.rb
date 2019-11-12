@@ -14,9 +14,9 @@ module Ros
       id = JSON.parse(json)['id']
       @document = Ros::Storage::Document.find(id).first
       Ros::Infra.resources.storage.app.cp(source_path)
-      if target_class.load_document(local_path, document.column_map, true)
-        document.update(platform_event_state: :processed)
-      end
+      return unless target_class.load_document(local_path, document.column_map, true)
+
+      document.update(platform_event_state: :processed)
     end
 
     def target_class; document.target.classify.constantize end

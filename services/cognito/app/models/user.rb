@@ -16,8 +16,6 @@ class User < Cognito::ApplicationRecord
     column_names + %i[pool_name]
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   # rubocop:disable Rails/Output
   def self.load_document(file_name, column_map = nil, create = false)
     column_map ||= default_headers
@@ -38,8 +36,6 @@ class User < Cognito::ApplicationRecord
     true
   end
   # rubocop:enable Rails/Output
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   def self.default_headers
     { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number,

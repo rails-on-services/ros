@@ -15,7 +15,6 @@ class GroupPolicyJoin < Iam::ApplicationRecord
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def remove_policy_from_users
     group.users.each do |user|
       user.attached_policies[policy.name] -= 1
@@ -23,5 +22,4 @@ class GroupPolicyJoin < Iam::ApplicationRecord
       user.save
     end
   end
-  # rubocop:enable Metrics/AbcSize
 end

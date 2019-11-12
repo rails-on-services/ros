@@ -11,8 +11,6 @@ class LoginController < ApplicationController
   #   }
   # }
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def create
     # Get the user from the payload
     json = request.body.read
@@ -44,6 +42,4 @@ class LoginController < ApplicationController
              }
            }] })
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 end

@@ -62,9 +62,6 @@ module Ros
     end
 
     class FluentdAvroLogger
-      # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/AbcSize
-
       attr_accessor :avro
 
       # source: source field for event, also used as tag of fluentd record
@@ -108,8 +105,6 @@ module Ros
         event.data = Base64.encode64(@avro.encode(data, schema_name: type, subject: type + '-value'))
         @fluentd_logger.post_with_time(@source, event.to_h, time)
       end
-      # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/AbcSize
     end
   end
 end

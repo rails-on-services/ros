@@ -44,9 +44,7 @@ module Ros
       # end
 
       initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
-        if Rails.env.development? && !Rails.const_defined?('Server') && File.exist?('console.rb')
-          require_relative 'console'
-        end
+        require_relative 'console' if Rails.env.development? && !Rails.const_defined?('Server') && File.exist?('console.rb')
       end
     end
   end

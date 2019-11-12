@@ -10,7 +10,6 @@ module AutoGenDoc
 
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/BlockLength
   module ClassMethods
     def inherited(subclass)
       subclass.class_eval do
@@ -107,7 +106,6 @@ module AutoGenDoc
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/BlockLength
 end
 
 class ApplicationDoc

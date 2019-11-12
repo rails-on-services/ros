@@ -17,7 +17,6 @@ module AssociationResource
     end
     # rubocop:enable Style/ClassAndModuleChildren
 
-    # rubocop:disable Metrics/BlockLength
     class_methods do
       def preload_included_fragments(resources, records, serializer, options)
         return if resources.empty?
@@ -64,6 +63,5 @@ module AssociationResource
         AssociationResource.const_set(klass_name, Class.new(base_klass))
       end
     end
-    # rubocop:enable Metrics/BlockLength
   end
 end

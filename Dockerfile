@@ -76,6 +76,7 @@ COPY --chown=rails:rails lib/core/. ../../lib/core/
 COPY --chown=rails:rails lib/sdk/. ../../lib/sdk/
 COPY --chown=rails:rails services/Gemfile ../Gemfile
 COPY --chown=rails:rails .rubocop.yml ../../.rubocop.yml
+COPY --chown=rails:rails .rubocop_todo.yml ../../.rubocop_todo.yml
 
 # workaround for buildkit not setting correct permissions
 RUN sed -i '/git/d' ../../lib/sdk/*.gemspec \

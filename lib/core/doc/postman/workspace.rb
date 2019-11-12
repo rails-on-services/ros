@@ -44,8 +44,6 @@ module Postman
       response.status.eql?(200) ? 'ok' : response.body
     end
 
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/MethodLength
     def data
       comm.endpoint = :workspaces
       if name
@@ -65,7 +63,5 @@ module Postman
       self.name ||= ws['description']['name']
       ws
     end
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/MethodLength
   end
 end

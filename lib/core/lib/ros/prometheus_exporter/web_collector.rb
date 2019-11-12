@@ -7,9 +7,7 @@ module Ros
     class WebCollector < ::PrometheusExporter::Server::WebCollector
       def type; 'ros_web_collector' end
 
-      # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/PerceivedComplexity
       def observe(obj)
         default_labels = {
@@ -35,9 +33,7 @@ module Ros
 
         @http_queue_duration_seconds.observe(queue_time, labels)
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/CyclomaticComplexity
-      # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
     end
   end

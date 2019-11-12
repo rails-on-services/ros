@@ -1,40 +1,5 @@
-require:
-  - rubocop-rails
-  - './lib/core/spec/support/rubocop/linters.rb'
-Rails/HttpPositionalArguments:
-  Enabled: false
-Rails/HasManyOrHasOneDependent:
-  Enabled: false
-Rails/NotNullColumn:
-  Enabled: false
-Rails/Output:
-  Exclude:
-    - '**/rails_helper.rb'
-Ros/RedundantFactoryBot:
-  Include:
-    - '**/spec/**/*.rb'
-Metrics/LineLength:
-  Max: 120
-Style/Documentation:
-  Enabled: false
-Style/SingleLineMethods:
-  Enabled: false
-Metrics/BlockLength:
-  Exclude:
-    - '**/db/seeds/**/*.rb'
-    - '**/spec/models/**/*.rb'
-    - '**/spec/policies/**/*.rb'
-    - '**/spec/requests/**/*.rb'
-    - '**/spec/operations/**/*.rb'
-AllCops:
-  Exclude:
-    - '**/schema.rb'
-    - '**/db/migrate/*.rb'
-    - '**/db/seeds.rb'
-    - '**/*.gemspec'
-    - '**/bin/*'
-    - '**/Guardfile'
-    - '**/Rakefile'
-    - '**/Gemfile'
-    - '**/sqs_test.rb'
-    - '.github/**/*'
+inherit_gem:
+  perx-rubocop:
+    - default.yml
+
+inherit_from: .rubocop_todo.yml

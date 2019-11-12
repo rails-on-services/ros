@@ -219,9 +219,7 @@ module Ros
       end
 
       initializer 'ros_core.set_factory_paths', after: 'factory_bot.set_factory_paths' do
-        if defined?(FactoryBot) && !Rails.env.production?
-          FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories'))
-        end
+        FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories')) if defined?(FactoryBot) && !Rails.env.production?
       end
 
       config.after_initialize do

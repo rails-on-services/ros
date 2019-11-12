@@ -6,9 +6,7 @@ module Ros
   class TenantMiddleware < Apartment::Elevators::Generic
     attr_accessor :auth_string, :auth_type, :token, :access_key_id
 
-    # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     # Returns the schema_name for Apartment to switch to for this request
     def parse_tenant_name(request)
       @auth_string = request.env['HTTP_AUTHORIZATION']
@@ -23,9 +21,7 @@ module Ros
       request.env['X-AccountId'] = schema_name
       Tenant.find_by(schema_name: schema_name)&.schema_name || 'public'
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def tenant_name_from_basic
       return 'public' unless (@access_key_id = token.split(':').first)

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # module ServiceTwilio
-# rubocop:disable Metrics/MethodLength
 class WhatsappsController < Comm::ApplicationController
   # skip_before_action :authenticate_user!
   # before_action :set_whatsapp, only: [:show, :update, :destroy]
@@ -71,5 +70,4 @@ class WhatsappsController < Comm::ApplicationController
     request.request_parameters.deep_transform_keys!(&:underscore).except(:controller, :action)
   end
 end
-# rubocop:enable Metrics/MethodLength
 # end
