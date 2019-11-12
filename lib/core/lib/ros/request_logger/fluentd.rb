@@ -4,7 +4,6 @@ module Ros
   module RequestLogger
     class Fluentd
       # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/MethodLength
       def self.preprocessor
         lambda { |data|
           # param data is a hash with keys :env, :timestamp, :response_time, :code, :body and :headers
@@ -41,7 +40,6 @@ module Ros
         }
       end
       # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

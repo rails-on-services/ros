@@ -32,7 +32,6 @@ RSpec.shared_context 'jsonapi requests' do
     "#{Ros.dummy_mount_path}#{url}"
   end
 
-  # rubocop:disable Metrics/AbcSize
   def mock_authentication
     # Return an instance of Ros::IAM::User to ApiTokenStrategy#authenticate!
     allow_any_instance_of(Ros::ApiTokenStrategy).to receive(:authenticate_basic).and_return(authorized_user)
@@ -41,7 +40,6 @@ RSpec.shared_context 'jsonapi requests' do
     allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_basic).and_return(tenant.schema_name)
     allow_any_instance_of(Ros::TenantMiddleware).to receive(:tenant_name_from_bearer).and_return(tenant.schema_name)
   end
-  # rubocop:enable Metrics/AbcSize
 
   before do
     mock_authentication if mock

@@ -42,8 +42,6 @@ module Ros
         # TODO: Some commands don't get created b/c the abbreviations are duplicates
         # Implement a strategy that handles this
         # TODO: Some commands step on pry commands, e.g. `up` for User.pluck is `up` in stack navigation
-        # rubocop:disable Metrics/AbcSize
-        # rubocop:disable Metrics/MethodLength
         def load_shortcuts
           return unless Rails.configuration.x.memoized_shortcuts.empty?
 
@@ -73,8 +71,6 @@ module Ros
         rescue ActiveRecord::StatementInvalid => e
           STDOUT.puts "WARNING: Error loading model shortcuts: #{e.message}"
         end
-        # rubocop:enable Metrics/MethodLength
-        # rubocop:enable Metrics/AbcSize
 
         def defined_shortcuts; @defined_shortcuts ||= {} end
 
@@ -104,7 +100,6 @@ module Ros::Console::Commands
       If the id that is passed doesn't exist then the default schema 'public' will become the active schema
     BANNER
 
-    # rubocop:disable Metrics/AbcSize
     def process(id = nil)
       if id.nil?
         columns = Tenant.column_names.include?('alias') ? %i[id schema_name alias] : %i[id schema_name]
@@ -117,7 +112,6 @@ module Ros::Console::Commands
       Rails.configuration.x.memoized_shortcuts[:ct] = Tenant.find_by(schema_name: Apartment::Tenant.current)
       Rails.configuration.x.memoized_shortcuts[:ct]&.set_role_credential
     end
-    # rubocop:enable Metrics/AbcSize
 
     Ros::PryCommandSet.add_command(self)
   end

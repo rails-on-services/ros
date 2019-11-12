@@ -4,8 +4,6 @@ module Ros
   module ApplicationControllerConcern
     extend ActiveSupport::Concern
 
-    # rubocop:disable Metrics/BlockLength
-    # rubocop:disable Metrics/AbcSize
     included do
       include JSONAPI::ActsAsResourceController
 
@@ -152,7 +150,5 @@ module Ros
         Raven.extra_context(params: params.to_unsafe_h, url: request.url, tenant: Apartment::Tenant.current)
       end
     end
-    # rubocop:enable Metrics/BlockLength
-    # rubocop:enable Metrics/AbcSize
   end
 end

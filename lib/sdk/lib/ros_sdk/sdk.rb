@@ -70,8 +70,6 @@ module Ros
       class << self
         attr_accessor :scheme, :host, :domain, :port, :force_path_style, :service
 
-        # rubocop:disable Metrics/AbcSize
-        # rubocop:disable Metrics/MethodLength
         # rubocop:disable Metrics/ParameterLists
         # rubocop:disable Lint/UnusedMethodArgument
         def configure(scheme: 'https', host: nil, domain: nil, port: nil, force_path_style: false,
@@ -101,11 +99,8 @@ module Ros
           Ros::Sdk.configured_services[self.service]
         end
         # rubocop:enable Lint/UnusedMethodArgument
-        # rubocop:enable Metrics/MethodLength
         # rubocop:enable Metrics/ParameterLists
-        # rubocop:enable Metrics/AbcSize
 
-        # rubocop:disable Metrics/AbcSize
         def endpoint
           path = force_path_style ? "/#{service}" : nil
           chost = force_path_style ? host : (host || service)
@@ -114,7 +109,6 @@ module Ros
         rescue StandardError
           raise 'ClientConfigurationError'
         end
-        # rubocop:enable Metrics/AbcSize
       end
     end
   end

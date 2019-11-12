@@ -118,7 +118,6 @@ module Ros
       self.class.accepted_actions[action] || []
     end
 
-    # rubocop:disable Metrics/MethodLength
     def self.accepted_policies
       {
         index?: [
@@ -145,6 +144,5 @@ module Ros
         ]
       }
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

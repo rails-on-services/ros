@@ -4,7 +4,6 @@ module Ros
   module TenantConcern
     extend ActiveSupport::Concern
 
-    # rubocop:disable Metrics/BlockLength
     class_methods do
       def urn_id; :account_id end
 
@@ -115,6 +114,5 @@ module Ros
         raise e if Rails.env.production? # Don't raise an exception in dev mode so to allow seeds to work
       end
     end
-    # rubocop:enable Metrics/BlockLength
   end
 end

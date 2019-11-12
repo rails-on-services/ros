@@ -6,8 +6,6 @@
 # The uid is a simple concatenation of the resource owner's user-id and the resource-id.
 # For example, a collection's uid is {{owner_id}}-{{collection_id}}
 
-# rubocop:disable Metrics/BlockLength
-# rubocop:disable Metrics/AbcSize
 namespace :ros do
   namespace :apidoc do
     desc 'Help'
@@ -42,7 +40,6 @@ namespace :ros do
       openapi.convert_to_postman
     end
 
-    # rubocop:disable Metrics/MethodLength
     def modify_payload(item)
       if item.is_a? Array
         item.each { |data_item| modify_payload(data_item) }
@@ -58,7 +55,6 @@ namespace :ros do
         item['request']['header'].select { |k| k['key'].eql?('Authorization') }.first['value'] = '{{authorization}}'
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     desc 'Publish docs to Postman'
     task publish: :environment do
@@ -81,5 +77,3 @@ namespace :ros do
     end
   end
 end
-# rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/BlockLength

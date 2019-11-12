@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 RSpec.shared_examples 'it belongs_to_resource' do |resource|
   it { should respond_to resource }
 
@@ -45,7 +44,6 @@ RSpec.shared_examples 'it belongs_to_resource' do |resource|
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
 
 RSpec.shared_examples 'it has_many_resources' do |resource|
   it { should respond_to resource }
