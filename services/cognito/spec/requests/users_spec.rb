@@ -31,6 +31,38 @@ RSpec.describe 'users requests', type: :request do
         expect_json_sizes('data', models_count)
       end
     end
+
+    context 'perform query' do
+      include_context 'authorized user'
+
+      let(:models_count) { rand(1..5) }
+      let!(:models) { create_list :user, models_count }
+
+      context 'based on ID' do
+        before do
+          get url + "?filter[query]=#{models.last.id}", headers: request_headers
+        end
+
+        it 'returns and ok response with the user ID queried' do
+          expect(response).to have_http_status(:ok)
+          expect_json_sizes('data', 1)
+        end
+      end
+
+      context 'based on primary_identifier' do
+        let(:model_primary_identifier) { models.last.primary_identifier }
+        let(:response_count) { models.select { |model| model.primary_identifier == model_primary_identifier }.length }
+
+        before do
+          get url + "?filter[query]=#{model_primary_identifier}", headers: request_headers
+        end
+
+        it 'returns and ok response with the user attribute queried' do
+          expect(response).to have_http_status(:ok)
+          expect_json_sizes('data', response_count)
+        end
+      end
+    end
   end
 
   describe 'GET show' do
