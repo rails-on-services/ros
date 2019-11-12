@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class User < Cognito::ApplicationRecord
-  include Ros::ScopableConcern
-
   attribute :anonymous, :boolean, default: false
 
   has_many :user_pools
