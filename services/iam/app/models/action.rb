@@ -7,5 +7,3 @@ class Action < Iam::ApplicationRecord
     User.find_each(&:recalculate_attached_actions)
   end
 end
-
-# class ReadAction < Action; end

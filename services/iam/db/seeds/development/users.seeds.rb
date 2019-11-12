@@ -17,7 +17,6 @@ after 'development:tenants' do
                            secret: credential.secret_access_key)
 
       admin_policy = user.policies.create(name: 'Admin Policy')
-      # policy.actions.create(name: '*', effect: :allow, target_resource: 'urn:perx:*', segment: :everything)
 
       actions = [
         {
