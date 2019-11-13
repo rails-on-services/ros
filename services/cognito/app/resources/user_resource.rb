@@ -10,7 +10,7 @@ class UserResource < Cognito::ApplicationResource
     query_by_non_id_attrs = %w[primary_identifier first_name last_name email_address]
                             .map { |field| "#{field} ILIKE '%#{value[0]}%'" }
                             .join(' OR ')
-    filter_fields = value[0].match(/\D/).nil? ? query_by_id : query_by_non_id_attrs
+    filter_fields = /\D/.match?(value[0]) ? query_by_non_id_attrs : query_by_id
     records.where(filter_fields)
   }
 
