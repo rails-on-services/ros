@@ -23,6 +23,8 @@ module Ros
       ctx[:errors] = ActiveModel::Errors.new(self)
     end
 
-    alias failed fail
+    class << self
+      alias failed fail
+    end
   end
 end
