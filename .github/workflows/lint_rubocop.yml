@@ -1,0 +1,19 @@
+name: Rubocop Lint
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.3
+    - name: Install perx-rubocop and run lint
+      run: |
+        gem install perx-rubocop --pre
+        rubocop
