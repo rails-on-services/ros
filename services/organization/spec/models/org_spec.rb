@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Org, type: :model do
   include_examples 'application record concern' do
     let(:tenant) { Tenant.first }
-    let!(:subject) { create(factory_name) }
+    let!(:subject) { FactoryBot.create(factory_name) }
   end
 
   describe 'associations' do
