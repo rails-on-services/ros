@@ -13,7 +13,9 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.3
-    - name: Install perx-rubocop and run lint
+    - name: Install perx-rubocop
       run: |
         gem install perx-rubocop --pre
+    - name: Run Rubocop Lint
+      run: |
         rubocop
