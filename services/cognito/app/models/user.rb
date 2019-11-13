@@ -6,6 +6,8 @@ class User < Cognito::ApplicationRecord
   has_many :user_pools
   has_many :pools, through: :user_pools
 
+  scope :owned, ->(user_context) { where(id: user_context.cognito_user_id) }
+
   def self.reset
     UserPool.delete_all
     Pool.delete_all
@@ -14,10 +16,6 @@ class User < Cognito::ApplicationRecord
 
   def self.file_fingerprint_attributes
     column_names + %i[pool_name]
-  end
-
-  def self.owned(user_context)
-    where(id: user_context.cognito_user_id)
   end
 
   # rubocop:disable Rails/Output

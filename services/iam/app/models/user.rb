@@ -37,9 +37,7 @@ class User < Iam::ApplicationRecord
          authentication_keys: [:username]
   # jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
-  def self.owned(user_context)
-    where(id: user_context.iam_user.id)
-  end
+  scope :owned, ->(user_context) { where(id: user_context.iam_user.id) }
 
   def all_policy_actions
     # delete duplication and group by name, effect and segment

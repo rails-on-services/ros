@@ -4,14 +4,9 @@ module Ros
   module ScopableConcern
     extend ActiveSupport::Concern
 
-    class_methods do
-      def everything(_user_context)
-        all
-      end
-
-      def owned(_user_context)
-        all
-      end
+    included do
+      scope :everything, ->(_user_context) { all }
+      scope :owned, ->(_user_context) { all }
     end
   end
 end

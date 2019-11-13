@@ -5,7 +5,7 @@ module Ros
     extend ActiveSupport::Concern
     include AssociationResource
     include UrnConcern
-    include Ros::ScopableConcern
+    include ScopableConcern
 
     class_methods do
       def account_id; Apartment::Tenant.current.eql?('public') ? '' : Apartment::Tenant.current.remove('_') end
