@@ -9,9 +9,8 @@ module Ros
       @record = record
     end
 
-    # UserPolicy.new({ policies: ['IamFullAccess'] }, nil).index?
     %i[new index show create update edit destroy].each do |method|
-      define_method("#{method}?") { check_action(method) } # or send("#{method}?")
+      define_method("#{method}?") { check_action(method) }
     end
 
     def check_action(action)
