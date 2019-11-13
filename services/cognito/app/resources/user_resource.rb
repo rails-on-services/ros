@@ -6,10 +6,12 @@ class UserResource < Cognito::ApplicationResource
   filter :primary_identifier
 
   filter :query, apply: lambda { |records, value, _options|
-    filter_fields = %w[primary_identifier first_name last_name email_address]
-                    .map { |field| "#{field} ILIKE '%#{value[0]}%'" }
-                    .join(' OR ')
+    query_by_id = "id IN (#{value[0]})"
+    query_by_non_id_attrs = %w[primary_identifier first_name last_name email_address]
+                            .map { |field| "#{field} ILIKE '%#{value[0]}%'" }
+                            .join(' OR ')
 
+    filter_fields = /\D/.match?(value[0]) ? query_by_non_id_attrs : query_by_id
     records.where(filter_fields)
   }
 
