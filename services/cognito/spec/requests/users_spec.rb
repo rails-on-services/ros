@@ -37,33 +37,70 @@ RSpec.describe 'users requests', type: :request do
 
       let(:models_count) { rand(1..5) }
       let!(:models) { create_list :user, models_count }
-      let!(:filtered_model) { models.last }
+      let!(:random_model) { models.last }
 
       context 'based on ID' do
-        let(:url) { "#{base_url}?filter[query]=#{filtered_model.id}" }
+        context 'matching query' do
+          let(:url) { "#{base_url}?filter[query]=#{random_model.id}" }
 
-        before do
-          get url, headers: request_headers
+          before do
+            get url, headers: request_headers
+          end
+
+          it 'returns and ok response with the user ID queried' do
+            expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 1)
+            expect_json('data.0', id: random_model.id.to_s)
+          end
         end
 
-        it 'returns and ok response with the user ID queried' do
-          expect(response).to have_http_status(:ok)
-          expect_json_sizes('data', 1)
+        context 'non-matching query' do
+          let(:url) { "#{base_url}?filter[query]=10" }
+
+          before do
+            get url, headers: request_headers
+          end
+
+          it 'returns and ok response, with zero response' do
+            expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 0)
+          end
         end
       end
 
-      context 'based on primary_identifier' do
-        let(:model_primary_identifier) { filtered_model.primary_identifier }
-        let(:response_count) { models.select { |model| model.primary_identifier == model_primary_identifier }.length }
-        let(:url) { "#{base_url}?filter[query]=#{model_primary_identifier}" }
+      context 'based on non ID attributes ' do
+        let!(:model_one) { create(:user, primary_identifier: 'bananas_123') }
+        let!(:model_two) { create(:user, first_name: 'bananas') }
+        let!(:model_three) { create(:user, last_name: 'bananas') }
+        let!(:model_four) { create(:user, email_address: 'bananas_oranges@email.com') }
+        let!(:model_five) { create(:user) }
 
-        before do
-          get url, headers: request_headers
+        context 'matching query' do
+          let(:random_query) { 'ananas' }
+          let(:url) { "#{base_url}?filter[query]=#{random_query}" }
+
+          before do
+            get url, headers: request_headers
+          end
+
+          it 'returns and ok response with the user attribute queried' do
+            expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 4)
+          end
         end
 
-        it 'returns and ok response with the user attribute queried' do
-          expect(response).to have_http_status(:ok)
-          expect_json_sizes('data', response_count)
+        context 'non-matching query' do
+          let(:random_query) { 'kiwi' }
+          let(:url) { "#{base_url}?filter[query]=#{random_query}" }
+
+          before do
+            get url, headers: request_headers
+          end
+
+          it 'returns and ok response with the user attribute queried' do
+            expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 0)
+          end
         end
       end
     end
