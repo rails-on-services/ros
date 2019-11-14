@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-# arr = [
-#  Ros::Urn.from_urn('urn:perx:iam::222222222:credential'),
-#  Ros::Urn.from_urn('urn:perx:iam::*:credential',
-#  Ros::Urn.from_urn('urn:perx:campaign::*',
-#  Ros::Urn.from_urn('urn:perx:campaign::222222222:entity'
-# ]
-
-# arr.uniq
-
 module Ros
   class Urn
     attr_accessor :txt, :partition_name, :service_name, :region, :account_id, :resource
@@ -22,77 +13,72 @@ module Ros
       @resource = resource
     end
 
-    def self.merge(urns)
-      output = []
-      loop do
-        urns.each do |a|
-          urns.each do |b|
-            merged = Ros::Urn.compare(a, b)
-            unless merged.nil?
-              output.reject! { |i| i == a }
-              a = merged
-            end
-            output << a
-            output.uniq!
-            output.reject!(&:nil?)
-          end
-        end
-        break if urns.sort == output.sort
+    # def self.merge(urns)
+    #   output = []
+    #   loop do
+    #     urns.each do |a|
+    #       urns.each do |b|
+    #         merged = Ros::Urn.compare(a, b)
+    #         unless merged.nil?
+    #           output.reject! { |i| i == a }
+    #           a = merged
+    #         end
+    #         output << a
+    #         output.uniq!
+    #         output.reject!(&:nil?)
+    #       end
+    #     end
+    #     break if urns.sort == output.sort
 
-        urns = output
-        output = []
-      end
-      output
-    end
+    #     urns = output
+    #     output = []
+    #   end
+    #   output
+    # end
 
-    # rubocop:disable Metrics/PerceivedComplexity
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/CyclomaticComplexity
-    def self.compare(left, right)
-      urn_breakdown = [
-        { txt: 1 },
-        { partition_name: 2 },
-        { service_name: 3 },
-        { region: 4 },
-        { account_id: 5 },
-        { resource: 6 }
-      ]
+    # def self.compare(left, right)
+    #   binding.pry
+    #   urn_breakdown = [
+    #     { txt: 1 },
+    #     { partition_name: 2 },
+    #     { service_name: 3 },
+    #     { region: 4 },
+    #     { account_id: 5 },
+    #     { resource: 6 }
+    #   ]
 
-      left = Ros::Urn.from_urn(Ros::Urn.flatten(left))
-      right = Ros::Urn.from_urn(Ros::Urn.flatten(right))
-      camparing_results = []
-      consumer, wildcard_position = nil
-      return nil if left.to_s == right.to_s
+    #   left = Ros::Urn.from_urn(Ros::Urn.flatten(left))
+    #   right = Ros::Urn.from_urn(Ros::Urn.flatten(right))
+    #   camparing_results = []
+    #   consumer, wildcard_position = nil
+    #   return nil if left.to_s == right.to_s
 
-      urn_breakdown.each do |i|
-        key = i.keys.first
-        position = i.values.first
-        left_value = left.send(key)
-        right_value = right.send(key)
+    #   urn_breakdown.each do |i|
+    #     key = i.keys.first
+    #     position = i.values.first
+    #     left_value = left.send(key)
+    #     right_value = right.send(key)
 
-        if consumer.nil?
-          if left_value != right_value && [left_value, right_value].include?('*')
-            wildcard_position = position
-            consumer = if left_value == '*'
-                         left
-                       elsif right_value == '*'
-                         left
-                       end
-          end
-        end
-        camparing_results << (left_value == right_value || [left_value, right_value].include?('*'))
-      end
-      return unless camparing_results.all?
+    #     if consumer.nil?
+    #       if left_value != right_value && [left_value, right_value].include?('*')
+    #         wildcard_position = position
+    #         consumer = if left_value == '*'
+    #                      left
+    #                    elsif right_value == '*'
+    #                      left
+    #                    end
+    #       end
+    #     end
+    #     camparing_results << (left_value == right_value || [left_value, right_value].include?('*'))
+    #   end
+    #   return unless camparing_results.all?
 
-      if consumer.nil?
-        nil
-      else
-        consumer.to_s
-      end
-    end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/CyclomaticComplexity
+    #   if consumer.nil?
+    #     nil
+    #   else
+    #     consumer.to_s
+    #   end
+    # end
 
     # TODO: Rename this, as this is not really flattening a urn but rather
     # filling the missing parts
@@ -165,6 +151,8 @@ module Ros
       !regex.match(other_str).nil?
     end
 
+    # NOTE: Forcing all URNs to have the same hash so it compares urns through
+    # eql? method instead of relying on the hash.
     def hash
       1
     end
