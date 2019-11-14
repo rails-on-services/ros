@@ -74,4 +74,38 @@ RSpec.describe Ros::Urn do
       expect(urn_object.model_name).to eq('Entity')
     end
   end
+
+  describe 'sorting an array of Urn' do
+    it 'sorts by more broad to more specific' do
+      arr = [
+        Ros::Urn.from_urn('urn:perx:iam::222222222:credential'),
+        Ros::Urn.from_urn('urn:perx:iam::*:credential'),
+        Ros::Urn.from_urn('urn:perx:campaign::*:*'),
+        Ros::Urn.from_urn('urn:perx:campaign::222222222:entity'),
+        Ros::Urn.from_urn('urn:perx:iam::*:user')
+      ]
+      arr.sort!
+      expect(arr.map(&:to_s)).to eq ['urn:perx:campaign::*:*',
+                                     'urn:perx:campaign::222222222:entity',
+                                     'urn:perx:iam::*:credential',
+                                     'urn:perx:iam::*:user',
+                                     'urn:perx:iam::222222222:credential']
+    end
+  end
+
+  describe 'unique an array of Urn' do
+    it 'returns unique scopes of urns' do
+      arr = [
+        Ros::Urn.from_urn('urn:perx:iam::222222222:credential'),
+        Ros::Urn.from_urn('urn:perx:iam::*:credential'),
+        Ros::Urn.from_urn('urn:perx:campaign::*:*'),
+        Ros::Urn.from_urn('urn:perx:campaign::222222222:entity'),
+        Ros::Urn.from_urn('urn:perx:iam::*:user')
+      ]
+      arr.sort!.uniq!
+      expect(arr.map(&:to_s)).to eq ['urn:perx:campaign::*:*',
+                                     'urn:perx:iam::*:credential',
+                                     'urn:perx:iam::*:user']
+    end
+  end
 end

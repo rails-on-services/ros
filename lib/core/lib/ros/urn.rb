@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# arr = [
+#  Ros::Urn.from_urn('urn:perx:iam::222222222:credential'),
+#  Ros::Urn.from_urn('urn:perx:iam::*:credential',
+#  Ros::Urn.from_urn('urn:perx:campaign::*',
+#  Ros::Urn.from_urn('urn:perx:campaign::222222222:entity'
+# ]
+
+# arr.uniq
+
 module Ros
   class Urn
     attr_accessor :txt, :partition_name, :service_name, :region, :account_id, :resource
@@ -85,6 +94,8 @@ module Ros
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity
 
+    # TODO: Rename this, as this is not really flattening a urn but rather
+    # filling the missing parts
     def self.flatten(urn)
       splitted = urn.split(':')
       if splitted.last.eql?('*') || splitted.size == 6
@@ -102,6 +113,8 @@ module Ros
       splitted.join(':')
     end
 
+    # TODO: Support incomplete URN String. Assume that if not present, then
+    # add * if it ends in * (we can maybe call flatten)
     def self.from_urn(urn_string)
       urn_array = urn_string.split(':')
       new(*urn_array)
@@ -134,6 +147,30 @@ module Ros
 
     def to_a
       [@txt, @partition_name, @service_name, @region, @account_id, @resource]
+    end
+
+    # NOTE: Orders first by more broad to more specific and then alphabetically
+    def <=>(other)
+      # NOTE: If string representation is a superset of the the other string
+      # representation, then means that self comes first
+      return - 1 if overlaps?(other)
+
+      to_s <=> other.to_s
+    end
+
+    def overlaps?(other)
+      str_rep = to_s
+      other_str = other.to_s
+      regex = Regexp.new(str_rep.gsub('*', '.*'))
+      !regex.match(other_str).nil?
+    end
+
+    def hash
+      1
+    end
+
+    def eql?(other)
+      overlaps?(other) || other.overlaps?(self)
     end
   end
 end
