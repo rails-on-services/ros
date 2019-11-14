@@ -6,12 +6,9 @@ FactoryBot.define do
       name { '*' }
       effect { :allow }
       target_resource do
-        'urn:' \
-        "#{Settings.partition_name}:" \
-        'iam:' \
-        ':' \
-        "#{Tenant.find_by(schema_name: Apartment::Tenant.current).account_id}:" \
-        '*'
+        partition_name = Settings.partition_name
+        account_id = Tenant.find_by(schema_name: Apartment::Tenant.current).account_id
+        "urn:#{partition_name}:iam::#{account_id}:*"
       end
       segment { :everything }
     end
