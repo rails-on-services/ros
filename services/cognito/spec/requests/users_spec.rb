@@ -38,6 +38,7 @@ RSpec.describe 'users requests', type: :request do
       let(:models_count) { rand(1..5) }
       let!(:models) { create_list :user, models_count }
       let!(:random_model) { models.last }
+      let!(:random_id) { models.sort_by(&:id).last.id + 1 }
 
       context 'based on ID' do
         context 'matching query' do
@@ -54,8 +55,8 @@ RSpec.describe 'users requests', type: :request do
           end
         end
 
-        context 'non-matching query' do
-          let(:url) { "#{base_url}?filter[query]=10" }
+        context 'non-matching query' do    
+          let(:url) { "#{base_url}?filter[query]=#{random_id}" }
 
           before do
             get url, headers: request_headers
