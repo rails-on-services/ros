@@ -24,7 +24,8 @@ module Ros
 
       arr = []
 
-      actions.select { |i| i['effect'] == 'allow' && (i['name'] == action.to_s || i['name'] == '*') }.each do |allowed_action|
+      actions.select! { |i| i['effect'] == 'allow' && (i['name'] == action.to_s || i['name'] == '*') }
+      actions.each do |allowed_action|
         allowed_action['resources'].each do |target_resource|
           arr << record.urn_match?(target_resource)
         end
@@ -50,7 +51,8 @@ module Ros
 
         scopes = []
 
-        actions.select { |i| i['effect'] == 'allow' && (i['name'] == user.params['action'] || i['name'] == '*') }.each do |allowed_action|
+        actions.select! { |i| i['effect'] == 'allow' && (i['name'] == user.params['action'] || i['name'] == '*') }
+        actions.each do |allowed_action|
           allowed_action['resources'].each do |target_resource|
             scopes << allowed_action['segment'] if scope.urn_match?(target_resource)
           end

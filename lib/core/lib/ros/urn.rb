@@ -36,6 +36,9 @@ module Ros
       output
     end
 
+    # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.compare(left, right)
       urn_breakdown = [
         { txt: 1 },
@@ -60,8 +63,12 @@ module Ros
 
         if consumer.nil?
           if left_value != right_value && [left_value, right_value].include?('*')
-            (consumer, wildcard_position = left, position) if left_value == '*'
-            (consumer, wildcard_position = right, position) if right_value == '*'
+            wildcard_position = position
+            consumer = if left_value == '*'
+                         left
+                       elsif right_value == '*'
+                         left
+                       end
           end
         end
         camparing_results << (left_value == right_value || [left_value, right_value].include?('*'))
@@ -74,6 +81,9 @@ module Ros
         consumer.to_s
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def self.flatten(urn)
       splitted = urn.split(':')

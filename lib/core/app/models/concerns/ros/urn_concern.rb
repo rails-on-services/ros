@@ -19,7 +19,7 @@ module Ros
 
       def urn_match?(urn_to_compare)
         params = %i[txt partition_name service_name region account_id resource]
-        record_urn = Ros::Urn.from_urn(self.to_urn)
+        record_urn = Ros::Urn.from_urn(to_urn)
         urn_to_compare = Ros::Urn.from_urn(Ros::Urn.flatten(urn_to_compare))
         matches = []
         params.each do |param|
