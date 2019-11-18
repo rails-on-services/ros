@@ -30,7 +30,7 @@ module Ros
       # Handles invocations from Scheduler
       def call(_job, _time)
         @count += 1
-        puts ". #{self.class} called at #{Time.current} (#{count})"
+        Rails.logger.debug ". #{self.class} called at #{Time.current} (#{count})"
         per_tenant { |tenant| perform_later(tenant) }
       end
 
