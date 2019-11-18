@@ -22,5 +22,9 @@ module Ros
     def setup_context(ctx, _params)
       ctx[:errors] = ActiveModel::Errors.new(self)
     end
+
+    class << self
+      alias failed fail
+    end
   end
 end
