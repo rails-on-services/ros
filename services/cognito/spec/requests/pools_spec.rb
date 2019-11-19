@@ -49,12 +49,12 @@ RSpec.describe 'pools requests', type: :request do
     context 'perform query' do
       include_context 'authorized user'
 
-      let!(:pool_name) { 'Pool-One'}
+      let!(:pool_name) { 'Pool-One' }
       let!(:model) { create(:pool, name: pool_name) }
       let!(:user)  { create(:user) }
-      let!(:user_pool) { create(:user_pool, pool: model, user: user)}
+      let!(:user_pool) { create(:user_pool, pool: model, user: user) }
       let!(:random_id) { model.id + 10 }
-     
+
       before do
         get url, headers: request_headers
       end
@@ -81,10 +81,10 @@ RSpec.describe 'pools requests', type: :request do
               expect_json_types('included', :array)
               expect_json('data.0.id', model.id.to_s)
             end
-          end 
+          end
         end
 
-        context 'with no match found' do 
+        context 'with no match found' do
           context 'without users included' do
             let(:url) { "#{base_url}?filter[query]=#{random_id}" }
 
@@ -99,7 +99,7 @@ RSpec.describe 'pools requests', type: :request do
             it 'returns successful response with zero result' do
               expect_json_sizes('data', 0)
             end
-          end 
+          end
         end
       end
 
@@ -125,10 +125,10 @@ RSpec.describe 'pools requests', type: :request do
               expect_json_types('included', :array)
               expect_json('data.0.attributes.name', pool_name)
             end
-          end 
+          end
         end
 
-        context 'with no match found' do 
+        context 'with no match found' do
           context 'without users included' do
             let(:url) { "#{base_url}?filter[query]=some_random_name" }
 
@@ -143,7 +143,7 @@ RSpec.describe 'pools requests', type: :request do
             it 'returns successful response with zero result' do
               expect_json_sizes('data', 0)
             end
-          end 
+          end
         end
       end
     end
