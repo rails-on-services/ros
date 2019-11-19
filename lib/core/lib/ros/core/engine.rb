@@ -182,6 +182,7 @@ module Ros
           manager.failure_app = Ros::FailureApp
         end
         app.config.middleware.use Ros::TenantMiddleware
+        app.config.middleware.insert_after Ros::TenantMiddleware, Ros::TenantLogger
       end
 
       # Configure any error reporting services if their credential has been set
@@ -203,7 +204,7 @@ module Ros
             allow do
               origins Settings.cors.origins
               resource Settings.cors.resource, headers: :any,
-                                               methods: %i[get post delete put patch options head]
+                       methods: %i[get post delete put patch options head]
             end
           end
         end

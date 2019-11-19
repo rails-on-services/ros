@@ -25,6 +25,7 @@ require_relative '../migrations'
 require_relative 'routes'
 require_relative 'scheduler/tenant_handler'
 require_relative 'tenant_middleware'
+require_relative 'tenant_logger'
 require_relative 'url_builder'
 require_relative 'urn'
 
