@@ -22,7 +22,7 @@ RSpec.describe 'pools requests', type: :request do
       let!(:model) { create(:pool) }
       let!(:user)  { create(:user) }
       let!(:user_pool) { create(:user_pool, pool: model, user: user) }
-      
+
       before do
         get url, headers: request_headers
       end
