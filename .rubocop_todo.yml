@@ -109,7 +109,7 @@ Lint/AssignmentInCondition:
 
 # Offense count: 6
 # Cop supports --auto-correct.
-Lint/UnneededCopDisableDirective:
+Lint/RedundantCopDisableDirective:
   Exclude:
     - 'lib/core/lib/ros/prometheus_exporter/middleware.rb'
     - 'lib/core/spec/rails_helper.rb'
