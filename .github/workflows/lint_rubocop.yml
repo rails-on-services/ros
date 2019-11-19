@@ -13,9 +13,10 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.3
-    - name: Install perx-rubocop
-      run: |
-        gem install perx-rubocop --pre
-    - name: Run Rubocop Lint
-      run: |
-        rubocop
+    - name: Rubocop Linter
+      uses: andrewmcodes/rubocop-linter-action@v1.0.5
+      with:
+        additional_gems: perx-rubocop
+        fail_level: 'warning'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
