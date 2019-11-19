@@ -55,6 +55,20 @@ RSpec.describe 'users requests', type: :request do
           end
         end
 
+        context 'matching query with include pools' do
+          let(:url) { "#{base_url}?filter[query]=#{random_model.id}&include=pools" }
+
+          before do
+            get url, headers: request_headers
+          end
+
+          it 'returns and ok response with the user ID queried' do
+            expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 1)
+            expect_json('data.0', id: random_model.id.to_s)
+          end
+        end
+
         context 'non-matching query' do
           let(:url) { "#{base_url}?filter[query]=#{random_id}" }
 
