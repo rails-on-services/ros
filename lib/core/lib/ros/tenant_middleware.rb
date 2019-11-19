@@ -9,7 +9,6 @@ module Ros
     # rubocop:disable Metrics/CyclomaticComplexity
     # Returns the schema_name for Apartment to switch to for this request
     def parse_tenant_name(request)
-      binding.pry
       @auth_string = request.env['HTTP_AUTHORIZATION']
       return 'public' if auth_string.blank?
 
