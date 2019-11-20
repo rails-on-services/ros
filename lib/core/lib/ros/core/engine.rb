@@ -65,22 +65,22 @@ module Ros
         end
       end
 
-      # Initialize sane defaults for smtp that will works with mailcatcher unless overridden
-      initializer 'ros_core.initialize_smtp' do |_app|
-        if Settings.dig(:smtp, :enabled)
-          Settings.smtp.tap do |t|
-            t.domain ||= 'example.com'
-            t.host_name ||= 'localhost'
-            t.port ||= 1025
-            # one of: nil, :plain, :login, :cram_md5
-            t.authentication ||= nil
-            t.starttls_auto ||= true
-            t.ssl ||= false
-            t.tls ||= false
-            t.from ||= "no-reply@#{t.domain}"
-          end
-        end
-      end
+      # # Initialize sane defaults for smtp that will works with mailcatcher unless overridden
+      # initializer 'ros_core.initialize_smtp' do |_app|
+      #   if Settings.dig(:smtp, :enabled)
+      #     Settings.smtp.tap do |t|
+      #       t.domain ||= 'example.com'
+      #       t.host_name ||= 'localhost'
+      #       t.port ||= 1025
+      #       # one of: nil, :plain, :login, :cram_md5
+      #       t.authentication ||= nil
+      #       t.starttls_auto ||= true
+      #       t.ssl ||= false
+      #       t.tls ||= false
+      #       t.from ||= "no-reply@#{t.domain}"
+      #     end
+      #   end
+      # end
 
       # Configure ActionMailer (used by Devise) based on our Settings.smtp
       initializer 'ros_core.initialize_action_mailer' do |app|
