@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 module Ros
-  module ActivityValidator
+  module ActivityParamsValidator
     extend ActiveSupport::Concern
 
     private
 
-    def validate_required(_ctx, params:, errors:)
+    def validate_required_params(ctx, errors:)
       return true unless validator
 
-      validator.new(params).validate!
+      validator.new(ctx[:params]).validate!
     rescue ActiveModel::ValidationError => e
       process_errors(e.model, errors)
       false
@@ -18,7 +20,7 @@ module Ros
     end
 
     class_methods do
-      def required_fields(*fields)
+      def required_params(*fields)
         return if fields.empty?
 
         klass = OpenStruct.include(ActiveModel::Model)

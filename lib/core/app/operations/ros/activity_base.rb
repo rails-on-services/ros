@@ -2,7 +2,7 @@
 
 module Ros
   class ActivityBase < Trailblazer::Activity::Railway
-    include Ros::ActivityValidator
+    include Ros::ActivityParamsValidator
     include Ros::ActivitySaver
 
     # NOTE: This is needed for the translating the errors object into
@@ -19,7 +19,7 @@ module Ros
     end
 
     step :setup_context
-    step :validate_required, Output(:failure) => End(:failure)
+    step :validate_required_params, Output(:failure) => End(:failure)
 
     private
 
