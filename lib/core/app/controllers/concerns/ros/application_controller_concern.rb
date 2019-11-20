@@ -8,8 +8,8 @@ module Ros
       include JSONAPI::ActsAsResourceController
 
       before_action :set_raven_context, if: -> { Settings.credentials.sentry_dsn }
-      before_action :set_tenant_context
       before_action :authenticate_it!
+      before_action :set_tenant_context
       after_action :set_headers!
 
       def authenticate_it!
@@ -152,9 +152,9 @@ module Ros
       end
 
       def set_tenant_context
-        request.env['X-TenantSchema'] = Apartment::Tenant.current.schema_name
+        request.env['X-TenantSchema'] = Apartment::Tenant.current
         request.env['X-CognitoUserId'] = cognito_user_id
-        request.env['X-IAMUserId'] = current_user.id
+        request.env['X-IAMUserId'] = current_user&.id
       end
     end
   end

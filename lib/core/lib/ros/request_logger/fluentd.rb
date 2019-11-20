@@ -25,7 +25,7 @@ module Ros
 
       def self.metadata(data)
         {
-          tenant: data[:env]['X-AccountId'],
+          tenant: data[:env]['X-TenantSchema'],
           cognito_user_id: data[:env]['X-CognitoUserId'],
           iam_user_id: data[:env]['X-IAMUserId']
         }
