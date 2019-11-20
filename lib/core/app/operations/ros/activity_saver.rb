@@ -7,7 +7,7 @@ module Ros
 
     private
 
-    def method_missing(method, ctx, *options, &blok)
+    def method_missing(method, ctx = {}, *_options, &blok)
       return super unless method.to_s.start_with? PREFIX
 
       save(ctx, model_name: method.to_s.remove(PREFIX), errors: ctx[:errors])
