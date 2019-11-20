@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Password management', type: :request do
   context :update do
     let(:mock) { false }
-    let(:url) { '/users/password' }
+    let(:url) { u('/users/password') }
     let(:tenant) { create(:tenant) }
     let(:user) do
       create(:user, :within_schema,

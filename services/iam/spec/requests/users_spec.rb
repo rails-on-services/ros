@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'users requests', type: :request do
+  include_context 'jsonapi requests'
+
+  let(:mock) { false }
   let(:url) { u('/users') }
   let(:tenant) { create(:tenant) }
   let(:admin_user) { create(:user, :administrator_access) }
@@ -30,8 +33,6 @@ RSpec.describe 'users requests', type: :request do
   let(:invalid_params) do
     valid_params.deep_merge(data: { attributes: { jwt_payload: 'foo' } })
   end
-
-  include_context 'jsonapi requests'
 
   describe 'GET index' do
     context 'unauthenticated user' do
