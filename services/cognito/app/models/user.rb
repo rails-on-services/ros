@@ -16,7 +16,6 @@ class User < Cognito::ApplicationRecord
     column_names + %i[pool_name]
   end
 
-  # rubocop:disable Rails/Output
   def self.load_document(file_name, column_map = nil, create = false)
     column_map ||= default_headers
     column_map = column_map.invert.symbolize_keys.invert
@@ -29,13 +28,12 @@ class User < Cognito::ApplicationRecord
         user.update(row.slice(:title, :last_name, :phone_number))
         pool.users << user
       else
-        puts "title: #{row[:title]} phone_number: #{row[:phone_number]} last_name: #{row[:last_name]} " \
-          "id: #{row[:primary_identifier]} pool: #{row[:pool_name]}"
+        Rails.logger.debug "title: #{row[:title]} phone_number: #{row[:phone_number]} " \
+          "last_name: #{row[:last_name]} id: #{row[:primary_identifier]} pool: #{row[:pool_name]}"
       end
     end
     true
   end
-  # rubocop:enable Rails/Output
 
   def self.default_headers
     { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number,
