@@ -69,7 +69,6 @@ module Ros
         app.config.middleware.insert_after(ActionDispatch::RequestId, Ros::DtraceMiddleware)
         if Settings.metrics.enabled
           require 'prometheus_exporter'
-          # binding.pry
           require_relative '../prometheus_exporter/web_collector'
           require_relative '../prometheus_exporter/middleware'
           app.config.middleware.insert 0, Ros::PrometheusExporter::Middleware

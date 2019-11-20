@@ -9,9 +9,7 @@ module Ros
 
       before_action :set_raven_context, if: -> { Settings.credentials.sentry_dsn }
       before_action :authenticate_it!
-      around_action :add_user_context_to_logs
       after_action :set_headers!
-
 
       def authenticate_it!
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
@@ -150,17 +148,6 @@ module Ros
       def set_raven_context
         # Raven.user_context(id: session[:current_user_id]) # or anything else in session
         Raven.extra_context(params: params.to_unsafe_h, url: request.url, tenant: Apartment::Tenant.current)
-      end
-
-      def add_user_context_to_logs
-        tags = {
-          tenant: Apartment::Tenant.current,
-          iam_user: current_user&.id,
-          cognito_user: cognito_user_id
-        }
-        logger.tagged(tags.to_json) do
-          yield
-        end
       end
     end
   end
