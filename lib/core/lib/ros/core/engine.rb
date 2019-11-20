@@ -104,17 +104,13 @@ module Ros
       initializer 'ros_core.initialize_request_logging' do |_app|
         if Settings.request_logging.enabled
           if Settings.request_logging.provider.eql? 'fluentd'
-            require 'rack/fluentd_logger'
             require_relative '../request_logger/fluentd'
-            Rack::FluentdLogger.configure(
-              name: 'test-name', # Settings.service.name,
+            Ros::RequestLogger::Fluentd.configure(
+              name: Settings.service.name,
               host: Settings.request_logging.config.host,
-              port: Settings.request_logging.config.port,
-              # don't want to parse body to json, also underline MIME check code is not working
-              json_parser: ->(d) { d },
-              preprocessor: Ros::RequestLogger::Fluentd.preprocessor
+              port: Settings.request_logging.config.port
             )
-            Rails.application.config.middleware.insert 0, Rack::FluentdLogger
+            Rails.application.config.middleware.insert 0, Ros::RequestLogger::Fluentd
           end
         end
       end
