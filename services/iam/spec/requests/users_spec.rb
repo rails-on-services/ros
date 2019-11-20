@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'users requests', type: :request do
-  let(:url) { '/users' }
+  let(:url) { u('/users') }
   let(:tenant) { create(:tenant) }
   let(:admin_user) { create(:user, :administrator_access) }
   let(:admin_creds) { admin_user.credentials.create }
@@ -47,7 +47,7 @@ RSpec.describe 'users requests', type: :request do
     context 'authenticated user' do
       before do
         login(admin_user)
-        get '/users', headers: headers
+        get url, headers: headers
       end
 
       it 'returns a successful response' do
@@ -85,6 +85,7 @@ RSpec.describe 'users requests', type: :request do
     end
 
     context 'authenticated admin user' do
+      let(:request) { post url, params: user_data, headers: headers }
       before do
         login(admin_user)
       end
@@ -93,7 +94,7 @@ RSpec.describe 'users requests', type: :request do
         let(:user_data) { valid_params.to_json }
 
         it 'returns a successful response' do
-          post url, params: user_data, headers: headers
+          request
           expect(response).to be_successful
           # TODO: improve reponse test coverage
           expect(response.code).to eq '201'
@@ -101,15 +102,11 @@ RSpec.describe 'users requests', type: :request do
         end
 
         it 'creates as user' do
-          expect do
-            post url, params: user_data, headers: headers
-          end.to change {
-            User.count
-          }.by 1
+          expect { request }.to change { User.count }.by 1
         end
 
         it 'does not activate the newly created user' do
-          post url, params: user_data, headers: headers
+          request
           expect(User.find_by(email: valid_params[:data][:attributes][:email]).confirmed_at).to be_nil
         end
       end
@@ -118,7 +115,7 @@ RSpec.describe 'users requests', type: :request do
         let(:user_data) { invalid_params.to_json }
 
         it 'returns an unsuccessful response' do
-          post url, params: user_data, headers: headers
+          request
           expect(response).to_not be_successful
           expect(response.code).to eq '400'
           # TODO: improve reponse test coverage
