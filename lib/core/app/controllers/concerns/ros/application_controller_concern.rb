@@ -8,6 +8,7 @@ module Ros
       include JSONAPI::ActsAsResourceController
 
       before_action :set_raven_context, if: -> { Settings.credentials.sentry_dsn }
+      before_action :set_tenant_context
       before_action :authenticate_it!
       after_action :set_headers!
 
@@ -26,30 +27,30 @@ module Ros
       end
 
       # This will throw an authentication error on invalid credentials
-      def new_authenticate_it!
-        if request.env['HTTP_X_AUTHORIZATION_CLIENT_ID']&.eql?('123456')
-          @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
-          @current_user = Ros::IAM::User.new(JSON.parse(@current_jwt['act']))
-          # binding.pry
-          # Everything we need is in the token
-        else
-          @current_user ||= request.env['warden'].authenticate!(:api_token)
+      # def new_authenticate_it!
+      #   if request.env['HTTP_X_AUTHORIZATION_CLIENT_ID']&.eql?('123456')
+      #     @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
+      #     @current_user = Ros::IAM::User.new(JSON.parse(@current_jwt['act']))
+      #     # binding.pry
+      #     # Everything we need is in the token
+      #   else
+      #     @current_user ||= request.env['warden'].authenticate!(:api_token)
 
-          if auth_type.basic?
-            @current_jwt = Jwt.new(current_user.jwt_payload)
-            @current_jwt.add_claims('act' => current_user.to_json)
-          elsif auth_type.bearer?
-            @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
-            @current_jwt.add_claims('act' => current_user.to_json)
-            if (sub_cognito = current_jwt.claims['sub_cognito'])
-              @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
-              @cognito_user_id = cognito_user_urn.resource_id
-            end
-          end
-        end
-        # Set the SDK header to prevent re-authentication on internal reuqests by the destination service
-        Ros::Sdk::Credential.request_headers['x-authorization-client-id'] = '123456'
-      end
+      #     if auth_type.basic?
+      #       @current_jwt = Jwt.new(current_user.jwt_payload)
+      #       @current_jwt.add_claims('act' => current_user.to_json)
+      #     elsif auth_type.bearer?
+      #       @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
+      #       @current_jwt.add_claims('act' => current_user.to_json)
+      #       if (sub_cognito = current_jwt.claims['sub_cognito'])
+      #         @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
+      #         @cognito_user_id = cognito_user_urn.resource_id
+      #       end
+      #     end
+      #   end
+      #   # Set the SDK header to prevent re-authentication on internal reuqests by the destination service
+      #   Ros::Sdk::Credential.request_headers['x-authorization-client-id'] = '123456'
+      # end
 
       def set_headers!
         return unless current_jwt
@@ -148,6 +149,12 @@ module Ros
       def set_raven_context
         # Raven.user_context(id: session[:current_user_id]) # or anything else in session
         Raven.extra_context(params: params.to_unsafe_h, url: request.url, tenant: Apartment::Tenant.current)
+      end
+
+      def set_tenant_context
+        request.env['X-TenantSchema'] = Apartment::Tenant.current.schema_name
+        request.env['X-CognitoUserId'] = cognito_user_id
+        request.env['X-IAMUserId'] = current_user.id
       end
     end
   end
