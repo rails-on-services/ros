@@ -6,7 +6,7 @@ module Ros
 
     private
 
-    def validate_required_params(ctx, errors:)
+    def validate_required_params(ctx, errors:, **)
       return true unless validator
 
       validator.new(ctx[:params]).validate!
