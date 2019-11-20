@@ -479,7 +479,7 @@ DEPENDENCIES
   faker
   jsonapi-resources-matchers
   listen (>= 3.0.5, < 3.2)
-  perx-rubocop (~> 0.0.1.rc1)
+  perx-rubocop
   pg
   pry-rails
   pry-stack_explorer
