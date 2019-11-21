@@ -24,7 +24,7 @@ RSpec.describe Template, type: :model do
 
     context 'when invalid keys are passed' do
       let(:template) { create(factory_name, content: 'Hi [userFirstName] [userId] [salutationn]') }
-      let(:invalid_content) { "Hi #{first_name} #{primary_identifier} salutationn"}
+      let(:invalid_content) { "Hi #{first_name} #{primary_identifier} salutationn" }
 
       it 'renders content with raw invalid key' do
         expect(template.render(user, campaign)).to eq invalid_content
