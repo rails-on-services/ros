@@ -147,7 +147,7 @@ class RServices < Pry::ClassCommand
   match 'sdk'
   group 'ros'
   description 'show SDK configured services and endpoints'
-  command_options({ keep_retval: true })
+  command_options(keep_retval: true)
 
   def process
     config = OpenStruct.new(

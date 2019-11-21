@@ -134,7 +134,7 @@ module Ros::Console::Commands
     match 'ir'
     group 'ros'
     description 'infrastructure resources'
-    command_options({ keep_retval: true })
+    command_options(keep_retval: true)
 
     def process(resource_type = nil, name = nil, *options)
       if resource_type.nil?
