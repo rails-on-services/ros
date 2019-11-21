@@ -147,11 +147,16 @@ class RServices < Pry::ClassCommand
   match 'sdk'
   group 'ros'
   description 'show SDK configured services and endpoints'
+  command_options({ keep_retval: true })
 
   def process
-    output.puts "Services: #{Ros::Sdk.configured_services}"
-    output.puts "\nEndpoints: #{Ros::Sdk.service_endpoints}"
-    output.puts "\nCurrent Credential: #{Ros::Sdk::Credential.authorization}"
+    config = OpenStruct.new(
+      services: Ros::Sdk.configured_services,
+      endpoints: Ros::Sdk.service_endpoints,
+      credential: Ros::Sdk::Credential.authorization
+    )
+    output.puts(config)
+    config
   end
 
   Ros::Sdk::PryCommandSet.add_command(self)
