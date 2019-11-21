@@ -11,6 +11,7 @@ class Template < Comm::ApplicationRecord
 
   # See: https://www.stuartellis.name/articles/erb/
   def render(user, campaign)
+    return content if user.nil? || campaign.nil?
     properties.user = user
     properties.campaign = campaign
 
