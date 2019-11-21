@@ -6,7 +6,6 @@ RSpec.describe 'User Authentication', type: :request do
   include_context 'jsonapi requests'
 
   context :create do
-    let(:mock) { false }
     let(:url) { u('/users/sign_in') }
     let(:tenant) { create(:tenant) }
     let(:user) { create(:user, :within_schema, username: 'test_user', password: '123456', schema: tenant.schema_name) }
@@ -38,25 +37,11 @@ RSpec.describe 'User Authentication', type: :request do
       end
     end
 
-    context 'with :alias' do
+    context 'with :account_alias' do
       let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.alias) } } }
       it 'returns success status' do
         expect(response.status).to eq 200
       end
     end
-    # context 'when logged in' do
-    #   let(:headers) do
-    #     {
-    #       'Content-Type' => 'application/vnd.api+json',
-    #       'Authorization' => "Basic #{admin_creds.access_key_id}:#{admin_creds.secret_access_key}"
-    #     }
-    #   end
-    #   let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.account_id) } } }
-
-    #   it "allows fetching user's own details", wip: true do
-    #     get u('/users/show'), params: valid_attributes, headers: headers, as: :json
-    #     expect(response.status).to eq 200
-    #   end
-    # end
   end
 end

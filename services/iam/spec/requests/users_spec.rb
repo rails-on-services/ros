@@ -5,7 +5,6 @@ require 'rails_helper'
 RSpec.describe 'users requests', type: :request do
   include_context 'jsonapi requests'
 
-  let(:mock) { false }
   let(:url) { u('/users') }
   let(:tenant) { create(:tenant) }
   let(:admin_user) { create(:user, :administrator_access) }
@@ -19,7 +18,34 @@ RSpec.describe 'users requests', type: :request do
     }
   end
 
-  # The jsonapi_data helper creates a valid user which includes a lot of
+  describe 'GET index' do
+    context 'unauthenticated user' do
+      before do
+        get url
+      end
+
+      it 'returns unauthenticated' do
+        expect(response).to be_unauthorized
+      end
+    end
+
+    context 'authenticated user' do
+      before do
+        normal_user
+        login(admin_user)
+        get url, headers: headers
+      end
+
+      it 'returns a successful response' do
+        expect(response).to be_successful
+        expect_json_types('data', :array)
+        expect_json('data.0.id', normal_user.id.to_s)
+        expect_json('data.1.id', admin_user.id.to_s)
+      end
+    end
+  end
+
+  # NOTE: The jsonapi_data helper creates a valid user which includes a lot of
   # properties that are invalid as part of generating a new user so we
   # construct it manually instead
   let(:valid_params) do
@@ -32,31 +58,6 @@ RSpec.describe 'users requests', type: :request do
   end
   let(:invalid_params) do
     valid_params.deep_merge(data: { attributes: { jwt_payload: 'foo' } })
-  end
-
-  describe 'GET index' do
-    context 'unauthenticated user' do
-      before(:each) do
-        get url
-      end
-
-      it 'returns unauthenticated' do
-        expect(response).to be_unauthorized
-      end
-    end
-
-    context 'authenticated user' do
-      before do
-        login(admin_user)
-        get url, headers: headers
-      end
-
-      it 'returns a successful response' do
-        expect(response).to be_successful
-        # TODO: improve reponse test coverage
-        expect(body['data']).to_not be_nil
-      end
-    end
   end
 
   describe 'POST create' do
