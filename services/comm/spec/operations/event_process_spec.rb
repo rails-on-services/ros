@@ -19,7 +19,12 @@ RSpec.describe EventProcess, type: :operation do
       expect(op_result.success?).to eq true
     end
 
-    xit 'creates one message per user' do
+    it 'has an event and template attached' do
+      expect(op_result.ctx[:event]).not_to be_nil
+      expect(op_result.ctx[:template]).not_to be_nil
+    end
+
+    it 'creates one message per user' do
       op_result
       # TODO: Check that params are passed properly
       expect(MessageCreate).to have_received(:call).exactly(users.length).times

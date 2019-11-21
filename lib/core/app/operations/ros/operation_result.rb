@@ -6,7 +6,7 @@
 # useful to have our operations using activity rather than Operation
 module Ros
   class OperationResult
-    attr_reader :errors
+    attr_reader :errors, :ctx
 
     def initialize(signal, context)
       @end_signal = signal
