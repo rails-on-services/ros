@@ -19,12 +19,14 @@ after 'development:tenants' do
                          api: true,
                          time_zone: 'Asia/Singapore',
                          email: 'admin@example.com',
+                         confirmed_at: DateTime.now,
                          password: 'asdfjkl;')
       User.create(username: 'Microsite',
                   console: false,
                   api: true,
                   time_zone: 'Asia/Singapore',
-                  email: 'microsite@example.com')
+                  email: 'microsite@example.com',
+                  confirmed_at: DateTime.now)
       # user.locale: 'en-US'
       credential = user.credentials.create
       @created_list.append(type: 'user',
