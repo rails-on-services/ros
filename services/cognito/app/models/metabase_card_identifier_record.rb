@@ -2,5 +2,5 @@
 
 class MetabaseCardIdentifierRecord < Cognito::ApplicationRecord
   validates :card_id, presence: true
-  validates :uniq_identifer, presence: true, uniqueness: true
+  validates :uniq_identifier, presence: true, uniqueness: true
 end

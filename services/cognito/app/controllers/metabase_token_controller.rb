@@ -33,10 +33,12 @@ class MetabaseTokenController < Cognito::ApplicationController
   end
 
   def map_identifier_to_id
-    if card_map.valid?
+    return unless params[:identifier].present?
+
+    if card_map.card_identifier_record.present?
       params[:id] = card_map.mapped_value
     else
-      render json: { errors: card_map.errors.messages }
+      render json: { errors: 'Card ID not found' }
     end
   end
 
