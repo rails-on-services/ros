@@ -16,16 +16,16 @@ module Metabase
     def mapped_value
       return unless valid?
 
-      card_identifer_record.card_id
+      card_identifier_record.card_id
     end
 
     private
 
     def card_present
-      errors.add(:card_id, 'not present') unless card_identifer_record.present?
+      errors.add(:card_id, 'not present') unless card_identifier_record.present?
     end
 
-    def card_identifer_record
+    def card_identifier_record
       MetabaseCardIdentifierRecord.find_by(uniq_identifier: identifier)
     end
   end
