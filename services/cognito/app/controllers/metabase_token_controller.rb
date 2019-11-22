@@ -33,14 +33,14 @@ class MetabaseTokenController < Cognito::ApplicationController
   end
 
   def map_identifier_to_id
-    if metabase_map.valid?
-      params[:id] = metabase_map.mapped_value
+    if card_map.valid?
+      params[:id] = card_map.mapped_value
     else
-      render json: { errors: metabase_map.errors.messages }
+      render json: { errors: card_map.errors.messages }
     end
   end
 
-  def metabase_map
-    MetabaseMap.new(identifier: params[:identifier])
+  def card_map
+    Metabase::CardMap.new(identifier: params[:identifier])
   end
 end
