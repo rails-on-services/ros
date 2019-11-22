@@ -24,15 +24,30 @@ RSpec.describe 'metabase token requests', type: :request do
     context 'authenticated user' do
       include_context 'authorized user'
 
-      let(:url)       { "#{base_url}/#{card_id}?identifier=#{card_name}" }
+      context 'when a valid identifier is passed' do
+        let(:url)       { "#{base_url}/#{card_id}?identifier=#{card_name}" }
 
-      before do
-        get url, headers: request_headers
+        before do
+          get url, headers: request_headers
+        end
+
+        it 'returns an ok response status' do
+          expect(response).to be_ok
+          expect_json_types('token', :string)
+        end
       end
 
-      it 'returns an ok response status' do
-        expect(response).to be_ok
-        expect_json_types('token', :string)
+      context 'when an invalid identifier is passed' do
+        let(:invalid_identifier) { 'invalid_identifier' }
+        let(:url)                { "#{base_url}/#{card_id}?identifier=#{invalid_identifier}" }
+
+        before do
+          get url, headers: request_headers
+        end
+
+        it 'returns an error' do
+          expect(errors.size).to be_positive
+        end
       end
     end
   end
