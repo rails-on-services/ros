@@ -3,6 +3,8 @@
 class MetabaseTokenController < Cognito::ApplicationController
   DEFAULT_TYPE = 'question'
 
+  before_action :map_identifier_to_id, only: :show
+
   def show
     tokenizer = Metabase::TokenGenerator.new(payload: payload, expiry: params[:expiry])
     if tokenizer.valid?
@@ -28,5 +30,17 @@ class MetabaseTokenController < Cognito::ApplicationController
     return options if params[:params].blank?
 
     options.merge(params[:params].to_unsafe_h.deep_symbolize_keys)
+  end
+
+  def map_identifier_to_id
+    if metabase_map.valid?
+      params[:id] = metabase_map.mapped_value
+    else
+      render json: { errors: metabase_map.errors.messages }
+    end
+  end
+
+  def metabase_map
+    MetabaseMap.new(identifier: params[:identifier])
   end
 end
