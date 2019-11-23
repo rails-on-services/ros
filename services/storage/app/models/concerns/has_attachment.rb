@@ -25,9 +25,11 @@ module HasAttachment
         blob.upload(io)
         blob.save!
       end
+      Rails.logger.debug("#{blob.key} - Setting bucket to #{bucket_name}")
       service.set_bucket(bucket_name)
       owner.file.attach(upload)
       owner.after_attach(io)
+      Rails.logger.debug("#{blob.key} - Uploaded to bucket #{bucket_name}")
       owner
     rescue Aws::S3::Errors::NoSuchBucket
       Rails.logger.warn("Bucket not found #{bucket_name}")

@@ -134,25 +134,19 @@ module Ros::Console::Commands
     match 'ir'
     group 'ros'
     description 'infrastructure resources'
+    command_options(keep_retval: true)
 
     def process(resource_type = nil, name = nil, *options)
       if resource_type.nil?
-        output.puts Ros::Infra.resources.keys
-        return
+        Ros::Infra.resources.keys
       elsif Ros::Infra.resources[resource_type].nil?
-        output.puts 'Unknown resource'
-        return
+        'Unknown resource'
       elsif name.nil?
-        output.puts Ros::Infra.resources[resource_type].keys
-        return
-      end
-      resource = Ros::Infra.resources[resource_type][name]
-      if options.size == 0
-        output.puts resource
-      elsif options.size == 1
-        output.puts resource.send(options.shift)
+        Ros::Infra.resources[resource_type].keys
       else
-        output.puts resource.send(options.shift, options)
+        resource = Ros::Infra.resources[resource_type][name]
+        options.each { |option| resource = resource.send(option) }
+        resource
       end
     end
 

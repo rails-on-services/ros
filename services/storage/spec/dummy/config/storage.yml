@@ -11,8 +11,8 @@ localstack: &localstack
 amazon: &amazon
   service: s3
   bucket: <%= ENV['PLATFORM__INFRA__RESOURCES__MQ__QUEUES__STORAGE_DATA__BUCKET_NAME'] %>
-  access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
-  secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+  # access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+  # secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
   region: <%= ENV['AWS_DEFAULT_REGION'] %>
 
 disk: &disk
@@ -25,4 +25,5 @@ development:
   <<: *amazon
 
 test:
-  <<: *disk
+  # <<: *disk
+  <<: *localstack

@@ -14,7 +14,8 @@ module Ros
         def initialize(user_config)
           self.name = user_config.name
           self.config = user_config.to_hash.slice(:region)
-          self.client = ::Aws::S3::Client.new(credentials.merge(config))
+          # self.client = ::Aws::S3::Client.new(credentials.merge(config))
+          self.client = ::Aws::S3::Client.new(region: credentials[:region])
           self.status = :not_configured
           if user_config.notifications
             self.notification_configuration = { bucket: name, notification_configuration: user_config.notifications.to_hash }

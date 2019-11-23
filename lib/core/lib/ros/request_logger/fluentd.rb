@@ -24,11 +24,11 @@ module Ros
       end
 
       def self.metadata(data)
-        {
-          tenant: data[:env]['X-TenantSchema'],
-          cognito_user_id: data[:env]['X-CognitoUserId'],
-          iam_user_id: data[:env]['X-IAMUserId']
-        }
+        [
+          { key: 'tenant', value: data[:env]['X-TenantSchema'] },
+          { key: 'cognito_user_id', value: data[:env]['X-CognitoUserId'] },
+          { key: 'iam_user_id', value: data[:env]['X-IAMUserId'] }
+        ]
       end
 
       def self.request_headers(data)
