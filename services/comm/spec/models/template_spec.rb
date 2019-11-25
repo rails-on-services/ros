@@ -24,26 +24,24 @@ RSpec.describe Template, type: :model do
 
     context 'when invalid keys are passed' do
       let(:template) { create(factory_name, content: 'Hi [userFirstName] [userId] [salutationn]') }
-      let(:invalid_content) { "Hi #{first_name} #{primary_identifier} salutationn" }
+      let(:invalid_content) { "Hi #{first_name} #{primary_identifier} [salutationn]" }
 
       it 'renders content with raw invalid key' do
         expect(template.render(user, campaign)).to eq invalid_content
       end
     end
 
-    context 'when any of the arguments passed are nil' do
-      let(:template) { create(factory_name, content: 'Hi [userFirstName] [userId] [salutation]') }
+    context 'when required arguments are nil' do
+      let(:template_one)   { create(factory_name, content: 'Hi [userFirstName] [userId] [salutation]') }
+      let(:template_two)   { create(factory_name, content: 'Hi [userFirstName] [userId]')}
+      let(:template_three) { create(factory_name, content: 'This is your [campaignUrl]')}
+      let(:template_four)  { create(factory_name, content: 'Hi [salutation] [userFirstName] this is your [campaignUrl]')}
 
-      it 'renders the original content when user is nil' do
-        expect(template.render(nil, campaign)).to eq template.content
-      end
-
-      it 'renders the original content when campaign is nil' do
-        expect(template.render(user, nil)).to eq template.content
-      end
-
-      it 'renders the original content when both user and campaign' do
-        expect(template.render(nil, nil)).to eq template.content
+      it 'renders content with the raw keys' do
+        expect(template_one.render(nil, nil)).to eq template_one.content
+        expect(template_two.render(nil, campaign)).to eq template_two.content
+        expect(template_three.render(user, nil)).to eq template_three.content
+        expect(template_four.render(user, nil)).to eq 'Hi Mr. Jim this is your [campaignUrl]'
       end
     end
   end
