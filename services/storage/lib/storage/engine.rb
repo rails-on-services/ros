@@ -8,12 +8,12 @@ module Storage
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
     end
 
-    initializer 'service.set_storage_config' do |app|
+    initializer 'service.set_storage_config' do |_app|
       ActiveStorage::Service.module_eval { attr_writer :bucket }
       ActiveStorage::Service.class_eval { include Storage::Methods }
-      # binding.pry
       # Read a block from config/storage.yml for the storage adapter to use
-      app.config.active_storage.service = Rails.env.to_sym if Rails.env.development?
+      # config = Rails.application.config.active_storage.service_configurations[storage_key_from_env]
+      # app.config.active_storage.service = Rails.env.to_sym if Rails.env.development?
     end
 
     initializer 'service.set_platform_config', before: 'ros_core.load_platform_config' do |_app|
