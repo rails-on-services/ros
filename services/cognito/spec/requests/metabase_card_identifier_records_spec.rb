@@ -21,7 +21,19 @@ RSpec.describe 'metabase card identifier record requests', type: :request do
     context 'authenticated user' do
       include_context 'authorized user'
 
+      let(:model_data) { build(:metabase_card_identifier_record) }
+
+      before do
+        mock_authentication if mock
+        post url, headers: request_headers, params: post_data
+      end
+
       context 'when valid params are passed' do
+        let(:post_data) { jsonapi_data(model_data) }
+
+        it 'returns a successful response' do
+          expect(response).to be_successful
+        end
       end
 
       context 'when invalid params are passed' do

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class MetabaseCardIdentifierRecordsController < Cognito::ApplicationController
-  before_action :load_record_creator
-
   def create
     card_identifier_record = MetabaseCardIdentifierRecord.new(card_identifier_record_params)
     if card_identifier_record.save
@@ -15,6 +13,6 @@ class MetabaseCardIdentifierRecordsController < Cognito::ApplicationController
   private
 
   def card_identifier_record_params
-    params(:metabase_card_identifier_record).permit(:card_id, :uniq_identifier)
+    jsonapi_params.permit(%i[card_id uniq_identifier])
   end
 end
