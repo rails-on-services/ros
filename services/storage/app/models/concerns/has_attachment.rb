@@ -32,16 +32,16 @@ module HasAttachment
       owner.after_attach(io)
       Rails.logger.debug("Uploaded #{upload.key} to bucket #{bucket_name}")
       owner
-    rescue Aws::S3::Errors::NoSuchBucket => error
+    rescue Aws::S3::Errors::NoSuchBucket => e
       # TODO: This should send an exception report to sentry
-      owner.errors.add(:file, error.message)
+      owner.errors.add(:file, e.message)
       owner.delete
-    rescue ActiveRecord::RecordNotUnique => error
+    rescue ActiveRecord::RecordNotUnique => e
       # TODO: This should send an exception report to sentry
-      owner.errors.add(:file, error.message)
+      owner.errors.add(:file, e.message)
       owner.delete
-    rescue StandardError => error
-      owner.errors.add(:file, error.message)
+    rescue StandardError => e
+      owner.errors.add(:file, e.message)
       owner.delete
     end
 

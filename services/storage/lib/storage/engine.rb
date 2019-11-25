@@ -8,7 +8,7 @@ module Storage
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
     end
 
-    initializer 'service.set_storage_config' do |app|
+    initializer 'service.set_storage_config' do |_app|
       ActiveStorage::Service.module_eval { attr_writer :bucket }
       ActiveStorage::Service.class_eval { include Storage::Methods }
       # Read a block from config/storage.yml for the storage adapter to use
