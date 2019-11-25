@@ -19,13 +19,17 @@ RSpec.describe 'metabase card identifier record requests', type: :request do
     context 'authenticated user' do
       include_context 'authorized user'
 
-      let!(:model_data) { build(:metabase_card_identifier_record,
-                          card_id: 5,
-                          uniq_identifier: 'uniq_identifier') }
+      let!(:model_data) do
+        build(:metabase_card_identifier_record,
+        card_id: 5,
+        uniq_identifier: 'uniq_identifier')
+      end
 
-      let!(:dup_record) { create(:metabase_card_identifier_record,
-                          card_id: 12,
-                          uniq_identifier: 'duplicate_identifier') }
+      let!(:dup_record) do
+        create(:metabase_card_identifier_record,
+        card_id: 12,
+        uniq_identifier: 'duplicate_identifier')
+      end
 
       before do
         mock_authentication if mock
@@ -41,10 +45,12 @@ RSpec.describe 'metabase card identifier record requests', type: :request do
       end
 
       context 'when a similar record exists' do
-        let(:duplicate_model) { build(:metabase_card_identifier_record,
-                                card_id: 7,
-                                uniq_identifier: 'duplicate_identifier') }
-        let(:post_data)       { jsonapi_data(duplicate_model) }
+        let(:duplicate_model) do
+          build(:metabase_card_identifier_record,
+          card_id: 7,
+          uniq_identifier: 'duplicate_identifier')
+        end
+        let(:post_data)  { jsonapi_data(duplicate_model) }
 
         it 'returns error' do
           expect(errors.size).to be_positive
