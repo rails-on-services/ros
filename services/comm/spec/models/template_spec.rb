@@ -41,7 +41,7 @@ RSpec.describe Template, type: :model do
         expect(template_one.render(nil, nil)).to eq template_one.content
         expect(template_two.render(nil, campaign)).to eq template_two.content
         expect(template_three.render(user, nil)).to eq template_three.content
-        expect(template_four.render(user, nil)).to eq 'Hi Mr. Jim this is your [campaignUrl]'
+        expect(template_four.render(user, nil)).to eq "Hi #{title} #{first_name} this is your [campaignUrl]"
       end
     end
   end
