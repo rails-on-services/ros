@@ -19,9 +19,10 @@ RSpec.describe EventProcess, type: :operation do
       expect(op_result.success?).to eq true
     end
 
-    it 'has an event and template attached' do
+    it 'has an event and template attached, and status changed to published' do
       expect(op_result.ctx[:event]).not_to be_nil
       expect(op_result.ctx[:template]).not_to be_nil
+      expect(op_result.ctx[:event][:status]).to eq('published')
     end
 
     it 'creates one message per user' do
