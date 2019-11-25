@@ -4,9 +4,9 @@ class MetabaseCardIdentifierRecordsController < Cognito::ApplicationController
   def create
     card_identifier_record = MetabaseCardIdentifierRecord.new(card_identifier_record_params)
     if card_identifier_record.save
-      render json: {data: card_identifier_record}
+      render json: { data: card_identifier_record }
     else
-      render json: {errors: card_identifier_record.errors.messages}
+      render json: { errors: card_identifier_record.errors.messages }
     end
   end
 
