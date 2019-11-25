@@ -19,20 +19,30 @@ module HasAttachment
       owner ||= create
       io_filename = io.path if io.respond_to?(:path)
       io_filename = io.original_filename if io.respond_to?(:original_filename)
+      # Set the bucket before uploading file
+      Rails.logger.debug("Setting bucket to #{bucket_name}")
+      service.set_bucket(bucket_name)
       upload = ActiveStorage::Blob.new.tap do |blob|
         blob.filename = io_filename
         blob.key = "#{object_root}/#{blob_key(owner, blob)}"
         blob.upload(io)
         blob.save!
       end
-      Rails.logger.debug("#{blob.key} - Setting bucket to #{bucket_name}")
-      service.set_bucket(bucket_name)
       owner.file.attach(upload)
       owner.after_attach(io)
-      Rails.logger.debug("#{blob.key} - Uploaded to bucket #{bucket_name}")
+      Rails.logger.debug("Uploaded #{upload.key} to bucket #{bucket_name}")
       owner
-    rescue Aws::S3::Errors::NoSuchBucket
-      Rails.logger.warn("Bucket not found #{bucket_name}")
+    rescue Aws::S3::Errors::NoSuchBucket => error
+      # TODO: This should send an exception report to sentry
+      owner.errors.add(:file, error.message)
+      owner.delete
+    rescue ActiveRecord::RecordNotUnique => error
+      # TODO: This should send an exception report to sentry
+      owner.errors.add(:file, error.message)
+      owner.delete
+    rescue StandardError => error
+      owner.errors.add(:file, error.message)
+      owner.delete
     end
 
     def blob_key(_owner, blob)

@@ -10,9 +10,9 @@ class ImageResource < Storage::ApplicationResource
     end.first.last[:url]
   end
 
-  def url; "#{cdn}/#{@model.file.blob.key}" end
+  def url; "#{cdn}/#{@model.file.attached? ? @model.file.blob.key : ''}" end
 
   def bucket_name; @model.class.bucket_name end
 
-  def blob; JSON.parse(@model.file.blob.to_json) end
+  def blob; JSON.parse((@model.file.attached? ? @model.file.blob : {}).to_json) end
 end
