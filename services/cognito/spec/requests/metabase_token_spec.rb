@@ -7,7 +7,7 @@ RSpec.describe 'metabase token requests', type: :request do
 
   let!(:tenant)       { Tenant.first }
   let!(:mock)         { true }
-  let!(:base_url)     { u('/metabase_token') }
+  let!(:base_url)     { u('metabase_token') }
   let!(:url)          { base_url }
   let!(:user)         { create(:user) }
   let!(:card_name)    { 'total_active_customers' }
@@ -25,7 +25,7 @@ RSpec.describe 'metabase token requests', type: :request do
       include_context 'authorized user'
 
       context 'when a valid identifier is passed' do
-        let(:url)       { "#{base_url}/#{card_id}?identifier=#{card_name}" }
+        let(:url)       { "#{base_url}/#{card_name}" }
 
         before do
           get url, headers: request_headers
@@ -39,7 +39,7 @@ RSpec.describe 'metabase token requests', type: :request do
 
       context 'when an invalid identifier is passed' do
         let(:invalid_identifier) { 'invalid_identifier' }
-        let(:url)                { "#{base_url}/#{card_id}?identifier=#{invalid_identifier}" }
+        let(:url)                { "#{base_url}/#{invalid_identifier}" }
 
         before do
           get url, headers: request_headers

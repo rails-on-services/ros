@@ -22,10 +22,6 @@ module Metabase
     end
 
     def token
-      puts "PAYLOAD"
-      puts payload
-      puts "CONFIG"
-      puts config.inspect
       return unless valid?
 
       @token ||= JWT.encode payload, config.secret, config.sign_algorithm
