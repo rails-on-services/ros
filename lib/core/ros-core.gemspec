@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'attr_encrypted', '~> 3.1.0'
   spec.add_dependency 'avro_turf', '~> 0.9.0'
   spec.add_dependency 'aws-sdk-s3'
+  spec.add_dependency 'aws-sdk-sqs'
   spec.add_dependency 'config', '1.7.1'
   spec.add_dependency 'grpc', '1.23.0'
   spec.add_dependency 'jsonapi-resources', '0.9.10'
