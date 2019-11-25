@@ -33,9 +33,9 @@ RSpec.describe Template, type: :model do
 
     context 'when required arguments are nil' do
       let(:template_one)   { create(factory_name, content: 'Hi [userFirstName] [userId] [salutation]') }
-      let(:template_two)   { create(factory_name, content: 'Hi [userFirstName] [userId]')}
-      let(:template_three) { create(factory_name, content: 'This is your [campaignUrl]')}
-      let(:template_four)  { create(factory_name, content: 'Hi [salutation] [userFirstName] this is your [campaignUrl]')}
+      let(:template_two)   { create(factory_name, content: 'Hi [userFirstName] [userId]') }
+      let(:template_three) { create(factory_name, content: 'This is your [campaignUrl]') }
+      let(:template_four)  { create(factory_name, content: 'Hi [salutation] [userFirstName] this is your [campaignUrl]') }
 
       it 'renders content with the raw keys' do
         expect(template_one.render(nil, nil)).to eq template_one.content

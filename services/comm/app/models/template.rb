@@ -11,8 +11,6 @@ class Template < Comm::ApplicationRecord
 
   # See: https://www.stuartellis.name/articles/erb/
   def render(user, campaign)
-    #return content if user.nil? && campaign.nil?
-
     properties.user = user
     properties.campaign = campaign
 
@@ -36,7 +34,6 @@ class Template < Comm::ApplicationRecord
 
   def value_for(key)
     sanitized_key = key.delete '[]'
-    #binding.pry
     mapped_key = key_map[sanitized_key]
     return key if mapped_key.nil? || properties[mapped_key[:property]].nil?
 
