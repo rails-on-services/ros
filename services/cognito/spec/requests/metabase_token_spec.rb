@@ -14,7 +14,6 @@ RSpec.describe 'metabase token requests', type: :request do
   let!(:card_id)      { rand(1..10) }
   let!(:card_record)  { create(:metabase_card_identifier_record, uniq_identifier: card_name, card_id: card_id) }
 
-
   describe 'GET show' do
     context 'Unauthenticated user' do
       include_context 'unauthorized user'
@@ -25,7 +24,7 @@ RSpec.describe 'metabase token requests', type: :request do
       include_context 'authorized user'
 
       context 'when a valid identifier is passed' do
-        let(:url)       { "#{base_url}/#{card_name}" }
+        let(:url) { "#{base_url}/#{card_name}" }
 
         before do
           get url, headers: request_headers

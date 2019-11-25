@@ -20,16 +20,15 @@ RSpec.describe 'metabase card identifier record requests', type: :request do
       include_context 'authorized user'
 
       let!(:model_data) { build(:metabase_card_identifier_record,
-                                card_id: 5,
-                                uniq_identifier: 'uniq_identifier') }
+                          card_id: 5,
+                          uniq_identifier: 'uniq_identifier') }
 
-      let!(:dup_record)  { create(:metabase_card_identifier_record,
-                                  card_id: 12,
-                                  uniq_identifier: 'duplicate_identifier') }
+      let!(:dup_record) { create(:metabase_card_identifier_record,
+                          card_id: 12,
+                          uniq_identifier: 'duplicate_identifier') }
 
       before do
         mock_authentication if mock
-        # dup_record
         post url, headers: request_headers, params: post_data
       end
 
