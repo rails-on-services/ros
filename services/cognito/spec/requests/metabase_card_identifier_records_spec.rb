@@ -10,8 +10,6 @@ RSpec.describe 'metabase card identifier record requests', type: :request do
   let!(:base_url)     { u('metabase_card_identifier_records') }
   let!(:url)          { base_url }
 
-
-
   describe 'POST create' do
     context 'Unauthenticated user' do
       include_context 'unauthorized user'

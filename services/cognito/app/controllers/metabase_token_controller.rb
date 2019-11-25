@@ -33,7 +33,7 @@ class MetabaseTokenController < Cognito::ApplicationController
   end
 
   def map_identifier_to_id
-    return unless params[:identifier].present?
+    return if params[:identifier].blank?
 
     if card_map.card_identifier_record.present?
       params[:id] = card_map.mapped_value

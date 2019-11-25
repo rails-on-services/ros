@@ -12,7 +12,8 @@ module Metabase
     end
 
     def mapped_value
-      return unless card_identifier_record.present?
+      return if card_identifier_record.blank?
+
       card_identifier_record.card_id
     end
 

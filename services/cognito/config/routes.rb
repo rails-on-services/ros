@@ -9,5 +9,5 @@ Ros::Cognito::Engine.routes.draw do
   jsonapi_resources :endpoints
   jsonapi_resources :metabase_card_identifier_records, only: [:create]
 
-  get '/metabase_token/:identifier' =>'metabase_token#show'
+  get '/metabase_token/:identifier' => 'metabase_token#show'
 end
