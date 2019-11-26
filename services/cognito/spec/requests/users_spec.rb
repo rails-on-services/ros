@@ -35,14 +35,26 @@ RSpec.describe 'users requests', type: :request do
     context 'perform query' do
       include_context 'authorized user'
 
-      let(:models_count) { rand(1..5) }
-      let!(:models) { create_list :user, models_count }
-      let!(:random_model) { models.max_by(&:id) }
-      let!(:random_id) { random_model.id + 1 }
+      let!(:model_one) do
+        create(:user, primary_identifier: 'some_identifier',
+                      first_name: 'Awesome',
+                      last_name: 'Name',
+                      email_address: 'amazing@email.com',
+                      phone_number: '+000000000')
+      end
+
+      let!(:model_two) do
+        create(:user, primary_identifier: 'another_identifier',
+                      first_name: 'Even',
+                      last_name: 'Better',
+                      email_address: 'hey@email.com')
+      end
+
+      let!(:random_id) { model_two.id + 1 }
 
       context 'based on ID' do
         context 'matching query' do
-          let(:url) { "#{base_url}?filter[query]=#{random_model.id}" }
+          let(:url) { "#{base_url}?filter[query]=#{model_two.id}" }
 
           before do
             get url, headers: request_headers
@@ -51,12 +63,12 @@ RSpec.describe 'users requests', type: :request do
           it 'returns and ok response with the user ID queried' do
             expect(response).to have_http_status(:ok)
             expect_json_sizes('data', 1)
-            expect_json('data.0', id: random_model.id.to_s)
+            expect_json('data.0', id: model_two.id.to_s)
           end
         end
 
         context 'matching query with include pools' do
-          let(:url) { "#{base_url}?filter[query]=#{random_model.id}&include=pools" }
+          let(:url) { "#{base_url}?filter[query]=#{model_two.id}&include=pools" }
 
           before do
             get url, headers: request_headers
@@ -65,7 +77,7 @@ RSpec.describe 'users requests', type: :request do
           it 'returns and ok response with the user ID queried' do
             expect(response).to have_http_status(:ok)
             expect_json_sizes('data', 1)
-            expect_json('data.0', id: random_model.id.to_s)
+            expect_json('data.0', id: model_two.id.to_s)
           end
         end
 
