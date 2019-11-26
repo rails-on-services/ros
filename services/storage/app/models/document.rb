@@ -31,7 +31,7 @@ class Document < Storage::ApplicationRecord
             f.readline
           end.chomp
           document.update(header: header)
-          document.identify_transfer_map
+          enqueue if document.identify_transfer_map
         end
       elsif event.type.eql? 'download'
         Rails.logger.debug { 'Processing download event' }
@@ -44,16 +44,16 @@ class Document < Storage::ApplicationRecord
   # For an HTTP upload the uploaded file is already on the local filesystem referenced by the io param
   # so we just need to open the io object and read the first line
   def after_attach(io)
-    update(header: File.open(io.tempfile, &:readline).chomp)
-    identify_transfer_map
+    # Remove BOM: https://estl.tech/of-ruby-and-hidden-csv-characters-ef482c679b35
+    update(header: File.open(io.tempfile, &:readline).chomp.gsub("\xEF\xBB\xBF", ''))
+    enqueue if identify_transfer_map
   end
 
   def identify_transfer_map
-    file_columns = header.split(',').sort
+    file_columns = header.split(',').map(&:strip)
     return unless (transfer_map_id = TransferMap.match(file_columns)&.id)
 
     update(transfer_map_id: transfer_map_id)
-    enqueue
   end
 
   def enqueue
