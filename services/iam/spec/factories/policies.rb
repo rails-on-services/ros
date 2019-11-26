@@ -7,5 +7,13 @@ FactoryBot.define do
     trait :administrator_access do
       name { 'AdministratorAccess' }
     end
+
+    trait :readonly_access do
+      name { 'IamUserReadOnlyAccess'}
+    end
+
+    trait :readwrite_access do
+      name { 'IamUserFullAccess'}
+    end
   end
 end
