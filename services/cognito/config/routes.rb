@@ -9,5 +9,5 @@ Ros::Cognito::Engine.routes.draw do
   jsonapi_resources :pools
   jsonapi_resources :endpoints
 
-  get '/metabase_token/:identifier' => 'metabase_token#show'
+  get '/metabase_token/:identifier' => 'metabase_token#show_identifier'
 end
