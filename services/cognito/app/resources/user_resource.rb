@@ -10,9 +10,9 @@ class UserResource < Cognito::ApplicationResource
                             .map { |field| "#{field} ILIKE :non_id_query" }
                             .join(' OR ')
 
-    records = records.where(query_by_non_id_attrs, non_id_query: "%#{value[0]}%")
-    records = records.or(records.where(id: value[0])) if /^(\d)+$/.match?(value[0])
-    records
+    results = records.where(query_by_non_id_attrs, non_id_query: "%#{value[0]}%")
+    results = results.or(records.where(id: value[0])) if /^(\d)+$/.match?(value[0])
+    results
   }
 
   has_many :pools
