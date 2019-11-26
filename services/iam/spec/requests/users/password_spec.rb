@@ -27,17 +27,26 @@ RSpec.describe 'Password management', type: :request do
     let(:invalid_params) { { data: { attributes: default_attributes.merge(password_confirmation: 'fef') } } }
 
     before do
-      post '/users/sign_in', params: {
-        data: {
-          attributes: {
-            username: user.username,
-            password: password,
-            account_id: tenant.account_id
-          }
-        }
+      post u('/users/sign_in'), params: {
+             data: {
+               attributes: {
+                 username: user.username,
+                 password: password,
+                 account_id: tenant.account_id
+               }
+             }
       }
 
-      @bearer_token = response.headers['Authorization']
+      # we use fetch to ensure we don't have a nil @bearer_token
+      @bearer_token = response.headers.fetch 'Authorization'
+    end
+
+    context 'logging in' do
+      include_context 'jsonapi requests'
+
+      it 'should allow login' do
+        expect(response).to be_successful
+      end
     end
 
     context 'resetting password' do
