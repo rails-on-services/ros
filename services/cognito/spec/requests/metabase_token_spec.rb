@@ -12,7 +12,7 @@ RSpec.describe 'metabase token requests', type: :request do
   let!(:user)         { create(:user) }
   let!(:card_name)    { 'total_active_customers' }
   let!(:card_id)      { rand(1..10) }
-  let!(:card_record)  { create(:metabase_card, uniq_identifier: card_name, card_id: card_id) }
+  let!(:card_record)  { create(:metabase_card, identifier: card_name, card_id: card_id) }
 
   describe 'GET show_identifier' do
     context 'Unauthenticated user' do

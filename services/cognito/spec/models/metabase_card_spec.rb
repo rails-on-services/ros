@@ -8,12 +8,12 @@ RSpec.describe MetabaseCard, type: :model do
     let!(:subject) { create(factory_name) }
   end
 
-  let(:record_one)   { build(factory_name, card_id: rand(1..20), uniq_identifier: subject.uniq_identifier) }
+  let(:record_one)   { build(factory_name, card_id: rand(1..20), identifier: subject.identifier) }
   let(:record_two)   { build(factory_name, card_id: nil) }
-  let(:record_three) { build(factory_name, uniq_identifier: nil) }
+  let(:record_three) { build(factory_name, identifier: nil) }
   let(:record_four)  { build(factory_name, card_id: subject.card_id) }
 
-  it 'is valid if card_id and uniq_identifier present' do
+  it 'is valid if card_id and identifier present' do
     expect(subject).to be_valid
   end
 
@@ -29,7 +29,7 @@ RSpec.describe MetabaseCard, type: :model do
     expect(record_two).to be_invalid
   end
 
-  it 'is invalid if uniq_identifier is nil' do
+  it 'is invalid if identifier is nil' do
     expect(record_three).to be_invalid
   end
 end

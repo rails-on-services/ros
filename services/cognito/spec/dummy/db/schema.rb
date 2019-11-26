@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(version: 2019_11_26_011832) do
 
   create_table "metabase_cards", force: :cascade do |t|
     t.integer "card_id"
-    t.string "uniq_identifier"
+    t.string "identifier"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

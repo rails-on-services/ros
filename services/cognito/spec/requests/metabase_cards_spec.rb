@@ -63,7 +63,7 @@ RSpec.describe 'metabase_cards requests', type: :request do
 
       context 'record with duplicate uniq identifier' do
         before do
-          create(:metabase_card, uniq_identifier: model_data.uniq_identifier)
+          create(:metabase_card, identifier: model_data.identifier)
         end
 
         it 'returns a failure response' do

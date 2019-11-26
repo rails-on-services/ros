@@ -11,7 +11,7 @@
       "type": "int"
     },
     {
-      "name": "uniq_identifier",
+      "name": "identifier",
       "type": "string"
     },
     {

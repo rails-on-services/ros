@@ -14,7 +14,7 @@ class MetabaseTokenController < Cognito::ApplicationController
 
   def show_identifier
     identifier = params.delete(:identifier)
-    card = MetabaseCard.find_by(uniq_identifier: identifier)
+    card = MetabaseCard.find_by(identifier: identifier)
     if card.nil?
       render json: { errors: 'Card ID not found' }
       return
