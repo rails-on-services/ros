@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe "metabase_cards requests", type: :request do
+RSpec.describe 'metabase_cards requests', type: :request do
   include_context 'jsonapi requests'
 
   let(:tenant) { Tenant.first }
