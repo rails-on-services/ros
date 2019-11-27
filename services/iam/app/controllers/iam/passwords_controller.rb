@@ -13,13 +13,12 @@ module Iam
       Apartment::Tenant.switch tenant_schema(password_params) do
         return super unless find_user!
 
-        self.resource = resource_class.send_reset_password_instructions(password_params)
-        yield resource if block_given?
+        @current_user.send_reset_password_instructions
 
-        if successfully_sent?(resource)
+        if successfully_sent?(@current_user)
           render status: :ok, json: json_resource(resource_class: user_resource, record: current_user)
         else
-          render status: :error
+          render status: :bad_request
         end
       end
     end

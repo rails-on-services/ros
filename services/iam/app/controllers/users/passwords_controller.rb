@@ -5,7 +5,7 @@ module Users
     protected
 
     def find_user!
-      @current_user = User.find_by!(username: password_params[:username])
+      @current_user = User.find_by(username: password_params[:username])
     end
 
     def password_params
