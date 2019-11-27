@@ -7,10 +7,12 @@ class TransferMap < Storage::ApplicationRecord
   validate :target_is_valid, if: -> { Ros.api_calls_enabled }
 
   def self.match(columns_to_match)
+    columns_to_match.sort!
     all.each do |tmap|
       columns = tmap.column_maps.pluck(:user_name).sort
-      break tmap if columns == columns_to_match
+      return tmap if columns.eql?(columns_to_match)
     end
+    nil
   end
 
   def service_name

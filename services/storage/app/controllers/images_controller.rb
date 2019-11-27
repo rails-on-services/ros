@@ -5,7 +5,12 @@ class ImagesController < Storage::ApplicationController
 
   def create
     file = model_class.upload(io: params[:file])
-    render status: :ok, json: serialize_resource(ImageResource, ImageResource.new(file, context))
+    if file.persisted?
+      render status: :ok, json: serialize_resource(ImageResource, ImageResource.new(file, context))
+    else
+      resource = ApplicationResource.new(file, nil)
+      handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
+    end
   end
 
   def model_class

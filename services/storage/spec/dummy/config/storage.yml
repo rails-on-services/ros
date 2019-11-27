@@ -8,11 +8,16 @@ localstack: &localstack
   region: localstack
   force_path_style: true
 
-amazon: &amazon
+amazon_app: &amazon_app
   service: s3
-  bucket: <%= ENV['PLATFORM__INFRA__RESOURCES__MQ__QUEUES__STORAGE_DATA__BUCKET_NAME'] %>
+  bucket: <%= ENV['PLATFORM__INFRA__RESOURCES__STORAGE__BUCKETS__APP__NAME'] %>
   # access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
   # secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+  region: <%= ENV['AWS_DEFAULT_REGION'] %>
+
+amazon_cdn: &amazon_cdn
+  service: s3
+  bucket: <%= ENV['PLATFORM__INFRA__RESOURCES__STORAGE__BUCKETS__CDN__NAME'] %>
   region: <%= ENV['AWS_DEFAULT_REGION'] %>
 
 disk: &disk
@@ -22,7 +27,7 @@ disk: &disk
 development:
   # <<: *localstack
   # <<: *disk
-  <<: *amazon
+  <<: *amazon_app
 
 test:
   # <<: *disk

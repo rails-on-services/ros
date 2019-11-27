@@ -105,22 +105,24 @@ module Ros
         serialize_resource(resource_class, resource)
       end
 
-      # Return JSONAPI Error objects on common errors
-      # https://jsonapi.org/examples/#error-objects-basics
-      rescue_from Pundit::NotAuthorizedError do |_error|
-        render(status: :forbidden,
-               json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] })
+      # TODO: Will internal errors still be reported to Sentry.io?
+      if Rails.env.production?
+        # Return JSONAPI Error objects on common errors
+        # https://jsonapi.org/examples/#error-objects-basics
+        rescue_from StandardError do |_error|
+          render(status: :internal_server_error,
+                 json: { errors: [{ status: '500', code: :internal_server_error, title: 'Internal Server Error' }] })
+        end
       end
 
       # Wrap validation errors with JSONAPI::Exceptions::ValidationErrors for non resource calls
       rescue_from ActiveRecord::RecordInvalid, with: :handle_validation_errors
 
-      # TODO: Will internal errors still be reported to Sentry.io?
-      if Rails.env.production?
-        rescue_from StandardError do |_error|
-          render(status: :internal_server_error,
-                 json: { errors: [{ status: '500', code: :internal_server_error, title: 'Internal Server Error' }] })
-        end
+      # Return JSONAPI Error objects on common errors
+      # https://jsonapi.org/examples/#error-objects-basics
+      rescue_from Pundit::NotAuthorizedError do |_error|
+        render(status: :forbidden,
+               json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] })
       end
 
       # This method is invoked on 404s from application's routes.rb if it extends

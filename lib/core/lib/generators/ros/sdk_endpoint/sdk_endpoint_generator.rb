@@ -8,7 +8,8 @@ module Ros
 
     def create_files
       repo = engine? ? 'ros' : 'perx'
-      file_path = "../../lib/sdk/lib/#{repo}_sdk/models/#{Settings.service.name}.rb"
+      service_name = Settings.service.name.underscore
+      file_path = "../../lib/sdk/lib/#{repo}_sdk/models/#{service_name}.rb"
 
       insert_into_file file_path, before: "  end\n" do
         "    class #{name.classify} < Base; end\n"
