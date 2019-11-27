@@ -24,7 +24,7 @@ module Providers
     end
 
     def from
-      current_tenant.properties.from || 'Perx'
+      current_tenant.properties.dig(:from) || 'Perx'
     end
 
     def sms(to, body)

@@ -2,7 +2,7 @@
 
 class Message < Comm::ApplicationRecord
   belongs_to :provider
-  belongs_to :owner, polymorphic: true
+  belongs_to :owner, polymorphic: true, optional: true
 
   validate :provider_channel, if: :provider
 
