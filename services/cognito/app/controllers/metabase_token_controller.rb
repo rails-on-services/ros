@@ -33,11 +33,14 @@ class MetabaseTokenController < Cognito::ApplicationController
   end
 
   def identify_resource
-    params[:id] = if identifier.is_a? Numeric
-                    identifier.to_i
-                  else
-                    card_id = MetabaseCard.find_by(identifier: identifier).id
-                    render json: { errors: 'Card not found' } if card_id.nil?
-                  end
+    return params if /^\d+$/.match?(params[:id])
+
+    card = MetabaseCard.find_by(identifier: params[:id])
+    if card.nil?
+      render json: { errors: 'Card not found' }
+      return
+    end
+
+    params[:id] = card.id
   end
 end

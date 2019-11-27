@@ -14,7 +14,7 @@ RSpec.describe 'metabase token requests', type: :request do
   let!(:card_id)      { rand(1..10) }
   let!(:card_record)  { create(:metabase_card, identifier: card_name, card_id: card_id) }
 
-  describe 'GET show_identifier' do
+  describe 'Show token' do
     context 'Unauthenticated user' do
       include_context 'unauthorized user'
       include_examples 'unauthenticated get'
@@ -36,9 +36,24 @@ RSpec.describe 'metabase token requests', type: :request do
         end
       end
 
+      # TODO: Deprecated: Non-breaking change migration. Endpoint should only accept
+      # Identifier and not id. This will be supported until FE migrates completely.
+      context 'when an integer is passed' do
+        let(:url) { "#{base_url}/1" }
+
+        before do
+          get url, headers: request_headers
+        end
+
+        it 'returns an ok response status' do
+          expect(response).to be_ok
+          expect_json_types('token', :string)
+        end
+      end
+
       context 'when an invalid identifier is passed' do
         let(:invalid_identifier) { 'invalid_identifier' }
-        let(:url)                { "#{base_url}/#{invalid_identifier}" }
+        let(:url) { "#{base_url}/#{invalid_identifier}" }
 
         before do
           get url, headers: request_headers
