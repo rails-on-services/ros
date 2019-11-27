@@ -33,6 +33,8 @@ RSpec.describe 'metabase token requests', type: :request do
         it 'returns an ok response status' do
           expect(response).to be_ok
           expect_json_types('token', :string)
+          token, _alg = JWT.decode(JSON.parse(response.body)['token'], nil, false)
+          expect(token['resource']['question']).to eq card_id
         end
       end
 
@@ -48,6 +50,8 @@ RSpec.describe 'metabase token requests', type: :request do
         it 'returns an ok response status' do
           expect(response).to be_ok
           expect_json_types('token', :string)
+          token, _alg = JWT.decode(JSON.parse(response.body)['token'], nil, false)
+          expect(token['resource']['question']).to eq 1
         end
       end
 
