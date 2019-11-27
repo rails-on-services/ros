@@ -61,7 +61,7 @@ RSpec.describe 'metabase_cards requests', type: :request do
         end
       end
 
-      context 'record with duplicate uniq identifier' do
+      context 'record with duplicate identifier' do
         before do
           create(:metabase_card, identifier: model_data.identifier)
         end

@@ -17,7 +17,7 @@ RSpec.describe MetabaseCard, type: :model do
     expect(subject).to be_valid
   end
 
-  it 'is invalid if uniq_identifer is not unique' do
+  it 'is invalid if identifer is not unique' do
     expect(record_one).to be_invalid
   end
 
