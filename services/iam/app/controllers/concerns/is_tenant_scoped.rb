@@ -7,9 +7,13 @@ module IsTenantScoped
     false
   end
 
-  def tenant_schema
-    tenant&.schema_name || Apartment::Tenant.current
+  # rubocop:disable Rails/DynamicFindBy
+  def tenant_schema(params, key = :account_id)
+    # this is not a dynamically created method but defined in our tenant concern
+    Tenant.find_by_schema_or_alias(params[key])&.schema_name ||
+      Apartment::Tenant.current
   end
+  # rubocop:enable Rails/DynamicFindBy
 
   def user_resource
     "#{resource_name.capitalize}Resource".constantize
