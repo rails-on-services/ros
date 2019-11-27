@@ -85,6 +85,14 @@
       "default": null
     },
     {
+      "name": "provider_msg_id",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
       "name": "urn",
       "type": [
         "null",
