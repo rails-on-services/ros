@@ -17,7 +17,7 @@ module Ros
         return false
       end
 
-      validator.new(**ctx[:params]).validate!
+      validator.new(**ctx[:params].to_h.deep_symbolize_keys).validate!
     rescue ActiveModel::ValidationError => e
       process_errors(e.model, errors)
       false
