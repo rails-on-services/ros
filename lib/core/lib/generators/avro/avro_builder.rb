@@ -9,6 +9,7 @@ class AvroBuilder
     datetime: 'long',
     jsonb: 'string',
     float: 'double',
+    decimal: 'double',
     boolean: 'boolean'
   }.freeze
 
