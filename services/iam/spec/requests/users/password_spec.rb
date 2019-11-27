@@ -23,27 +23,30 @@ RSpec.describe 'Password management', type: :request do
         account_id: tenant.account_id
       }
     end
-    let(:password_reset_params) {
+    let(:password_reset_params) do
       { data: { attributes: {
-                  username: user.username,
-                  email: user.email,
-                  account_id: tenant.account_id
-                } } } }
-    let(:valid_params)   {
-      { data: { attributes: default_attributes } } }
-    let(:invalid_params) {
-      { data: { attributes: default_attributes.merge(password_confirmation: 'fef') } } }
+        username: user.username,
+        email: user.email,
+        account_id: tenant.account_id
+      } } }
+    end
+    let(:valid_params) do
+      { data: { attributes: default_attributes } }
+    end
+    let(:invalid_params) do
+      { data: { attributes: default_attributes.merge(password_confirmation: 'fef') } }
+    end
 
     before do
       post u('/users/sign_in'), params: {
-             data: {
-               attributes: {
-                 username: user.username,
-                 password: password,
-                 account_id: tenant.account_id
-               }
-             }
-           }
+        data: {
+          attributes: {
+            username: user.username,
+            password: password,
+            account_id: tenant.account_id
+          }
+        }
+      }
 
       # we use fetch to ensure we don't have a nil @bearer_token
       @bearer_token = response.headers.fetch 'Authorization'
