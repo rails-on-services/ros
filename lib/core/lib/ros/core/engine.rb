@@ -182,6 +182,7 @@ module Ros
       # Configure any error reporting services if their credential has been set
       # For now, only sentry.io is supported
       initializer 'ros_core.configure_error_reporting' do |_app|
+        binding.pry
         # export PLATFORM__CREDENTIALS__SENTRY_DSN=url
         if Settings.dig(:credentials, :sentry_dsn)
           require 'sentry-raven'
