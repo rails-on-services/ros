@@ -4,7 +4,7 @@ class MessagesController < Comm::ApplicationController
   def create
     res = MessageCreate.call(params: assign_params, current_user: current_user)
     if res.success?
-      render json: json_resource(resource_class: VoucherResource, record: res.model), status: :created
+      render json: json_resource(resource_class: MessageResource, record: res.model), status: :created
     else
       resource = ApplicationResource.new(res, nil)
       handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
