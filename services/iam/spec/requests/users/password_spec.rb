@@ -41,16 +41,22 @@ RSpec.describe 'Password management', type: :request do
       @bearer_token = response.headers.fetch 'Authorization'
     end
 
+    include_context 'jsonapi requests'
+
     context 'logging in' do
-      include_context 'jsonapi requests'
+      # this is technically not needed as it tests the test implementation, but
+      # it helps to throw an error if authentication hasn't happened for
+      # whatever reason
+      it 'should have a bearer token' do
+        expect(@bearer_token).to_not be_nil
+      end
 
       it 'should allow login' do
         expect(response).to be_successful
       end
     end
 
-    context 'resetting password' do
-      include_context 'jsonapi requests'
+    context 'updating password' do
       # the authorized_user we get from the shared context is an IAM user, not a
       # regular user
       let(:authorized_user) { user }
@@ -73,10 +79,20 @@ RSpec.describe 'Password management', type: :request do
       context 'with valid password_confirmation' do
         let(:params) { valid_params }
 
-        it 'returns success status', wip: true do
+        it 'returns success status' do
           put url, params: params, headers: request_headers, as: :json
           expect(response).to be_successful
         end
+      end
+    end
+
+    context 'recovering passwords' do
+      let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
+      let(:params) { valid_params }
+
+      it 'should allow performing a password reset/recovery without authentication' do
+        post url, params: params, headers: headers, as: :json
+        expect(response).to be_successful
       end
     end
   end

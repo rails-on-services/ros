@@ -32,11 +32,13 @@ RSpec.describe 'User Authentication', type: :request do
 
     context 'with :account_id' do
       let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.account_id) } } }
+
       it 'returns success status' do
         expect(response).to be_successful
       end
 
-      xit 'sets the authorization header with the token for the user' do
+      it 'sets the authorization header with the token for the user' do
+        expect(response.headers['Authorization']).to_not be_nil
       end
     end
 
@@ -46,7 +48,8 @@ RSpec.describe 'User Authentication', type: :request do
         expect(response).to be_successful
       end
 
-      xit 'sets the authorization header with the token for the user' do
+      it 'sets the authorization header with the token for the user' do
+        expect(response.headers['Authorization']).to_not be_nil
       end
     end
   end
