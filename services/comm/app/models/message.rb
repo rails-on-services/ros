@@ -3,7 +3,6 @@
 class Message < Comm::ApplicationRecord
   belongs_to :provider
   belongs_to :owner, polymorphic: true
-  # api_belongs_to :cognito_user_id, class_name: 'Ros::Cognito::User'
 
   validate :provider_channel, if: :provider
 

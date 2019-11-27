@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
 class EventProcess < Ros::ActivityBase
-  # rubocop:disable Style/SignalException
-  # rubocop:disable Lint/UnreachableCode
   step :find_event
-  fail :event_not_found
+  failed :event_not_found
   step :create_messages_for_pool
-  # rubocop:enable Lint/UnreachableCode
-  # rubocop:enable Style/SignalException
 
   def find_event(ctx, params:, **)
     event = ::Event.find_by(params)

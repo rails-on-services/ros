@@ -37,11 +37,11 @@ RSpec.describe MessageCreate, type: :operation do
 
     context 'when send_at is nil' do
       before do
-        allow(MessageJob).to receive(:perform_now).and_return true
+        allow(MessageSendJob).to receive(:perform_now).and_return true
         op_result
       end
       it 'sends the message to the provider' do
-        expect(MessageJob).to have_received(:perform_now).once
+        expect(MessageSendJob).to have_received(:perform_now).once
       end
     end
 
