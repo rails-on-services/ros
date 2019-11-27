@@ -9,11 +9,11 @@ FactoryBot.define do
     end
 
     trait :readonly_access do
-      name { 'IamUserReadOnlyAccess'}
+      name { 'IamUserReadOnlyAccess' }
     end
 
     trait :readwrite_access do
-      name { 'IamUserFullAccess'}
+      name { 'IamUserFullAccess' }
     end
   end
 end

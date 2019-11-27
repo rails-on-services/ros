@@ -28,13 +28,13 @@ RSpec.describe 'Password management', type: :request do
 
     before do
       post u('/users/sign_in'), params: {
-             data: {
-               attributes: {
-                 username: user.username,
-                 password: password,
-                 account_id: tenant.account_id
-               }
-             }
+        data: {
+          attributes: {
+            username: user.username,
+            password: password,
+            account_id: tenant.account_id
+          }
+        }
       }
 
       # we use fetch to ensure we don't have a nil @bearer_token
