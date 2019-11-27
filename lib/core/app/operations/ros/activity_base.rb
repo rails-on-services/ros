@@ -29,6 +29,8 @@ module Ros
 
     def process_errors(model, errors)
       model.errors.each do |attribute, message|
+        next if errors[attribute].present?
+
         errors.add(attribute, message)
       end
     end
