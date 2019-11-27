@@ -9,7 +9,7 @@ module Ros
 
       before_action :authenticate_it!
       before_action :set_tenant_context
-      before_action :set_raven_context, if: -> { Settings.credentials.sentry_dsn }
+      before_action :set_raven_context, if: -> { ENV['SENTRY_DSN'] }
       after_action :set_headers!
 
       def authenticate_it!
