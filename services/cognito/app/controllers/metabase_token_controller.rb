@@ -3,6 +3,8 @@
 class MetabaseTokenController < Cognito::ApplicationController
   DEFAULT_TYPE = 'question'
 
+  before_action :identify_resource, only: :show
+
   def show
     tokenizer = Metabase::TokenGenerator.new(payload: payload, expiry: params[:expiry])
     if tokenizer.valid?
@@ -12,25 +14,13 @@ class MetabaseTokenController < Cognito::ApplicationController
     end
   end
 
-  def show_identifier
-    identifier = params.delete(:identifier)
-    card = MetabaseCard.find_by(identifier: identifier)
-    if card.nil?
-      render json: { errors: 'Card ID not found' }
-      return
-    end
-
-    params[:id] = card.card_id
-    show
-  end
-
   private
 
   def payload
     type = params.delete(:type) || DEFAULT_TYPE
 
     {
-      resource: { type => params[:id].to_i },
+      resource: { type => params[:id] },
       params: payload_params
     }
   end
@@ -40,5 +30,14 @@ class MetabaseTokenController < Cognito::ApplicationController
     return options if params[:params].blank?
 
     options.merge(params[:params].to_unsafe_h.deep_symbolize_keys)
+  end
+
+  def identify_resource
+    params[:id] = if identifier.is_a? Numeric
+                    identifier.to_i
+                  else
+                    card_id = MetabaseCard.find_by(identifier: identifier).id
+                    render json: { errors: 'Card not found' } if card_id.nil?
+                  end
   end
 end
