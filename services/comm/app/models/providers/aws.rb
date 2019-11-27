@@ -24,13 +24,10 @@ module Providers
     end
 
     def from
-      current_tenant.properties.from || 'Perx'
+      current_tenant.properties.dig(:from) || 'Perx'
     end
 
     def sms(to, body)
-      # TODO: toggle sending on and off
-      return unless Settings.active
-
       client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
       client.publish(phone_number: to, message: body)
       # rescue
@@ -46,8 +43,8 @@ module Providers
     # 1. settings, env variables, our defaults
     def client_params
       params = { region: 'ap-southeast-1',
-                 access_key_id: access_key_id,
-                 secret_access_key: secret_access_key }
+                 access_key_id: x_access_key_id,
+                 secret_access_key: x_secret_access_key }
 
       return params if Rails.env.production?
 
