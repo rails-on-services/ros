@@ -1,17 +1,12 @@
 # frozen_string_literal: true
 
 class MessageCreate < Ros::ActivityBase
-  # rubocop:disable Style/SignalException
-  # rubocop:disable Lint/UnreachableCode
   step :valid_send_at
-  # NOTE: Fail fast is not available in a Railway activity
-  fail :invalid_send_at, Output(:failure) => End(:failure), Output(:success) => End(:failure)
+  failed :invalid_send_at, Output(:success) => End(:failure)
   step :setup_message
-  fail :invalid_message
+  failed :invalid_message
   step :save_sms
   step :send_to_provider
-  # rubocop:enable Lint/UnreachableCode
-  # rubocop:enable Style/SignalException
 
   # NOTE: Ensures that if send_at was sent then it is a valid date/datetime
   # If send_at is sent and valid, we store it in context, else we jump
@@ -52,9 +47,9 @@ class MessageCreate < Ros::ActivityBase
 
   def send_to_provider(ctx, model:, **)
     if ctx[:send_at].present?
-      MessageJob.set(wait_until: ctx[:send_at]).perform_later(id: model.id)
+      MessageSendJob.set(wait_until: ctx[:send_at]).perform_later(id: model.id)
     else
-      MessageJob.perform_now(id: model.id)
+      MessageSendJob.perform_now(id: model.id)
     end
   end
 end

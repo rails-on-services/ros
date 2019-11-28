@@ -9,6 +9,7 @@ class AvroBuilder
     datetime: 'long',
     jsonb: 'string',
     float: 'double',
+    decimal: 'bytes',
     boolean: 'boolean'
   }.freeze
 
@@ -42,10 +43,18 @@ class AvroBuilder
   end
 
   def data_type(column)
-    if column.sql_type_metadata.type == :datetime
+    case column.sql_type_metadata.type
+    when :datetime
       {
         "type": DICTIONARY[column.sql_type_metadata.type],
         "logicalType": 'timestamp-millis'
+      }
+    when :decimal
+      {
+        "type": DICTIONARY[column.sql_type_metadata.type],
+        "logicalType": 'decimal',
+        "precision": column.sql_type_metadata.precision,
+        "scale": column.sql_type_metadata.scale
       }
     else
       DICTIONARY[column.sql_type_metadata.type] || 'string'

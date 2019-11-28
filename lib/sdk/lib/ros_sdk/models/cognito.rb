@@ -13,5 +13,6 @@ module Ros
     class FileFingerprint < Base; end
     class ChownRequest < Base; end
     class ChownResult < Base; end
+    class MetabaseCard < Base; end
   end
 end

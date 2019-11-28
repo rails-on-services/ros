@@ -3,6 +3,8 @@
 class MetabaseTokenController < Cognito::ApplicationController
   DEFAULT_TYPE = 'question'
 
+  before_action :identify_resource, only: :show
+
   def show
     tokenizer = Metabase::TokenGenerator.new(payload: payload, expiry: params[:expiry])
     if tokenizer.valid?
@@ -28,5 +30,17 @@ class MetabaseTokenController < Cognito::ApplicationController
     return options if params[:params].blank?
 
     options.merge(params[:params].to_unsafe_h.deep_symbolize_keys)
+  end
+
+  def identify_resource
+    return params if /^\d+$/.match?(params[:id])
+
+    card = MetabaseCard.find_by(identifier: params[:id])
+    if card.nil?
+      render json: { errors: 'Card not found' }
+      return
+    end
+
+    params[:id] = card.card_id
   end
 end

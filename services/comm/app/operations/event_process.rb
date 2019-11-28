@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
 class EventProcess < Ros::ActivityBase
-  # rubocop:disable Style/SignalException
-  # rubocop:disable Lint/UnreachableCode
   step :find_event
-  fail :event_not_found
+  failed :event_not_found
   step :create_messages_for_pool
-  # rubocop:enable Lint/UnreachableCode
-  # rubocop:enable Style/SignalException
 
   def find_event(ctx, params:, **)
     event = ::Event.find_by(params)
@@ -26,13 +22,15 @@ class EventProcess < Ros::ActivityBase
   def create_messages_for_pool(_ctx, event:, template:, campaign:, **)
     event.process!
     event.users.each do |user|
-      content = template.render(user, campaign)
+      _content = template.render(user, campaign)
 
-      MessageCreate.call(params: { to: user.phone_number,
-                                   provider: event.provider,
-                                   channel: event.channel,
-                                   body: content,
-                                   owner: event })
+      # TODO: Disabling actual SMS sending on EventProcess until
+      # FE is not creating events at the same time as a campaign
+      # MessageCreate.call(params: { to: user.phone_number,
+      #                              provider: event.provider,
+      #                              channel: event.channel,
+      #                              body: content,
+      #                              owner: event })
     end
     event.publish!
   end
