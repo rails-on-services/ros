@@ -2,6 +2,9 @@
 
 module Ros
   class ActivityBase < Trailblazer::Activity::Railway
+    include Ros::ActivityParamsValidator
+    include Ros::ActivitySaver
+
     # NOTE: This is needed for the translating the errors object into
     # full messages
     def self.human_attribute_name(attr_name, _opts)
@@ -16,11 +19,20 @@ module Ros
     end
 
     step :setup_context
+    step :validate_required_params, Output(:failure) => End(:failure)
 
     private
 
     def setup_context(ctx, _params)
       ctx[:errors] = ActiveModel::Errors.new(self)
+    end
+
+    def process_errors(model, errors)
+      model.errors.each do |attribute, message|
+        next if errors[attribute].present?
+
+        errors.add(attribute, message)
+      end
     end
 
     class << self
