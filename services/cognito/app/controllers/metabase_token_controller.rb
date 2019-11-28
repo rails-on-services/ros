@@ -20,7 +20,7 @@ class MetabaseTokenController < Cognito::ApplicationController
     type = params.delete(:type) || DEFAULT_TYPE
 
     {
-      resource: { type => params[:id] },
+      resource: { type => params[:id].to_i },
       params: payload_params
     }
   end
@@ -41,6 +41,6 @@ class MetabaseTokenController < Cognito::ApplicationController
       return
     end
 
-    params[:id] = card.id
+    params[:id] = card.card_id
   end
 end

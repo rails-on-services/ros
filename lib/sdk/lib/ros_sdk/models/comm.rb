@@ -10,6 +10,7 @@ module Ros
     class Channel < Base; end
     class Event < Base; end
     class Template < Base; end
+    class Provider < Base; end
     class Campaign < Base; end
     class FileFingerprint < Base; end
   end
