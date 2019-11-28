@@ -9,7 +9,7 @@ module Users
     end
 
     def password_params
-      jsonapi_params.permit(%i[email username password password_confirmation account_id])
+      jsonapi_params.permit(%i[email username password password_confirmation account_id reset_password_token])
     end
   end
 end

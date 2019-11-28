@@ -4,8 +4,7 @@ module Iam
   class PasswordsController < Devise::PasswordsController
     include IsTenantScoped
 
-    skip_before_action :authenticate_it!, only: :create
-
+    skip_before_action :authenticate_it!, only: [:create, :update]
     respond_to :json
 
     # POST /resource/password
@@ -26,12 +25,20 @@ module Iam
     # PUT /resource/password
     def update
       Apartment::Tenant.switch tenant_schema(password_params) do
-        if current_user.password_update!(password_params)
-          render status: :ok, json: json_resource(resource_class: user_resource, record: current_user)
+        binding.pry
+        res = User.reset_password_by_token(password_params)
+        if res.persisted?
+          render status: :ok, json: json_resource(resource_class: user_resource, record: res)
         else
-          render status: :bad_request
+          render status: :bad_request, json: { errors: res.errors }
         end
       end
+    end
+
+    private
+
+    def assert_reset_token_passed
+      render status: :bad_request if params[:reset_password_token].blank?
     end
   end
 end
