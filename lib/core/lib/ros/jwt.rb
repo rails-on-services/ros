@@ -44,7 +44,7 @@ module Ros
     def iss; Settings.jwt.iss end
 
     def encode
-      @token = JWT.encode(claims, encryption_key, alg)
+      @token = JWT.encode(claims, encryption_key, alg, { typ: 'JWT' })
     end
 
     def decode
