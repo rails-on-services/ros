@@ -183,10 +183,10 @@ module Ros
       # For now, only sentry.io is supported
       initializer 'ros_core.configure_error_reporting' do |_app|
         # export PLATFORM__CREDENTIALS__SENTRY_DSN=url
-        if Settings.dig(:credentials, :sentry_dsn)
+        if ENV['SENTRY_DSN']
           require 'sentry-raven'
           Raven.configure do |config|
-            config.dsn = Settings.credentials.sentry_dsn
+            config.dsn = ENV['SENTRY_DSN']
           end
         end
       end
