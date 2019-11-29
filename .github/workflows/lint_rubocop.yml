@@ -14,9 +14,10 @@ jobs:
       with:
         ruby-version: 2.6.3
     - name: Rubocop Linter
-      uses: andrewmcodes/rubocop-linter-action@v1.0.5
+      uses: andrewmcodes/rubocop-linter-action@v2.0.0
       with:
-        additional_gems: perx-rubocop
+        additional_gems: 'perx-rubocop:0.0.3'
         fail_level: 'warning'
+        version: '0.77.0'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -29,7 +29,6 @@ module Ros
       credential.try(:schema_name) || 'public'
     end
 
-    # rubocop:disable Lint/HandleExceptions
     def credential
       # TODO: Credential.authorization must be an instance variable
       Ros::Sdk::Credential.authorization = auth_string
@@ -37,8 +36,8 @@ module Ros
     # rescue JsonApiClient::Errors::ServerError => e
     # NOTE: Swallow the auth error and return nil which causes tenant to be 'public'
     rescue JsonApiClient::Errors::NotAuthorized
+      nil
     end
-    # rubocop:enable Lint/HandleExceptions
 
     def tenant_name_from_bearer
       return 'public' unless (account_id = urn.try(:account_id))

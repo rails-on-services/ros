@@ -72,7 +72,8 @@ module AssociationResource
     # :as represents polymorphic relation. type will be added to query:
     #   User.has_many_resources(:some_resource, class_name: 'Some::Resource', as: :external) ->
     #      Some::Resource.where(external_type: 'User', external_id: user.id)
-    # rubocop:disable Naming/UncommunicativeMethodParamName
+
+    # rubocop:disable Naming/MethodParameterName
     # rubocop:disable Naming/PredicateName
     def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
       return if find_resource(resource_name).present?
@@ -84,9 +85,8 @@ module AssociationResource
         associated_name: as
       )
     end
-
     # rubocop:enable Naming/PredicateName
-    # rubocop:enable Naming/UncommunicativeMethodParamName
+    # rubocop:enable Naming/MethodParameterName
 
     def find_resource(resource_name)
       resource_associations.find { |resource| resource.name == resource_name }
