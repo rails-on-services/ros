@@ -41,10 +41,9 @@ module Ros
 
       from_urn(urn_string)
     # NOTE: Intentionally swallow decode error and return nil
-    # rubocop:disable Lint/HandleExceptions
     rescue JWT::DecodeError
+      nil
     end
-    # rubocop:enable Lint/HandleExceptions
 
     def resource_type; resource.split('/').first end
 
