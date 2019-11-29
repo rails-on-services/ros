@@ -48,7 +48,7 @@ module Ros
     end
 
     def decode
-      @claims = JWT.decode(token, encryption_key, alg).first
+      @claims = HashWithIndifferentAccess.new(JWT.decode(token, encryption_key, alg).first)
     end
 
     def encryption_key; Settings.jwt.encryption_key end

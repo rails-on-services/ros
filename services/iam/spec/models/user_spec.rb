@@ -41,4 +41,14 @@ RSpec.describe User, type: :model do
       expect(user.valid?).to be true
     end
   end
+
+  context 'password handling' do
+    let(:user) { confirmed_user }
+
+    it 'creates a job' do
+      expect do
+        user.send_reset_password_instructions
+      end.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+    end
+  end
 end

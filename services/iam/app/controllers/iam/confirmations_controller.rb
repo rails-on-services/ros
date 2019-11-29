@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 module Iam
-  class PasswordsController < Devise::PasswordsController
+  class ConfirmationsController < Devise::ConfirmationsController
     include IsTenantScoped
 
     skip_before_action :authenticate_it!, only: %i[create update]
 
     respond_to :json
 
-    # POST /resource/password
+    # POST /resource/confirmation
     def create
-      Apartment::Tenant.switch tenant_schema(password_params) do
+      Apartment::Tenant.switch tenant_schema(confirmation_params) do
         return super unless find_user!
 
-        @current_user.send_reset_password_instructions
+        @current_user.send_confirmation_instructions
 
         if successfully_sent?(@current_user)
           render status: :ok, json: json_resource(resource_class: user_resource, record: current_user)
@@ -23,7 +23,7 @@ module Iam
       end
     end
 
-    # PUT /resource/password
+    # PUT /resource/confirmation
     def update
       mail_token = begin
                      Ros::Jwt.new(reset_params[:token]).decode
@@ -35,15 +35,8 @@ module Iam
       return unless mail_token
 
       Apartment::Tenant.switch tenant_schema(mail_token) do
-        decoded_params = {
-          reset_password_token: mail_token[:token],
-          password: reset_params[:password],
-          password_confirmation: reset_params[:password_confirmation]
-        }
-
-        res = User.reset_password_by_token(decoded_params)
-
-        if res.persisted?
+        res = User.confirm_by_token(mail_token[:token])
+        if res.confirmed?
           render status: :ok, json: json_resource(resource_class: user_resource, record: res)
         else
           render status: :bad_request, json: { errors: res.errors }
