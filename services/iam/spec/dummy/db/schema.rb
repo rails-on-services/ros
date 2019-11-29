@@ -182,7 +182,7 @@ ActiveRecord::Schema.define(version: 2019_11_20_083154) do
     t.datetime "remember_created_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "email", null: false
+    t.string "email"
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
