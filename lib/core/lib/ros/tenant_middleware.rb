@@ -34,6 +34,7 @@ module Ros
       Ros::Sdk::Credential.authorization = auth_string
       Ros::IAM::Credential.where(access_key_id: access_key_id).first
     # rescue JsonApiClient::Errors::ServerError => e
+
     # NOTE: Swallow the auth error and return nil which causes tenant to be 'public'
     rescue JsonApiClient::Errors::NotAuthorized
       nil

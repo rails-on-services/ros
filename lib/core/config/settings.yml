@@ -85,3 +85,12 @@ api_docs:
   name: ros-api
   server:
     host: http://localhost:3000
+
+smtp:
+  domain: 'example.com'
+  host_name: 'localhost'
+  port: 1025
+  starttls_auto: true
+  ssl: false
+  tls: false
+  from: 'no-reply@example.com'

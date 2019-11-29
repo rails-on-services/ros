@@ -18,6 +18,7 @@ class User < Iam::ApplicationRecord
   has_many :role_policies, through: :roles, source: :policies
   has_many :role_actions, through: :roles, source: :actions
 
+  # TODO: we need to support an empty username when an email is provided
   validates :username, presence: true
   validates :username, uniqueness: true
   # store_accessor :permissions, :authorized_policies, :authorized_actions
@@ -25,13 +26,38 @@ class User < Iam::ApplicationRecord
   # TODO: validate locales inclusion in list and time_zone in available time zones
   # validates :locale, :time_zone, presence: true
 
-  def self.urn_id; :username end
+  def self.urn_id
+    :username
+  end
+
+  # We allow users being created without a password so they can choose one
+  # themselves
+  #
+  # Devise calls this
+  def password_required?
+    confirmed?
+  end
+
+  # Devise calls this
+  def password_update!(params)
+    update!(password: params[:password]) if params[:password] == params[:password_confirmation]
+  end
+
+  # Send an email using ActiveJob. This is used for password resets and
+  # when a new users needs to set his initial password
+  #
+  # Devise calls this
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
+  end
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable,
+         :confirmable,
+         :recoverable,
          # :registerable,
-         # :recoverable, :rememberable, :validatable,
+         # :rememberable, :validatable,
          # :jwt_authenticatable, # jwt_revocation_strategy: self
          # authentication_keys: [:username],
          authentication_keys: [:username]

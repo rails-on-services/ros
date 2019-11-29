@@ -14,12 +14,25 @@ after 'development:tenants' do
       end
       next if User.count.positive?
 
-      user = User.create(username: 'Admin', console: true, api: true, time_zone: 'Asia/Singapore',
+      user = User.create(username: 'Admin',
+                         console: true,
+                         api: true,
+                         time_zone: 'Asia/Singapore',
+                         email: 'admin@example.com',
+                         confirmed_at: DateTime.now,
                          password: 'asdfjkl;')
-      User.create(username: 'Microsite', console: false, api: true, time_zone: 'Asia/Singapore')
+      User.create(username: 'Microsite',
+                  console: false,
+                  api: true,
+                  time_zone: 'Asia/Singapore',
+                  email: 'microsite@example.com',
+                  confirmed_at: DateTime.now)
       # user.locale: 'en-US'
       credential = user.credentials.create
-      @created_list.append(type: 'user', owner: user, tenant: tenant, credential: credential,
+      @created_list.append(type: 'user',
+                           owner: user,
+                           tenant: tenant,
+                           credential: credential,
                            secret: credential.secret_access_key)
 
       # Create a Group

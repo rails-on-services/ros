@@ -20,7 +20,7 @@ module Ros
       if payload.is_a? Hash # From IAM::User, IAM::Root
         @claims = payload.merge(default_payload)
       else # From a bearer token
-        @token = payload.gsub('Bearer ', '')
+        @token = payload.to_s.gsub('Bearer ', '')
         decode
       end
     end
@@ -44,11 +44,11 @@ module Ros
     def iss; Settings.jwt.iss end
 
     def encode
-      @token = JWT.encode(claims, encryption_key, alg)
+      @token = JWT.encode(claims, encryption_key, alg, typ: 'JWT')
     end
 
     def decode
-      @claims = JWT.decode(token, encryption_key, alg).first
+      @claims = HashWithIndifferentAccess.new(JWT.decode(token, encryption_key, alg).first)
     end
 
     def encryption_key; Settings.jwt.encryption_key end

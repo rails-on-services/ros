@@ -71,6 +71,14 @@
       "default": null
     },
     {
+      "name": "email",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
       "name": "encrypted_password",
       "type": [
         "null",
@@ -105,6 +113,44 @@
           "type": "long",
           "logicalType": "timestamp-millis"
         }
+      ],
+      "default": null
+    },
+    {
+      "name": "confirmation_token",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "confirmed_at",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "confirmation_sent_at",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "unconfirmed_email",
+      "type": [
+        "null",
+        "string"
       ],
       "default": null
     },

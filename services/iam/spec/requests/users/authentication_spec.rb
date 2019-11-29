@@ -3,8 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'User Authentication', type: :request do
+  include_context 'jsonapi requests'
+
   context :create do
-    let(:url) { '/users/sign_in' }
+    let(:url) { u('/users/sign_in') }
     let(:tenant) { create(:tenant) }
     let(:user) { create(:user, :within_schema, username: 'test_user', password: '123456', schema: tenant.schema_name) }
     let(:valid_attributes) { { username: user.username, password: '123456' } }
@@ -17,21 +19,37 @@ RSpec.describe 'User Authentication', type: :request do
     context 'with invalid credentials' do
       let(:params) { { data: { attributes: invalid_attributes } } }
       it 'returns unauthorized status' do
-        expect(response.status).to eq 401
+        expect(response).to be_unauthorized
+      end
+    end
+
+    context 'without :account_id or :alias' do
+      let(:params) { { data: { attributes: valid_attributes } } }
+      it 'returns error status' do
+        expect(response).to be_unauthorized
       end
     end
 
     context 'with :account_id' do
       let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.account_id) } } }
+
       it 'returns success status' do
-        expect(response.status).to eq 200
+        expect(response).to be_successful
+      end
+
+      it 'sets the authorization header with the token for the user' do
+        expect(response.headers['Authorization']).to_not be_nil
       end
     end
 
-    context 'with :alias' do
+    context 'with :account_alias' do
       let(:params) { { data: { attributes: valid_attributes.merge(account_id: tenant.alias) } } }
       it 'returns success status' do
-        expect(response.status).to eq 200
+        expect(response).to be_successful
+      end
+
+      it 'sets the authorization header with the token for the user' do
+        expect(response.headers['Authorization']).to_not be_nil
       end
     end
   end

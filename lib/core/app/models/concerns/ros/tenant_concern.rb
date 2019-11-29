@@ -35,6 +35,12 @@ module Ros
           'public'
         end
       end
+
+      def find_by_schema_or_alias(criterion)
+        where('schema_name = ? OR alias = ?',
+              account_id_to_schema(criterion),
+              criterion).first
+      end
     end
 
     included do
