@@ -4,13 +4,13 @@ module Iam
   class ConfirmationsController < Devise::ConfirmationsController
     include IsTenantScoped
 
-    skip_before_action :authenticate_it!, only: %i[create update]
+    skip_before_action :authenticate_it!, only: %i[create show]
 
     respond_to :json
 
     # POST /resource/confirmation
     def create
-      Apartment::Tenant.switch tenant_schema(confirmation_params) do
+      Apartment::Tenant.switch tenant_schema(reset_params) do
         return super unless find_user!
 
         @current_user.send_confirmation_instructions
@@ -23,10 +23,10 @@ module Iam
       end
     end
 
-    # PUT /resource/confirmation
-    def update
+    # GET /resource/confirmation
+    def show
       mail_token = begin
-                     Ros::Jwt.new(reset_params[:token]).decode
+                     Ros::Jwt.new(confirmation_params[:token]).decode
                    rescue JWT::DecodeError => e
                      render status: :bad_request, json: { errors: e }
                      return

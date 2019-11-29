@@ -42,19 +42,19 @@ RSpec.describe 'Password management', type: :request do
                    username: user.username).encode
     end
     let(:mail_params) do
-      { data: { attributes: default_attributes.merge( { token: mail_token }) } }
+      { data: { attributes: default_attributes.merge(token: mail_token) } }
     end
 
     before do
       post u('/users/sign_in'), params: {
-             data: {
-               attributes: {
-                 username: user.username,
-                 password: password,
-                 account_id: tenant.account_id
-               }
-             }
-           }
+        data: {
+          attributes: {
+            username: user.username,
+            password: password,
+            account_id: tenant.account_id
+          }
+        }
+      }
 
       # we use fetch to ensure we don't have a nil @bearer_token
       @bearer_token = response.headers.fetch 'Authorization'
@@ -98,11 +98,11 @@ RSpec.describe 'Password management', type: :request do
       context 'with valid password_confirmation' do
         let(:params) { mail_params }
 
-        it 'returns success status', wip: true do
+        it 'returns success status' do
           allow(User).to receive(:reset_password_by_token)
-                           .with(reset_password_token: 'AAA',
-                                 password: default_attributes[:password],
-                                 password_confirmation: default_attributes[:password_confirmation]).and_return(user)
+            .with(reset_password_token: 'AAA',
+                  password: default_attributes[:password],
+                  password_confirmation: default_attributes[:password_confirmation]).and_return(user)
 
           put url, params: params, headers: request_headers, as: :json
           expect(response).to be_successful
@@ -110,7 +110,7 @@ RSpec.describe 'Password management', type: :request do
       end
     end
 
-    context 'recovering passwords' do
+    context 'triggering password recovery email' do
       let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
       let(:params) { password_reset_params }
 

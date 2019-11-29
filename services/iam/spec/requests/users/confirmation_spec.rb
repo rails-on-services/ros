@@ -22,6 +22,14 @@ RSpec.describe 'Account confirmation', type: :request do
       }
     end
     let(:valid_params) { { data: { attributes: default_attributes } } }
+    let(:mail_token) do
+      Ros::Jwt.new(token: 'AAA',
+                   account_id: tenant.account_id,
+                   username: user.username).encode
+    end
+    let(:mail_params) do
+      { data: { attributes: default_attributes.merge(token: mail_token) } }
+    end
     let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
 
     include_context 'jsonapi requests'
@@ -39,6 +47,18 @@ RSpec.describe 'Account confirmation', type: :request do
 
       it 'should allow performing an account confirmation without authentication' do
         post url, params: valid_params, headers: headers, as: :json
+        expect(response).to be_successful
+      end
+    end
+
+    context 'confirming account from email' do
+      let(:params) { mail_params }
+
+      it 'should confirm the user' do
+        allow(User).to receive(:confirm_by_token)
+          .with('AAA').and_return(user)
+
+        get url, params: params, headers: headers
         expect(response).to be_successful
       end
     end
