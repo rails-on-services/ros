@@ -2,8 +2,8 @@
 
 class UserResource < Cognito::ApplicationResource
   attributes :title, :first_name, :last_name, :phone_number, :email_address,
-             :primary_identifier, :properties, :anonymous
-  filter :primary_identifier
+             :primary_identifier, :properties, :anonymous, :birthday
+  filters :primary_identifier, :birthday
 
   filter :query, apply: lambda { |records, value, _options|
     query_by_non_id_attrs = %w[primary_identifier first_name last_name phone_number email_address]
