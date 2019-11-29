@@ -31,6 +31,8 @@ PATH
   remote: ../../lib/sdk
   specs:
     ros_sdk (0.1.0)
+      activemodel (= 6.0.0.rc2)
+      activesupport (= 6.0.0.rc2)
       config (= 1.7.1)
       globalid (= 0.4.2)
       inifile (= 3.0.0)
