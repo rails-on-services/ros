@@ -24,8 +24,20 @@ module Iam
 
     # PUT /resource/password
     def update
-      Apartment::Tenant.switch tenant_schema(password_params) do
-        res = User.reset_password_by_token(password_params)
+      begin
+        mail_token = Ros::Jwt.new(reset_params[:token]).decode
+      rescue JWT::DecodeError => e
+        render status: :bad_request, json: { errors: e }
+        return
+      end
+
+      Apartment::Tenant.switch tenant_schema(mail_token.account_id) do
+        reset_params = {
+          reset_password_token: mail_token.token,
+          password: reset_params[:password],
+          password_confirmation: reset_params[:password_confirmation]
+        }
+        res = User.reset_password_by_token(reset_params)
         if res.persisted?
           render status: :ok, json: json_resource(resource_class: user_resource, record: res)
         else
