@@ -31,9 +31,9 @@ module Iam
         return
       end
 
-      Apartment::Tenant.switch tenant_schema(mail_token.account_id) do
+      Apartment::Tenant.switch tenant_schema(mail_token[:account_id]) do
         reset_params = {
-          reset_password_token: mail_token.token,
+          reset_password_token: mail_token[:token],
           password: reset_params[:password],
           password_confirmation: reset_params[:password_confirmation]
         }
