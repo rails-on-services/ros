@@ -32,6 +32,7 @@ module Ros
       return unless (credential = Ros::IAM::Credential.where(access_key_id: access_key_id).first)
 
       "Ros::IAM::#{credential.owner_type}".constantize.find(credential.owner_id).first
+
     # NOTE: Swallow the auth error and return nil which causes user to be nil, which cuases FailureApp to be invoked
     rescue JsonApiClient::Errors::NotAuthorized
       nil
@@ -43,9 +44,11 @@ module Ros
 
       # TODO: Credential.authorization must be an instance variable
       Ros::Sdk::Credential.authorization = auth_string
+
       # rubocop:disable Rails/DynamicFindBy
       "Ros::IAM::#{urn.model_name}".constantize.find_by_urn(urn.resource_id)
     # rubocop:enable Rails/DynamicFindBy
+
     # NOTE: Swallow the auth error and return nil which causes user to be nil, which cuases FailureApp to be invoked
     rescue JsonApiClient::Errors::NotAuthorized
       nil

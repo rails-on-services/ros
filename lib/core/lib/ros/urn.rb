@@ -40,6 +40,7 @@ module Ros
       return unless (urn_string = jwt.decode['sub'])
 
       from_urn(urn_string)
+
     # NOTE: Intentionally swallow decode error and return nil
     rescue JWT::DecodeError
       nil
