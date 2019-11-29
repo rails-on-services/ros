@@ -23,6 +23,10 @@ module Iam
       end
     end
 
+    # Devise v4.7.1 expects this to be a GET request and not PUT which is
+    # definitely not what I expected.
+    # https://github.com/plataformatec/devise/blob/v4.7.1/app/controllers/devise/confirmations_controller.rb#L21
+    #
     # GET /resource/confirmation
     def show
       mail_token = begin
