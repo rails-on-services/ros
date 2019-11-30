@@ -7,12 +7,12 @@ module Ros
     class_methods do
       def urn_id; :account_id end
 
-      def public_schema_endpoints; [] end
+      # def public_schema_endpoints; [] end
 
-      def account_id; 'platform' end
+      # def account_id; 'platform' end
 
       def schema_name_for(id:)
-        Tenant.find_by(id: id)&.schema_name || public_schema
+        Tenant.find_by(id: id)&.schema_name || 'public' # public_schema
       end
 
       def schema_name_from(account_id: nil, id: nil)
@@ -24,17 +24,19 @@ module Ros
       end
 
       def account_id_to_schema(account_id)
+        return 'public' if account_id.to_i.zero?
+
         account_id.to_s.scan(/.{3}/).join('_')
       end
 
-      def public_schema
-        case ActiveRecord::Base.connection.class.name
-        when 'ActiveRecord::ConnectionAdapters::SQLite3Adapter'
-          nil
-        when 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
-          'public'
-        end
-      end
+      # def public_schema
+      #   case ActiveRecord::Base.connection.class.name
+      #   when 'ActiveRecord::ConnectionAdapters::SQLite3Adapter'
+      #     nil
+      #   when 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
+      #     'public'
+      #   end
+      # end
 
       def find_by_schema_or_alias(criterion)
         where('schema_name = ? OR alias = ?',

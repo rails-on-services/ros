@@ -6,7 +6,7 @@ require 'devise'
 
 require 'ros/core'
 require_relative 'api_token_strategy'
-require_relative 'tenant_middleware'
+# require_relative 'tenant_middleware'
 require 'ros/iam/engine'
 
 module Ros

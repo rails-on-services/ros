@@ -29,9 +29,10 @@ module Ros
     def authenticate_basic
       # TODO: Credential.authorization must be an instance variable
       Ros::Sdk::Credential.authorization = auth_string
-      return unless (credential = Ros::IAM::Credential.where(access_key_id: access_key_id).first)
+      access_key = Ros::AccessKey.decode(access_key_id)
+      # return unless (credential = Ros::IAM::Credential.where(access_key_id: access_key_id).first)
 
-      "Ros::IAM::#{credential.owner_type}".constantize.find(credential.owner_id).first
+      "Ros::IAM::#{access_key.owner_type}".constantize.find(access_key.owner_id).first
 
     # NOTE: Swallow the auth error and return nil which causes user to be nil, which cuases FailureApp to be invoked
     rescue JsonApiClient::Errors::NotAuthorized

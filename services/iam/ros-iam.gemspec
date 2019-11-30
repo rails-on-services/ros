@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
   spec.add_dependency 'bcrypt', '~> 3.1.12'
+  spec.add_dependency 'hashids', '1.0.5'
   spec.add_dependency 'rails', '~> 6.0.0.rc2'
   # spec.add_dependency 'devise-jwt', '~> 0.5.8'
   spec.add_dependency 'devise', '~> 4.7.1'
