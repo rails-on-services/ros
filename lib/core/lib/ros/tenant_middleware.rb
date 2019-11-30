@@ -4,24 +4,19 @@ require 'apartment/elevators/generic'
 
 module Ros
   class TenantMiddleware < Apartment::Elevators::Generic
-    attr_accessor :auth_string, :auth_type, :token, :access_key_id
+    attr_accessor :auth_type, :token, :access_key_id
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     # Returns the schema_name for Apartment to switch to for this request
     def parse_tenant_name(request)
-      @auth_string = request.env['HTTP_AUTHORIZATION']
-      return 'public' if auth_string.blank?
+      @request = request
+      parse_auth_type_and_token
+      return 'public' unless auth_type_valid? && token_valid?
 
-      @auth_type, @token = auth_string.split(' ')
-      @auth_type.downcase!
-      Rails.logger.info("Invalid auth type #{auth_type}") && (return 'public') unless auth_type.in? %w[basic bearer]
-      Rails.logger.info('Invalid token') && (return 'public') if token.nil?
       schema_name = send("tenant_name_from_#{auth_type}")
-      Rails.logger.info('Invalid credentials') if schema_name.eql?('public')
+
       request.env['X-AccountId'] = schema_name
       Tenant.find_by(schema_name: schema_name)&.schema_name || 'public'
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     def tenant_name_from_basic
       return 'public' unless (@access_key_id = token.split(':').first)
@@ -41,11 +36,38 @@ module Ros
     end
 
     def tenant_name_from_bearer
-      return 'public' unless (account_id = urn.try(:account_id))
+      account_id = urn.try(:account_id)
+      return Tenant.account_id_to_schema(account_id) if account_id
 
-      Tenant.account_id_to_schema(account_id)
+      Rails.logger.info('Invalid credentials')
+      'public'
+    end
+
+    def auth_string
+      @auth_string ||= @request.env['HTTP_AUTHORIZATION']
     end
 
     def urn; Urn.from_jwt(token) end
+
+    private
+
+    def parse_auth_type_and_token
+      @auth_type, @token = auth_string.split(' ')
+      @auth_type.downcase!
+    end
+
+    def auth_type_valid?
+      return true if auth_type.in? %w[basic bearer]
+
+      Rails.logger.info("Invalid auth type #{auth_type}")
+      false
+    end
+
+    def token_valid?
+      return true unless token.nil?
+
+      Rails.logger.info('Invalid token')
+      false
+    end
   end
 end
