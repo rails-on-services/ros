@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'avro_turf', '~> 0.9.0'
   spec.add_dependency 'aws-sdk-s3'
   spec.add_dependency 'config', '1.7.1'
+  spec.add_dependency 'hashids', '1.0.5'
   spec.add_dependency 'grpc', '1.23.0'
   spec.add_dependency 'json_schemer', '0.2.6'
   spec.add_dependency 'jsonapi-authorization', '3.0.1'

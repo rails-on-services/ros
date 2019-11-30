@@ -4,6 +4,7 @@
 require 'apartment'
 require 'attr_encrypted'
 require 'config'
+require 'hashids'
 require 'jsonapi-resources'
 require 'jsonapi/authorization'
 require 'jwt'
@@ -68,6 +69,33 @@ module Ros
 
     # By default all services exclude only the Tenant model from schemas
     def excluded_models; %w[Tenant] end
+  end
+
+  class AccessKey
+    def self.generate(owner)
+      Rails.configuration.x.hasher.encode(
+        Rails.configuration.x.hash_version,
+        owner.class.name.eql?('Root') ? owner.tenant.account_id : Apartment::Tenant.current.to_i,
+        owner.class.name.eql?('Root') ? 0 : 1,
+        owner.id,
+        Time.zone.now.to_i
+      )
+    end
+
+    def self.decode(access_key_id)
+      version, account_id, owner_type, owner_id, created_at = Rails.configuration.x.hasher.decode(access_key_id)
+      return { version: 0, account_id: 0, owner_type: nil, owner_id: 0, schema_name: 'public' } if version.nil?
+
+      # TODO: If the owner type is root then the schema name should be the root user's tenant schema
+      # NOT the public schema
+      if version.eql?(1)
+        { version: version, account_id: account_id, owner_id: owner_id,
+          owner_type: owner_type.zero? ? 'Root' : 'User',
+          schema_name: Tenant.account_id_to_schema(account_id),
+          created_at: Time.zone.at(created_at) }
+      elsif version.eql?(2)
+      end
+    end
   end
 
   # Failure response to return JSONAPI error message when authentication fails

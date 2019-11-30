@@ -13,44 +13,22 @@ module Ros
       after_action :set_headers!
 
       def authenticate_it!
+        Ros::Sdk::Credential.authorization = request.env['HTTP_AUTHORIZATION']
         return unless (@current_user = request.env['warden'].authenticate!(:api_token))
 
-        if auth_type.basic?
+        if auth_type.eql?('basic')
           @current_jwt = Jwt.new(current_user.jwt_payload)
-        elsif auth_type.bearer?
+        elsif auth_type.eql?('bearer')
           @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
           if (sub_cognito = current_jwt.claims['sub_cognito'])
             @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
             @cognito_user_id = cognito_user_urn.resource_id
           end
         end
+        # TODO: Credential.authorization must be an instance variable
+        current_jwt.add_claims(user: current_user.to_json) unless current_jwt.claims.key?(:user)
+        Ros::Sdk::Credential.authorization = "Bearer #{current_jwt.encode(:internal)}"
       end
-
-      # This will throw an authentication error on invalid credentials
-      # def new_authenticate_it!
-      #   if request.env['HTTP_X_AUTHORIZATION_CLIENT_ID']&.eql?('123456')
-      #     @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
-      #     @current_user = Ros::IAM::User.new(JSON.parse(@current_jwt['act']))
-      #     # binding.pry
-      #     # Everything we need is in the token
-      #   else
-      #     @current_user ||= request.env['warden'].authenticate!(:api_token)
-
-      #     if auth_type.basic?
-      #       @current_jwt = Jwt.new(current_user.jwt_payload)
-      #       @current_jwt.add_claims('act' => current_user.to_json)
-      #     elsif auth_type.bearer?
-      #       @current_jwt = Jwt.new(request.env['HTTP_AUTHORIZATION'])
-      #       @current_jwt.add_claims('act' => current_user.to_json)
-      #       if (sub_cognito = current_jwt.claims['sub_cognito'])
-      #         @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
-      #         @cognito_user_id = cognito_user_urn.resource_id
-      #       end
-      #     end
-      #   end
-      #   # Set the SDK header to prevent re-authentication on internal reuqests by the destination service
-      #   Ros::Sdk::Credential.request_headers['x-authorization-client-id'] = '123456'
-      # end
 
       def set_headers!
         return unless current_jwt
@@ -68,7 +46,23 @@ module Ros
       end
 
       def cognito_user
-        @cognito_user ||= cognito_user_urn ? Ros::Cognito::User.find(cognito_user_urn.resource_id) : nil
+        @cognito_user ||= set_cognito_user
+      end
+
+      # NOTE: Unless this is called on the initial request then only internal services will make this call
+      # meaning that if the initial request spawns several internal requests that need the cognito_user object
+      # then the call will be made several times rather than just on the initial request
+      # TODO: Keep an eye on usage patterns and udpate if necessary
+      def set_cognito_user
+        return unless cognito_user_urn
+
+        user = Ros::Cognito::User.find(cognito_user_urn.resource_id).first
+        current_jwt.add_claims(cognito_user: user.to_json)
+        Ros::Sdk::Credential.authorization = "Bearer #{current_jwt.encode(:internal)}"
+        # NOTE: Swallow the error and return nil
+        # TODO: This should probably be logged as a bug since the user should exist
+      rescue JsonApiClient::Errors::NotFound => _e
+        nil
       end
 
       def current_user
@@ -80,15 +74,13 @@ module Ros
       end
 
       def auth_type
-        @auth_type ||= ActiveSupport::StringInquirer.new(request.env['HTTP_AUTHORIZATION'].split[0].downcase)
+        @auth_type ||= request.env.fetch('HTTP_AUTHORIZATION', '').split[0]&.downcase
       end
 
       # Next method is for Pundit;
       # inside JSONAPI resources can reference user with context[:user]
       def context
-        {
-          user: ::PolicyUser.new(current_user, cognito_user_id, params: params)
-        }
+        { user: ::PolicyUser.new(current_user, cognito_user_id, params: params) }
       end
 
       # Custom Array resource serializer:

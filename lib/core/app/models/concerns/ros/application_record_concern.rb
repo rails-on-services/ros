@@ -7,7 +7,7 @@ module Ros
     include UrnConcern
 
     class_methods do
-      def account_id; Apartment::Tenant.current.eql?('public') ? '' : Apartment::Tenant.current.remove('_') end
+      def account_id; Apartment::Tenant.current.to_i end
 
       def current_tenant; Tenant.find_by(schema_name: Apartment::Tenant.current) end
 
