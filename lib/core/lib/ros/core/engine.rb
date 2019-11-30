@@ -58,6 +58,13 @@ module Ros
         Settings.reload!
       end
 
+      initializer 'ros_core.set_access_key_hash', after: 'ros_core.load_platform_config' do |_app|
+        hash_length = Settings.credential.hash_length || 20
+        salt = Settings.jwt.encryption_key
+        Rails.configuration.x.hasher = Hashids.new(salt, hash_length)
+        Rails.configuration.x.hash_version = Settings.credential.hash_version || 1
+      end
+
       initializer 'ros_core.initialize_infra_services' do |_app|
         if (resources = Settings.dig(:infra, :resources))
           require 'ros/infra'

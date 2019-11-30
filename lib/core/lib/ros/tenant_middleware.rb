@@ -2,50 +2,49 @@
 
 require 'apartment/elevators/generic'
 
+# rack = lambda { |env| [200, { 'Content-Type' => 'text/plain' }, ['OK']] }]}
+# request = OpenStruct.new(env: {'HTTP_AUTHORIZATION' => 'Basic 1EWzOrRhxjlk9JtQON8b:test'})
+# Ros::TenantMiddleware.new(rack).parse_tenant_name(request)
+
 module Ros
   class TenantMiddleware < Apartment::Elevators::Generic
-    attr_accessor :auth_string, :auth_type, :token, :access_key_id
+    attr_accessor :auth_type, :token
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     # Returns the schema_name for Apartment to switch to for this request
     def parse_tenant_name(request)
-      @auth_string = request.env['HTTP_AUTHORIZATION']
+      auth_string = request.env['HTTP_AUTHORIZATION']
       return 'public' if auth_string.blank?
 
       @auth_type, @token = auth_string.split(' ')
-      @auth_type.downcase!
-      Rails.logger.info("Invalid auth type #{auth_type}") && (return 'public') unless auth_type.in? %w[basic bearer]
-      Rails.logger.info('Invalid token') && (return 'public') if token.nil?
+      return 'public' unless auth_is_well_formed
+
       schema_name = send("tenant_name_from_#{auth_type}")
-      Rails.logger.info('Invalid credentials') if schema_name.eql?('public')
       request.env['X-AccountId'] = schema_name
-      Tenant.find_by(schema_name: schema_name)&.schema_name || 'public'
+      schema_name
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
+
+    def auth_is_well_formed
+      auth_type.downcase!
+      if !auth_type.in?(%w[basic bearer])
+        Rails.logger.info("Invalid auth type #{auth_type}")
+      elsif token.nil?
+        Rails.logger.info('Invalid token')
+      else
+        return true
+      end
+    end
 
     def tenant_name_from_basic
-      return 'public' unless (@access_key_id = token.split(':').first)
+      return 'public' unless (access_key_id = token.split(':').first)
 
-      credential.try(:schema_name) || 'public'
-    end
-
-    def credential
-      # TODO: Credential.authorization must be an instance variable
-      Ros::Sdk::Credential.authorization = auth_string
-      Ros::IAM::Credential.where(access_key_id: access_key_id).first
-    # rescue JsonApiClient::Errors::ServerError => e
-
-    # NOTE: Swallow the auth error and return nil which causes tenant to be 'public'
-    rescue JsonApiClient::Errors::NotAuthorized
-      nil
+      Ros::AccessKey.decode(access_key_id)[:schema_name]
     end
 
     def tenant_name_from_bearer
+      urn = Urn.from_jwt(token)
       return 'public' unless (account_id = urn.try(:account_id))
 
       Tenant.account_id_to_schema(account_id)
     end
-
-    def urn; Urn.from_jwt(token) end
   end
 end
