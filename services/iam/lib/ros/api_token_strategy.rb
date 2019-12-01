@@ -5,10 +5,10 @@ module Ros
   class ApiTokenStrategy
     def authenticate_basic
       credential = if access_key[:owner_type].eql?('Root')
-        Apartment::Tenant.switch('public') { Credential.find_by(access_key_id: access_key_id) }
-      else
-        Credential.find_by(access_key_id: access_key_id)
-      end
+                     Apartment::Tenant.switch('public') { Credential.find_by(access_key_id: access_key_id) }
+                   else
+                     Credential.find_by(access_key_id: access_key_id)
+                   end
       return unless credential
 
       credential.authenticate_secret_access_key(secret_access_key).try(:owner)
