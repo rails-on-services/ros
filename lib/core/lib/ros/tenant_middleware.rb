@@ -32,6 +32,7 @@ module Ros
       else
         return true
       end
+      false
     end
 
     def tenant_name_from_basic
