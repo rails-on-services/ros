@@ -75,7 +75,7 @@ module Ros
     def self.generate(owner)
       Rails.configuration.x.hasher.encode(
         Rails.configuration.x.hash_version,
-        Apartment::Tenant.current.to_i,
+        owner.class.name.eql?('Root') ? owner.tenant.account_id : Apartment::Tenant.current.to_i,
         owner.class.name.eql?('Root') ? 0 : 1,
         owner.id,
         Time.now.to_i

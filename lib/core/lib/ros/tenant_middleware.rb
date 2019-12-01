@@ -16,6 +16,7 @@ module Ros
       return 'public' if auth_string.blank?
 
       @auth_type, @token = auth_string.split(' ')
+      auth_type.downcase!
       return 'public' unless auth_is_well_formed
 
       schema_name = send("tenant_name_from_#{auth_type}")
@@ -24,7 +25,6 @@ module Ros
     end
 
     def auth_is_well_formed
-      auth_type.downcase!
       if !auth_type.in?(%w[basic bearer])
         Rails.logger.info("Invalid auth type #{auth_type}")
       elsif token.nil?
