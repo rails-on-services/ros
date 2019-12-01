@@ -1,10 +1,33 @@
 # frozen_string_literal: true
 
 class CredentialResource < Iam::ApplicationResource
-  attributes :access_key_id, :owner_type, :owner_id
-  attributes :secret_access_key
+  attributes :access_key_id, :owner_type, :owner_id, :secret_access_key,
+             :account_id
 
   filter :access_key_id
+
+  before_save do
+    unless Apartment::Tenant.current == 'public' && context[:user].root?
+      @model.owner ||= context[:user]
+    end
+  end
+
+  def account_id=(account_id)
+    owner = Tenant.find_by_schema_or_alias(account_id).root
+    @model.owner = owner
+  end
+
+  def self.creatable_fields(context)
+    if Apartment::Tenant.current == 'public' && context[:user].root?
+      [:account_id]
+    else
+      []
+    end
+  end
+
+  def fetchable_fields
+    super - %i[account_id]
+  end
 
   def self.descriptions
     {
