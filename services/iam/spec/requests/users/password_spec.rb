@@ -114,12 +114,10 @@ RSpec.describe 'Password management', type: :request do
       let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
 
       before do
-        puts warning
         post url, params: params, headers: headers, as: :json
       end
 
       context 'when no user is specified' do
-        let!(:warning) { '' }
         let(:params) { { data: { attributes: { username: nil, account_id: tenant.account_id } } } }
 
         it 'should fail' do
@@ -128,17 +126,14 @@ RSpec.describe 'Password management', type: :request do
       end
 
       context 'when no tenant is specified' do
-        let!(:warning) { 'BANANAS!!!!!!!!!!!!!!!!' }
         let(:params) { { data: { attributes: { username: user.username, account_id: nil } } } }
 
         it 'should fail when no tenant is specified' do
-          binding.pry
           expect(response).to_not be_successful
         end
       end
 
       context 'with the right params and no auth headers' do
-        let!(:warning) { '' }
         let(:params) { password_reset_params }
 
         it 'should allow performing a password reset/recovery' do
