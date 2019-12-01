@@ -80,7 +80,6 @@ module Ros
       # Next method is for Pundit;
       # inside JSONAPI resources can reference user with context[:user]
       def context
-        params = {jwt: current_jwt}
         {
           user: ::PolicyUser.new(current_user, cognito_user_id, params: params)
         }
