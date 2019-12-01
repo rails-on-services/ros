@@ -7,9 +7,7 @@ class CredentialResource < Iam::ApplicationResource
   filter :access_key_id
 
   before_save do
-    unless Apartment::Tenant.current == 'public' && context[:user].root?
-      @model.owner ||= context[:user]
-    end
+    @model.owner ||= context[:user] unless Apartment::Tenant.current == 'public' && context[:user].root?
   end
 
   def account_id=(account_id)
