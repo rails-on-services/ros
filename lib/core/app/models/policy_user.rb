@@ -19,7 +19,7 @@ class PolicyUser
   end
 
   def root?
-    @iam_user.class.name.eql? 'Root'
+    ['Root', 'Ros::IAM::Root'].include? @iam_user.class.name
   end
 
   def schema_name
