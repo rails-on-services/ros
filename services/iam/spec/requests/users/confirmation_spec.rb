@@ -35,19 +35,32 @@ RSpec.describe 'Account confirmation', type: :request do
     include_context 'jsonapi requests'
 
     context 'should trigger confirmation email' do
-      it 'should fail when no tenant is specified' do
-        post url, params: { data: { attributes: { username: user.username, account_id: nil } } }, headers: headers, as: :json
-        expect(response).to_not be_successful
+      before do
+        post url, params: params, headers: headers, as: :json
       end
 
-      it 'should fail when no user is specified' do
-        post url, params: { data: { attributes: { username: nil, account_id: tenant.account_id } } }, headers: headers, as: :json
-        expect(response).to_not be_successful
+      context 'when no tenant is specified' do
+        let(:params) { { data: { attributes: { username: user.username, account_id: nil } } } }
+
+        it 'should fail' do
+          expect(response).to_not be_successful
+        end
       end
 
-      it 'should allow performing an account confirmation without authentication' do
-        post url, params: valid_params, headers: headers, as: :json
-        expect(response).to be_successful
+      context 'when no used is specified' do
+        let(:params) { { data: { attributes: { username: nil, account_id: tenant.account_id } } } }
+
+        it 'should fail when no user is specified' do
+          expect(response).to_not be_successful
+        end
+      end
+
+      context 'with the right params and no auth headers' do
+        let(:params) { valid_params }
+
+        it 'should allow performing an account confirmation without authentication' do
+          expect(response).to be_successful
+        end
       end
     end
 

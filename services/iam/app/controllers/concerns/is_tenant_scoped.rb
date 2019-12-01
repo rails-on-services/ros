@@ -13,7 +13,7 @@ module IsTenantScoped
     # this is not a dynamically created method but defined in our tenant concern
     # rubocop:disable Rails/DynamicFindBy
     Tenant.find_by_schema_or_alias(params_[key])&.schema_name ||
-      Apartment::Tenant.current
+      'public'
     # rubocop:enable Rails/DynamicFindBy
   end
 
