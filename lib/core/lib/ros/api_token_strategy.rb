@@ -28,27 +28,26 @@ module Ros
 
     def authenticate_basic
       # TODO: Credential.authorization must be an instance variable
-      Ros::Sdk::Credential.authorization = auth_string
       access_key = Ros::AccessKey.decode(access_key_id)
-      # return unless (credential = Ros::IAM::Credential.where(access_key_id: access_key_id).first)
-
-      "Ros::IAM::#{access_key.owner_type}".constantize.find(access_key.owner_id).first
-
+      return unless access_key[:version].positive?
+      "Ros::IAM::#{access_key[:owner_type]}".constantize.find(access_key[:owner_id]).first
     # NOTE: Swallow the auth error and return nil which causes user to be nil, which cuases FailureApp to be invoked
     rescue JsonApiClient::Errors::NotAuthorized
       nil
     end
 
     def authenticate_bearer
-      return unless (urn = Urn.from_jwt(token))
-      return unless urn.model_name.in? %w[Root User]
+      return unless (jwt = Ros::Jwt.new(token))
+      return unless (urn = Urn.from_urn(jwt.claims['sub']))
+      # return unless urn.model_name.in? %w[Root User]
 
-      # TODO: Credential.authorization must be an instance variable
-      Ros::Sdk::Credential.authorization = auth_string
-
-      # rubocop:disable Rails/DynamicFindBy
-      "Ros::IAM::#{urn.model_name}".constantize.find_by_urn(urn.resource_id)
-    # rubocop:enable Rails/DynamicFindBy
+      if jwt.claims.has_key?('user')
+        "Ros::IAM::#{urn.model_name}".constantize.new(JSON.parse(jwt.claims['user']))
+      else
+        # rubocop:disable Rails/DynamicFindBy
+        "Ros::IAM::#{urn.model_name}".constantize.find_by_urn(urn.resource_id)
+        # rubocop:enable Rails/DynamicFindBy
+      end
 
     # NOTE: Swallow the auth error and return nil which causes user to be nil, which cuases FailureApp to be invoked
     rescue JsonApiClient::Errors::NotAuthorized

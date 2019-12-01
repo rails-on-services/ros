@@ -81,11 +81,14 @@ module Ros
       # TODO: Create IAM Roles in the public schema
       def set_role_credential(type = 'user', uid = 'Admin')
         jwt = role_jwt(type, uid)
-        Ros::Sdk::Credential.authorization = "Bearer #{jwt.encode}"
+        Ros::Sdk::Credential.authorization = "Bearer #{jwt.encode(:internal)}"
       end
 
       def role_jwt(type, uid)
-        @role_jwt ||= Ros::Jwt.new(sub: "#{self.class.urn_base}:#{account_id}:#{type}/#{uid}")
+        urn = "#{self.class.urn_base}:#{account_id}:#{type}/#{uid}"
+        klass = "Ros::IAM::#{type.camelize}".constantize
+        user = klass.new(id: 1, sub: urn, attached_policies: { 'AdministratorAccess' => 1 }, attached_actions: {})
+        Ros::Jwt.new(sub: urn, user: user.to_json)
       end
 
       def clear_credential; Ros::Sdk::Credential.authorization = nil end

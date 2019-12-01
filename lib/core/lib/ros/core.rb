@@ -77,18 +77,22 @@ module Ros
         Rails.configuration.x.hash_version,
         Apartment::Tenant.current.to_i,
         owner.class.name.eql?('Root') ? 0 : 1,
-        owner.id
+        owner.id,
+        Time.now.to_i
       )
     end
 
     def self.decode(access_key_id)
-      version, account_id, owner_type, owner_id = Rails.configuration.x.hasher.decode(access_key_id)
-      return { version: 1, account_id: 0, owner_type: nil, owner_id: 0, schema_name: 'public' } if version.nil?
+      version, account_id, owner_type, owner_id, created_at = Rails.configuration.x.hasher.decode(access_key_id)
+      return { version: 0, account_id: 0, owner_type: nil, owner_id: 0, schema_name: 'public' } if version.nil?
 
+      # TODO: If the owner type is root then the schema name should be the root user's tenant schema
+      # NOT the public schema
       if version.eql?(1)
         { version: version, account_id: account_id, owner_id: owner_id,
           owner_type: owner_type.zero? ? 'Root' : 'User',
-          schema_name: Tenant.account_id_to_schema(account_id) }
+          schema_name: Tenant.account_id_to_schema(account_id),
+          created_at: Time.at(created_at) }
       elsif version.eql?(2)
       end
     end
