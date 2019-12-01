@@ -49,7 +49,7 @@ module Ros
         "Ros::IAM::#{urn.model_name}".constantize.new(JSON.parse(jwt.claims['user']))
       else
         # rubocop:disable Rails/DynamicFindBy
-        "Ros::IAM::#{urn.model_name}".constantize.find_by_urn(urn.resource_id)
+        "Ros::IAM::#{urn.model_name}".constantize.find_by_urn(urn.resource_id).first
         # rubocop:enable Rails/DynamicFindBy
       end
 
