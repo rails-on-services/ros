@@ -10,8 +10,6 @@ module Iam
 
     # POST /resource/password
     def create
-      binding.pry
-
       Apartment::Tenant.switch tenant_schema(password_params) do
         return super unless find_user!
 
