@@ -32,7 +32,6 @@ module Ros
         end
       end
 
-
       def set_headers!
         return unless current_jwt
 

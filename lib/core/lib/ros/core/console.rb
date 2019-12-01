@@ -103,14 +103,15 @@ module Ros::Console::Commands
     def process(id = nil)
       if id.nil?
         columns = Tenant.column_names.include?('alias') ? %i[id schema_name alias] : %i[id schema_name]
-        output.puts Tenant.order(:id).pluck(*columns).each_with_object([]) { |a, ary| ary << a.join(' ') }
+        output.puts Tenant.order(:id).pluck(*columns).each_with_object([columns.join("\t")]) { |a, ary| ary << a.join("\t") }
         return
       end
       Rails.configuration.x.memoized_shortcuts[:ct]&.clear_credential
       Ros::Console::Methods.reset_shortcuts
       Apartment::Tenant.switch! Tenant.schema_name_for(id: id)
-      Rails.configuration.x.memoized_shortcuts[:ct] = Tenant.find_by(schema_name: Apartment::Tenant.current)
-      Rails.configuration.x.memoized_shortcuts[:ct]&.set_role_credential
+      tenant = Tenant.find_by(schema_name: Apartment::Tenant.current)
+      Rails.configuration.x.memoized_shortcuts[:ct] = tenant
+      Rails.configuration.x.memoized_shortcuts[:ct]&.set_role_credential('root', tenant.root.id)
     end
 
     Ros::PryCommandSet.add_command(self)
