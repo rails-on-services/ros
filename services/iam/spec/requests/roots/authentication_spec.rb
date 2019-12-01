@@ -5,16 +5,21 @@ require 'rails_helper'
 RSpec.describe 'Root Authentication', type: :request do
   context :create do
     let(:url) { '/roots/sign_in' }
-    let(:root) { create(:root, email: 'test@email.com', password: '123456') }
+    let!(:root) do
+      Apartment::Tenant.switch 'public' do
+        create(:root, email: 'test@email.com', password: '123456')
+      end
+    end
     let(:valid_attributes) { { email: root.email, password: '123456' } }
     let(:invalid_attributes) { { email: root.email, password: 'fake' } }
 
-    before(:each) do
+    before do
       post url, params: params, as: :json
     end
 
     context 'with invalid credentials' do
       let(:params) { { data: { attributes: invalid_attributes } } }
+
       it 'returns unauthorized status' do
         expect(response.status).to eq 401
       end
@@ -22,6 +27,7 @@ RSpec.describe 'Root Authentication', type: :request do
 
     context 'with valid credentials' do
       let(:params) { { data: { attributes: valid_attributes } } }
+
       xit 'returns success status' do
         expect(response.status).to eq 200
       end

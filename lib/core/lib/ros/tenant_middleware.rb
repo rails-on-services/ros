@@ -52,6 +52,8 @@ module Ros
     private
 
     def parse_auth_type_and_token
+      return if auth_string.blank?
+
       @auth_type, @token = auth_string.split(' ')
       @auth_type.downcase!
     end
