@@ -14,8 +14,7 @@ module Ros
         end
 
         def resolve
-          binding.pry
-          if user.root?
+          if Apartment::Tenant.current == 'public' && user.root?
             scope.all
           else
             current_tenant = Tenant.find_by(schema_name: user.schema_name)

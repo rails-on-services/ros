@@ -5,8 +5,6 @@ class PolicyUser
   attr_accessor :params
 
   def initialize(user, cognito_user_id, options = {})
-    binding.pry
-
     @iam_user = user
     @cognito_user_id = cognito_user_id
     @params = options[:params]
