@@ -24,8 +24,6 @@ module Ros
             @cognito_user_urn = Ros::Urn.from_urn(sub_cognito)
             @cognito_user_id = cognito_user_urn.resource_id
           end
-        else
-          return
         end
         # TODO: Credential.authorization must be an instance variable
         current_jwt.add_claims(user: current_user.to_json) unless current_jwt.claims.key?('user')
