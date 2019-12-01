@@ -5,6 +5,8 @@ class PolicyUser
   attr_accessor :params
 
   def initialize(user, cognito_user_id, options = {})
+    binding.pry
+
     @iam_user = user
     @cognito_user_id = cognito_user_id
     @params = options[:params]
@@ -19,7 +21,7 @@ class PolicyUser
   end
 
   def root?
-    @iam_user.class.name.eql? 'Root'
+    ['Root', 'Ros::IAM::Root'].include? @iam_user.class.name
   end
 
   def schema_name

@@ -14,8 +14,13 @@ module Ros
         end
 
         def resolve
-          current_tenant = Tenant.find_by(schema_name: user.schema_name)
-          scope.where(id: current_tenant.id)
+          binding.pry
+          if user.root?
+            scope.all
+          else
+            current_tenant = Tenant.find_by(schema_name: user.schema_name)
+            scope.where(id: current_tenant.id)
+          end
         end
       end
     end
