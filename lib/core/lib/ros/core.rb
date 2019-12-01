@@ -92,7 +92,7 @@ module Ros
         { version: version, account_id: account_id, owner_id: owner_id,
           owner_type: owner_type.zero? ? 'Root' : 'User',
           schema_name: Tenant.account_id_to_schema(account_id),
-          created_at: Time.at(created_at) }
+          created_at: Time.zone.at(created_at) }
       elsif version.eql?(2)
       end
     end

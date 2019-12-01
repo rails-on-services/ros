@@ -37,13 +37,13 @@ module Ros
 
       validates :schema_name, presence: true
 
-      validates :schema_name, length: { is: 11 }, unless: Proc.new { |record| record.schema_name.eql?('public') }
+      validates :schema_name, length: { is: 11 }, unless: proc { |record| record.schema_name.eql?('public') }
 
       validate :fixed_values_unchanged, if: :persisted?
 
-      after_commit :create_schema, on: :create, unless: Proc.new { |record| record.schema_name.eql?('public') }
+      after_commit :create_schema, on: :create, unless: proc { |record| record.schema_name.eql?('public') }
 
-      after_commit :destroy_schema, on: :destroy, unless: Proc.new { |record| record.schema_name.eql?('public') }
+      after_commit :destroy_schema, on: :destroy, unless: proc { |record| record.schema_name.eql?('public') }
 
       def fixed_values_unchanged
         errors.add(:schema_name, 'schema_name cannot be changed') if schema_name_changed?
