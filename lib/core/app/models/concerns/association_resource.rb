@@ -74,7 +74,7 @@ module AssociationResource
     #      Some::Resource.where(external_type: 'User', external_id: user.id)
 
     # rubocop:disable Naming/PredicateName
-    # rubocop:disable Naming/MethodParameterName
+    # rubocop:disable Naming/UncommunicativeMethodParamName
     def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
       return if find_resource(resource_name).present?
 
@@ -86,7 +86,7 @@ module AssociationResource
       )
     end
     # rubocop:enable Naming/PredicateName
-    # rubocop:enable Naming/MethodParameterName
+    # rubocop:enable Naming/UncommunicativeMethodParamName
 
     def find_resource(resource_name)
       resource_associations.find { |resource| resource.name == resource_name }
