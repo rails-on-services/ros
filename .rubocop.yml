@@ -7,3 +7,4 @@ inherit_from: .rubocop_todo.yml
 Rails/DynamicFindBy:
   Whitelist:
     - find_by_schema_or_alias
+    - find_by_urn
