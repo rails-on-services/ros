@@ -7,26 +7,18 @@ module Ros
     class_methods do
       def urn_id; :account_id end
 
-      def schema_name_for(id:)
-        Tenant.find_by(id: id)&.schema_name
+      def find_by_schema_or_alias(criterion)
+        find_by('schema_name = ? OR alias = ?', account_id_to_schema(criterion), criterion.to_s)
       end
 
       def schema_name_from(account_id: nil, id: nil)
-        if account_id && (tenant = Tenant.find_by(schema_name: account_id_to_schema(account_id)))
-          tenant.schema_name
-        elsif id && (tenant = Tenant.find_by(id: id))
-          tenant.schema_name
-        end
+        return unless account_id or id
+        criterion = account_id ? { schema_name: account_id_to_schema(account_id) } : { id: id }
+        find_by(criterion)&.schema_name
       end
 
       def account_id_to_schema(account_id)
-        return 'public' if account_id.to_i.zero?
-
-        account_id.to_s.scan(/.{3}/).join('_')
-      end
-
-      def find_by_schema_or_alias(criterion)
-        where('schema_name = ? OR alias = ?', account_id_to_schema(criterion), criterion.to_s).first
+        account_id.to_i.zero? ? 'public' : account_id.to_s.scan(/.{3}/).join('_')
       end
     end
 
@@ -39,9 +31,9 @@ module Ros
 
       validate :fixed_values_unchanged, if: :persisted?
 
-      after_commit :create_schema, on: :create, unless: proc { |record| record.schema_name.eql?('public') }
+      after_commit :create_schema, on: :create
 
-      after_commit :destroy_schema, on: :destroy, unless: proc { |record| record.schema_name.eql?('public') }
+      after_commit :destroy_schema, on: :destroy
 
       def fixed_values_unchanged
         errors.add(:schema_name, 'schema_name cannot be changed') if schema_name_changed?
@@ -65,24 +57,19 @@ module Ros
         end
       end
 
-      def to_urn; "#{self.class.urn_base}:0:tenant/#{id}" end
+      # All tenants belong to the platform owner (public schema with account_id 0)
+      def to_urn; "#{self.class.urn_base}:0:tenant/#{account_id}" end
 
       # TODO: Create IAM Roles in the public schema
-      def set_role_credential(type = 'user', uid = 'Admin', policies = {}, actions = {})
-        jwt = role_jwt(type.downcase, uid, policies, actions)
+      def set_role_credential(opts = { user: 'Admin' })
+        jwt = jwt_for_role(opts)
         Ros::Sdk::Credential.authorization = "Bearer #{jwt.encode(:internal)}"
-      end
-
-      def role_jwt(type, uid, policies, actions)
-        urn = "#{self.class.urn_base}:#{account_id}:#{type}/#{uid}"
-        attrs = { id: 1, sub: urn, attached_policies: policies, attached_actions: actions }
-        user = "Ros::IAM::#{type.camelize}".constantize.new(attrs)
-        Ros::Jwt.new(sub: urn, user: user.to_json)
       end
 
       def clear_credential; Ros::Sdk::Credential.authorization = nil end
 
       def create_schema
+        return if schema_name.eql?('public')
         Apartment::Tenant.create(schema_name)
         Rails.logger.info("Tenant created: #{schema_name}")
       rescue Apartment::TenantExists => e
@@ -92,11 +79,25 @@ module Ros
 
       # NOTE: This is only called when tenant#destroy is called NOT tenant#delete
       def destroy_schema
+        return if schema_name.eql?('public')
         Apartment::Tenant.drop(schema_name)
         Rails.logger.info("Tenant dropped: #{schema_name}")
       rescue Apartment::TenantNotFound => e
         Rails.logger.warn("Failed to drop tenant (not found): #{schema_name}")
         raise e if Rails.env.production? # Don't raise an exception in dev mode so to allow seeds to work
+      end
+
+      private
+
+      def jwt_for_role(opts)
+        type = opts.keys.first.to_s
+        uid = opts.values.first
+        urn = "#{self.class.urn_base}:#{account_id}:#{type}/#{uid}"
+        attrs = { id: 1, sub: urn, attached_policies: {}, attached_actions: {} }
+        user = "Ros::IAM::#{type.camelize}".constantize.new(attrs)
+        # if the user is root then return a Jwt that doesn't require authentiation by supplying the user attribute
+        hash = type.eql?('user') ? { sub: urn } : { sub: urn, user: user.to_json }
+        Ros::Jwt.new(hash)
       end
     end
   end

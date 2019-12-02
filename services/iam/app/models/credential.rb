@@ -35,5 +35,10 @@ class Credential < Iam::ApplicationRecord
     Ros.access_key(access_key_id)
   end
 
+  def token
+    return unless secret_access_key # only available when the object is just created
+    "Basic #{access_key_id}:#{secret_access_key}"
+  end
+
   def self.urn_id; :access_key_id end
 end
