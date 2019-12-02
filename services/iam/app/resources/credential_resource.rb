@@ -11,8 +11,12 @@ class CredentialResource < Iam::ApplicationResource
   end
 
   def account_id=(account_id)
-    owner = Tenant.find_by_schema_or_alias(account_id).root
-    @model.owner = owner
+    return unless account_id
+
+    tenant = Tenant.find_by_schema_or_alias(account_id)
+    Apartment::Tenant.switch(tenant.schema_name) do
+      @model.owner = Root.first
+    end
   end
 
   def self.creatable_fields(context)
