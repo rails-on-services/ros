@@ -29,7 +29,7 @@ class AccountMailer < Devise::Mailer
     # account confirmation token or a password confirmation token
     Ros::Jwt.new(token: @devise_token,
                  account_id: Tenant.current_tenant&.alias,
-                 username: @resource.username).encode
+                 username: @resource.username).encode(:confirmation)
   end
 
   def user_confirmation_url
