@@ -9,5 +9,6 @@ class RootResource < Iam::ApplicationResource
   filter :email
 
   def attached_policies; {} end
+
   def attached_actions; {} end
 end

@@ -26,9 +26,7 @@ module Ros
       end
 
       def find_by_schema_or_alias(criterion)
-        where('schema_name = ? OR alias = ?',
-              account_id_to_schema(criterion),
-              criterion).first
+        where('schema_name = ? OR alias = ?', account_id_to_schema(criterion), criterion.to_s).first
       end
     end
 

@@ -74,15 +74,13 @@ module Ros
       end
 
       def auth_type
-        @auth_type ||= request.env['HTTP_AUTHORIZATION'].split[0].downcase
+        @auth_type ||= request.env.fetch('HTTP_AUTHORIZATION', '').split[0]&.downcase
       end
 
       # Next method is for Pundit;
       # inside JSONAPI resources can reference user with context[:user]
       def context
-        {
-          user: ::PolicyUser.new(current_user, cognito_user_id, params: params)
-        }
+        { user: ::PolicyUser.new(current_user, cognito_user_id, params: params) }
       end
 
       # Custom Array resource serializer:
