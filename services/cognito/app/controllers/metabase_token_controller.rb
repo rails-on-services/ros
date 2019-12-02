@@ -10,7 +10,7 @@ class MetabaseTokenController < Cognito::ApplicationController
     if tokenizer.valid?
       render json: { token: tokenizer.token }, root: :data
     else
-      render json: { errors: tokenizer.errors.messages }
+      render json: { errors: tokenizer.errors.messages }, status: 422
     end
   end
 
@@ -37,7 +37,7 @@ class MetabaseTokenController < Cognito::ApplicationController
 
     card = MetabaseCard.find_by(identifier: params[:id])
     if card.nil?
-      render json: { errors: 'Card not found' }
+      render json: { errors: 'Card not found'}, status: 404
       return
     end
 
