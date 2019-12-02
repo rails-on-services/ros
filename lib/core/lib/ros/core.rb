@@ -78,7 +78,7 @@ module Ros
         owner.class.name.eql?('Root') ? owner.tenant.account_id : Apartment::Tenant.current.to_i,
         owner.class.name.eql?('Root') ? 0 : 1,
         owner.id,
-        Time.now.to_i
+        Time.zone.now.to_i
       )
     end
 

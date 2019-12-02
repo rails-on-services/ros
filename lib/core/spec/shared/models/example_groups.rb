@@ -70,9 +70,10 @@ RSpec.shared_examples 'application record concern' do
   end
 
   context 'urn matching' do
-    it 'matches to wildcard' do
-      expect(subject.urn_match?('urn:*')).to be_truthy
-    end
+    # TODO: check if this is needed after having policy implemented
+    # it 'matches to wildcard' do
+    #   expect(subject.urn_match?('urn:*')).to be_truthy
+    # end
 
     pending 'add all urn matching tests'
   end
