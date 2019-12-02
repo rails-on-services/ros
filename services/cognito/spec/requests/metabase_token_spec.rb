@@ -65,6 +65,7 @@ RSpec.describe 'metabase token requests', type: :request do
 
         it 'returns an error' do
           expect(errors.size).to be_positive
+          expect(response.code.to_i).to eq 404
         end
       end
     end

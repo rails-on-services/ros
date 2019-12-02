@@ -58,6 +58,8 @@ RSpec.describe 'metabase_cards requests', type: :request do
           post url, headers: request_headers, params: post_data
 
           expect(errors.size).to be_positive
+          # 422 for duplicate record
+          expect(response.code.to_i).to eq 422
         end
       end
 
@@ -71,6 +73,8 @@ RSpec.describe 'metabase_cards requests', type: :request do
           post url, headers: request_headers, params: post_data
 
           expect(errors.size).to be_positive
+          # 422 for duplicate record
+          expect(response.code.to_i).to eq 422
         end
       end
     end
