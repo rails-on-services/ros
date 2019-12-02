@@ -54,9 +54,7 @@ module Ros
 
     def model; model_name.constantize end
 
-    # rubocop:disable Rails/DynamicFindBy
     def instance; model.find_by_urn(resource_id) end
-    # rubocop:enable Rails/DynamicFindBy
 
     def to_s; to_a.join(':') end
   end
