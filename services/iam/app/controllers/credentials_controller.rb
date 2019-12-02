@@ -5,8 +5,6 @@ class CredentialsController < Iam::ApplicationController
 
   # TODO: Remove this once we support registration of callbacks
   def blackcomb
-    binding.pry
-
     tenant = Tenant.find_by_schema_or_alias(blackcomb_params[:account_id])
     credential = tenant.root.credentials.create
     if credential.persisted?
