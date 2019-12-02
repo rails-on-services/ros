@@ -6,24 +6,18 @@ class CredentialResource < Iam::ApplicationResource
 
   filter :access_key_id
 
-  before_save do
-    @model.owner ||= context[:user] unless Apartment::Tenant.current == 'public' && context[:user].root?
-  end
-
   def account_id=(account_id)
     return unless account_id
 
     tenant = Tenant.find_by_schema_or_alias(account_id)
-    Apartment::Tenant.switch(tenant.schema_name) do
-      @model.owner = Root.first
-    end
+    @model.owner = tenant.root
   end
 
   def self.creatable_fields(context)
     if Apartment::Tenant.current == 'public' && context[:user].root?
       [:account_id]
     else
-      []
+      %i[owner_type owner_id]
     end
   end
 

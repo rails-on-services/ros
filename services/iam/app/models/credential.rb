@@ -35,5 +35,7 @@ class Credential < Iam::ApplicationRecord
     Ros.access_key(access_key_id)
   end
 
-  def self.urn_id; :access_key_id end
+  def self.urn_id
+    :access_key_id
+  end
 end
