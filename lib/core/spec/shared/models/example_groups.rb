@@ -54,7 +54,13 @@ RSpec.shared_examples 'application record concern' do
   context 'instance methods' do
     it 'converts to urn' do
       expect(subject.respond_to?(:to_urn)).to be_truthy
-      expect(subject.to_urn).to eq("#{urn}/#{subject.send(described_class.urn_id)}")
+      if subject.class.name.eql?('Tenant')
+        u = Ros::Urn.from_urn("#{urn}/#{subject.send(described_class.urn_id)}")
+        u.account_id = 0
+        expect(subject.to_urn).to eq(u.to_s)
+      else
+        expect(subject.to_urn).to eq("#{urn}/#{subject.send(described_class.urn_id)}")
+      end
     end
 
     it 'related to valid tenant' do

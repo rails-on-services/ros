@@ -95,23 +95,28 @@ module Ros::Console::Commands
     banner <<-BANNER
       Usage: select-tenant [id]
 
-      'id' is the numerical id returned from `select-tenant` when no id is passed
-      If the id is passed that tenant's schema will become the active schema
-      If the id that is passed doesn't exist then the default schema 'public' will become the active schema
+      'id' is the numerical id returned from `select-tenant` when no id is provided
+      If the id is provided the tenant with that id or matching alias will become the active tenant
     BANNER
 
     def process(id = nil)
       if id.nil?
-        columns = Tenant.column_names.include?('alias') ? %i[id schema_name alias] : %i[id schema_name]
-        output.puts Tenant.order(:id).pluck(*columns).each_with_object([columns.join("\t")]) { |a, ary| ary << a.join("\t") }
+        output.puts tenant_list
         return
       end
-      Rails.configuration.x.memoized_shortcuts[:ct]&.clear_credential
+      return unless (tenant = Tenant.find_by(id: id) || Tenant.find_by_schema_or_alias(id))
+
+      tenant.set_role_credential(root: tenant.root.id)
+      Apartment::Tenant.switch! tenant.schema_name
       Ros::Console::Methods.reset_shortcuts
-      Apartment::Tenant.switch! Tenant.schema_name_for(id: id)
-      tenant = Tenant.find_by(schema_name: Apartment::Tenant.current)
       Rails.configuration.x.memoized_shortcuts[:ct] = tenant
-      Rails.configuration.x.memoized_shortcuts[:ct]&.set_role_credential('root', tenant.root.id)
+    end
+
+    def tenant_list
+      has_alias = Tenant.column_names.include?('alias')
+      columns = has_alias ? %i[id schema_name alias] : %i[id schema_name]
+      order = has_alias ? :alias : :id
+      Tenant.order(order).pluck(*columns).each_with_object([columns.join("\t")]) { |a, ary| ary << a.join("\t") }
     end
 
     Ros::PryCommandSet.add_command(self)
