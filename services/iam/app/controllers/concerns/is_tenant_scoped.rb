@@ -11,10 +11,8 @@ module IsTenantScoped
     params_ = HashWithIndifferentAccess.new(params)
 
     # this is not a dynamically created method but defined in our tenant concern
-    # rubocop:disable Rails/DynamicFindBy
     Tenant.find_by_schema_or_alias(params_[key])&.schema_name ||
       Apartment::Tenant.current
-    # rubocop:enable Rails/DynamicFindBy
   end
 
   def user_resource

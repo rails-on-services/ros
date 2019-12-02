@@ -37,9 +37,7 @@ module Ros
 
     def model; model_name.constantize end
 
-    # rubocop:disable Rails/DynamicFindBy
     def instance; model.find_by_urn(resource_id) end
-    # rubocop:enable Rails/DynamicFindBy
 
     def to_s; [txt, partition_name, service_name, region, account_id, resource].join(':') end
   end

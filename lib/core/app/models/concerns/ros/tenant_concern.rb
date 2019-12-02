@@ -12,7 +12,8 @@ module Ros
       end
 
       def schema_name_from(account_id: nil, id: nil)
-        return unless account_id or id
+        return unless account_id || id
+
         criterion = account_id ? { schema_name: account_id_to_schema(account_id) } : { id: id }
         find_by(criterion)&.schema_name
       end
@@ -61,15 +62,18 @@ module Ros
       def to_urn; "#{self.class.urn_base}:0:tenant/#{account_id}" end
 
       # TODO: Create IAM Roles in the public schema
+      # rubocop:disable Naming/AccessorMethodName
       def set_role_credential(opts = { user: 'Admin' })
         jwt = jwt_for_role(opts)
         Ros::Sdk::Credential.authorization = "Bearer #{jwt.encode(:internal)}"
       end
+      # rubocop:enable Naming/AccessorMethodName
 
       def clear_credential; Ros::Sdk::Credential.authorization = nil end
 
       def create_schema
         return if schema_name.eql?('public')
+
         Apartment::Tenant.create(schema_name)
         Rails.logger.info("Tenant created: #{schema_name}")
       rescue Apartment::TenantExists => e
@@ -80,6 +84,7 @@ module Ros
       # NOTE: This is only called when tenant#destroy is called NOT tenant#delete
       def destroy_schema
         return if schema_name.eql?('public')
+
         Apartment::Tenant.drop(schema_name)
         Rails.logger.info("Tenant dropped: #{schema_name}")
       rescue Apartment::TenantNotFound => e
