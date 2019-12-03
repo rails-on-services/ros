@@ -79,7 +79,7 @@ RSpec.shared_context 'unauthorized user' do
   let(:authorized_user) { nil }
   let(:request_headers) do
     {
-      'Authorization' => 'Bearer invalid_key:invalid_secret',
+      'Authorization' => 'Basic invalid_key:invalid_secret',
       'Content-Type' => 'application/vnd.api+json'
     }
   end

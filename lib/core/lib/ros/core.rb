@@ -88,13 +88,14 @@ module Ros
 
       # TODO: If the owner type is root then the schema name should be the root user's tenant schema
       # NOT the public schema
-      if version.eql?(1)
-        { version: version, account_id: account_id, owner_id: owner_id,
-          owner_type: owner_type.zero? ? 'Root' : 'User',
-          schema_name: Tenant.account_id_to_schema(account_id),
-          created_at: Time.zone.at(created_at) }
-      elsif version.eql?(2)
-      end
+      return unless version.positive?
+
+      { version: version, account_id: account_id, owner_id: owner_id,
+        owner_type: owner_type.zero? ? 'Root' : 'User',
+        schema_name: Tenant.account_id_to_schema(account_id),
+        created_at: Time.zone.at(created_at) }
+    rescue Hashids::InputError
+      { version: 0, account_id: 0, owner_type: nil, owner_id: 0, schema_name: 'public' }
     end
   end
 
