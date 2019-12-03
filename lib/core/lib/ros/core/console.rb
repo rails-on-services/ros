@@ -106,7 +106,9 @@ module Ros::Console::Commands
       end
       return unless (tenant = Tenant.find_by(id: id) || Tenant.find_by_schema_or_alias(id))
 
-      tenant.set_role_credential(root: tenant.root.id)
+      # TODO: Fix this in order to point to the proper root user, instead of
+      # relying on root id and tenant id being the same.
+      tenant.set_role_credential(root: tenant.id)
       Apartment::Tenant.switch! tenant.schema_name
       Ros::Console::Methods.reset_shortcuts
       Rails.configuration.x.memoized_shortcuts[:ct] = tenant
