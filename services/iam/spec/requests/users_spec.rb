@@ -9,8 +9,8 @@ RSpec.describe 'users requests', type: :request do
   let(:tenant) { create(:tenant) }
   let(:admin_user) { create(:user, :administrator_access) }
   let(:admin_creds) { admin_user.credentials.create }
+  let(:admin_group) { create(:group, users: [admin_user]) }
   let(:normal_user) { create(:user) }
-  let(:normal_creds) { normal_user.credentials.create }
   let(:headers) do
     {
       'Content-Type' => 'application/vnd.api+json',
@@ -36,6 +36,17 @@ RSpec.describe 'users requests', type: :request do
         expect_json_types('data', :array)
         expect_json('data.0.id', normal_user.id.to_s)
         expect_json('data.1.id', admin_user.id.to_s)
+      end
+
+      context 'filtered search' do
+        let(:url) { u("/users?filter[groups]=#{admin_group.id}") }
+
+        it 'filters the users that belong to group id' do
+          expect(response).to be_successful
+          expect_json_types('data', :array)
+          expect_json_sizes('data', 1)
+          expect_json('data.0.id', admin_user.id.to_s)
+        end
       end
     end
   end
