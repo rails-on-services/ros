@@ -12,7 +12,7 @@ module Ros
       end
 
       def schema_name_from(account_id: nil, id: nil)
-        return unless account_id or id
+        return unless account_id || id
 
         criterion = account_id ? { schema_name: account_id_to_schema(account_id) } : { id: id }
         find_by(criterion)&.schema_name
