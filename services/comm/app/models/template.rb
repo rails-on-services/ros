@@ -10,7 +10,7 @@ class Template < Comm::ApplicationRecord
   end
 
   # See: https://www.stuartellis.name/articles/erb/
-  def render(user, campaign)
+  def render(user:, campaign:)
     properties.user = user
     properties.campaign = campaign
 

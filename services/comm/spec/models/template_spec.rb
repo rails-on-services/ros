@@ -18,7 +18,7 @@ RSpec.describe Template, type: :model do
       let(:valid_content) { "Hi #{first_name} #{primary_identifier} #{title}" }
 
       it 'renders valid content' do
-        expect(template.render(user, campaign)).to eq valid_content
+        expect(template.render(user: user, campaign: campaign)).to eq valid_content
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe Template, type: :model do
       let(:invalid_content) { "Hi #{first_name} #{primary_identifier} [salutationn]" }
 
       it 'renders content with raw invalid key' do
-        expect(template.render(user, campaign)).to eq invalid_content
+        expect(template.render(user: user, campaign: campaign)).to eq invalid_content
       end
     end
 
@@ -38,10 +38,10 @@ RSpec.describe Template, type: :model do
       let(:template_four)  { create(factory_name, content: 'Hi [salutation] [userFirstName] this is your [campaignUrl]') }
 
       it 'renders content with the raw keys' do
-        expect(template_one.render(nil, nil)).to eq template_one.content
-        expect(template_two.render(nil, campaign)).to eq template_two.content
-        expect(template_three.render(user, nil)).to eq template_three.content
-        expect(template_four.render(user, nil)).to eq "Hi #{title} #{first_name} this is your [campaignUrl]"
+        expect(template_one.render(user: nil, campaign: nil)).to eq template_one.content
+        expect(template_two.render(user: nil, campaign: campaign)).to eq template_two.content
+        expect(template_three.render(user: user, campaign: nil)).to eq template_three.content
+        expect(template_four.render(user: user, campaign: nil)).to eq "Hi #{title} #{first_name} this is your [campaignUrl]"
       end
     end
   end
