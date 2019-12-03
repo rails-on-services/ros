@@ -63,5 +63,7 @@ class User < Iam::ApplicationRecord
          authentication_keys: [:username]
   # jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
-  def jwt_payload; @jwt_payload ||= { sub: to_urn } end
+  def jwt_payload
+    @jwt_payload ||= { sub: to_urn }
+  end
 end

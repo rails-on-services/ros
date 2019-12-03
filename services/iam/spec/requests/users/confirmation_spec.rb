@@ -25,7 +25,7 @@ RSpec.describe 'Account confirmation', type: :request do
     let(:mail_token) do
       Ros::Jwt.new(token: 'AAA',
                    account_id: tenant.account_id,
-                   username: user.username).encode
+                   username: user.username).encode(:confirmation)
     end
     let(:mail_params) do
       { data: { attributes: default_attributes.merge(token: mail_token) } }

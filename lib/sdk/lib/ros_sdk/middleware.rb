@@ -22,9 +22,12 @@ module Ros
         env.request_headers.merge!(Ros::Sdk::Credential.request_headers)
         # env.request_headers['Authorization'] = RequestStore.store['Authorization']
         response = @app.call(env)
-        if response.env.response_headers['authorization']
-          Ros::Sdk::Credential.authorization = response.env.response_headers['authorization']
-        end
+        # NOTE: when using this as a stand-alone sdk then the next three lines should be enabled
+        # TODO: Update this when testing as a stand-alone sdk
+        #
+        # if response.env.response_headers['authorization']
+        #   Ros::Sdk::Credential.authorization = response.env.response_headers['authorization']
+        # end
         # RequestStore.store['Authorization'] = env.request_headers['Authorization']
         response
       end

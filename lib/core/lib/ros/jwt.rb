@@ -32,27 +32,33 @@ module Ros
     end
 
     def add_claims(claims = {})
-      @claims.merge!(claims.select{ |k, v| k.to_s.in?(valid_claims) })
+      @claims.merge!(claims)
       self
     end
 
-    def valid_claims; @valid_claims ||= (Settings.dig(:jwt, :valid_claims) || []) end
+    def decode
+      @claims = HashWithIndifferentAccess.new(JWT.decode(token, encryption_key, alg).first) if token
+    end
+
+    def encode(type = :public)
+      JWT.encode(claims.slice(*send("#{type}_claims")), encryption_key, alg, typ: 'JWT')
+    end
+
+    def internal_claims; public_claims + private_claims end
+
+    def private_claims; %i[user cognito_user] end
+
+    def public_claims; %i[iss aud iat sub cognito_sub] end
+
+    def confirmation_claims; public_claims + %i[token account_id username] end
 
     # TODO: Set audience from the issuer's domain name
     def aud; Settings.jwt.aud end
 
     def iss; Settings.jwt.iss end
 
-    def encode
-      @token = JWT.encode(claims, encryption_key, alg, typ: 'JWT')
-    end
-
-    def decode
-      @claims = HashWithIndifferentAccess.new(JWT.decode(token, encryption_key, alg).first)
-    end
+    def alg; Settings.jwt.alg end
 
     def encryption_key; Settings.jwt.encryption_key end
-
-    def alg; Settings.jwt.alg end
   end
 end
