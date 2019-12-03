@@ -25,6 +25,7 @@ class EventProcess < Ros::ActivityBase
       content = template.render(user: user, campaign: campaign)
       # TODO: Disabling actual SMS sending on EventProcess until
       # FE is not creating events at the same time as a campaign
+      # PW-1909: Temporarily uncommenting this
       MessageCreate.call(params: { to: user.phone_number,
                                    provider: event.provider,
                                    channel: event.channel,

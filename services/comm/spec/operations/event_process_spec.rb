@@ -10,7 +10,7 @@ RSpec.describe EventProcess, type: :operation do
   end
 
   context 'when the event has been setup properly' do
-    let(:users) { create_list :user, 5 }
+    let(:users) { create_list :user, 50 }
     let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new(users: users)) }
     let!(:event) { create :event }
     let(:op_params) { { id: event.id } }
@@ -20,9 +20,10 @@ RSpec.describe EventProcess, type: :operation do
     end
 
     it 'has an event and template attached, and status changed to published' do
-      expect(op_result.ctx[:event]).not_to be_nil
-      expect(op_result.ctx[:template]).not_to be_nil
-      expect(op_result.ctx[:event][:status]).to eq('published')
+      ctx = op_result.instance_variable_get :@ctx
+      expect(ctx[:event]).not_to be_nil
+      expect(ctx[:template]).not_to be_nil
+      expect(ctx[:event][:status]).to eq('published')
     end
 
     it 'creates one message per user' do
