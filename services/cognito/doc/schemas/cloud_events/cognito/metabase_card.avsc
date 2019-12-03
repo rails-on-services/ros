@@ -8,19 +8,11 @@
     },
     {
       "name": "card_id",
-      "type": [
-        "null",
-        "int"
-      ],
-      "default": null
+      "type": "int"
     },
     {
       "name": "identifier",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
+      "type": "string"
     },
     {
       "name": "created_at",
