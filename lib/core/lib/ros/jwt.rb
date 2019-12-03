@@ -48,7 +48,7 @@ module Ros
 
     def private_claims; %i[user cognito_user] end
 
-    def public_claims; %i[iss aud iat sub cognito_sub] end
+    def public_claims; %i[iss aud iat sub sub_cognito] end
 
     def confirmation_claims; public_claims + %i[token account_id username] end
 
