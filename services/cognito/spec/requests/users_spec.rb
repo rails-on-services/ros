@@ -96,15 +96,17 @@ RSpec.describe 'users requests', type: :request do
       end
 
       context 'based on non ID attributes ' do
+        let(:url) { "#{base_url}?filter[query]=#{random_query}" }
+
         let!(:model_one) { create(:user, primary_identifier: 'bananas_123') }
         let!(:model_two) { create(:user, first_name: 'bananas') }
         let!(:model_three) { create(:user, last_name: 'bananas') }
         let!(:model_four) { create(:user, email_address: 'bananas_oranges@email.com') }
         let!(:model_five) { create(:user) }
+        let!(:model_six) { create(:user, last_name: 'Tomato', first_name: 'Signor') }
 
         context 'matching query' do
           let(:random_query) { 'ananas' }
-          let(:url) { "#{base_url}?filter[query]=#{random_query}" }
 
           before do
             get url, headers: request_headers
@@ -116,9 +118,21 @@ RSpec.describe 'users requests', type: :request do
           end
         end
 
+        context 'matching query for first and last name together' do
+          let(:random_query) { 'signor tomato' }
+
+          before do
+            get url, headers: request_headers
+          end
+
+          it 'returns and ok response with the user attribute queried' do
+            expect(response).to be_successful
+            expect_json_sizes('data', 1)
+          end
+        end
+
         context 'non-matching query' do
           let(:random_query) { 'kiwi' }
-          let(:url) { "#{base_url}?filter[query]=#{random_query}" }
 
           before do
             get url, headers: request_headers
