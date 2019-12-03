@@ -93,6 +93,14 @@
       "default": null
     },
     {
+      "name": "birthday",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
       "name": "urn",
       "type": [
         "null",
