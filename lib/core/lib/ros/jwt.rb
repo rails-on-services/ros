@@ -37,7 +37,10 @@ module Ros
     end
 
     def decode
-      @claims = HashWithIndifferentAccess.new(JWT.decode(token, encryption_key, alg).first) if token
+      jwt = JWT.decode(token, encryption_key, alg)
+      @claims = HashWithIndifferentAccess.new(jwt.first)
+    rescue JWT::DecodeError
+      @claims = HashWithIndifferentAccess.new
     end
 
     def encode(type = :public)

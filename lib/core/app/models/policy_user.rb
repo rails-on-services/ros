@@ -21,8 +21,4 @@ class PolicyUser
   def root?
     ['Root', 'Ros::IAM::Root'].include? @iam_user.class.name
   end
-
-  def schema_name
-    Tenant.account_id_to_schema(Ros::Urn.from_urn(iam_user.to_urn).account_id)
-  end
 end
