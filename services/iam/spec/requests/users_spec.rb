@@ -19,14 +19,6 @@ RSpec.describe 'users requests', type: :request do
   end
 
   describe 'GET index' do
-    context 'unauthenticated user' do
-      before do
-        get url
-      end
-
-  include_context 'jsonapi requests'
-
-  describe 'GET index' do
     context 'Unauthenticated user' do
       include_context 'unauthorized user'
       include_examples 'unauthenticated get'
