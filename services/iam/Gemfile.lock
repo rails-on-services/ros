@@ -47,7 +47,6 @@ PATH
     ros-iam (0.1.0)
       bcrypt (~> 3.1.12)
       devise (~> 4.7.1)
-      hashids (= 1.0.5)
       rails (~> 6.0.0.rc2)
       ros-core (~> 0.1.0)
       ros_sdk (~> 0.1.0)

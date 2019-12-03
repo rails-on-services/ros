@@ -17,7 +17,7 @@ module Ros
           if Apartment::Tenant.current == 'public' && user.root?
             scope.all
           else
-            current_tenant = Tenant.find_by(schema_name: user.schema_name)
+            current_tenant = Tenant.find_by(schema_name: Apartment::Tenant.current)
             scope.where(id: current_tenant.id)
           end
         end

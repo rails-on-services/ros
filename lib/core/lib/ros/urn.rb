@@ -14,6 +14,8 @@ module Ros
     end
 
     def self.from_urn(urn_string)
+      return nil unless urn_string
+
       urn_array = urn_string.split(':')
       new(*urn_array)
     end
