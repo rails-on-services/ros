@@ -22,6 +22,8 @@ create_list = if initialize
                 []
               end
 
+Tenant.create(name: 'Account 1', schema_name: 'public', alias: 'root', root: Root.create(email: 'root@owner.com', password: 'asdfjkl;'))
+
 @created_list = []
 create_list.each do |account|
   tenant_alias = account.delete(:alias)
