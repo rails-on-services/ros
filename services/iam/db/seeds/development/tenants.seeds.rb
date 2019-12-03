@@ -21,8 +21,9 @@ create_list = if initialize
                 # ]
                 []
               end
-
-Tenant.create(name: 'Account 1', schema_name: 'public', alias: 'root', root: Root.create(email: 'root@owner.com', password: 'asdfjkl;'))
+Root.create(email: 'root@owner.com', password: 'asdfjkl;').tap do |root|
+  root.create_tenant(schema_name: 'public', name: 'Account 1', alias: 'root')
+end
 
 @created_list = []
 create_list.each do |account|
