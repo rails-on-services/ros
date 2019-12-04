@@ -10,6 +10,8 @@ Ros::Core::Engine.routes.draw do
      [{ errors: [{ status: '404', title: 'Not found' }] }.to_json]]
   }
   jsonapi_resources :tenants
+  jsonapi_resources :service_policies, only: [:index]
+  jsonapi_resources :policy_actions, only: [:index]
   jsonapi_resources :file_fingerprints, only: [:index]
   jsonapi_resources :cloud_event_subjects, only: [:index]
 end

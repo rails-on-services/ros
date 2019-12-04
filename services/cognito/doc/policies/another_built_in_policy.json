@@ -1,0 +1,5 @@
+{ "name": "AnotherBuiltInPolicy",
+  "description": "Provides administrative access to existing Amazon Cognito resources",
+  "version": "1",
+  "rules": []
+}

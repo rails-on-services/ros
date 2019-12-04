@@ -13,7 +13,7 @@ module Ros
         settings_path = root.join('config/settings.yml')
         Settings.prepend_source!(settings_path) if File.exist? settings_path
         name = self.class.module_parent.name.demodulize.underscore
-        Settings.prepend_source!(service: { name: name, policy_name: name.capitalize })
+        Settings.prepend_source!(service: { name: name, policy_name: name.camelize })
       end
 
       # Adds this gem's db/migrations path to the enclosing application's migraations_path array

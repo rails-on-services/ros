@@ -5,6 +5,7 @@ require 'apartment'
 require 'attr_encrypted'
 require 'config'
 require 'hashids'
+require 'iron_hide'
 require 'jsonapi-resources'
 require 'jsonapi/authorization'
 require 'jwt'
@@ -20,6 +21,8 @@ require 'warden'
 
 require_relative 'api_token_strategy'
 require_relative 'dtrace_middleware'
+require_relative 'iron_hide/rule'
+require_relative 'iron_hide/storage/service_adapter'
 require_relative 'jsonapi_authorization/authorizer'
 require_relative 'jwt'
 require_relative '../migrations'
@@ -69,6 +72,19 @@ module Ros
 
     # By default all services exclude only the Tenant model from schemas
     def excluded_models; %w[Tenant] end
+
+    def paths; @paths ||= HashWithIndifferentAccess.new(policies: [], policy_actions: []) end
+
+    def load_policies
+      %i[policies policy_actions].each do |type|
+        Settings.service[type]= Ros.paths[type].each_with_object([]) do |path, ary|
+          path = path.to_s.end_with?('.json') ? path : "#{path}/*.json"
+          Dir[path].each { |policy_file| ary << JSON.parse(File.read(policy_file)) }
+        end.flatten
+      end
+    rescue JSON::ParserError
+      Rails.logger.warn('Error parsing security policies')
+    end
   end
 
   class AccessKey

@@ -72,6 +72,15 @@ module Ros
         end
       end
 
+      initializer 'ros_core.initialize_policies' do |_app|
+        Ros.paths[:policies] << root.join('doc/policies')
+        Ros.load_policies
+        IronHide.config do |config|
+          config.adapter = :service
+          config.namespace = Settings.service.policy_name
+        end
+      end
+
       # Configure ActionMailer (used by Devise) based on our Settings.smtp
       initializer 'ros_core.initialize_action_mailer' do |app|
         # NOTE: Enabling the smtp is not enough. The service that enables
