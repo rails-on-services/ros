@@ -8,7 +8,7 @@ class FileFingerprintsController < ApplicationController
   private
 
   def resources
-    # @TODO: Add proper filters based on resource class
+    # TODO: Add proper filters based on resource class
     if params.dig(:filter, :model_name)
       models.select! { |model| model.model_name.downcase == params[:filter][:model_name].downcase }
     end

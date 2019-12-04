@@ -19,7 +19,7 @@ module Ros
       end
 
       def account_id_to_schema(account_id)
-        account_id.to_i.zero? ? 'public' : account_id.to_s.scan(/.{3}/).join('_')
+        %w[public 0].include?(account_id.to_s) ? 'public' : account_id.to_s.scan(/.{3}/).join('_')
       end
     end
 

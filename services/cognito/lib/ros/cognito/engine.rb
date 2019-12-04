@@ -40,8 +40,10 @@ module Ros
         end
       end
 
-      # initializer 'service.initialize_infra_services', after: 'ros_core.initialize_infra_services' do |app|
-      # end
+      initializer 'service.initialize_policies', before: 'ros_core.initialize_policies' do |_app|
+        Ros.paths[:policies] << root.join('doc/policies')
+        Ros.paths[:policy_actions] << root.join('doc/policy_actions.json')
+      end
 
       # initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
       #   if Rails.env.development? && !Rails.const_defined?('Server')

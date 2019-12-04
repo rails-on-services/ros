@@ -1,0 +1,16 @@
+[
+  {
+    "name": "List",
+    "actions": [
+      "DescribeRepositories",
+      "ListImages"
+    ]
+  },
+  {
+    "name": "Read",
+    "actions": [
+      "BatchCheckLayerAvailability",
+      "DescribeImages"
+    ]
+  }
+]

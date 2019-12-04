@@ -8,14 +8,14 @@ WORKDIR /home/rails/services/app
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
     bundler:2.0.2 \
-    nokogiri:1.10.4 \
-    ffi:1.11.1 \
-    grpc:1.23.0 \
+    nokogiri:1.10.5 \
+    ffi:1.11.3 \
+    grpc:1.25.0 \
     mini_portile2:2.4.0 \
     msgpack:1.3.1 \
     pg:1.1.4 \
-    nio4r:2.5.1 \
-    puma:4.1.1 \
+    nio4r:2.5.2 \
+    puma:4.3.0 \
     eventmachine:1.2.7
 
 # NOTE: Copy in a generic Gemfile and the dependent gem's gemspecs so that their dependencies are also installed

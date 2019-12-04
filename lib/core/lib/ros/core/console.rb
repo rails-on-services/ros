@@ -132,6 +132,7 @@ module Ros::Console::Commands
     def process
       Ros::Console::Methods.reset_shortcuts
       TOPLEVEL_BINDING.eval('self').reload!
+      Ros.load_policies
       Rails.configuration.x.memoized_shortcuts[:ct] = Tenant.find_by(schema_name: Apartment::Tenant.current)
     end
 
