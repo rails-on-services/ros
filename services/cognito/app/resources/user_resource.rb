@@ -6,9 +6,9 @@ class UserResource < Cognito::ApplicationResource
   filter :primary_identifier
 
   filter :query, apply: lambda { |records, value, _options|
-    query_by_non_id_attrs = %w[primary_identifier first_name last_name phone_number email_address]
-                            .map { |field| "#{field} ILIKE :non_id_query" }
-                            .join(' OR ')
+    searchable_columns = ['primary_identifier', 'first_name', 'last_name', 'phone_number', 'email_address',
+                          "first_name || ' ' || last_name", "last_name || ' ' || first_name"]
+    query_by_non_id_attrs = searchable_columns.map { |field| "#{field} ILIKE :non_id_query" }.join(' OR ')
 
     results = records.where(query_by_non_id_attrs, non_id_query: "%#{value[0]}%")
     results = results.or(records.where(id: value[0])) if /^(\d)+$/.match?(value[0])
