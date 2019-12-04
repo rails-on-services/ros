@@ -2,6 +2,6 @@
 
 Tenant.create(schema_name: 'public')
 
-2.upto(7) do |id|
+1.upto(6) do |id|
   Tenant.create!(schema_name: Tenant.account_id_to_schema(id.to_s * 9))
 end
