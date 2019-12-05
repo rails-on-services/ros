@@ -127,6 +127,7 @@ RSpec.describe 'Password management', type: :request do
       it 'should allow performing a password reset/recovery without authentication' do
         post url, params: params, headers: headers, as: :json
         expect(response).to be_successful
+        expect_json('message', 'ok')
       end
     end
   end
