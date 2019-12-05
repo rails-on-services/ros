@@ -38,7 +38,8 @@ class BlackcombUserCreate < Ros::ActivityBase
     return true if ctx[:model].persisted?
 
     password = SecureRandom.hex
-    ctx[:model].update(password: password, password_confirmation: password, confirmed_at: Time.zone.today)
+    ctx[:model].update(password: password, password_confirmation: password,
+                       confirmed_at: Time.zone.today, attached_policies: { AdministratorAccess: 1 })
     ctx[:model].save
   end
 

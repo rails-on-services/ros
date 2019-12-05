@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# NOTE: Disabling event logging
+logging_mem = Settings.event_logging.enabled
+Settings.event_logging.enabled = false
 # if 'platform owner' account does not exist then create it and initialize credentials file
 initialize = Root.find_by(email: 'root@platform.com').nil?
 
@@ -21,19 +24,19 @@ create_list = if initialize
                 # ]
                 []
               end
-Root.create(email: 'root@owner.com', password: 'asdfjkl;').tap do |root|
+Root.create!(email: 'root@owner.com', password: 'asdfjkl;').tap do |root|
   root.create_tenant(schema_name: 'public', name: 'Account 1', alias: 'root')
 end
 
 @created_list = []
-create_list.each_with_index do |account, index|
-  index += 1
+create_list.each do |account|
   tenant_alias = account.delete(:alias)
   Root.create!(account).tap do |root|
-    root.create_tenant(schema_name: Tenant.account_id_to_schema(index.to_s * 9)[0..10],
+    root.create_tenant(schema_name: Tenant.account_id_to_schema(root.id.to_s * 9)[0..10],
                        name: "Account #{root.id}", state: :active, alias: tenant_alias)
     credential = Credential.create(owner: root)
     @created_list.append(type: 'root', owner: root, tenant: root.tenant, credential: credential,
                          secret: credential.secret_access_key)
   end
 end
+Settings.event_logging.enabled = logging_mem
