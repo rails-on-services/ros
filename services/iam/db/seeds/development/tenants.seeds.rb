@@ -21,7 +21,7 @@ create_list = if initialize
                 # ]
                 []
               end
-Root.create(email: 'root@owner.com', password: 'asdfjkl;').tap do |root|
+Root.create!(email: 'root@owner.com', password: 'asdfjkl;').tap do |root|
   root.create_tenant(schema_name: 'public', name: 'Account 1', alias: 'root')
 end
 
