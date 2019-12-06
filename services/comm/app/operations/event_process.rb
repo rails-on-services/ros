@@ -7,12 +7,12 @@ class EventProcess < Ros::ActivityBase
 
   def find_event(ctx, id:, **)
     event = ::Event.find(id)
-    return false unless event
-
     # TODO: What if campaign is not set? This returns nil and fails
     ctx[:event] = event
     ctx[:template] = event.template
     ctx[:campaign] = event.campaign
+  rescue ActiveRecord::RecordNotFound
+    false
   end
 
   def event_not_found(_ctx, id:, errors:, **)
