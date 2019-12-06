@@ -50,5 +50,9 @@ module Ros
     def generate_model_specs
       Ros::ModelSpecGenerator.new([name]).invoke_all
     end
+
+    def generate_migration_file
+      Ros::MigrationGenerator.new([name]).invoke_all
+    end
   end
 end
