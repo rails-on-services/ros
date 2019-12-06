@@ -6,7 +6,7 @@ class EventProcess < Ros::ActivityBase
   step :create_messages_for_pool
 
   def find_event(ctx, id:, **)
-    event = ::Event.find_by(id)
+    event = ::Event.find(id)
     return false unless event
 
     # TODO: What if campaign is not set? This returns nil and fails
