@@ -16,7 +16,7 @@ module Iam
         @current_user.send_confirmation_instructions
 
         if successfully_sent?(@current_user)
-          render status: :ok, json: json_resource(resource_class: user_resource, record: current_user)
+          render status: :ok, json: { message: 'ok' }
         else
           render status: :bad_request
         end
@@ -41,7 +41,7 @@ module Iam
       Apartment::Tenant.switch tenant_schema(mail_token) do
         res = User.confirm_by_token(mail_token[:token])
         if res.confirmed?
-          render status: :ok, json: json_resource(resource_class: user_resource, record: res)
+          render status: :ok, json: { message: 'ok' }
         else
           render status: :bad_request, json: { errors: res.errors }
         end

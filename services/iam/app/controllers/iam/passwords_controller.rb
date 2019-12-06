@@ -16,7 +16,7 @@ module Iam
         @current_user.send_reset_password_instructions
 
         if successfully_sent?(@current_user)
-          render status: :ok, json: json_resource(resource_class: user_resource, record: current_user)
+          render status: :ok, json: { message: 'ok' }
         else
           render status: :bad_request
         end
@@ -44,7 +44,7 @@ module Iam
         res = User.reset_password_by_token(decoded_params)
 
         if res.persisted?
-          render status: :ok, json: json_resource(resource_class: user_resource, record: res)
+          render status: :ok, json: { message: 'ok' }
         else
           render status: :bad_request, json: { errors: res.errors }
         end

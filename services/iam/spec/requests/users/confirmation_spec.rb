@@ -48,6 +48,7 @@ RSpec.describe 'Account confirmation', type: :request do
       it 'should allow performing an account confirmation without authentication' do
         post url, params: valid_params, headers: headers, as: :json
         expect(response).to be_successful
+        expect_json('message', 'ok')
       end
     end
 
@@ -60,6 +61,7 @@ RSpec.describe 'Account confirmation', type: :request do
 
         get url, params: params, headers: headers
         expect(response).to be_successful
+        expect_json('message', 'ok')
       end
     end
   end
