@@ -5,8 +5,8 @@ class EventProcess < Ros::ActivityBase
   failed :event_not_found
   step :create_messages_for_pool
 
-  def find_event(ctx, params:, **)
-    event = ::Event.find_by(params)
+  def find_event(ctx, id:, **)
+    event = ::Event.find_by(id)
     return false unless event
 
     # TODO: What if campaign is not set? This returns nil and fails
@@ -15,8 +15,8 @@ class EventProcess < Ros::ActivityBase
     ctx[:campaign] = event.campaign
   end
 
-  def event_not_found(_ctx, params:, errors:, **)
-    errors.add(:event, "not found for tenant (params: #{params})")
+  def event_not_found(_ctx, id:, errors:, **)
+    errors.add(:event, "not found for tenant (id: #{id})")
   end
 
   def create_messages_for_pool(_ctx, event:, template:, campaign:, **)
