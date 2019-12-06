@@ -8,6 +8,11 @@ RSpec.describe User, type: :model do
     let(:subject) { create(factory_name) }
   end
 
+  describe 'attributes' do
+    let(:gender) { { male: 'm', feemale: 'f', other: 'o' } }
+    it { is_expected.to define_enum_for(:gender).with_values(gender).backed_by_column_of_type(:string) }
+  end
+
   describe 'associations' do
     it { is_expected.to have_many(:user_pools) }
     it { is_expected.to have_many(:pools).through(:user_pools) }

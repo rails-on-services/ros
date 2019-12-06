@@ -2,7 +2,7 @@
 
 class UserResource < Cognito::ApplicationResource
   attributes :title, :first_name, :last_name, :phone_number, :email_address,
-             :primary_identifier, :properties, :anonymous, :birthday
+             :primary_identifier, :properties, :anonymous, :birthday, :gender
   filter :primary_identifier
 
   filter :query, apply: lambda { |records, value, _options|
