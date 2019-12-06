@@ -51,8 +51,12 @@ module Ros
       Ros::ModelSpecGenerator.new([name]).invoke_all
     end
 
-    def generate_migration_file
+    def generate_migration
       Ros::MigrationGenerator.new([name]).invoke_all
+    end
+
+    def generate_factory
+      Ros::FactoryGenerator.new([name]).invoke_all
     end
   end
 end
