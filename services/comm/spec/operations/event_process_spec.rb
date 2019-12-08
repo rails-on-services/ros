@@ -3,27 +3,28 @@
 require 'rails_helper'
 
 RSpec.describe EventProcess, type: :operation do
-  let(:op_result) { described_class.call(params: op_params) }
-
+  let(:users) { create_list :user, 5 }
+  let(:event) { create(:event) }
   before do
     allow(MessageCreate).to receive(:call).and_return true
+    stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new(users: users))
   end
 
   context 'when the event has been setup properly' do
-    let(:users) { create_list :user, 5 }
-    let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new(users: users)) }
-    let!(:event) { create :event }
     let(:op_params) { { id: event.id } }
+    let(:op_result) { described_class.call(params: op_params) }
+
+    before do
+      event
+      op_result
+    end
 
     it 'runs successfully' do
       expect(op_result.success?).to eq true
     end
 
-    it 'has an event and template attached, and status changed to published' do
-      ctx = op_result.instance_variable_get :@ctx
-      expect(ctx[:event]).not_to be_nil
-      expect(ctx[:template]).not_to be_nil
-      expect(ctx[:event][:status]).to eq('published')
+    it 'changes event status to published' do
+      expect(event.reload.status).to eq 'published'
     end
 
     xit 'creates one message per user' do
@@ -35,6 +36,7 @@ RSpec.describe EventProcess, type: :operation do
 
   context 'when event does not exist' do
     let(:op_params) { { id: 1000 } }
+    let(:op_result) { described_class.call(params: op_params) }
 
     it 'fails the operation' do
       expect(op_result.success?).to eq false
