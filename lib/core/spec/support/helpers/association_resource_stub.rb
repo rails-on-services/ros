@@ -3,7 +3,10 @@
 module AssociationResource
   module Stub
     def stubbed_resource(resource:, attributes:)
-      allow(resource).to receive(:find).and_return [attributes]
+      attributes = [attributes] unless attributes.is_a? Array
+
+      allow(resource).to receive(:find).and_return attributes
+      allow(resource).to receive(:all).and_return attributes
       allow(resource).to receive(:where).and_return resource
       allow(resource).to receive(:includes).and_return resource
     end
