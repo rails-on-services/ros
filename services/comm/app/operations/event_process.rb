@@ -22,15 +22,15 @@ class EventProcess < Ros::ActivityBase
   def create_messages_for_pool(_ctx, event:, template:, campaign:, **)
     event.process!
     event.users.each do |user|
-      _content = template.render(user, campaign)
-
+      _content = template.render(user: user, campaign: campaign)
       # TODO: Disabling actual SMS sending on EventProcess until
       # FE is not creating events at the same time as a campaign
+      # PW-1909: Temporarily uncommenting this
       # MessageCreate.call(params: { to: user.phone_number,
-      #                              provider: event.provider,
-      #                              channel: event.channel,
-      #                              body: content,
-      #                              owner: event })
+      #                             provider: event.provider,
+      #                             channel: event.channel,
+      #                             body: content,
+      #                             owner: event })
     end
     event.publish!
   end
