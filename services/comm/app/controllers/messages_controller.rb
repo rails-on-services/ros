@@ -20,9 +20,11 @@ class MessagesController < Comm::ApplicationController
   end
 
   def check_user
-    if context[:user].cognito_user_id
-      render(status: :forbidden,
-             json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] })
-    end
+    return forbidden_error if context[:user].cognito_user_id
+  end
+
+  def forbidden_error
+    render(status: :forbidden,
+           json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] })
   end
 end
