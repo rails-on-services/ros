@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MessagesController < Comm::ApplicationController
+  before_action :check_user, only: :create
+
   def create
     res = MessageCreate.call(params: assign_params)
     if res.success?
@@ -15,5 +17,9 @@ class MessagesController < Comm::ApplicationController
 
   def assign_params
     jsonapi_params.permit(MessageResource.creatable_fields(context))
+  end
+
+  def check_user
+    render(status: :forbidden, json: { errors: [{ status: '403', code: :forbidden, title: 'Forbidden' }] }) if context[:user].cognito_user_id
   end
 end
