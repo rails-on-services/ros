@@ -169,7 +169,7 @@ RSpec.describe 'pools requests', type: :request do
         end
 
         context 'correct params' do
-          let(:post_data) { jsonapi_data(model_data) }
+          let(:post_data) { jsonapi_data(model_data, skip_attributes: [:system_generated]) }
 
           it 'returns a successful response with proper serialized response' do
             expect(response).to be_created
