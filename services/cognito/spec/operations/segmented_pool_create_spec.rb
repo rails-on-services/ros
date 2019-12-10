@@ -21,6 +21,7 @@ RSpec.describe SegmentedPoolCreate, type: :operation do
 
     it 'returns successfull result' do
       expect(op_result.success?).to be_truthy
+      expect(op_result.model.system_generated?).to be_truthy
       expect(op_result.model.users.size).to eq(1)
     end
   end
@@ -30,6 +31,7 @@ RSpec.describe SegmentedPoolCreate, type: :operation do
 
     it 'returns successfull result' do
       expect(op_result.success?).to be_truthy
+      expect(op_result.model.system_generated?).to be_truthy
       expect(op_result.model.users.size).to eq(6)
     end
   end
