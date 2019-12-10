@@ -15,10 +15,9 @@ class SegmentedPoolCreate < Ros::ActivityBase
     errors.add(:pool, "Can't create temporary pool")
   end
 
-  def fetch_users(ctx, **)
-    # users
-    ctx[:users] = []
-    true
+  def fetch_users(ctx, base_pool_id:, segments:, **)
+    users = Pool.find(base_pool_id).users
+    ctx[:users] = SegmentsApply.call(users: users, segments: segments).model
   end
 
   def users_not_fetched(_ctx, errors:, **)
