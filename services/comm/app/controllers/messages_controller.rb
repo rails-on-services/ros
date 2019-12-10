@@ -2,7 +2,7 @@
 
 class MessagesController < Comm::ApplicationController
   def create
-    res = MessageCreate.call(params: assign_params)
+    res = MessageCreate.call(params: assign_params, user: context[:user])
     if res.success?
       render json: json_resource(resource_class: MessageResource, record: res.model), status: :created
     else

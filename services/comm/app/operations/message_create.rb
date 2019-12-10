@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MessageCreate < Ros::ActivityBase
+  step :check_permission
+  failed :not_permitted, Output(:success) => End(:failure)
   step :valid_send_at
   failed :invalid_send_at, Output(:success) => End(:failure)
   step :setup_message
@@ -13,6 +15,15 @@ class MessageCreate < Ros::ActivityBase
   # to the error track.
   # If send_at is not sent we will not delay the sms sending and instead send
   # it immediately
+
+  def check_permission(_ctx, user:, **)
+    MessagePolicy.new(user: user).create?
+  end
+
+  def not_permitted(ctx, **)
+    ctx[:errors].add(:user, 'not permitted to send message')
+  end
+
   def valid_send_at(ctx, **)
     return true if ctx[:send_at].blank?
 
