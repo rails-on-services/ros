@@ -13,6 +13,6 @@ class SegmentsApply < Ros::ActivityBase
   def apply_birthday(ctx, model:, segments:, **)
     return true unless segments.key?('birthday')
 
-    ctx[:model] = Segment::Birthday.call(users: model, segment: segments['birthday']).model
+    ctx[:model] = Segments::Birthday.call(users: model, segment: segments['birthday']).model
   end
 end
