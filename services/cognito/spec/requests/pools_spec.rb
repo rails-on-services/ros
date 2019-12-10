@@ -27,11 +27,14 @@ RSpec.describe 'pools requests', type: :request do
         get url, headers: request_headers
       end
 
+      it 'includes user count for the pool' do
+        expect_json('data.0.attributes.user_count', 1)
+      end
+
       context 'without users included' do
         it 'returns successful response' do
           expect(response).to have_http_status(:ok)
           expect_json_sizes('data', 1)
-          expect_json('included', nil)
         end
       end
 
