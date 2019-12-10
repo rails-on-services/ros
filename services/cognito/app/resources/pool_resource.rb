@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PoolResource < Cognito::ApplicationResource
-  attributes :name, :properties
+  attributes :name, :properties, :users_count
   has_many :users
 
   filter :query, apply: lambda { |records, value, _options|
@@ -13,4 +13,8 @@ class PoolResource < Cognito::ApplicationResource
     filter_fields = /\D/.match?(value[0]) ? query_by_non_id_attrs : query_by_id
     records.where(filter_fields)
   }
+
+  def users_count
+    users.size
+  end
 end
