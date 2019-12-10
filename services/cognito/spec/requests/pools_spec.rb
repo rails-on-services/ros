@@ -9,7 +9,7 @@ RSpec.describe 'pools requests', type: :request do
   let(:mock) { true }
   let(:base_url) { u('/pools') }
   let(:url) { base_url }
-  let(:resource_attrs) { %i[name properties users_count] }
+  let(:resource_attrs) { %i[name properties user_count urn created_at updated_at properties] }
 
   describe 'GET index' do
     context 'Unauthenticated user' do

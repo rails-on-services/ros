@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PoolResource < Cognito::ApplicationResource
-  attributes :name, :properties, :users_count
+  attributes :name, :properties, :user_count
   has_many :users
 
   filter :query, apply: lambda { |records, value, _options|
@@ -14,7 +14,15 @@ class PoolResource < Cognito::ApplicationResource
     records.where(filter_fields)
   }
 
-  def users_count
+  def self.updatable_fields(context)
+    super - [:user_count]
+  end
+
+  def self.creatable_fields(context)
+    super - [:user_count]
+  end
+
+  def user_count
     users.size
   end
 end
