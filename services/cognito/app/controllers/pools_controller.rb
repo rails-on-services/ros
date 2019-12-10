@@ -2,9 +2,7 @@
 
 class PoolsController < Cognito::ApplicationController
   def create
-    return super unless params.key?(:base_pool_id) && params.key?(:segments)
-
-    res = SegmentedPoolCreate.call(params: create_params, base_pool_id: params[:base_pool_id], segments: params[:segments])
+    res = PoolCreate.call(params: create_params)
     if res.success?
       render json: json_resource(resource_class: PoolResource, record: res.model), status: :created
     else
@@ -16,6 +14,7 @@ class PoolsController < Cognito::ApplicationController
   private
 
   def create_params
-    jsonapi_params.permit(PoolResource.creatable_fields(context))
+    creatable_fields = PoolResource.creatable_fields(context) + [:base_pool_id, { segments: {} }]
+    jsonapi_params.permit(creatable_fields)
   end
 end
