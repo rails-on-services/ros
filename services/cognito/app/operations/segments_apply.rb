@@ -12,9 +12,9 @@ class SegmentsApply < Ros::ActivityBase
   end
 
   def apply_birthday(ctx, model:, segments:, **)
-    return true unless segments.key?('birthday')
+    return true unless segments.key?(:birthday)
 
-    ctx[:model] = Segments::Birthday.call(users: model, segment: segments['birthday']).model
+    ctx[:model] = Segments::Birthday.call(users: model, segment: segments[:birthday]).model
   end
 
   # def apply_gender(ctx, model:, segments:, **)

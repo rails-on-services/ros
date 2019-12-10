@@ -2,7 +2,7 @@
 
 class PoolsController < Cognito::ApplicationController
   def create
-    res = PoolCreate.call(params: create_params)
+    res = PoolCreate.call(params: create_params, user: context[:user])
     if res.success?
       render json: json_resource(resource_class: PoolResource, record: res.model), status: :created
     else

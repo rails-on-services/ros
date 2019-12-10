@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PoolCreate < Ros::ActivityBase
+  step :check_permission
+  failed :not_permitted, Output(:success) => End(:failure)
   step :should_be_segmented?, Output(:failure) => Id(:create_regular_pool)
   step :find_base_pool
   failed :base_pool_not_found, Output(:success) => End(:failure)
@@ -10,6 +12,14 @@ class PoolCreate < Ros::ActivityBase
   failed :pool_not_created, Output(:success) => End(:failure)
   step :add_users_to_pool, Output(:success) => End(:success)
   step :create_regular_pool
+
+  def check_permission(_ctx, user:, **)
+    PoolPolicy.new(user, Pool.new).create?
+  end
+
+  def not_permitted(_ctx, errors:, **)
+    errors.add(:user, 'not permitted to create a pool')
+  end
 
   def should_be_segmented?(_ctx, params:, **)
     params.key?(:base_pool_id) && params.key?(:segments)
@@ -26,7 +36,7 @@ class PoolCreate < Ros::ActivityBase
   def fetch_users(ctx, base_pool:, params:, **)
     ctx[:users] = SegmentsApply.call(users: base_pool.users, segments: params[:segments]).model
     # NOTE: don't create an empty pool
-    ctx[:users].any?
+    ctx[:users].count.positive?
   end
 
   def users_not_fetched(_ctx, errors:, **)

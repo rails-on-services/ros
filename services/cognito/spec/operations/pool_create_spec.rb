@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe PoolCreate, type: :operation do
-  let(:op_result) { described_class.call(params: op_params) }
+  let(:user) { double(PolicyUser, root?: true) }
+  let(:op_result) { described_class.call(params: op_params, user: user) }
 
   context 'regular pool creation' do
     let(:pool_name) { 'sample pool' }
@@ -31,7 +32,7 @@ RSpec.describe PoolCreate, type: :operation do
     end
 
     context 'with segment specified' do
-      let(:segments) { { 'birthday' => 'this_day' } }
+      let(:segments) { { birthday: 'this_day' } }
 
       it 'returns successfull result' do
         expect(op_result.success?).to be_truthy
@@ -51,7 +52,7 @@ RSpec.describe PoolCreate, type: :operation do
     end
 
     context 'with non-matching segment' do
-      let(:segments) { { 'birthday' => 'this_day' } }
+      let(:segments) { { birthday: 'this_day' } }
 
       before do
         travel_to Time.zone.today - 1.month
