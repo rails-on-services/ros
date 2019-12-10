@@ -23,5 +23,9 @@ class UserResource < Cognito::ApplicationResource
     records.where("TO_CHAR(birthday, 'MM') = TO_CHAR(DATE(?), 'MM')", value[0])
   }
 
+  filter :pool_id, apply: lambda { |records, value, _options|
+    records.joins(:pools).where(pools: { id: value })
+  }
+
   has_many :pools
 end
