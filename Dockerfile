@@ -1,4 +1,4 @@
-FROM ruby:2.6.3-stretch as base
+FROM ruby:2.6.5-stretch as base
 
 # WORKDIR needs to be the same as in the final base image or compiled gems will point to an invalid directory
 # NOTE: For the compiled gems to be shared across services then the WORKDIR needs to be same for all images
@@ -45,7 +45,7 @@ RUN bundle install ${bundle_string} \
  && find /usr/local/bundle -iname '*.a' -exec rm -rf {} \;
 
 # Runtime container
-FROM ruby:2.6.3-slim-stretch
+FROM ruby:2.6.5-slim-stretch
 
 # Install OS packages and create a non-root user to run the application
 # To compile pg gem: libpq-dev
