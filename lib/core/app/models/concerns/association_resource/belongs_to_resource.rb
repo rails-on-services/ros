@@ -25,14 +25,11 @@ module AssociationResource
       query = _resource_class(model)
       return unless query
 
-      query = yield query if block_given?
       resource_id = extract_resource_id(model)
+      return query.find_by(id: resource_id) if query.ancestors.include? ActiveRecord::Base
 
-      if query.ancestors.include? ActiveRecord::Base
-        query.find_by(id: resource_id)
-      else
-        query.find(resource_id).first
-      end
+      query = yield query if block_given?
+      query.where(id: resource_id).find.first
     end
 
     private
