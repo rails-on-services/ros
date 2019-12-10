@@ -3,15 +3,16 @@
 class PoolCreate < Ros::ActivityBase
   step :check_permission
   failed :not_permitted, Output(:success) => End(:failure)
-  step :should_be_segmented?, Output(:failure) => Id(:create_regular_pool)
+  step :should_be_segmented?, Output(:failure) => Id(:create_regular_pool), Output(:success) => Id(:find_base_pool)
+  step :create_regular_pool, Output(:success) => End(:success), Output(:failure) => End(:failure)
+
   step :find_base_pool
   failed :base_pool_not_found, Output(:success) => End(:failure)
   step :fetch_users
   failed :users_not_fetched, Output(:success) => End(:failure)
   step :create_pool
   failed :pool_not_created, Output(:success) => End(:failure)
-  step :add_users_to_pool, Output(:success) => End(:success)
-  step :create_regular_pool
+  step :add_users_to_pool
 
   def check_permission(_ctx, user:, **)
     PoolPolicy.new(user, Pool.new).create?
