@@ -30,7 +30,7 @@ RSpec.describe 'pools requests', type: :request do
 
       context 'without users included' do
         it 'returns successful response' do
-          expect_json_keys('data.0.attributes', resource_attrs)
+          returns_expected_attrs
           expect(response).to have_http_status(:ok)
           expect_json_sizes('data', 1)
           expect_json('included', nil)
@@ -41,7 +41,7 @@ RSpec.describe 'pools requests', type: :request do
         let(:url) { "#{base_url}?include=users" }
 
         it 'returns successful response' do
-          expect_json_keys('data.0.attributes', resource_attrs)
+          returns_expected_attrs
           expect(response).to have_http_status(:ok)
           expect_json_sizes('data', 1)
           expect_json_types('included', :array)
@@ -68,7 +68,7 @@ RSpec.describe 'pools requests', type: :request do
             let(:url) { "#{base_url}?filter[query]=#{model.id}" }
 
             it 'returns successful response' do
-              expect_json_keys('data.0.attributes', resource_attrs)
+              returns_expected_attrs
               expect(response).to have_http_status(:ok)
               expect_json_sizes('data', 1)
               expect_json('included', nil)
@@ -80,7 +80,7 @@ RSpec.describe 'pools requests', type: :request do
             let(:url) { "#{base_url}?include=users&filter[query]=#{model.id}" }
 
             it 'returns successful response' do
-              expect_json_keys('data.0.attributes', resource_attrs)
+              returns_expected_attrs
               expect(response).to have_http_status(:ok)
               expect_json_sizes('data', 1)
               expect_json_types('included', :array)
@@ -114,7 +114,7 @@ RSpec.describe 'pools requests', type: :request do
             let(:url) { "#{base_url}?filter[query]=#{pool_name}" }
 
             it 'returns successful response' do
-              expect_json_keys('data.0.attributes', resource_attrs)
+              returns_expected_attrs
               expect(response).to have_http_status(:ok)
               expect_json_sizes('data', 1)
               expect_json('included', nil)
@@ -126,7 +126,7 @@ RSpec.describe 'pools requests', type: :request do
             let(:url) { "#{base_url}?include=users&filter[query]=#{pool_name}" }
 
             it 'returns successful response' do
-              expect_json_keys('data.0.attributes', resource_attrs)
+              returns_expected_attrs
               expect(response).to have_http_status(:ok)
               expect_json_sizes('data', 1)
               expect_json_types('included', :array)
@@ -153,6 +153,12 @@ RSpec.describe 'pools requests', type: :request do
           end
         end
       end
+    end
+
+    private
+
+    def returns_expected_attrs
+      expect_json_keys('data.0.attributes', resource_attrs)
     end
   end
 end
