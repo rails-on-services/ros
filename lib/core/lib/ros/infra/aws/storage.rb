@@ -6,6 +6,7 @@ require_relative 'settings'
 module Ros
   module Infra
     module Aws
+      # rubocop:disable Metrics/ClassLength
       class Storage
         include Ros::Infra::Aws::Settings
         include Ros::Infra::Storage
@@ -107,6 +108,14 @@ module Ros
           client.head_object(bucket: name, key: path)
         end
 
+        def get_object(path)
+          client.get_object(bucket: name, key: path)
+        end
+
+        def presigned_url(path)
+          ::Aws::S3::Presigner.new.presigned_url(:get_object, bucket: name, key: path)
+        end
+
         # Ros::Infra.resources.storage.app.cp(source, target)
         # by default source is 'storage' unless the prefix 'fs:' is part of the source name
         # cp('this/file.txt') # => Copies storage:this/file.txt to fs:file.txt
@@ -172,6 +181,7 @@ module Ros
         end
 =end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
