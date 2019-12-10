@@ -193,6 +193,13 @@ module AssociationResource
         has_many resources.to_sym, class_name: "AssociationResource::#{resource_name}"
         define_method("records_for_#{resources}") { |_| _model.send(resources.to_sym) }
       end
+
+      def has_one_resource(resource)
+        resource_name = resource.to_s.singularize
+        define_new_resource(resource_name)
+        has_one resource.to_sym, class_name: "AssociationResource::#{resource_name}", foreign_key_on: :related
+        define_method("record_for_#{resource}") { _model.send(resource.to_sym) }
+      end
       # rubocop:enable Naming/PredicateName
 
       private

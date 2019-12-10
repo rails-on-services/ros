@@ -67,3 +67,27 @@ RSpec.shared_examples 'it has_many_resources' do |resource|
     end
   end
 end
+
+RSpec.shared_examples 'it has_one_resource' do |resource|
+
+  it { should respond_to resource }
+
+  describe 'association config' do
+    let(:resource_config) { described_class.find_resource(resource) }
+
+    it 'should be instance of HasManyResources class' do
+      expect(resource_config).to be_instance_of(AssociationResource::HasOneResource)
+    end
+
+    context 'Resource class' do
+      subject { described_class.find_resource(resource).class_name.classify.safe_constantize }
+
+      it 'should be defined' do
+        expect(subject).not_to be_nil
+      end
+
+      it { should respond_to :where }
+      it { should respond_to :find }
+    end
+  end
+end

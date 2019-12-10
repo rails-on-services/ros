@@ -66,6 +66,27 @@ module AssociationResource
       )
     end
 
+    # Adds link to external ONE_ONE association. Oposite of belongs_to_resource
+    # :resource_name required. Model will respond this name to query external resources
+    # :class_name required. Should respond to `where` and `find`
+    # :as represents polymorphic relation. type will be added to query:
+    #   User.has_one_resource(:some_resource, class_name: 'Some::Resource', as: :external) ->
+    #      Some::Resource.where(external_type: 'User', external_id: user.id)
+    # rubocop:disable Naming/PredicateName
+    # rubocop:disable Naming/UncommunicativeMethodParamName
+    def has_one_resource(resource_name, class_name:, foreign_key: nil, as: nil)
+      return if find_resource(resource_name).present?
+
+      resource_associations << HasOneResource.new(
+        name: resource_name,
+        class_name: class_name,
+        foreign_key: foreign_key,
+        associated_name: as
+      )
+    end
+    # rubocop:enable Naming/PredicateName
+    # rubocop:enable Naming/UncommunicativeMethodParamName
+
     # Adds link to external ONE_MANY association.
     # :resource_name required. Model will respond this name to query external resources
     # :class_name required. Should respond to `where` and `find`
@@ -74,7 +95,7 @@ module AssociationResource
     #      Some::Resource.where(external_type: 'User', external_id: user.id)
 
     # rubocop:disable Naming/PredicateName
-    # rubocop:disable Naming/MethodParameterName
+    # rubocop:disable Naming/UncommunicativeMethodParamName
     def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
       return if find_resource(resource_name).present?
 
@@ -86,7 +107,7 @@ module AssociationResource
       )
     end
     # rubocop:enable Naming/PredicateName
-    # rubocop:enable Naming/MethodParameterName
+    # rubocop:enable Naming/UncommunicativeMethodParamName
 
     def find_resource(resource_name)
       resource_associations.find { |resource| resource.name == resource_name }
