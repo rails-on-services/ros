@@ -12,6 +12,7 @@ RSpec.describe PoolCreate, type: :operation do
     it 'returns successfull result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.persisted?).to be_truthy
+      expect(op_result.model.system_generated?).to be_falsey
       expect(op_result.model.name).to eq(pool_name)
     end
   end
