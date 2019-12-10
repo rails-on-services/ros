@@ -3,14 +3,14 @@
 module IronHide
   class Storage
     class ServiceAdapter < FileAdapter
-
-      def initialize
-      end
+      def initialize; end
 
       def where(opts = {})
-        #  Settings.dig(:service, :policies))
-        json.select { |p| p['name'].eql?('CognitoPowerUser') }
-        @rules = unfold(opts[:user].attached_policies)
+        keys = opts[:user].attached_policies.keys
+        policy = Settings.dig(:service, :policies)
+        json = policy.select { |p| keys.include?(p['name']) }.map { |j| j['rules'] }.flatten
+        @rules = unfold(json)
+        # @rules = unfold(opts[:user].attached_policies)
         self[opts[:resource]][opts[:action]]
       end
     end

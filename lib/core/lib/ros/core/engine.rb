@@ -77,7 +77,8 @@ module Ros
         Ros.load_policies
         IronHide.config do |config|
           config.adapter = :service
-          config.namespace = Settings.service.policy_name
+          # config.namespace = Settings.service.policy_name
+          config.namespace = Settings.service.name
         end
       end
 

@@ -4,9 +4,9 @@
   "rules": [
     {
       "description": "Allow owners to read their account",
+      "resource": "urn:perx:cognito:*:*:user",
+      "action": ["read"],
       "effect": "allow",
-      "action": ["cognito:read"],
-      "resource": "urn:perx:cognito::user",
       "conditions": [
         {
           "equal": {
@@ -16,10 +16,10 @@
       ]
     },
     {
-      "description": "Allow authors to read, write, and sell their books",
+      "description": "Allow user to read, write, and list their pools",
+      "resource": "urn:perx:cognito:*:*:pool",
+      "action": ["read", "write", "list"],
       "effect": "allow",
-      "action": ["sell"],
-      "resource": "Iam::User",
       "conditions": [
         {
           "equal": {
@@ -30,22 +30,22 @@
     },
     {
       "description": "Disallow users from writing books in languages they do not speak",
-      "effect": "deny",
-      "resource": "Iam::User",
+      "resource": "urn:perx:cognito:*:*:pool",
       "action": ["write"],
+      "effect": "deny",
       "conditions": [
         {
           "not_equal": {
-            "resource::time_zone": ["user::time_zone"]
+            "resource::id": ["user::id"]
           }
         }
       ]
     },
     {
       "description": "Allows users to borrow books from friendly users",
-      "effect": "allow",
-      "resource": "Iam::User",
-      "action": ["borrow_book"]
+      "resource": "urn:perx:cognito:*:*:pool",
+      "action": ["write"],
+      "effect": "allow"
     }
   ]
 }

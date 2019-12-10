@@ -9,6 +9,7 @@ class PolicyActionsController < ApplicationController
 
   def resources
     return [] unless (json = Settings.dig(:service, :policy_actions))
+
     json.map { |model| PolicyActionResource.new(PolicyAction.new(model), nil) }
   end
 end

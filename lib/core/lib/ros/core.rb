@@ -77,7 +77,7 @@ module Ros
 
     def load_policies
       %i[policies policy_actions].each do |type|
-        Settings.service[type]= Ros.paths[type].each_with_object([]) do |path, ary|
+        Settings.service[type] = Ros.paths[type].each_with_object([]) do |path, ary|
           path = path.to_s.end_with?('.json') ? path : "#{path}/*.json"
           Dir[path].each { |policy_file| ary << JSON.parse(File.read(policy_file)) }
         end.flatten
