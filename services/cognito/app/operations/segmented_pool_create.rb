@@ -28,7 +28,7 @@ class SegmentedPoolCreate < Ros::ActivityBase
   end
 
   def create_pool(ctx, **)
-    ctx[:model] = Pool.create(name: "temporary_pool_#{SecureRandom.hex}")
+    ctx[:model] = Pool.create(name: "temporary_pool_#{SecureRandom.hex}", system_generated: true)
   end
 
   def pool_not_created(_ctx, errors:, **)
