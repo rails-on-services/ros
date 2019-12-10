@@ -31,7 +31,7 @@ module AssociationResource
       if query.ancestors.include? ActiveRecord::Base
         query.find_by(id: resource_id)
       else
-        query.where(id: resource_id).find.first
+        query.find(resource_id).first
       end
     end
 
