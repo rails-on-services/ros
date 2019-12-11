@@ -3,7 +3,7 @@
 class User < Cognito::ApplicationRecord
   attribute :anonymous, :boolean, default: false
 
-  enum gender: { male: 'm', feemale: 'f', other: 'o' }
+  enum gender: { male: 'm', female: 'f', other: 'o' }
 
   has_many :user_pools
   has_many :pools, through: :user_pools
