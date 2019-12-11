@@ -5,7 +5,7 @@ module Segments
     step :verify_segment
     failed :incorrect_segment, Output(:success) => End(:failure)
     step :apply_segment
-    failed :segment_not_applied, Output(:success) => End(:failure)
+    failed :segment_not_applied
 
     private
 
