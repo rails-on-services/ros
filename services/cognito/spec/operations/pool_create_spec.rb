@@ -19,20 +19,17 @@ RSpec.describe PoolCreate, type: :operation do
   end
 
   context 'segmented pool creation' do
-    include ActiveSupport::Testing::TimeHelpers
-
-    let(:model_data) { jsonapi_data(pool) }
     let(:base_pool) { create(:pool) }
-    let(:op_params) { { name: 'amazing pool', base_pool_id: base_pool.id, segments: segments } }
+    let(:op_params) { { name: 'amazing pool', base_pool_id: base_pool.id, segments: { whatever: 'segment' } } }
+    let(:users) { create_list(:user, 5) }
 
     before do
-      create(:user, birthday: Time.zone.today)
-      create_list(:user, 5)
-      base_pool.users << User.all
+      # NOTE: Segment agnostic spec
+      allow(SegmentsApply).to receive_message_chain(:call, :model).and_return(segmented_users)
     end
 
     context 'with segment specified' do
-      let(:segments) { { birthday: 'this_day' } }
+      let(:segmented_users) { users.sample(1) }
 
       it 'returns successfull result' do
         expect(op_result.success?).to be_truthy
@@ -42,21 +39,17 @@ RSpec.describe PoolCreate, type: :operation do
     end
 
     context 'without segments specified' do
-      let(:segments) { {} }
+      let(:segmented_users) { users }
 
       it 'returns successfull result' do
         expect(op_result.success?).to be_truthy
         expect(op_result.model.system_generated?).to be_truthy
-        expect(op_result.model.users.size).to eq(6)
+        expect(op_result.model.users.size).to eq(5)
       end
     end
 
     context 'with non-matching segment' do
-      let(:segments) { { birthday: 'this_day' } }
-
-      before do
-        travel_to Time.zone.today - 1.month
-      end
+      let(:segmented_users) { users.sample(0) }
 
       it 'returns unsuccessfull result' do
         expect(op_result.success?).to be_falsey
