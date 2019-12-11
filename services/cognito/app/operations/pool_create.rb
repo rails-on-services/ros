@@ -26,6 +26,10 @@ class PoolCreate < Ros::ActivityBase
     params.key?(:base_pool_id) && params.key?(:segments)
   end
 
+  def create_regular_pool(ctx, params:, **)
+    ctx[:model] = Pool.create(params)
+  end
+
   def find_base_pool(ctx, params:, **)
     ctx[:base_pool] = Pool.find(params[:base_pool_id])
   end
@@ -54,9 +58,5 @@ class PoolCreate < Ros::ActivityBase
 
   def add_users_to_pool(_ctx, model:, users:, **)
     model.users << users
-  end
-
-  def create_regular_pool(ctx, params:, **)
-    ctx[:model] = Pool.create(params)
   end
 end
