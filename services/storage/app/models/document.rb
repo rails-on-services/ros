@@ -8,7 +8,7 @@ class Document < Storage::ApplicationRecord
   def self.object_dir; 'uploads' end
 
   def self.blob_key(_owner, blob)
-    blob.filename
+    "#{Time.zone.now.strftime('%F %T')}-#{blob.filename}"
   end
 
   # Takes array of events from SQS worker with keys to attached files. For each event/file it:
