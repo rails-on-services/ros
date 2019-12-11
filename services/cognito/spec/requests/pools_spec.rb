@@ -164,7 +164,6 @@ RSpec.describe 'pools requests', type: :request do
 
       context 'regular pool creation' do
         before do
-          mock_authentication if mock
           post url, headers: request_headers, params: post_data
         end
 
@@ -193,7 +192,6 @@ RSpec.describe 'pools requests', type: :request do
         let(:birthday_user) { create(:user, birthday: Time.zone.today) }
 
         before do
-          mock_authentication if mock
           base_pool.users << birthday_user
           post url, headers: request_headers, params: post_data
         end
