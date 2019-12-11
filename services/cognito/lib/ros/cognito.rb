@@ -7,4 +7,10 @@ module Ros
   module Cognito
     # Your code goes here...
   end
+
+  class << self
+    def excluded_models
+      %w[Tenant MetabaseCard]
+    end
+  end
 end
