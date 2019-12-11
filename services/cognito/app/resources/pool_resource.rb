@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PoolResource < Cognito::ApplicationResource
-  attributes :name, :properties, :user_count
+  attributes :name, :properties, :user_count, :system_generated
   has_many :users
 
   filter :query, apply: lambda { |records, value, _options|
