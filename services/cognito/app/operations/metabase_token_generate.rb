@@ -39,6 +39,6 @@ class MetabaseTokenGenerate < Ros::ActivityBase
   end
 
   def invalid_params(ctx, **)
-    ctx[:errors].add(:params, "are not valid to generate token")
+    ctx[:errors].add(:params, 'are not valid to generate token')
   end
 end
