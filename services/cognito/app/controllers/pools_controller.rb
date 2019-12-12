@@ -14,6 +14,7 @@ class PoolsController < Cognito::ApplicationController
   private
 
   def create_params
+    # TODO: Think of the proper pattern for this
     creatable_fields = PoolResource.creatable_fields(context) + [:base_pool_id, { segments: {} }]
     jsonapi_params.permit(creatable_fields)
   end

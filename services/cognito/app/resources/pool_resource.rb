@@ -15,11 +15,11 @@ class PoolResource < Cognito::ApplicationResource
   }
 
   def self.updatable_fields(context)
-    super - [:user_count]
+    super - %i[user_count]
   end
 
   def self.creatable_fields(context)
-    super - [:user_count]
+    super - %i[user_count]
   end
 
   def user_count
