@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MetabaseTokenGenerate < Ros::ActivityBase
+  required_params :payload
+
   step :validate_config
   step :validate_payload
   step :validate_expiry
@@ -18,8 +20,6 @@ class MetabaseTokenGenerate < Ros::ActivityBase
   end
 
   def validate_payload(ctx, payload:, **)
-    return false if payload.nil?
-
     ctx[:payload] = payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + exp)
   end
 
