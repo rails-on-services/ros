@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
 class MetabaseTokenGenerate < Ros::ActivityBase
-  # - {id} ChownRequest id
-  # - {from_ids} list of user ids to merge
-  # - {to_id} Final user id to receive all the data
-
-  # TODO: Needs improvement
-  # - Ensure that user id is confirmed while all the other users are not
-  # confirmed
-  # - Which permissions should this require?
-  # - For now, requesting user (identified via token), has to match the
-  # id passed in the params
-
   step :validate_config
   step :validate_payload
   step :validate_expiry
