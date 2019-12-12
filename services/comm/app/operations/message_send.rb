@@ -2,11 +2,18 @@
 
 class MessageSend < Ros::ActivityBase
   step :retrieve_message
+  failed :message_not_found
   step :send_message
   step :update_message_provider
 
   def retrieve_message(ctx, id:, **)
     ctx[:message] = Message.find(id)
+  rescue ActiveRecord::RecordNotFound
+    false
+  end
+
+  def message_not_found(_ctx, errors:, id:, **)
+    errors.add(:message, "with #{id} not found")
   end
 
   def send_message(ctx, **)
