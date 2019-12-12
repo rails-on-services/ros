@@ -6,7 +6,7 @@ class MessageSend < Ros::ActivityBase
   step :update_message_provider
 
   def retrieve_message(ctx, id:, **)
-    ctx[:message] = Message.find_by(id)
+    ctx[:message] = Message.find(id)
   end
 
   def send_message(ctx, **)
