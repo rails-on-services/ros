@@ -149,13 +149,13 @@ RSpec.describe 'users requests', type: :request do
     context 'birthday filter' do
       include_context 'authorized user'
 
-      let(:url) { "#{base_url}?filter[#{filter}]=#{Time.zone.today}" }
+      let(:url) { "#{base_url}?filter[segments][birthday]=#{filter}" }
 
       let!(:birthday_user) { create(:user, birthday: Time.zone.today) }
       let!(:non_birthday_user) { create(:user, birthday: Time.zone.today - 1.month) }
 
       context 'birth_day' do
-        let(:filter) { 'birth_day' }
+        let(:filter) { 'this_day' }
 
         it 'returns correctly filtered results' do
           get url, headers: request_headers
@@ -166,7 +166,7 @@ RSpec.describe 'users requests', type: :request do
       end
 
       context 'birth_month' do
-        let(:filter) { 'birth_month' }
+        let(:filter) { 'this_month' }
 
         it 'returns correctly filtered results' do
           get url, headers: request_headers
