@@ -154,6 +154,28 @@ RSpec.describe 'users requests', type: :request do
       let!(:birthday_user) { create(:user, birthday: Time.zone.today) }
       let!(:non_birthday_user) { create(:user, birthday: Time.zone.today - 1.month) }
 
+      context 'exact day' do
+        let(:filter) { Time.zone.today.strftime('%d-%m') }
+
+        it 'returns correctly filtered results' do
+          get url, headers: request_headers
+          expect(response).to be_successful
+          expect_json_sizes('data', 1)
+          expect_json('data.0', id: birthday_user.id.to_s)
+        end
+      end
+
+      context 'exact month' do
+        let(:filter) { Time.zone.today.strftime('%m') }
+
+        it 'returns correctly filtered results' do
+          get url, headers: request_headers
+          expect(response).to be_successful
+          expect_json_sizes('data', 1)
+          expect_json('data.0', id: birthday_user.id.to_s)
+        end
+      end
+
       context 'birth_day' do
         let(:filter) { 'this_day' }
 
