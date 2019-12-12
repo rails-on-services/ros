@@ -39,6 +39,7 @@ class User < Cognito::ApplicationRecord
 
   def self.default_headers
     { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number,
-      'Unique Number' => :primary_identifier, 'Campaign Code' => :pool_name }
+      'Unique Number' => :primary_identifier, 'Campaign Code' => :pool_name,
+      'Birthday' => :birthday, 'Gender' => :gender }
   end
 end
