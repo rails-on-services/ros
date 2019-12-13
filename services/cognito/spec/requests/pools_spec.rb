@@ -27,11 +27,14 @@ RSpec.describe 'pools requests', type: :request do
         get url, headers: request_headers
       end
 
+      it 'includes user count for the pool' do
+        expect_json('data.0.attributes.user_count', 1)
+      end
+
       context 'without users included' do
         it 'returns successful response' do
           expect(response).to have_http_status(:ok)
           expect_json_sizes('data', 1)
-          expect_json('included', nil)
         end
       end
 
@@ -143,6 +146,63 @@ RSpec.describe 'pools requests', type: :request do
             it 'returns successful response with zero result' do
               expect_json_sizes('data', 0)
             end
+          end
+        end
+      end
+    end
+  end
+
+  describe 'POST create' do
+    context 'Unauthenticated user' do
+      include_context 'unauthorized user'
+      include_examples 'unauthenticated post'
+    end
+
+    context 'Authenticated user' do
+      include_context 'authorized user'
+      let(:model_data) { build(:pool) }
+
+      context 'regular pool creation' do
+        before do
+          post url, headers: request_headers, params: post_data
+        end
+
+        context 'correct params' do
+          let(:post_data) { jsonapi_data(model_data, skip_attributes: [:system_generated]) }
+
+          it 'returns a successful response with proper serialized response' do
+            expect(response).to be_created
+          end
+        end
+
+        # TODO: skip unless we'll deal with params validation on custom controller
+        xcontext 'incorrect params' do
+          let(:post_data) { jsonapi_data(model_data, extra_attributes: { invalid: :param }) }
+
+          it 'returns a failure response and' do
+            expect(errors.size).to be_positive
+            expect(response).to be_bad_request
+            expect(error_response.title).to eq('Param not allowed')
+          end
+        end
+      end
+
+      context 'segmented pool creation' do
+        let(:base_pool) { create(:pool) }
+        let(:birthday_user) { create(:user, birthday: Time.zone.today) }
+
+        before do
+          base_pool.users << birthday_user
+          post url, headers: request_headers, params: post_data
+        end
+
+        context 'correct params' do
+          let(:post_data) do
+            jsonapi_data(model_data, extra_attributes: { base_pool_id: base_pool.id, segments: { birthday: 'this_day' } })
+          end
+
+          it 'returns a successful response with proper serialized response' do
+            expect(response).to be_created
           end
         end
       end

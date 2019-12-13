@@ -15,12 +15,8 @@ class UserResource < Cognito::ApplicationResource
     results
   }
 
-  filter :birth_day, apply: lambda { |records, value, _options|
-    records.where("TO_CHAR(birthday, 'DD-MM') = TO_CHAR(DATE(?), 'DD-MM')", value[0])
-  }
-
-  filter :birth_month, apply: lambda { |records, value, _options|
-    records.where("TO_CHAR(birthday, 'MM') = TO_CHAR(DATE(?), 'MM')", value[0])
+  filter :segments, apply: lambda { |records, value, _options|
+    SegmentsApply.call(users: records, segments: value[0]).model
   }
 
   filter :pool_id, apply: lambda { |records, value, _options|

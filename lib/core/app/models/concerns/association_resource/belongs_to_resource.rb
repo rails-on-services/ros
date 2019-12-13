@@ -27,6 +27,7 @@ module AssociationResource
 
       query = yield query if block_given?
       resource_id = extract_resource_id(model)
+
       if query.ancestors.include? ActiveRecord::Base
         query.find_by(id: resource_id)
       else

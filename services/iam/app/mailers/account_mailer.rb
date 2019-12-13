@@ -56,6 +56,6 @@ class AccountMailer < Devise::Mailer
   end
 
   def base_url
-    Tenant.current_tenant.properties.base_url || 'http://localhost'
+    Tenant.current_tenant.properties['base_url'] || 'http://localhost'
   end
 end

@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe MessageCreate, type: :operation do
   let(:op_result) { described_class.call(op_params) }
+  let(:user) { create(:user) }
   # NOTE: an event needs a valid target
   let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   # TODO: Who should be the owner of a message?
@@ -18,7 +19,8 @@ RSpec.describe MessageCreate, type: :operation do
         from: 'PerxTech',
         to: '+6587173612',
         body: 'hello'
-      }
+      },
+      user: user
     }
   end
 
@@ -57,6 +59,7 @@ RSpec.describe MessageCreate, type: :operation do
             to: '+6587173612',
             body: 'hello'
           },
+          user: user,
           send_at: 10.minutes.from_now.to_s
         }
       end
@@ -77,7 +80,8 @@ RSpec.describe MessageCreate, type: :operation do
           from: 'PerxTech',
           to: '+6587173612',
           body: 'hello'
-        }
+        },
+        user: user
       }
     end
 
@@ -102,6 +106,7 @@ RSpec.describe MessageCreate, type: :operation do
             to: '+6587173612',
             body: 'hello'
           },
+          user: user,
           send_at: 'bananas'
         }
       end

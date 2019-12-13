@@ -3,10 +3,13 @@
 class User < Cognito::ApplicationRecord
   attribute :anonymous, :boolean, default: false
 
-  enum gender: { male: 'm', feemale: 'f', other: 'o' }
+  enum gender: { male: 'm', female: 'f', other: 'o' }
 
   has_many :user_pools
   has_many :pools, through: :user_pools
+
+  scope :birth_day, ->(date) { where("TO_CHAR(birthday, 'DD-MM') = TO_CHAR(DATE(?), 'DD-MM')", date) }
+  scope :birth_month, ->(date) { where("TO_CHAR(birthday, 'MM') = TO_CHAR(DATE(?), 'MM')", date) }
 
   def self.reset
     UserPool.delete_all
@@ -39,6 +42,7 @@ class User < Cognito::ApplicationRecord
 
   def self.default_headers
     { 'Salutation' => :title, 'Last Name' => :last_name, 'Mobile' => :phone_number,
-      'Unique Number' => :primary_identifier, 'Campaign Code' => :pool_name }
+      'Unique Number' => :primary_identifier, 'Campaign Code' => :pool_name,
+      'Birthday' => :birthday, 'Gender' => :gender }
   end
 end

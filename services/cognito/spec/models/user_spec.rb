@@ -9,7 +9,7 @@ RSpec.describe User, type: :model do
   end
 
   describe 'attributes' do
-    let(:gender) { { male: 'm', feemale: 'f', other: 'o' } }
+    let(:gender) { { male: 'm', female: 'f', other: 'o' } }
     it { is_expected.to define_enum_for(:gender).with_values(gender).backed_by_column_of_type(:string) }
   end
 

@@ -6,6 +6,9 @@ module Users
 
     def login_user!
       @current_user = User.find_by(username: sign_in_params[:username])
+      return if current_user.nil?
+      return unless current_user.confirmed?
+
       current_user&.valid_password? sign_in_params[:password]
     end
 
