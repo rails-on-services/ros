@@ -8,6 +8,9 @@ class User < Cognito::ApplicationRecord
   has_many :user_pools
   has_many :pools, through: :user_pools
 
+  scope :birth_day, ->(date) { where("TO_CHAR(birthday, 'DD-MM') = TO_CHAR(DATE(?), 'DD-MM')", date) }
+  scope :birth_month, ->(date) { where("TO_CHAR(birthday, 'MM') = TO_CHAR(DATE(?), 'MM')", date) }
+
   def self.reset
     UserPool.delete_all
     Pool.delete_all

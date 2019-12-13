@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_05_023159) do
+ActiveRecord::Schema.define(version: 2019_12_10_050613) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2019_12_05_023159) do
     t.jsonb "properties"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "system_generated", default: false, null: false
     t.index ["name"], name: "index_pools_on_name", unique: true
   end
 

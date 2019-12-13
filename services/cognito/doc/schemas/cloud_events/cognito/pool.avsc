@@ -45,6 +45,14 @@
       "default": null
     },
     {
+      "name": "system_generated",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
+    },
+    {
       "name": "urn",
       "type": [
         "null",
