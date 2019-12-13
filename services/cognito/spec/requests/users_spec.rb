@@ -149,13 +149,35 @@ RSpec.describe 'users requests', type: :request do
     context 'birthday filter' do
       include_context 'authorized user'
 
-      let(:url) { "#{base_url}?filter[#{filter}]=#{Time.zone.today}" }
+      let(:url) { "#{base_url}?filter[segments][birthday]=#{filter}" }
 
       let!(:birthday_user) { create(:user, birthday: Time.zone.today) }
       let!(:non_birthday_user) { create(:user, birthday: Time.zone.today - 1.month) }
 
+      context 'exact day' do
+        let(:filter) { Time.zone.today.strftime('%d-%m') }
+
+        it 'returns correctly filtered results' do
+          get url, headers: request_headers
+          expect(response).to be_successful
+          expect_json_sizes('data', 1)
+          expect_json('data.0', id: birthday_user.id.to_s)
+        end
+      end
+
+      context 'exact month' do
+        let(:filter) { Time.zone.today.strftime('%m') }
+
+        it 'returns correctly filtered results' do
+          get url, headers: request_headers
+          expect(response).to be_successful
+          expect_json_sizes('data', 1)
+          expect_json('data.0', id: birthday_user.id.to_s)
+        end
+      end
+
       context 'birth_day' do
-        let(:filter) { 'birth_day' }
+        let(:filter) { 'this_day' }
 
         it 'returns correctly filtered results' do
           get url, headers: request_headers
@@ -166,7 +188,7 @@ RSpec.describe 'users requests', type: :request do
       end
 
       context 'birth_month' do
-        let(:filter) { 'birth_month' }
+        let(:filter) { 'this_month' }
 
         it 'returns correctly filtered results' do
           get url, headers: request_headers
