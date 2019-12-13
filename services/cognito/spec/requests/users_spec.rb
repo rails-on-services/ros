@@ -155,7 +155,7 @@ RSpec.describe 'users requests', type: :request do
       let!(:non_birthday_user) { create(:user, birthday: Time.zone.today - 1.month) }
 
       context 'exact day' do
-        let(:filter) { Time.zone.today.strftime('%d-%m') }
+        let(:filter) { Time.zone.today.strftime('%m-%d') }
 
         it 'returns correctly filtered results' do
           get url, headers: request_headers
