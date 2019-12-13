@@ -48,11 +48,7 @@ class User < Iam::ApplicationRecord
   #
   # Devise calls this
   def send_devise_notification(notification, *args)
-    if unconfirmed_email.nil? && notification == :confirmation_instructions
-      devise_mailer.send(:reset_password_instructions, self, *args).deliver_later
-    else
-      devise_mailer.send(notification, self, *args).deliver_later
-    end
+    devise_mailer.send(notification, self, *args).deliver_later
   end
 
   # Include default devise modules. Others available are:

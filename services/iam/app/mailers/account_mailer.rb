@@ -9,9 +9,16 @@ class AccountMailer < Devise::Mailer
   def confirmation_instructions(resource, devise_token, _opts = {})
     @resource = resource
     @devise_token = devise_token
-    @confirmation_url = user_confirmation_url
 
-    mail to: resource.email
+    if resource.unconfirmed_email.nil?
+      @reset_url = user_reset_password_url
+      template_name = 'reset_password_instructions'
+    else
+      @confirmation_url = user_confirmation_url
+      template_name = 'confirmation_instructions'
+    end
+
+    mail to: resource.email, template_name: template_name
   end
 
   def reset_password_instructions(resource, devise_token, _opts = {})
