@@ -58,6 +58,7 @@ module HasAttachment
 
     def object_scope; 'tenants' end
 
+    # TODO: if we need the tenant in a different format, that should be the responsibility of the Tenant model
     def tenant_schema; Apartment::Tenant.current.gsub('_', '') end
 
     # Examples: uploads, downloads; used on sftp service

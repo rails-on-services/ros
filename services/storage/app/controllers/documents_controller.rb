@@ -3,6 +3,7 @@
 class DocumentsController < Storage::ApplicationController
   include HasAttachmentController
 
+  # TODO: move this to an operation
   def create
     file = model_class.upload(io: params[:file])
     if file.persisted?
@@ -11,9 +12,5 @@ class DocumentsController < Storage::ApplicationController
       resource = ApplicationResource.new(file, nil)
       handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
     end
-  end
-
-  def model_class
-    self.class.name.gsub('Controller', '').singularize.constantize
   end
 end
