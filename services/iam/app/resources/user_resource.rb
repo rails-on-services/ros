@@ -3,7 +3,7 @@
 class UserResource < Iam::ApplicationResource
   attributes :username, :api, :console, :time_zone, :properties,
              :display_properties, :jwt_payload, :attached_policies,
-             :attached_actions, :email, :password, :password_confirmation
+             :attached_actions, :email, :password, :password_confirmation, :unconfirmed_email
 
   has_many :groups
   has_many :credentials

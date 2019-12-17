@@ -44,6 +44,8 @@ module Iam
         res = User.reset_password_by_token(decoded_params)
 
         if res.persisted?
+          res.confirm unless res.confirmed?
+          @current_jwt = Ros::Jwt.new(res.jwt_payload)
           render status: :ok, json: { message: 'ok' }
         else
           render status: :bad_request, json: { errors: res.errors }

@@ -11,7 +11,15 @@ RSpec.describe 'Password management', type: :request do
       create(:user, :within_schema,
              username: 'test_user',
              password: password,
-             email: 'foo@perx.test',
+             email: 'foo@ros.test',
+             schema: tenant.schema_name,
+             confirmed_at: nil)
+    end
+    let(:confirmed_user) do
+      create(:user, :within_schema,
+             username: 'another_user',
+             password: password,
+             email: 'foo2@ros.test',
              schema: tenant.schema_name)
     end
     let(:default_attributes) do
@@ -45,24 +53,23 @@ RSpec.describe 'Password management', type: :request do
       { data: { attributes: default_attributes.merge(token: mail_token) } }
     end
 
-    before do
-      post u('/users/sign_in'), params: {
-        data: {
-          attributes: {
-            username: user.username,
-            password: password,
-            account_id: tenant.account_id
-          }
-        }
-      }
-
-      # we use fetch to ensure we don't have a nil @bearer_token
-      @bearer_token = response.headers.fetch 'Authorization'
-    end
-
     include_context 'jsonapi requests'
 
     context 'logging in' do
+      before do
+        post u('/users/sign_in'), params: {
+          data: {
+            attributes: {
+              username: confirmed_user.username,
+              password: password,
+              account_id: tenant.account_id
+            }
+          }
+        }
+        # we use fetch to ensure we don't have a nil @bearer_token
+        @bearer_token = response.headers.fetch 'Authorization'
+      end
+
       # this is technically not needed as it tests the test implementation, but
       # it helps to throw an error if authentication hasn't happened for
       # whatever reason
@@ -104,9 +111,12 @@ RSpec.describe 'Password management', type: :request do
                   password: default_attributes[:password],
                   password_confirmation: default_attributes[:password_confirmation]).and_return(user)
 
+          expect(user.confirmed?).to be_falsey
           put url, params: params, headers: request_headers, as: :json
           expect(response).to be_successful
+          expect(response.headers['Authorization']).to_not be_nil
           expect_json('message', 'ok')
+          expect(user.confirmed?).to be_truthy
         end
       end
     end
