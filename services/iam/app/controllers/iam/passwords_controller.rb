@@ -13,7 +13,7 @@ module Iam
       Apartment::Tenant.switch tenant_schema(password_params) do
         return super unless find_user!
 
-        @current_user.send_reset_password_instructions
+        AccountMailer.reset_password_instructions(@current_user, @current_user.reset_password_token, ip: request.remote_ip)
 
         if successfully_sent?(@current_user)
           render status: :ok, json: { message: 'ok' }
