@@ -69,7 +69,6 @@ RSpec.shared_examples 'it has_many_resources' do |resource|
 end
 
 RSpec.shared_examples 'it has_one_resource' do |resource|
-
   it { should respond_to resource }
 
   describe 'association config' do

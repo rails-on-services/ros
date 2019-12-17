@@ -3,7 +3,6 @@
 # Class Represents external association ONE_ONE
 module AssociationResource
   class HasOneResource < HasManyResources
-
     def query_resource(model)
       result = super
       result.first
