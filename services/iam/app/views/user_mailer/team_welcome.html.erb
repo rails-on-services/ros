@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>PERX Reset Password</title>
+  <title>PERX Welcome!</title>
 
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet" type="text/css">
   <style type="text/css">
@@ -29,20 +29,17 @@
               </tr>
               <tr>
                 <td align="center">
-                  <img alt="Illustration of user unlocking account" src="https://cdn.uat.whistler.perxtech.io/dev1/global/assets/email/email-reset.png" width="268" style="width: 100%; max-width: 268px; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-weight: 400; font-size: 12px; line-height: 16px; letter-spacing: 0.4px; color: #7b7b7b; display: block; border: 0px;" border="0">
+                  <img alt="Illustration of user unlocking account" src="https://cdn.uat.whistler.perxtech.io/dev1/global/assets/email/email-figure.png" width="268" style="width: 100%; max-width: 268px; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-weight: 400; font-size: 12px; line-height: 16px; letter-spacing: 0.4px; color: #7b7b7b; display: block; border: 0px;" border="0">
                 </td>
               </tr>
               <tr>
                 <td align="left" valign="top" style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-weight: 400; font-size: 24px; line-height: 24px; letter-spacing: 0.18px; color: #333333;">
-                  Hi <%= @resource.email %>,
+                  Welcome <%= @resource.email %>,
                 </td>
               </tr>
               <tr>
                 <td align="left" valign="top" style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; color: #7b7b7b;">
-                  A request has been made to reset your password. Simply click on the button below to reset it.
-                  <b style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; color: #333333; font-weight: 500;">
-                    This password reset is only valid for the next 24 hours.
-                  </b>
+                  Thanks for joining Perx, where you can create wonderful campaigns easily.
                 </td>
               </tr>
               <tr>
@@ -52,7 +49,7 @@
                       <td align="center">
                         <table border="0" cellspacing="0" cellpadding="0" width="268" style="width: 100%; max-width: 268px;">
                           <tr>
-                            <td align="center" width="100%" style="width: 100%; border-radius: 4px;" bgcolor="#2664ED"><a href="<%= @reset_url %>" target="_blank" style="font-size: 14px; letter-spacing: 0.75px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; font-weight: 500; text-decoration: none; border-radius: 4px; padding: 12px 24px; border: 1px solid #2664ED; display: block;"><!--[if mso]>&nbsp;<![endif]-->Reset Password<!--[if mso]>&nbsp;<![endif]--></a></td>
+                            <td align="center" width="100%" style="width: 100%; border-radius: 4px;" bgcolor="#2664ED"><a href="<%= @reset_url %>" target="_blank" style="font-size: 14px; letter-spacing: 0.75px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; font-weight: 500; text-decoration: none; border-radius: 4px; padding: 12px 24px; border: 1px solid #2664ED; display: block;"><!--[if mso]>&nbsp;<![endif]-->Join <%= @account_name %> Team!<!--[if mso]>&nbsp;<![endif]--></a></td>
                           </tr>
                         </table>
                       </td>
@@ -62,20 +59,15 @@
               </tr>
               <tr>
                 <td align="left" valign="top" style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; color: #7b7b7b;">
-                  For security, the request was received from the following: <br />
-                  IP Address:
                   <b style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; color: #333333; font-weight: 500;">
-                    <%= @ip %>
-                  </b>
+                    What is Perx Whistler?
+                  </b><br />
+                  Information promoting whistler/perx
                 </td>
               </tr>
               <tr>
                 <td align="left" valign="top" style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; color: #7b7b7b;">
-                  If you did not make this request, you can safely ignore this email or
-                  <a href="#" target="_blank" style="font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; color: #2664ED; font-weight: 400; display: inline-block; text-decoration: none;">
-                    contact support
-                  </a>
-                  if you have questions.
+                  Learn how Whistler can help you and your team
                 </td>
               </tr>
               <tr>
