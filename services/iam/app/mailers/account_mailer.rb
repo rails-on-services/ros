@@ -22,8 +22,7 @@ class AccountMailer < Devise::Mailer
     mail to: resource.email, template_name: template_name
   end
 
-  def reset_password_instructions(resource, devise_token, opts = {})
-    @ip = opts[:ip]
+  def reset_password_instructions(resource, devise_token, _opts = {})
     @resource = resource
     @devise_token = devise_token
     @reset_url = user_reset_password_url
