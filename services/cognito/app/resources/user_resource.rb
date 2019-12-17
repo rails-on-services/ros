@@ -19,5 +19,9 @@ class UserResource < Cognito::ApplicationResource
     SegmentsApply.call(users: records, segments: value[0]).model
   }
 
+  filter :pool_id, apply: lambda { |records, value, _options|
+    records.joins(:pools).where(pools: { id: value })
+  }
+
   has_many :pools
 end
