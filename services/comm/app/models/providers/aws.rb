@@ -30,8 +30,8 @@ module Providers
     def sms(to, body)
       client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
       client.publish(phone_number: to, message: body)
-      # rescue
-      # Rails.logger.warn('No AWS client configured for tenant.account_id') and return if client.nil?
+    rescue Aws::Errors::ServiceError => e
+      Rails.logger.warn("No AWS client configured for tenant.account_id. #{e.inspect}")
     end
 
     private
@@ -46,9 +46,7 @@ module Providers
                  access_key_id: x_access_key_id,
                  secret_access_key: x_secret_access_key }
 
-      return params if Rails.env.production?
-
-      params[:endpoint] = 'http://localstack:4575'
+      params[:endpoint] = ENV['AWS_ENDPOINT'] unless ENV['AWS_ENDPOINT'].nil?
       params
     end
   end
