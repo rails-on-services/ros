@@ -1,0 +1,48 @@
+name: Publish Docs to confluence
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    # Job name is Greeting
+    name: Publish
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
+      - name: Install Markdown2Confluence
+        run: |
+          curl -LO https://github.com/justmiles/go-markdown2confluence/releases/download/v3.0.2/markdown2confluence_3.0.2_linux_x86_64.tar.gz
+          sudo tar -xzvf markdown2confluence_3.0.2_linux_x86_64.tar.gz -C /usr/local/bin/ markdown2confluence
+
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          version: 2.6.x
+
+      - name: Build and test with Rake
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+
+      - name: Publish documentation to Confluence
+        env: # Or as an environment variable
+          CONFLUENCE_ENDPOINT: ${{ secrets.CONFLUENCE_ENDPOINT }}
+          CONFLUENCE_PASSWORD: ${{ secrets.CONFLUENCE_PASSWORD }}
+          CONFLUENCE_USERNAME: ${{ secrets.CONFLUENCE_USERNAME }}
+        run: markdown2confluence --space 'WD' --parent 'API Docs' ./source/includes/iam/_index.md
+
+      # TODO: publish the slate documentation
+      - name: Publish documentation to public slate
+        run: './deploy.sh'
+
+      # TODO: publish index.html.md and create namespaced paths for all things under includes.
+      # E.g ./source/includes/iam/_index.md should create folder iam under the API Docs parent
+      # and the file index under it.
+
+      # TODO: Only publish the files changed since the last merge
+
+      # TODO: Wrap this into a docker image action so we don't need to install
+      # all the gems every time
