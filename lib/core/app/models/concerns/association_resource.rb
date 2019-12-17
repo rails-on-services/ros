@@ -73,7 +73,6 @@ module AssociationResource
     #   User.has_one_resource(:some_resource, class_name: 'Some::Resource', as: :external) ->
     #      Some::Resource.where(external_type: 'User', external_id: user.id)
     # rubocop:disable Naming/PredicateName
-    # rubocop:disable Naming/UncommunicativeMethodParamName
     def has_one_resource(resource_name, class_name:, foreign_key: nil, as: nil)
       return if find_resource(resource_name).present?
 
@@ -85,7 +84,6 @@ module AssociationResource
       )
     end
     # rubocop:enable Naming/PredicateName
-    # rubocop:enable Naming/UncommunicativeMethodParamName
 
     # Adds link to external ONE_MANY association.
     # :resource_name required. Model will respond this name to query external resources
@@ -95,7 +93,6 @@ module AssociationResource
     #      Some::Resource.where(external_type: 'User', external_id: user.id)
 
     # rubocop:disable Naming/PredicateName
-    # rubocop:disable Naming/UncommunicativeMethodParamName
     def has_many_resources(resource_name, class_name:, foreign_key: nil, as: nil)
       return if find_resource(resource_name).present?
 
@@ -107,7 +104,6 @@ module AssociationResource
       )
     end
     # rubocop:enable Naming/PredicateName
-    # rubocop:enable Naming/UncommunicativeMethodParamName
 
     def find_resource(resource_name)
       resource_associations.find { |resource| resource.name == resource_name }
