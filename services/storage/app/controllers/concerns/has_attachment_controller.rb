@@ -9,6 +9,6 @@ module HasAttachmentController
   end
 
   def model_class
-    self.class.name.gsub('Controller').singularize.constantize
+    self.class.name.gsub('Controller', '').singularize.constantize
   end
 end

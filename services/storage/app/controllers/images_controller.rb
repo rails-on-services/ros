@@ -12,8 +12,4 @@ class ImagesController < Storage::ApplicationController
       handle_exceptions JSONAPI::Exceptions::ValidationErrors.new(resource)
     end
   end
-
-  def model_class
-    self.class.name.gsub('Controller', '').singularize.constantize
-  end
 end
