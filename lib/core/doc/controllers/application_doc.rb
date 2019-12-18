@@ -8,7 +8,6 @@ module JSONAPI
     class Configuration
       def user_context(_context)
         PolicyUser.new(nil, nil, {})
-        # HashWithIndifferentAccess.new(cognito_user_id: nil, user: nil)
       end
     end
   end
@@ -133,6 +132,8 @@ class ApplicationDoc
     def resources
       2.times { FactoryBot.create(model_name.underscore.to_sym) } if model_class.count.zero?
       model_class.all.limit(2).map { |record| resource_class.new(record, nil) }
+    rescue StandardError => e
+      Rails.logger.error e.inspect
     end
 
     def resource_class; resource_name.constantize end
