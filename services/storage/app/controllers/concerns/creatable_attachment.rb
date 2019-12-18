@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module HasAttachmentController
+module CreatableAttachment
   extend ActiveSupport::Concern
 
   def create
