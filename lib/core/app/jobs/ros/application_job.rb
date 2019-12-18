@@ -20,24 +20,12 @@ module Ros
     end
 
     def perform(*params)
-      operation_class(params).call(params)
+      operation_class.call(params)
     end
 
-    def operation_class(params)
-      return JSON.parse(params)['operation'].constantize if json?(params)
-
+    def operation_class
       job_name = self.class.name.gsub('Job', '')
-      return "#{Settings.service.name}::Chown".underscore.classify.constantize if job_name == 'Chown'
-
       job_name.constantize
-    end
-
-    private
-
-    def json?(params)
-      JSON.parse(params).is_a?(Hash)
-    rescue StandardError
-      false
     end
   end
 end
