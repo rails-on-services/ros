@@ -16,7 +16,7 @@ class UserResource < Cognito::ApplicationResource
   }
 
   filter :segments, apply: lambda { |records, value, _options|
-    SegmentsApply.call(users: records, segments: value[0]).model
+    SegmentsApply.call(users: records, segments: value[0].permit!.to_h).model
   }
 
   filter :pool_id, apply: lambda { |records, value, _options|
