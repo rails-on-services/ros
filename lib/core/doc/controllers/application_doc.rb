@@ -137,11 +137,17 @@ class ApplicationDoc
 
     def resource_class; resource_name.constantize end
 
-    def resource_name; name.remove('Doc') end
+    def resource_name
+      name.delete_suffix('Doc')
+    end
 
-    def model_class; model_name.constantize end
+    def model_class
+      model_name.constantize
+    end
 
-    def model_name; name.remove('ResourceDoc') end
+    def model_name
+      name.delete_suffix('ResourceDoc')
+    end
   end
 end
 
