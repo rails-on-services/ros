@@ -26,7 +26,10 @@ module Ros
     def operation_class(params)
       return JSON.parse(params)['operation'].constantize if json?(params)
 
-      self.class.name.gsub('Job', '').constantize
+      job_name = self.class.name.gsub('Job', '')
+      return "#{Settings.service.name}::Chown".underscore.classify.constantize if job_name == 'Chown'
+
+      job_name.constantize
     end
 
     private
