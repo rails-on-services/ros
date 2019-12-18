@@ -20,7 +20,7 @@ module Ros
     end
 
     def perform(*params)
-      operation_class(*params).call(params)
+      operation_class(params).call(params)
     end
 
     def operation_class(params)
