@@ -20,11 +20,21 @@ module Ros
     end
 
     def perform(*params)
-      operation_class.call(params)
+      operation_class(*params).call(params)
     end
 
-    def operation_class
+    def operation_class(params)
+      return JSON.parse(params)['operation'].constantize if json?(params)
+
       self.class.name.gsub('Job', '').constantize
+    end
+
+    private
+
+    def json?(params)
+      JSON.parse(params).is_a?(Hash)
+    rescue StandardError
+      false
     end
   end
 end
