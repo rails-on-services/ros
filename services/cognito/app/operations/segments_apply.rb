@@ -15,7 +15,6 @@ class SegmentsApply < Ros::ActivityBase
   end
 
   def apply_segments(ctx, model:, segments:, errors:, **)
-    binding.pry
     segments.each do |segment_key, segment_value|
       res = apply_segment(segment_key, segment_value, model, errors)
       return false if res.nil?
