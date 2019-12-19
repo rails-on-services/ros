@@ -15,23 +15,28 @@ class SegmentsApply < Ros::ActivityBase
   end
 
   def apply_segments(ctx, model:, segments:, errors:, **)
-    segments.keys.each do |segment_key, segment_value|
-      begin
-        puts ">>>>>>>>>>>>>>>>>>>> #{segment_key.classify}"
-        segment_class = "Segments::#{segment_key.classify}".constantize
-        applied_segment = segment_class.call(users: model, segment: segment_value)
-        if applied_segment.failure?
-          errors.add(:segment, applied_segment.errors)
-          return false
-        end
+    binding.pry
+    segments.each do |segment_key, segment_value|
+      res = apply_segment(segment_key, segment_value, model, errors)
+      return false if res.nil?
 
-        model = applied_segment.model
-      rescue Exception => e
-        errors.add(:segment, e.inspect)
+      if res.failure?
+        ctx[:errors] = res.errors
         return false
       end
+
+      model = res.model
     end
     ctx[:model] = model
+  end
+
+  # def apply_segment(segment_class, users, segment_value)
+  def apply_segment(segment_key, segment_value, users, errors)
+    segment_class = "Segments::#{segment_key.classify}".constantize
+    segment_class.call(users: users, segment: segment_value)
+  rescue NameError => _e
+    errors.add(:segment, "Can't find segmentation class")
+    nil
   end
 
   def apply_birthday(ctx, model:, segments:, **)
