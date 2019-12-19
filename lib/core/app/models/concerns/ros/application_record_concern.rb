@@ -22,9 +22,8 @@ module Ros
       after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
 
       def stream_cloud_event
-        trigger = identify_trigger
         type = "#{Settings.service.name}.#{self.class.name.underscore.downcase}"
-        Ros::CloudEventStreamJob.perform_later(type: type, message_id: id, data: cloud_event_data.merge('_op' => trigger))
+        Ros::CloudEventStreamJob.perform_later(type: type, message_id: id, data: cloud_event_data)
       end
 
       def cloud_event_data
@@ -35,7 +34,7 @@ module Ros
           convert_attributes(name, value)
         end
 
-        avro_attributes.to_h.merge('urn' => to_urn)
+        avro_attributes.to_h.merge('urn' => to_urn, '_op' => after_commit_trigger)
       end
 
       def convert_attributes(name, value)
@@ -46,13 +45,9 @@ module Ros
         end
       end
 
-      def identify_trigger
-        if transaction_include_any_action?([:create])
-          'create'
-        elsif transaction_include_any_action?([:update])
-          'update'
-        else
-          'destroy'
+      def after_commit_trigger
+        %i[create update destroy].each do |action|
+          return action.to_s if transaction_include_any_action?([action])
         end
       end
     end
