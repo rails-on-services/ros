@@ -61,7 +61,7 @@ class AccountMailer < Devise::Mailer
     case kind
     when :confirm
       'confirmation_token'
-    when :reset
+    when :reset, :new
       'reset_password_token'
     else
       raise ArgumentError, "Unknown token type: #{kind}"
