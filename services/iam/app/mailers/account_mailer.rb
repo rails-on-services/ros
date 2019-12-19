@@ -9,17 +9,9 @@ class AccountMailer < Devise::Mailer
   def confirmation_instructions(resource, devise_token, _opts = {})
     @resource = resource
     @devise_token = devise_token
+    @confirmation_url = user_confirmation_url
 
-    if resource.unconfirmed_email.nil?
-      @account_name = Tenant.current_tenant&.alias
-      @reset_url = user_reset_password_url
-      template_name = 'team_welcome'
-    else
-      @confirmation_url = user_confirmation_url
-      template_name = 'confirmation_instructions'
-    end
-
-    mail to: resource.email, template_name: template_name
+    mail to: resource.email
   end
 
   def reset_password_instructions(resource, devise_token, _opts = {})
@@ -28,6 +20,15 @@ class AccountMailer < Devise::Mailer
     @reset_url = user_reset_password_url
 
     mail to: resource.email
+  end
+
+  def team_welcome(resource, devise_token, _opts = {})
+    @resource = resource
+    @devise_token = devise_token
+    @account_name = Tenant.current_tenant&.alias
+    @reset_url = new_user_password_url
+
+    mail to: resource.email # template_name: 'team_welcome' ?
   end
 
   private
@@ -46,6 +47,10 @@ class AccountMailer < Devise::Mailer
 
   def user_reset_password_url
     account_url :reset
+  end
+
+  def new_user_password_url
+    account_url :new
   end
 
   def account_url(kind)
