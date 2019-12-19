@@ -39,7 +39,7 @@ class AvroBuilder
       attribute_hash(column.name, data_type(column))
     end
 
-    all_attributes.push(attribute_hash('urn', 'string'))
+    all_attributes.push(*optional_attributes)
   end
 
   def data_type(column)
@@ -71,5 +71,12 @@ class AvroBuilder
 
   def model_columns
     model.columns
+  end
+
+  def optional_attributes
+    [
+      attribute_hash('urn', 'string'),
+      attribute_hash('_op', 'string')
+    ]
   end
 end
