@@ -40,6 +40,7 @@ class AvroBuilder
     end
 
     all_attributes.push(attribute_hash('urn', 'string'))
+    all_attributes.push(attribute_hash('_op', 'string'))
   end
 
   def data_type(column)
