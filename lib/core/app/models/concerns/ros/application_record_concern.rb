@@ -34,7 +34,7 @@ module Ros
           convert_attributes(name, value)
         end
 
-        avro_attributes.to_h.merge('urn' => to_urn, '_op' => after_commit_trigger)
+        avro_attributes.to_h.merge('urn' => to_urn, '_op' => type_of_callback_trigger)
       end
 
       def convert_attributes(name, value)
@@ -45,7 +45,7 @@ module Ros
         end
       end
 
-      def after_commit_trigger
+      def type_of_callback_trigger
         %i[create update destroy].each do |action|
           return action.to_s if transaction_include_any_action?([action])
         end
