@@ -2,7 +2,7 @@
 
 class UsersController < Iam::ApplicationController
   def create
-    res = UserCreate.call(params: create_params)
+    res = UserCreate.call(params: create_params, user: context[:user])
     if res.success?
       render json: json_resource(resource_class: UserResource, record: res.model), status: :created
     else
