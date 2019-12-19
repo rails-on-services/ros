@@ -12,30 +12,27 @@ module Segments
     private
 
     def init(ctx, segment:, **)
-      ctx[:base_date] = Time.zone.today
       ctx[:segment] = Array.wrap(segment)
       ctx[:translated_segments] = []
     end
 
     def verify_segment(_ctx, segment:, **)
-      segment.each do |element|
-        return false unless verify_segment_element(element)
-      end
+      segment.all? { |s| segment_element_valid?(s) }
     end
 
     def incorrect_segment(_ctx, errors:, segment:, **)
       errors.add(:segment, "Incorrect age segment value: #{segment}")
     end
 
-    def translate_segment(_ctx, segment:, base_date:, translated_segments:, **)
+    def translate_segment(_ctx, segment:, translated_segments:, **)
       segment.each do |element|
-        case element
-        when Hash
-          el = element.with_indifferent_access
-          translated_segments << ((base_date - el['to'].to_i.years - 1.year + 1.day)..(base_date - el['from'].to_i.years))
-        when String, Integer
-          translated_segments << ((base_date - element.to_i.years - 1.year + 1.day)..(base_date - element.to_i.years))
-        end
+        translated_segments << case element
+                               when Hash
+                                 el = element.with_indifferent_access
+                                 date_range(el['from'], el['to'])
+                               when String, Integer
+                                 date_range(element, element)
+                               end
       end
     end
 
@@ -47,7 +44,7 @@ module Segments
       errors.add(:model, "Can't apply age segment: #{segment}")
     end
 
-    def verify_segment_element(element)
+    def segment_element_valid?(element)
       case element
       when Hash
         element.with_indifferent_access.keys.sort == %w[from to] && element.values.all? { |el| el.to_s.match(/^\d+$/) }
@@ -56,6 +53,13 @@ module Segments
       else
         false
       end
+    end
+
+    def date_range(from, to, base_date = Time.zone.today)
+      Range.new(
+        base_date - to.to_i.years - 1.year + 1.day,
+        base_date - from.to_i.years
+      )
     end
   end
 end
