@@ -12,6 +12,10 @@ module Ros
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
       end
 
+      initializer 'ros_core.set_secret_key' do |app|
+        app.config.secret_key_base = ENV['SECRET_KEY_BASE']
+      end
+
       initializer 'ros_core.sidekiq' do |_app|
         require 'apartment-sidekiq'
         Apartment::Sidekiq::Middleware.run
