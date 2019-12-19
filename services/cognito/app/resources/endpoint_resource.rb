@@ -11,6 +11,8 @@ class EndpointResource < Cognito::ApplicationResource
   end
 
   def target_uri(uri)
+    return '' unless @model.target_type
+
     service, model = @model.target_type.underscore.split('/')
     case Settings.external_connection.type
     when 'service'
