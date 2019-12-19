@@ -30,7 +30,7 @@ module Providers
     def sms(to, body)
       client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
       client.publish(phone_number: to, message: body)
-    rescue Aws::Errors::ServiceError => e
+    rescue ::Aws::SNS::Errors::ServiceError => e
       Rails.logger.warn("No AWS client configured for tenant.account_id. #{e.inspect}")
     end
 
