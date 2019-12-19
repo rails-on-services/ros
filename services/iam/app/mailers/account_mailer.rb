@@ -28,7 +28,7 @@ class AccountMailer < Devise::Mailer
     @account_name = Tenant.current_tenant&.alias
     @reset_url = new_user_password_url
 
-    mail to: resource.email # template_name: 'team_welcome' ?
+    mail to: resource.email
   end
 
   private
