@@ -3,9 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe AccountMailer, type: :mailer do
-  include ActiveSupport::Testing::TimeHelpers
-
   describe 'team_welcome' do
+    let(:base_url) { 'http://bananas.com' }
     let(:user) { create(:user) }
     let(:reset_password_token) { 'secret_token' }
     let(:mail) { described_class.team_welcome(user, reset_password_token) }
@@ -16,14 +15,13 @@ RSpec.describe AccountMailer, type: :mailer do
         username: user.username
       ).encode(:confirmation)
     end
-    let(:base_url) { 'http://localhost' }
+
     let(:url) { "#{base_url}/password/new?reset_password_token=#{jwt}" }
 
     before do
-      # NOTE: We need it here to freeze `issued_at` attribute in JWT
-      travel_to Time.zone.today
+      # NOTE: Ensuring that the current tenant has the base url set
+      Tenant.current_tenant.update(properties: { base_url: base_url })
       allow_any_instance_of(User).to receive(:set_reset_password_token).and_return(reset_password_token)
-      allow_any_instance_of(Tenant).to receive(:properties).and_return('base_url' => base_url)
     end
 
     it 'has correct headers' do
