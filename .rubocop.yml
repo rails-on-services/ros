@@ -4,7 +4,15 @@ inherit_gem:
 
 inherit_from: .rubocop_todo.yml
 
+inherit_mode:
+  merge:
+    - AllowedNames
+
 Rails/DynamicFindBy:
   Whitelist:
     - find_by_schema_or_alias
     - find_by_urn
+
+Naming/MethodParameterName:
+  AllowedNames:
+    - as
