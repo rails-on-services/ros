@@ -7,7 +7,8 @@ RSpec.describe 'Messages', type: :request do
 
   let(:tenant)   { Tenant.first }
   let(:mock)     { true }
-  let(:url)      { u('/messages') }
+  let(:base_url) { u('/messages') }
+  let(:url)      { base_url }
   let(:provider) { create(:provider_aws) }
 
   describe 'GET index' do
@@ -26,15 +27,30 @@ RSpec.describe 'Messages', type: :request do
         get url, headers: request_headers
       end
 
-      it 'returns returns an ok response status' do
+      it 'returns an ok response status' do
         expect(response).to have_http_status(:ok)
         expect_json_sizes('data', models_count)
       end
 
       describe 'when we filter by user id' do
+        let(:url) { "#{base_url}?filter[user_id]=1" }
+
+        describe 'when the user exists' do
+          it 'returns all messages sent to that user' do
+          end
+        end
+
+        describe 'when the user does not exist' do
+          it 'it returns no messages at all' do
+          end
+        end
       end
 
       describe 'when we filter by phone number' do
+        let(:url) { "#{base_url}?filter[to]=+6587173612" }
+
+        it 'it returns only messages sent to the phone number' do
+        end
       end
     end
   end
