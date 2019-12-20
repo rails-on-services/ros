@@ -7,7 +7,7 @@ class UserCreate < Ros::ActivityBase
   step :initialize_user
   step :skip_confirmation_notification
   step :generate_reset_passowrd_token
-  step :save__user, Output(:failure) => End(:failure)
+  step :save__model, Output(:failure) => End(:failure)
   step :create_relationships
   step :send_welcome_email
 
