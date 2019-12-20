@@ -17,7 +17,7 @@ class MessageSend < Ros::ActivityBase
   end
 
   def send_message(ctx, **)
-    ctx[:msg_id] = ctx[:message].provider.send(ctx[:message].channel, ctx[:message].to, ctx[:message].from)
+    ctx[:msg_id] = ctx[:message].provider.send(ctx[:message].channel, ctx[:message].from, ctx[:message].to, ctx[:message].body)
   end
 
   def update_message_provider(ctx, **)
