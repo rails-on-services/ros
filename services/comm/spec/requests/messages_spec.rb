@@ -30,6 +30,12 @@ RSpec.describe 'Messages', type: :request do
         expect(response).to have_http_status(:ok)
         expect_json_sizes('data', models_count)
       end
+
+      describe 'when we filter by user id' do
+      end
+
+      describe 'when we filter by phone number' do
+      end
     end
   end
 
