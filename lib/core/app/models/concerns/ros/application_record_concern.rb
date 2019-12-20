@@ -34,7 +34,7 @@ module Ros
           convert_attributes(name, value)
         end
 
-        avro_attributes.to_h.merge('urn' => to_urn)
+        avro_attributes.to_h.merge('urn' => to_urn, '_op' => type_of_callback_trigger)
       end
 
       def convert_attributes(name, value)
@@ -42,6 +42,12 @@ module Ros
           [name, value.to_s]
         elsif column_for_attribute(name).type == :datetime
           [name, (value.to_f * 1000).to_i]
+        end
+      end
+
+      def type_of_callback_trigger
+        %i[create update destroy].each do |action|
+          return action.to_s if transaction_include_any_action?([action])
         end
       end
     end
