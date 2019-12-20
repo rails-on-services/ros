@@ -9,32 +9,33 @@ RSpec.describe 'Messages', type: :request do
   let(:mock)     { true }
   let(:url)      { u('/messages') }
   let(:provider) { create(:provider_aws) }
-  let(:post_data) do
-    {
-      data: {
-        attributes: {
-          body: 'HELLO DEAR HELLO',
-          to: '+6587173612',
-          from: 'PerxTest',
-          provider_id: provider.id,
-          channel: 'sms'
-        }
-      }
-    }.to_json
-  end
-
-  before do
-    mock_authentication if mock
-    post url, params: post_data, headers: request_headers
-  end
 
   describe 'POST create' do
+    let(:post_data) do
+      {
+        data: {
+          attributes: {
+            body: 'HELLO DEAR HELLO',
+            to: '+6587173612',
+            from: 'PerxTest',
+            provider_id: provider.id,
+            channel: 'sms'
+          }
+        }
+      }.to_json
+    end
+
     context 'Unauthenticated user' do
       include_context 'unauthorized user'
       include_examples 'unauthenticated get'
     end
 
     context 'Authenticated user' do
+      before do
+        mock_authentication if mock
+        post url, params: post_data, headers: request_headers
+      end
+
       context 'cognito user attempts to send message' do
         include_context 'cognito user'
 
