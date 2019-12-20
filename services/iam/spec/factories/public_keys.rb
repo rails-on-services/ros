@@ -2,5 +2,6 @@
 
 FactoryBot.define do
   factory :public_key do
+    association(:user)
   end
 end

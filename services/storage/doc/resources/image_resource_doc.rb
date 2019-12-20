@@ -6,5 +6,4 @@ class ImageResourceDoc < ApplicationDoc
   api :index, 'All Images'
   api :show, 'Single Image'
   api :create, 'Create Image'
-  api :update, 'Update Image'
 end

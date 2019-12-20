@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :event do
     send_at { Time.zone.now + 10.minutes }
-    channel { 'sms' }
+    channel { 'weblink' }
     sequence(:owner_id)
     owner_type { 'Perx::Campaign::Entity' }
     association :provider, factory: :provider_aws

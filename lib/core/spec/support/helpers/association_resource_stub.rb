@@ -2,6 +2,8 @@
 
 module AssociationResource
   module Stub
+    # TODO: re-evaluate the stubs because they actually seem confusing on what
+    # they return
     def stubbed_resource(resource:, attributes:)
       attributes = [attributes] unless attributes.is_a? Array
 

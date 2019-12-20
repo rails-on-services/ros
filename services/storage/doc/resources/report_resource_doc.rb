@@ -5,6 +5,4 @@ class ReportResourceDoc < ApplicationDoc
 
   api :index, 'All Reports'
   api :show, 'Single Report'
-  api :create, 'Create Report'
-  api :update, 'Update Report'
 end

@@ -3,8 +3,8 @@
 class ColumnMapResourceDoc < ApplicationDoc
   route_base 'column_maps'
 
-  api :index, 'All Column_maps'
-  api :show, 'Single Column_map'
-  api :create, 'Create Column_map'
-  api :update, 'Update Column_map'
+  api :index, 'All Column Maps'
+  api :show, 'Single Column Map'
+  api :create, 'Create Column Map'
+  api :update, 'Update Column Map'
 end

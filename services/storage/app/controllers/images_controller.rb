@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImagesController < Storage::ApplicationController
-  include HasAttachmentController
+  include CreatableAttachment
 
   def create
     file = model_class.upload(io: params[:file])
