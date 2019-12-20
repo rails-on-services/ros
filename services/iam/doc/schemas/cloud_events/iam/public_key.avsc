@@ -1,5 +1,5 @@
 {
-  "name": "iam.group_policy_join",
+  "name": "iam.public_key",
   "type": "record",
   "fields": [
     {
@@ -7,7 +7,7 @@
       "type": "int"
     },
     {
-      "name": "group_id",
+      "name": "user_id",
       "type": [
         "null",
         "int"
@@ -15,10 +15,10 @@
       "default": null
     },
     {
-      "name": "policy_id",
+      "name": "content",
       "type": [
         "null",
-        "int"
+        "string"
       ],
       "default": null
     },
