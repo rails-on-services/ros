@@ -7,8 +7,7 @@ class UserCreate < Ros::ActivityBase
   step :initialize_user
   step :skip_confirmation_notification
   step :generate_reset_passowrd_token
-  step :save_user
-  failed :user_not_created
+  step :save__user, Output(:failure) => End(:failure)
   step :create_relationships
   step :send_welcome_email
 
@@ -36,21 +35,10 @@ class UserCreate < Ros::ActivityBase
   end
 
   def generate_reset_passowrd_token(ctx, model:, **)
-    # NOTE: Alternative way is
-    # ctx[:reset_password_token] = model.send(:set_reset_password_token)
-    # But it saves model
     ctx[:reset_password_token], enc = Devise.token_generator.generate(model.class, :reset_password_token)
 
     model.reset_password_token   = enc
     model.reset_password_sent_at = Time.now.utc
-  end
-
-  def save_user(_ctx, model:, **)
-    model.save
-  end
-
-  def user_not_created(_ctx, model:, errors:, **)
-    errors.add(:user, model.errors.full_messages)
   end
 
   def create_relationships(_ctx, model:, relationships:, **)
