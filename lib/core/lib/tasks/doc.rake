@@ -22,17 +22,22 @@ namespace :ros do
     task all: %i[generate convert publish] do
     end
 
-    desc 'Create OpenAPI V 3.0 docuementation'
+    desc 'Create OpenAPI V 3.0 documentation'
     task generate: :environment do
       require Ros::Core::Engine.root.join('doc/open_api').to_s
+      # TODO: Fix this as this shouldn't be the way out of validations
+      Settings.api_calls_enabled = false
       ActiveRecord::Base.connection.begin_transaction(joinable: false)
-      create(:tenant).switch do
+
+      FactoryBot.create(:tenant).switch do
         OpenApi.write_docs
       end
+      # TODO: Fix this as this shouldn't be the way out of validations
+      Settings.api_calls_enabled = true
       ActiveRecord::Base.connection.rollback_transaction
     end
 
-    desc 'Convert OpenAPI V 3.0 docuementation to Postman'
+    desc 'Convert OpenAPI V 3.0 documentation to Postman'
     task :convert do
       require Ros::Core::Engine.root.join('doc/postman').to_s
       openapi = Postman::OpenApi.new(file_name: 'ros-api.json', openapi_dir: 'tmp/docs/openapi',

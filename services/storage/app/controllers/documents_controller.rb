@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DocumentsController < Storage::ApplicationController
-  include HasAttachmentController
+  include CreatableAttachment
 
   # TODO: move this to an operation
   def create

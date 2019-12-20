@@ -3,8 +3,8 @@
 class TransferMapResourceDoc < ApplicationDoc
   route_base 'transfer_maps'
 
-  api :index, 'All Transfer_maps'
-  api :show, 'Single Transfer_map'
-  api :create, 'Create Transfer_map'
-  api :update, 'Update Transfer_map'
+  api :index, 'All Transfer Maps'
+  api :show, 'Single Transfer Map'
+  api :create, 'Create Transfer Map'
+  api :update, 'Update Transfer Map'
 end
