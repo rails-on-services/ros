@@ -115,6 +115,14 @@
         "string"
       ],
       "default": null
+    },
+    {
+      "name": "_op",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     }
   ]
 }
