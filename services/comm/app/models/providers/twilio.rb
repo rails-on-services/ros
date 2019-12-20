@@ -19,15 +19,13 @@ module Providers
       auth_token || current_tenant.platform_twilio_enabled ? ENV['TWILIO_AUTH_TOKEN'] : nil
     end
 
-    # TODO: Get from provider
-    def from; '+12565308753' end
-
-    def sms(to, body)
+    def sms(from, to, body)
+      sender = from || provider_from
       # Rails.logger.warn('No Twilio client configured for tenant.account_id') and return unless client
       # message.update(from: from)
       # binding.pry
       # TODO: toggle sending on and off
-      client.messages.create(from: from, to: to, body: body)
+      client.messages.create(from: sender, to: to, body: body)
       Rails.logger.debug message
     end
 

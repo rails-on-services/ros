@@ -23,12 +23,13 @@ module Providers
       secret_access_key || current_tenant.platform_aws_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
     end
 
-    def from
+    def provider_from
       current_tenant.properties.dig(:from) || 'Perx'
     end
 
-    def sms(to, body)
-      client.set_sms_attributes(attributes: { 'DefaultSenderID' => from })
+    def sms(from, to, body)
+      sender = from || provider_from
+      client.set_sms_attributes(attributes: { 'DefaultSenderID' => sender })
       client.publish(phone_number: to, message: body)
     rescue ::Aws::SNS::Errors::ServiceError => e
       Rails.logger.warn("No AWS client configured for tenant.account_id. #{e.inspect}")

@@ -12,5 +12,9 @@ class Provider < Comm::ApplicationRecord
 
   def self.services; [] end
 
+  def provider_from
+    current_tenant.properties.dig(:from) || 'Perx'
+  end
+
   def sms; raise NotImplementedError end
 end
