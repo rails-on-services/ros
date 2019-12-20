@@ -4,7 +4,9 @@ require 'rails_helper'
 
 RSpec.describe MessageCreate, type: :operation do
   let(:op_result) { described_class.call(op_params) }
-  let(:user) { create(:user) }
+  let(:iam_user) { create :iam_user }
+  let(:cognito_user_id) { nil }
+  let(:user) { PolicyUser.new(iam_user, cognito_user_id) }
   # NOTE: an event needs a valid target
   let!(:target) { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   # TODO: Who should be the owner of a message?

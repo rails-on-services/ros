@@ -10,6 +10,29 @@ RSpec.describe 'Messages', type: :request do
   let(:url)      { u('/messages') }
   let(:provider) { create(:provider_aws) }
 
+  describe 'GET index' do
+    context 'Unauthenticated user' do
+      include_context 'unauthorized user'
+      include_examples 'unauthenticated get'
+    end
+
+    context 'authenticated user' do
+      include_context 'authorized user'
+
+      let(:models_count) { rand(1..5) }
+      let!(:models) { create_list :message, models_count }
+
+      before do
+        get url, headers: request_headers
+      end
+
+      it 'returns returns an ok response status' do
+        expect(response).to have_http_status(:ok)
+        expect_json_sizes('data', models_count)
+      end
+    end
+  end
+
   describe 'POST create' do
     let(:post_data) do
       {
@@ -32,11 +55,12 @@ RSpec.describe 'Messages', type: :request do
 
     context 'Authenticated user' do
       before do
-        mock_authentication if mock
         post url, params: post_data, headers: request_headers
       end
 
       context 'cognito user attempts to send message' do
+        let(:cognito_user_id) { 1 }
+
         include_context 'cognito user'
 
         it 'should not allow message to be sent' do
