@@ -7,34 +7,26 @@
       "type": "int"
     },
     {
-      "name": "name",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "etag",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "size",
-      "type": [
-        "null",
-        "int"
-      ],
-      "default": null
-    },
-    {
       "name": "transfer_map_id",
       "type": [
         "null",
         "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "header",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "platform_event_state",
+      "type": [
+        "null",
+        "string"
       ],
       "default": null
     },
@@ -62,6 +54,14 @@
     },
     {
       "name": "urn",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "_op",
       "type": [
         "null",
         "string"

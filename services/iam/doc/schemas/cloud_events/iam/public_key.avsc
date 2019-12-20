@@ -1,5 +1,5 @@
 {
-  "name": "cognito.endpoint",
+  "name": "iam.public_key",
   "type": "record",
   "fields": [
     {
@@ -7,23 +7,7 @@
       "type": "int"
     },
     {
-      "name": "url",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "target_type",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "target_id",
+      "name": "user_id",
       "type": [
         "null",
         "int"
@@ -31,7 +15,7 @@
       "default": null
     },
     {
-      "name": "properties",
+      "name": "content",
       "type": [
         "null",
         "string"
