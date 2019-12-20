@@ -87,7 +87,7 @@ RSpec.shared_examples 'application record concern' do
 
       avro_json = JSON.parse(File.read(avro_file))
       avro_field_names = avro_json['fields'].map { |column| column['name'] }
-      model_column_names = subject.class.columns.map(&:name).push(%w[urn _op])
+      model_column_names = subject.class.columns.map(&:name).push(*%w[urn _op])
       expect(avro_field_names).to match_array model_column_names
     end
   end
