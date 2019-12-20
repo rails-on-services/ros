@@ -8,11 +8,19 @@
     },
     {
       "name": "card_id",
-      "type": "int"
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
     },
     {
       "name": "identifier",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "created_at",
@@ -38,6 +46,14 @@
     },
     {
       "name": "urn",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "_op",
       "type": [
         "null",
         "string"
