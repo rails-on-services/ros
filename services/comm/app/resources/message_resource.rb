@@ -3,7 +3,14 @@
 class MessageResource < Comm::ApplicationResource
   attributes :from, :to, :body, :provider_id, :owner_id, :owner_type, :channel
 
-  filters :owner_id, :owner_type
+  filters :owner_id, :owner_type, :to
+
+  filter :user_id, apply: lambda { |records, value, _options|
+    user = Ros::Cognito::User.where(id: value[0]).first
+    return records.where('1=0') if user.nil?
+
+    records.sent_to(user.phone_number)
+  }
 
   def fetchable_fields
     super + [:provider_msg_id]
