@@ -2,7 +2,7 @@
 
 class DocumentResource < Storage::ApplicationResource
   attributes :transfer_map, :target, :column_map, :blob, :platform_event_state,
-             :url
+             :url, :status, :processed_amount, :success_amount, :fail_amount, :processed_details
 
   def transfer_map
     @model.transfer_map&.name

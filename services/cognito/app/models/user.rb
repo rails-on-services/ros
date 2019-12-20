@@ -22,6 +22,7 @@ class User < Cognito::ApplicationRecord
   end
 
   def self.load_document(file_name, column_map = nil, create = false)
+    processed_count = 0
     column_map ||= default_headers
     column_map = column_map.invert.symbolize_keys.invert
     CSV.foreach(file_name, headers: true, header_converters: ->(name) { column_map[name] }) do |row|
@@ -30,14 +31,15 @@ class User < Cognito::ApplicationRecord
         # row[:phone_number] = "+#{row[:phone_number]}"
         row = row.to_h.except(:pool_name)
         user = User.find_or_create_by(primary_identifier: row[:primary_identifier])
-        user.update(row.slice(:title, :last_name, :phone_number))
+        user.update(row.slice(:title, :last_name, :phone_number, :birthday, :gender))
+        processed_count += 1
         pool.users << user
       else
         Rails.logger.debug "title: #{row[:title]} phone_number: #{row[:phone_number]} " \
           "last_name: #{row[:last_name]} id: #{row[:primary_identifier]} pool: #{row[:pool_name]}"
       end
     end
-    true
+    processed_count
   end
 
   def self.default_headers
