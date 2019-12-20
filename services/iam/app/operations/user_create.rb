@@ -14,16 +14,17 @@ class UserCreate < Ros::ActivityBase
 
   private
 
-  def init(ctx, params:, **)
-    ctx[:relationships] = params.delete(:relationships)
-  end
-
   def check_permission(_ctx, user:, **)
     UserPolicy.new(user, User.new).create?
   end
 
   def not_permitted(_ctx, errors:, **)
     errors.add(:user, 'not permitted to create a user')
+  end
+
+  def init(ctx, params:, **)
+    ctx[:relationships] = params.delete(:relationships)
+    true
   end
 
   def initialize_user(ctx, params:, **)
@@ -53,9 +54,9 @@ class UserCreate < Ros::ActivityBase
   end
 
   def create_relationships(_ctx, model:, relationships:, **)
+    return true unless relationships
+
     model.groups << Group.where(id: relationships[:groups][:data].pluck(:id)).all
-  rescue NoMethodError
-    true # do nothing
   end
 
   def send_welcome_email(_ctx, model:, reset_password_token:, **)
