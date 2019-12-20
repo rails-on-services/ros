@@ -54,7 +54,7 @@ class UserCreate < Ros::ActivityBase
   end
 
   def create_relationships(_ctx, model:, relationships:, **)
-    return true unless relationships
+    return true if relationships&.dig(:groups, :data).blank?
 
     model.groups << Group.where(id: relationships[:groups][:data].pluck(:id)).all
   end
