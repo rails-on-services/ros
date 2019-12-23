@@ -261,7 +261,7 @@ module Ros
         FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories')) if defined?(FactoryBot) && !Rails.env.production?
       end
 
-      initialize 'ros_core.initialize_bullet' do
+      initializer 'ros_core.initialize_bullet' do
         blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
         environments = Settings.dig(:bullet, :environments)
 
