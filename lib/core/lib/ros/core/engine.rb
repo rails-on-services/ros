@@ -261,6 +261,13 @@ module Ros
         FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories')) if defined?(FactoryBot) && !Rails.env.production?
       end
 
+      initialize 'ros_core.initialize_bullet' do
+        blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
+        environments = Settings.dig(:bullet, :environments)
+
+        Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?(root_url)
+      end
+
       config.after_initialize do
         require_relative 'console' unless Rails.const_defined?('Server')
         if Settings.event_logging.enabled
@@ -272,11 +279,6 @@ module Ros
             )
           end
         end
-
-        blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
-        environments = Settings.dig(:bullet, :environments)
-        require 'bullet'
-        Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?(root_url)
       end
     end
     # rubocop:enable Metrics/ClassLength
