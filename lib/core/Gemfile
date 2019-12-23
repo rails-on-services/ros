@@ -7,6 +7,11 @@ gem 'pry-rails'
 gem 'awesome_print'
 
 gem 'ros_sdk', path: '../sdk'
+
+group :development do
+  gem 'bullet'
+end
+
 group :development, :test do
   gem 'brakeman', require: false
   gem 'spring-commands-rspec'
