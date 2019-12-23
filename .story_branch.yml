@@ -2,3 +2,4 @@
 tracker: jira
 project_id:
 - perxtechnologies|PW
+issue_placement: beginning
