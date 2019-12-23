@@ -265,7 +265,7 @@ module Ros
         blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
         environments = Settings.dig(:bullet, :environments)
 
-        Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?(root_url)
+        Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?('localhost:3000')
       end
 
       config.after_initialize do

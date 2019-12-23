@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'trailblazer-activity-dsl-linear', '~> 0.2.1'
   spec.add_dependency 'warden', '1.2.8'
   spec.add_dependency 'zero-rails_openapi', '2.1.0'
+  spec.add_dependency 'bullet'
   # spec.add_dependency 'ros_sdk', '~> 0.1.0'
 
   spec.add_development_dependency 'factory_bot_rails', '~> 5.0.2'
