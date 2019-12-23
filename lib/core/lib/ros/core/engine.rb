@@ -12,6 +12,10 @@ module Ros
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
       end
 
+      config.after_initialize do
+        Bullet.enable = Rails.env.development? ? true : false
+      end
+
       initializer 'ros_core.set_secret_key' do |app|
         app.config.secret_key_base = ENV['SECRET_KEY_BASE']
       end
