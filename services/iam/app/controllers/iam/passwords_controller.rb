@@ -46,7 +46,7 @@ module Iam
         if res.persisted?
           res.confirm unless res.confirmed?
           @current_jwt = Ros::Jwt.new(res.jwt_payload)
-          render status: :ok, json: { message: 'ok' }
+          render status: :ok, json: json_resource(resource_class: user_resource, record: res)
         else
           render status: :bad_request, json: { errors: res.errors }
         end

@@ -115,7 +115,6 @@ RSpec.describe 'Password management', type: :request do
           put url, params: params, headers: request_headers, as: :json
           expect(response).to be_successful
           expect(response.headers['Authorization']).to_not be_nil
-          expect_json('message', 'ok')
           expect(user.confirmed?).to be_truthy
         end
       end
