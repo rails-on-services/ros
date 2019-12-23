@@ -262,10 +262,10 @@ module Ros
       end
 
       initializer 'ros_core.initialize_bullet' do
-        blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
+        blacklisted_hosts = Settings.dig(:bullet, :blacklisted_hosts)
         environments = Settings.dig(:bullet, :environments)
 
-        Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?('localhost:3000')
+        Bullet.enable = environments.include?(Rails.env) && blacklisted_hosts.exclude?(app.host)
       end
 
       config.after_initialize do

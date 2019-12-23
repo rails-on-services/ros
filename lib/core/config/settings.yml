@@ -96,5 +96,5 @@ smtp:
   from: 'no-reply@example.com'
 
 bullet:
-  blacklisted_urls: ['https://candyland-dev1.uat.whistler.perxtech.io']
+  blacklisted_hosts: ['candyland-dev1.uat.whistler.perxtech.io']
   environments: ['development']
