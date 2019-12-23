@@ -265,7 +265,7 @@ module Ros
         blacklisted_hosts = Settings.dig(:bullet, :blacklisted_hosts)
         environments = Settings.dig(:bullet, :environments)
 
-        Bullet.enable = environments.include?(Rails.env) && blacklisted_hosts.exclude?(app.host)
+        Bullet.enable = environments.include?(Rails.env) && (blacklisted_hosts & app.config.hosts).empty?
       end
 
       config.after_initialize do
