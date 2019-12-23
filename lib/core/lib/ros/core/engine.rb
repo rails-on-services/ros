@@ -12,10 +12,6 @@ module Ros
         g.fixture_replacement :factory_bot, dir: 'spec/factories'
       end
 
-      config.after_initialize do
-        Bullet.enable = Rails.env.development? ? true : false
-      end
-
       initializer 'ros_core.set_secret_key' do |app|
         app.config.secret_key_base = ENV['SECRET_KEY_BASE']
       end
@@ -274,6 +270,11 @@ module Ros
             )
           end
         end
+
+        blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
+        environments = Settings.dig(:bullet, :environments)
+
+        Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?(root_url)
       end
     end
     # rubocop:enable Metrics/ClassLength
