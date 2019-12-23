@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bullet'
+
 module Ros
   module Core
     # rubocop:disable Metrics/ClassLength
