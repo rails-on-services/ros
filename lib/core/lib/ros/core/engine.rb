@@ -275,7 +275,7 @@ module Ros
 
         blacklisted_urls = Settings.dig(:bullet, :blacklisted_urls)
         environments = Settings.dig(:bullet, :environments)
-
+        require 'bullet'
         Bullet.enable = environments.include?(Rails.env) && blacklisted_urls.exclude?(root_url)
       end
     end
