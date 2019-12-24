@@ -6,7 +6,7 @@ RSpec.describe 'User Authentication', type: :request do
   include_context 'jsonapi requests'
 
   context :create do
-    let(:url) { u('/users/sign_in') }
+    let(:url) { service_url('/users/sign_in') }
     let(:tenant) { create(:tenant) }
     let(:user) { create(:user, :within_schema, username: 'test_user', password: '123456', schema: tenant.schema_name) }
     let(:valid_attributes) { { username: user.username, password: '123456' } }

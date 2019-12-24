@@ -7,7 +7,7 @@ RSpec.describe 'Messages', type: :request do
 
   let(:tenant)   { Tenant.first }
   let(:mock)     { true }
-  let(:url)      { u('/messages') }
+  let(:url)      { service_url('/messages') }
   let(:provider) { create(:provider_aws) }
   let(:post_data) do
     {

@@ -7,7 +7,7 @@ RSpec.describe 'pools requests', type: :request do
 
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:base_url) { u('/pools') }
+  let(:base_url) { service_url('/pools') }
   let(:url) { base_url }
 
   describe 'GET index' do

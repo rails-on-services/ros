@@ -12,7 +12,7 @@ RSpec.describe 'Events', type: :request do
   # Mocked results are 10% faster than non-mocked Bearer Authentication
   let(:mock) { true }
 
-  let(:url) { u('/events') }
+  let(:url) { service_url('/events') }
   let(:event) { create(:event) }
   let(:pool) { double(Ros::Cognito::Pool, id: 1) }
 

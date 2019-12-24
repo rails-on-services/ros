@@ -7,7 +7,7 @@ RSpec.describe 'metabase token requests', type: :request do
 
   let!(:tenant)       { Tenant.first }
   let!(:mock)         { true }
-  let!(:base_url)     { u('/metabase_token') }
+  let!(:base_url)     { service_url('/metabase_token') }
   let!(:url)          { base_url }
   let!(:user)         { create(:user) }
   let!(:card_name)    { 'total_active_customers' }

@@ -7,7 +7,7 @@ RSpec.describe 'Chown Request', type: :request do
 
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:url) { u('/chown_requests') }
+  let(:url) { service_url('/chown_requests') }
 
   xdescribe 'GET index' do
     let(:models_count) { rand(1..5) }

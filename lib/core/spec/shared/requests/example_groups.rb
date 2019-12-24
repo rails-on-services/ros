@@ -26,9 +26,10 @@ RSpec.shared_context 'jsonapi requests' do
   let(:get_response) { OpenStruct.new(attributes) }
   let(:post_response) { OpenStruct.new(post_attributes) }
 
-  # This method smells of :reek:UncommunicativeMethodName
-  def u(url)
-    Rails.logger.debug 'Reconsider the use of this'
+  # Currently the ROS services are mounted with a root mountpoint of
+  # /service-name so allow specifying a partial url without the service name as
+  # a prefix.
+  def service_url(url)
     "#{Ros.dummy_mount_path}#{url}"
   end
 

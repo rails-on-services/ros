@@ -7,7 +7,7 @@ RSpec.describe 'metabase_cards requests', type: :request do
 
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:base_url) { u('/metabase_cards') }
+  let(:base_url) { service_url('/metabase_cards') }
   let(:url) { base_url }
 
   describe 'POST create' do

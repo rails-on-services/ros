@@ -12,7 +12,7 @@ RSpec.describe 'Templates', type: :request do
   # Mocked results are 10% faster than non-mocked Bearer Authentication
   let(:mock) { true }
 
-  let(:url) { u('/templates') }
+  let(:url) { service_url('/templates') }
   let(:template) { create(:template) }
 
   describe 'GET index' do

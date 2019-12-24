@@ -7,7 +7,7 @@ RSpec.describe 'Chown Results', type: :request do
 
   let(:tenant) { Tenant.first }
   let(:mock) { true }
-  let(:url) { u('/chown_results') }
+  let(:url) { service_url('/chown_results') }
 
   describe 'GET index' do
     context 'Unauthenticated user' do

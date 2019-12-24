@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'users requests', type: :request do
   include_context 'jsonapi requests'
 
-  let(:url) { u('/users') }
+  let(:url) { service_url('/users') }
   let(:tenant) { create(:tenant) }
   let(:admin_user) { create(:user, :administrator_access) }
   let(:admin_creds) { admin_user.credentials.create }
@@ -39,7 +39,7 @@ RSpec.describe 'users requests', type: :request do
       end
 
       context 'filtered search' do
-        let(:url) { u("/users?filter[groups]=#{admin_group.id}") }
+        let(:url) { service_url("/users?filter[groups]=#{admin_group.id}") }
 
         it 'filters the users that belong to group id' do
           expect(response).to be_successful

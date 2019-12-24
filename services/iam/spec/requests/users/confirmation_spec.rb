@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Account confirmation', type: :request do
   context :update do
-    let(:url) { u('/users/confirmation') }
+    let(:url) { service_url('/users/confirmation') }
     let(:tenant) { create(:tenant) }
     let(:password) { '123456' }
     let(:user) do

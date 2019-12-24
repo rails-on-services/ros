@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Password management', type: :request do
   context :update do
-    let(:url) { u('/users/password') }
+    let(:url) { service_url('/users/password') }
     let(:tenant) { create(:tenant) }
     let(:password) { '123456' }
     let(:user) do
@@ -57,7 +57,7 @@ RSpec.describe 'Password management', type: :request do
 
     context 'logging in' do
       before do
-        post u('/users/sign_in'), params: {
+        post service_url('/users/sign_in'), params: {
           data: {
             attributes: {
               username: confirmed_user.username,
