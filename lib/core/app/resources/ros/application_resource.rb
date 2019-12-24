@@ -6,7 +6,7 @@ module Ros
     include Ros::UrlBuilder
     include AssociationResource::ResourceHelper
     abstract
-    attributes :urn, :created_at, :updated_at
+    attributes :urn, :created_at, :updated_at, :gid
 
     def urn; @model.to_urn end
 

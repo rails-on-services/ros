@@ -17,6 +17,10 @@ module Ros
     end
 
     included do
+      def gid
+        @gid ||= GlobalID.create(self, app: Settings.service.name)
+      end
+
       def current_tenant; self.class.current_tenant end
 
       after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
