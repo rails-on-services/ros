@@ -10,8 +10,8 @@ class MessageResource < Comm::ApplicationResource
   }
 
   filter :user_id, apply: lambda { |records, value, _options|
-    user = Ros::Cognito::User.where(id: value[0]).first
     binding.pry
+    user = Ros::Cognito::User.where(id: value[0]).first
 
     return records.none if user.nil?
 

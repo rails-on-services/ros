@@ -20,10 +20,12 @@ RSpec.describe 'Messages', type: :request do
     context 'authenticated user' do
       include_context 'authorized user'
 
-      let!(:models) { create_list :message, 3, to: "+6598765432" }
-      let!(:message_to_user) { create_list :message, 2, to: "+6512345678" }
+      let!(:models) { create_list :message, 3, to: '+6598765432' }
+      let!(:message_to_user) { create_list :message, 2, to: '+6512345678' }
+      let(:existing_user) { OpenStruct.new(id: 1, phone_number: message_to_user[0].to) }
 
       before do
+        stubbed_resource(resource: Ros::Cognito::User, attributes: existing_user)
         get url, headers: request_headers
       end
 
@@ -35,20 +37,16 @@ RSpec.describe 'Messages', type: :request do
       describe 'when we filter by user id' do
         let(:url) { "#{base_url}?filter[user_id]=1" }
 
-        before do
-          stubbed_resource(resource: Ros::Cognito::User, attributes: OpenStruct.new(id: 1, phone_number: message_to_user[0].to))
-        end
-
         describe 'when the user exists' do
           it 'returns all messages sent to that user' do
-            binding.pry
-
             expect(response).to have_http_status(:ok)
             expect_json_sizes('data', 2)
           end
         end
 
         describe 'when the user does not exist' do
+          let(:existing_user) { [] }
+
           it 'it returns no messages at all' do
             expect(response).to have_http_status(:ok)
             expect_json_sizes('data', 0)
