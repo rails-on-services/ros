@@ -142,6 +142,8 @@ components:
               # This is for production; for staging it is the values here
               redis_url: redis://redis-master:6379
               platform:
+                bullet:
+                  enabled: no
                 jwt:
                   encryption_key: 73f726055b4891da8ed00cb6bb72789b
                   iss: http://iam.localhost:3000

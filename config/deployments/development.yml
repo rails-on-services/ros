@@ -63,6 +63,8 @@ components:
             environment:
               redis_url: redis://redis:6379
               platform:
+                bullet:
+                  enabled: yes
                 request_logging:
                   enabled: no
                 event_logging:
