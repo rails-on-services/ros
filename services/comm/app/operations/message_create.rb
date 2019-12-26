@@ -17,7 +17,7 @@ class MessageCreate < Ros::ActivityBase
   # it immediately
 
   def check_permission(_ctx, user:, **)
-    MessagePolicy.new(user: user).create?
+    MessagePolicy.new(user, Message.new).create?
   end
 
   def not_permitted(ctx, **)

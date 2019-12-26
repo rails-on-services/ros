@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
 class MessagePolicy < Comm::ApplicationPolicy
-  attr_reader :user
-
-  def initialize(user:)
-    @user = user
-  end
-
   def create?
-    user.cognito_user_id.nil?
+    return false if user.cognito_user_id
+
+    super
   end
 end
