@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module MailchimpService
-
   class Client
     def self.perform(&block)
       client = Gibbon::Request.new(api_key: ENV['MAILCHIMP_API_KEY'], symbolize_keys: true, debug: true)
@@ -13,10 +12,10 @@ module MailchimpService
       e.record
     end
 
-    def self.parse_error(e)
-      return e if e.body.nil?
+    def self.parse_error(err)
+      return err if err.body.nil?
 
-      body = e.body
+      body = err.body
       unless body[:errors]
         body[:errors] = {
           message: body[:title],
@@ -88,5 +87,4 @@ module MailchimpService
 
   module_function :show_members, :create_members, :create_list, :create_campaign,
                   :campaign_status, :show_campaign_content, :create_campaign_content, :start_campaign
-
 end

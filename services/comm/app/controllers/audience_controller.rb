@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class AudienceController < ApplicationController
-
   def show
     render json: MailchimpService.show_members(list: audience)
   end
@@ -44,6 +43,4 @@ class AudienceController < ApplicationController
   def audience
     current_campaign.audience.find(params[:id])
   end
-
-
 end

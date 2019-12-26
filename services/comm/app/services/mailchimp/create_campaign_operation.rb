@@ -36,6 +36,5 @@ module Mailchimp
     def list
       @list ||= campaign.audience
     end
-
   end
 end

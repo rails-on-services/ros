@@ -44,6 +44,5 @@ module Mailchimp
         }
       }
     end
-
   end
 end

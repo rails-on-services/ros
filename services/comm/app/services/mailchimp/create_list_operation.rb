@@ -3,6 +3,7 @@
 module Mailchimp
   class CreateListOperation
     attr_reader :audience
+
     delegate :name, :company_name, :address, :city, :state, :zip, :country, :phone, :reminder,
              :from_name, :from_email, :subject, :language, to: :audience
 
@@ -27,6 +28,7 @@ module Mailchimp
       }
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def contact_hash
       {
         company: company_name || '',
@@ -38,6 +40,7 @@ module Mailchimp
         phone: phone || ''
       }
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def defaults_hash
       {
@@ -47,6 +50,5 @@ module Mailchimp
         subject: subject || ''
       }
     end
-
   end
 end

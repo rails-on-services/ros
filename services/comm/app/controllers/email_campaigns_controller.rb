@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EmailCampaignsController < ApplicationController
-
   def show
     render json: email_campaign
   end
@@ -33,7 +32,6 @@ class EmailCampaignsController < ApplicationController
   def content
     render json: MailchimpService.show_campaign_content(campaign: email_campaign)
   end
-
 
   private
 

@@ -11,11 +11,9 @@ class EmailCampaign < Comm::ApplicationRecord
   validates :name, :audience, :subject, presence: true
   before_validation :set_defaults
 
-
   private
 
   def set_defaults
     self.type ||= DEFAULT_TYPE
   end
-
 end
