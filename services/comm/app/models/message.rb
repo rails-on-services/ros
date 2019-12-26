@@ -5,7 +5,8 @@ class Message < Comm::ApplicationRecord
   belongs_to :owner, polymorphic: true, optional: true
 
   def self.sent_to(phone_number)
-    where(to: phone_number)
+    search_number = phone_number.tr('^0-9', '%')
+    where('messages.to LIKE ?', search_number)
   end
 
   validate :provider_channel, if: :provider

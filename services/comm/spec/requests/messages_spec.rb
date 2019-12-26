@@ -20,8 +20,8 @@ RSpec.describe 'Messages', type: :request do
     context 'authenticated user' do
       include_context 'authorized user'
 
-      let(:models_count) { rand(1..5) }
-      let!(:models) { create_list :message, models_count }
+      let!(:models) { create_list :message, 3, to: "+6598765432" }
+      let!(:message_to_user) { create_list :message, 2, to: "+6512345678" }
 
       before do
         get url, headers: request_headers
@@ -29,29 +29,39 @@ RSpec.describe 'Messages', type: :request do
 
       it 'returns an ok response status' do
         expect(response).to have_http_status(:ok)
-        expect_json_sizes('data', models_count)
+        expect_json_sizes('data', 5)
       end
 
       describe 'when we filter by user id' do
         let(:url) { "#{base_url}?filter[user_id]=1" }
 
+        before do
+          stubbed_resource(resource: Ros::Cognito::User, attributes: OpenStruct.new(id: 1, phone_number: message_to_user[0].to))
+        end
+
         describe 'when the user exists' do
           it 'returns all messages sent to that user' do
+            binding.pry
+
             expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 2)
           end
         end
 
         describe 'when the user does not exist' do
           it 'it returns no messages at all' do
             expect(response).to have_http_status(:ok)
+            expect_json_sizes('data', 0)
           end
         end
       end
 
       describe 'when we filter by phone number' do
-        let(:url) { "#{base_url}?filter[to]=+6587173612" }
+        let(:url) { "#{base_url}?filter[to]=+6598765432" }
 
         it 'it returns only messages sent to the phone number' do
+          expect(response).to have_http_status(:ok)
+          expect_json_sizes('data', 3)
         end
       end
     end
