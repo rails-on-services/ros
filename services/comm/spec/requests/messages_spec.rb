@@ -37,11 +37,13 @@ RSpec.describe 'Messages', type: :request do
 
         describe 'when the user exists' do
           it 'returns all messages sent to that user' do
+            expect(response).to have_http_status(:ok)
           end
         end
 
         describe 'when the user does not exist' do
           it 'it returns no messages at all' do
+            expect(response).to have_http_status(:ok)
           end
         end
       end

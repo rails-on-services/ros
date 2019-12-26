@@ -4,7 +4,9 @@ class Message < Comm::ApplicationRecord
   belongs_to :provider
   belongs_to :owner, polymorphic: true, optional: true
 
-  scope :sent_to, ->(phone_number) { where(phone_number: phone_number) }
+  def self.sent_to(phone_number)
+    where(to: phone_number)
+  end
 
   validate :provider_channel, if: :provider
 
