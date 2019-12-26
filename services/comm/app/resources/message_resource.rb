@@ -5,7 +5,7 @@ class MessageResource < Comm::ApplicationResource
 
   filters :owner_id, :owner_type
 
-  filter :to, apply: lambda {|records, value, _options|
+  filter :to, apply: lambda { |records, value, _options|
     records.sent_to(value[0])
   }
 
