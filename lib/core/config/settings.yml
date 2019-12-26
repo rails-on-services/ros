@@ -94,7 +94,3 @@ smtp:
   ssl: false
   tls: false
   from: 'no-reply@example.com'
-
-bullet:
-  blacklisted_hosts: ['candyland-dev1.uat.whistler.perxtech.io']
-  environments: ['development']
