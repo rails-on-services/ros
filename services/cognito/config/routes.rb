@@ -10,4 +10,5 @@ Ros::Cognito::Engine.routes.draw do
   jsonapi_resources :endpoints
 
   resources :metabase_token, only: [:show]
+  post 'login', to: 'login#create'
 end
