@@ -14,12 +14,12 @@ class MessageSend < Ros::ActivityBase
     errors.add(:message, "with #{id} not found")
   end
 
-  def send_message(ctx, **)
-    ctx[:msg_id] = ctx[:message].provider.send(ctx[:message].channel, ctx[:message].from, ctx[:message].to, ctx[:message].body)
+  def send_message(ctx, message:, **)
+    ctx[:msg_id] = message.provider.send(message.channel, message.from, message.to, message.body)
   end
 
-  def update_message_provider_id(ctx, **)
-    ctx[:message].provider_msg_id = ctx[:msg_id]
-    ctx[:message].save
+  def update_message_provider_id(ctx, message:, **)
+    message.provider_msg_id = ctx[:msg_id]
+    message.save
   end
 end
