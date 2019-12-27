@@ -4,12 +4,10 @@ class MessageSend < Ros::ActivityBase
   step :retrieve_message
   failed :message_not_found
   step :send_message
-  step :update_message_provider
+  step :update_message_provider_id
 
   def retrieve_message(ctx, id:, **)
-    ctx[:message] = Message.find(id)
-  rescue ActiveRecord::RecordNotFound
-    false
+    ctx[:message] = Message.find_by(id: id)
   end
 
   def message_not_found(_ctx, errors:, id:, **)
@@ -20,7 +18,7 @@ class MessageSend < Ros::ActivityBase
     ctx[:msg_id] = ctx[:message].provider.send(ctx[:message].channel, ctx[:message].from, ctx[:message].to, ctx[:message].body)
   end
 
-  def update_message_provider(ctx, **)
+  def update_message_provider_id(ctx, **)
     ctx[:message].provider_msg_id = ctx[:msg_id]
     ctx[:message].save
   end
