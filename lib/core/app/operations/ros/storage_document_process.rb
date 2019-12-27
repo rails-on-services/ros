@@ -10,19 +10,22 @@ module Ros
     #   The column_mapping which is a hash of CSV column names to table column names
     #   The path to the file on the bucket
     # It then determines the file type and does whatever it is supposed to do for a file of this type
-    class << self
-      def call(json)
-        id = JSON.parse(json)['id']
-        @document = Ros::Storage::Document.find(id).first
-        Ros::Infra.resources.storage.app.cp(source_path)
-        return unless target_class.load_document(local_path, document.column_map, true)
-
-        document.update(platform_event_state: :processed)
-      end
-
-      def target_class; document.target.classify.constantize end
-      def local_path; "#{Rails.root}/tmp/fs/#{File.basename(source_path)}" end
-      def source_path; document.blob['key'] end
+    def self.call(json)
+      new.call(json)
     end
+
+    def call(json)
+      id = JSON.parse(json)['id']
+      @document = Ros::Storage::Document.find(id).first
+      Ros::Infra.resources.storage.app.cp(source_path)
+      processed_count = target_class.load_document(local_path, document.column_map, true)
+      return unless processed_count
+
+      document.update(status: :success, processed_amount: processed_count)
+    end
+
+    def target_class; document.target.classify.constantize end
+    def local_path; "#{Rails.root}/tmp/fs/#{File.basename(source_path)}" end
+    def source_path; document.blob['key'] end
   end
 end
