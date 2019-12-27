@@ -9,4 +9,4 @@ def get_organization_org(self, id):
 
 def create_organization_orgs(self):
   payload = { 'data': { 'type': 'orgs', 'attributes': { 'name': "MyString", 'description': "MyString", 'properties': {} } } }
-  return self.client.post('organization/orgs', data=json.dumps(payload), headers=self.iam_header)
+  return self.client.post('organization/orgs', data=json.dumps(payload), headers=self.response['iam_header'])
