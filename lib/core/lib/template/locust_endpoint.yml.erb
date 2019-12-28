@@ -1,12 +1,12 @@
 import json
 
-def get_all_<%=values.service_name%>_<%=values.plural_name%>(self):
-  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', headers=self.header)
+def get_all_<%=values.service_name%>_<%=values.plural_name%>(self, header):
+  self.client.get('<%=values.service_name%>/<%=values.plural_name%>', headers=header)
 
-def get_<%=values.service_name%>_<%=values.name%>(self, id):
+def get_<%=values.service_name%>_<%=values.name%>(self, id, header):
   path = ('<%=values.service_name%>/<%=values.plural_name%>/%s' %(id))
-  self.client.get(path, headers=self.header)
+  self.client.get(path, headers=header)
 
-def create_<%=values.service_name%>_<%=values.plural_name%>(self<%=values.extra_args%>):
+def create_<%=values.service_name%>_<%=values.name%>(self<%=values.extra_args%>, header):
   payload = <%=payload%>
-  return self.client.post('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=self.header)
+  return self.client.post('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=header)
