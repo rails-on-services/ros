@@ -10,3 +10,8 @@ def get_<%=values.service_name%>_<%=values.name%>(self, id, header):
 def create_<%=values.service_name%>_<%=values.name%>(self<%=values.extra_args%>, header):
   payload = <%=payload%>
   return self.client.post('<%=values.service_name%>/<%=values.plural_name%>', data=json.dumps(payload), headers=header)
+
+def update_<%=values.service_name%>_<%=values.name%>(self, id, attributes, header):
+  payload = { 'data': { 'type': '<%=values.plural_name%>', 'id': id, 'attributes': attributes } }
+  path = ('<%=values.service_name%>/<%=values.plural_name%>/%s' %(id))
+  self.client.patch(path, data=json.dumps(payload), headers=header)

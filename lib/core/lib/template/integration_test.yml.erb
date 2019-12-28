@@ -7,6 +7,8 @@ from locust import HttpLocust, task, seq_task, TaskSet, TaskSequence
 # from lib.service_name import model_name
 
 class <%=values.service_name%>(TaskSequence):
+  response = {}
+
   def setup(self):
     iam_response = helper.login_as_iam_user(self)
     self.response['iam_header'] = { "authorization": iam_response.headers['Authorization'], 'content-type': 'application/vnd.api+json' }
