@@ -150,6 +150,37 @@ RSpec.describe 'pools requests', type: :request do
         end
       end
     end
+
+    context 'system_generated filter' do
+      include_context 'authorized user'
+
+      let!(:regular_pool) { create(:pool) }
+      let!(:system_generated_pool) { create(:pool, system_generated: true) }
+
+      before do
+        get url, headers: request_headers
+      end
+
+      context 'only regular' do
+        let(:url) { "#{base_url}?filter[system_generated]=false" }
+
+        it 'returns filtered response' do
+          expect(response).to be_ok
+          expect_json_sizes('data', 1)
+          expect_json('data.0.id', regular_pool.id.to_s)
+        end
+      end
+
+      context 'only system_generated' do
+        let(:url) { "#{base_url}?filter[system_generated]=true" }
+
+        it 'returns filtered response' do
+          expect(response).to be_ok
+          expect_json_sizes('data', 1)
+          expect_json('data.0.id', system_generated_pool.id.to_s)
+        end
+      end
+    end
   end
 
   describe 'POST create' do
