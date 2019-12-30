@@ -18,10 +18,10 @@ module Ros
         app.config.secret_key_base = ENV['SECRET_KEY_BASE']
       end
 
-      initializer 'ros_core.sidekiq' do |_app|
-        require 'apartment-sidekiq'
-        Apartment::Sidekiq::Middleware.run
-      end
+      # initializer 'ros_core.sidekiq' do |_app|
+      #   require 'apartment-sidekiq'
+      #   Apartment::Sidekiq::Middleware.run
+      # end
 
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
       # export PLATFORM__CREDENTIALS__JWT_ENCRYPTION_KEY='test'
