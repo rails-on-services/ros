@@ -7,7 +7,7 @@ WORKDIR /home/rails/services/app
 
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
-    bundler:2.0.2 \
+    bundler:2.1.2 \
     nokogiri:1.10.4 \
     ffi:1.11.1 \
     grpc:1.23.0 \

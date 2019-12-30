@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pry-rails', '0.3.9'
   spec.add_dependency 'rack-cors'
   spec.add_dependency 'rack-fluentd-logger', '0.1.5'
-  spec.add_dependency 'rails', '~> 6.0.0.rc2'
+  spec.add_dependency 'rails', '~> 6.0.2.1'
   spec.add_dependency 'rufus-scheduler', '~> 3.6.0'
   spec.add_dependency 'seedbank', '0.5.0'
   spec.add_dependency 'sentry-raven', '2.11.1'
