@@ -180,6 +180,15 @@ RSpec.describe 'pools requests', type: :request do
           expect_json('data.0.id', system_generated_pool.id.to_s)
         end
       end
+
+      context 'all' do
+        let(:url) { base_url }
+
+        it 'returns full response' do
+          expect(response).to be_ok
+          expect_json_sizes('data', 2)
+        end
+      end
     end
   end
 

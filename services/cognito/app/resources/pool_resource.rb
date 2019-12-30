@@ -14,9 +14,7 @@ class PoolResource < Cognito::ApplicationResource
     records.where(filter_fields, id_query: value[0], ilike_query: "%#{value[0]}%")
   }
 
-  filter :system_generated, apply: lambda { |records, value, _options|
-    records.where('system_generated = ?', value[0] == 'true')
-  }
+  filter :system_generated
 
   def self.updatable_fields(context)
     super - %i[user_count]
