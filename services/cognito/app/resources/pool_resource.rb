@@ -5,14 +5,16 @@ class PoolResource < Cognito::ApplicationResource
   has_many :users
 
   filter :query, apply: lambda { |records, value, _options|
-    query_by_id = "pools.id IN (#{value[0]})"
+    query_by_id = 'pools.id IN (:id_query)'
     query_by_non_id_attrs = %w[name]
-                            .map { |field| "#{field} ILIKE '%#{value[0]}%'" }
+                            .map { |field| "#{field} ILIKE :ilike_query" }
                             .join(' OR ')
 
-    filter_fields = /\D/.match?(value[0]) ? query_by_non_id_attrs : query_by_id
-    records.where(filter_fields)
+    filter_fields = /^\d+$/.match?(value[0]) ? query_by_id : query_by_non_id_attrs
+    records.where(filter_fields, id_query: value[0], ilike_query: "%#{value[0]}%")
   }
+
+  filter :system_generated
 
   def self.updatable_fields(context)
     super - %i[user_count]
