@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class IamPublicKeyProcess
+  def self.call(params)
+    new.call(params: params)
+  end
+
   METADATA_HASH = { mode: '33188', gid: '100' }.freeze
 
   def call(_json)

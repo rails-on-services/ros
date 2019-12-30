@@ -24,7 +24,8 @@ module Ros
     end
 
     def operation_class
-      self.class.name.gsub('Job', '').constantize
+      job_name = self.class.name.gsub('Job', '')
+      job_name.constantize
     end
   end
 end
