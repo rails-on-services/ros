@@ -50,16 +50,16 @@ module Ros
           end
           # Set ENVs that allow the local server to access compose cluster services
           # TODO: Figure out how core/config/settings.local.yml can override the ENVs
-          ENV['PLATFORM__CONNECTION__HOST__HOST'] = 'localhost'
-          ENV['PLATFORM__CONNECTION__HOST__FORCE_PATH_STYLE'] = 'true'
-          ENV['PLATFORM__REQUEST_LOGGING__ENABLED'] = 'false'
-          ENV['PLATFORM__EVENT_LOGGING__ENABLED'] = 'false'
-          ENV['RAILS_DATABASE_HOST'] = 'localhost'
-          ENV['REDIS_URL'] = 'redis://localhost:6379'
-          ENV['PLATFORM__REQUEST_LOGGING__CONFIG__HOST'] = 'localhost'
-          ENV['PLATFORM__INFRA__SERVICES__STORAGE__AWS__ENDPOINT'] = 'http://localhost:4572'
-          ENV['PLATFORM__INFRA__SERVICES__MQ__AWS__ENDPOINT'] = 'http://localhost:4576'
-          ENV['BUCKET_ENDPOINT_URL'] = 'http://localhost:4572'
+          #   ENV['PLATFORM__CONNECTION__HOST__HOST'] = 'localhost'
+          #   ENV['PLATFORM__CONNECTION__HOST__FORCE_PATH_STYLE'] = 'true'
+          #   ENV['PLATFORM__REQUEST_LOGGING__ENABLED'] = 'false'
+          #   ENV['PLATFORM__EVENT_LOGGING__ENABLED'] = 'false'
+          #   ENV['RAILS_DATABASE_HOST'] = 'localhost'
+          #   ENV['REDIS_URL'] = 'redis://localhost:6379'
+          #   ENV['PLATFORM__REQUEST_LOGGING__CONFIG__HOST'] = 'localhost'
+          #   ENV['PLATFORM__INFRA__SERVICES__STORAGE__AWS__ENDPOINT'] = 'http://localhost:4572'
+          #   ENV['PLATFORM__INFRA__SERVICES__MQ__AWS__ENDPOINT'] = 'http://localhost:4576'
+          #   ENV['BUCKET_ENDPOINT_URL'] = 'http://localhost:4572'
         end
         Settings.reload!
       end
