@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bullet'
+
 module Ros
   module Core
     # rubocop:disable Metrics/ClassLength
@@ -257,6 +259,10 @@ module Ros
 
       initializer 'ros_core.set_factory_paths', after: 'factory_bot.set_factory_paths' do
         FactoryBot.definition_file_paths.prepend(Ros.spec_root.join('factories')) if defined?(FactoryBot) && !Rails.env.production?
+      end
+
+      initializer 'ros_core.initialize_bullet' do
+        Bullet.enable = Settings.bullet.enabled
       end
 
       config.after_initialize do
