@@ -142,9 +142,9 @@ GEM
       aws-eventstream (~> 1.0, >= 1.0.2)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bullet (6.1.0)
     brakeman (4.7.2)
     builder (3.2.4)
+    bullet (6.1.0)
     choice (0.2.0)
     coderay (1.1.2)
     colorize (0.8.1)
@@ -445,7 +445,6 @@ GEM
       unf_ext
     unf_ext (0.0.7.6)
     unicode-display_width (1.6.0)
-    uniform_notifier (1.13.0)
     uri_template (0.7.0)
     warden (1.2.8)
       rack (>= 2.0.6)
