@@ -3,7 +3,7 @@
 namespace :ros do
   namespace :cloud_event_stream do
     desc 'Log'
-    task :log, [:timestamp] => :environment do
+    task :log, [:timestamp] => :environment do |task, args|
       next unless Settings.event_logging.enabled
 
       ApplicationRecord.descendants.each do |model|
@@ -11,7 +11,7 @@ namespace :ros do
       end
     end
 
-    task :log_for_model, [:model, :timestamp] :environment do |task, args|
+    task :log_for_model, [:model, :timestamp] => :environment do |task, args|
       next unless Settings.event_logging.enabled
 
       model = args[:model].to_s.classify.constantize
