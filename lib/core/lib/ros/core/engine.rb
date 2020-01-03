@@ -18,10 +18,10 @@ module Ros
         app.config.secret_key_base = ENV['SECRET_KEY_BASE']
       end
 
-      # initializer 'ros_core.sidekiq' do |_app|
-      #   require 'apartment-sidekiq'
-      #   Apartment::Sidekiq::Middleware.run
-      # end
+      initializer 'ros_core.sidekiq' do |_app|
+        require 'apartment-sidekiq'
+        Apartment::Sidekiq::Middleware.run
+      end
 
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
       # export PLATFORM__CREDENTIALS__JWT_ENCRYPTION_KEY='test'
@@ -35,10 +35,8 @@ module Ros
       initializer 'ros_core.load_platform_config' do |_app|
         # The location of the environment files is the parent services/.env dir
         # This dir is soft linked to the compose directory of the current deployment
-        # puts ">>>>>>>>>>> #{Ros.root}"
-        root = '/Users/perx/dev/ros-native/perx/whistler-services'
 
-        if Ros.host_env.os? && Dir.exist?("#{root}/services/.env")
+        if Ros.host_env.os? && Dir.exist?("#{Ros.root}/services/.env")
           configs = ['platform']
           ary = Settings.instance_variable_get('@config_sources').select do |config|
             config.instance_variable_get('@hash')&.keys&.include?(:service)
@@ -48,7 +46,7 @@ module Ros
           end
           require 'dotenv'
           configs.each do |env_name|
-            env_file = "#{root}/services/.env/#{env_name}.env"
+            env_file = "#{Ros.root}/services/.env/#{env_name}.env"
             Dotenv.load(env_file) if File.exist?(env_file)
           end
           # Set ENVs that allow the local server to access compose cluster services
