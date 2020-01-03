@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  spec.add_dependency 'ros-apartment', '2.3.0.alpha2'
+  spec.add_dependency 'ros-apartment', '2.3.0'
   spec.add_dependency 'ros-apartment-sidekiq', '1.2.0'
   spec.add_dependency 'attr_encrypted', '~> 3.1.0'
   spec.add_dependency 'avro_turf', '~> 0.9.0'
