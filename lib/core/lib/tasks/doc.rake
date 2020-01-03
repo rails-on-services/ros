@@ -22,7 +22,7 @@ namespace :ros do
     task all: %i[generate convert publish] do
     end
 
-    desc 'Create OpenAPI V 3.0 docuementation'
+    desc 'Create OpenAPI V 3.0 documentation'
     task generate: :environment do
       require Ros::Core::Engine.root.join('doc/open_api').to_s
       ActiveRecord::Base.connection.begin_transaction(joinable: false)
