@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  spec.add_dependency 'apartment', '2.2.1'
-  spec.add_dependency 'apartment-sidekiq', '1.2.0'
+  spec.add_dependency 'ros-apartment', '2.3.0'
+  spec.add_dependency 'ros-apartment-sidekiq', '1.2.0'
   spec.add_dependency 'attr_encrypted', '~> 3.1.0'
   spec.add_dependency 'avro_turf', '~> 0.9.0'
   spec.add_dependency 'aws-sdk-s3'
@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pry-rails', '0.3.9'
   spec.add_dependency 'rack-cors'
   spec.add_dependency 'rack-fluentd-logger', '0.1.5'
-  spec.add_dependency 'rails', '~> 6.0.0.rc2'
+  spec.add_dependency 'rails', '~> 6.0.2.1'
   spec.add_dependency 'rufus-scheduler', '~> 3.6.0'
   spec.add_dependency 'seedbank', '0.5.0'
   spec.add_dependency 'sentry-raven', '2.11.1'

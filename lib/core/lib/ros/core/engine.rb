@@ -35,6 +35,7 @@ module Ros
       initializer 'ros_core.load_platform_config' do |_app|
         # The location of the environment files is the parent services/.env dir
         # This dir is soft linked to the compose directory of the current deployment
+
         if Ros.host_env.os? && Dir.exist?("#{Ros.root}/services/.env")
           configs = ['platform']
           ary = Settings.instance_variable_get('@config_sources').select do |config|
