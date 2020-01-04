@@ -7,7 +7,7 @@ module JsonApiSpecHelper
     method = options.fetch(:method, :get)
     relations = Array.wrap(options[:relationships])
 
-    generic_attributes = %i[id created_at updated_at]
+    generic_attributes = %i[id created_at updated_at deleted_at]
     skip_attributes.append(*generic_attributes)
 
     data = {
