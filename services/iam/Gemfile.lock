@@ -7,6 +7,7 @@ PATH
       aws-sdk-s3
       bullet (~> 6.1.0)
       config (= 1.7.1)
+      dotenv
       grpc (= 1.23.0)
       hashids (= 1.0.5)
       json_schemer (= 0.2.6)
