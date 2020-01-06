@@ -11,7 +11,7 @@ RSpec.shared_examples 'application record concern' do
   let(:factory_name) { described_class.name.underscore.to_sym }
 
   it 'has a factory' do
-    expect { create(factory_name) }.not_to raise_error(KeyError)
+    expect { create(factory_name) }.not_to raise_error
   end
 
   before do
