@@ -12,10 +12,12 @@ default: &default
 development:
   <<: *default
   database: cognito_development
+  gssencmode: disable
 
 test:
   <<: *default
   database: cognito_test
+  gssencmode: disable
 
 production:
   <<: *default

@@ -13,10 +13,12 @@ default: &default
 development:
   <<: *default
   database: iam_development
+  gssencmode: disable
 
 test:
   <<: *default
   database: iam_test
+  gssencmode: disable
   # database: db/test.sqlite3
   # database: ':memory:'
 
