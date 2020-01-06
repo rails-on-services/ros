@@ -72,10 +72,11 @@ RSpec.describe MessageCreate, type: :operation do
     end
   end
 
-  context 'when some attributes are not valid' do
+  context 'when send_at is not a date time' do
     let(:op_params) do
       {
         params: {
+          provider_id: message_owner.provider_id,
           channel: 'sms',
           owner_type: message_owner.class.name,
           owner_id: message_owner.id,
@@ -83,44 +84,18 @@ RSpec.describe MessageCreate, type: :operation do
           to: '+6587173612',
           body: 'hello'
         },
-        user: user
+        user: user,
+        send_at: 'bananas'
       }
     end
 
     it 'returns unsuccessful operation with error' do
       expect(op_result.success?).to eq false
-      expect(op_result.errors.full_messages).to eq ['Provider must exist']
+      expect(op_result.errors.full_messages).to eq ['Send at is not a valid date format (send_at: bananas)']
     end
 
     it 'does not create the message' do
       expect { op_result }.to_not(change { Message.count })
-    end
-
-    context 'when send_at is not a date time' do
-      let(:op_params) do
-        {
-          params: {
-            provider_id: message_owner.provider_id,
-            channel: 'sms',
-            owner_type: message_owner.class.name,
-            owner_id: message_owner.id,
-            from: 'PerxTech',
-            to: '+6587173612',
-            body: 'hello'
-          },
-          user: user,
-          send_at: 'bananas'
-        }
-      end
-
-      it 'returns unsuccessful operation with error' do
-        expect(op_result.success?).to eq false
-        expect(op_result.errors.full_messages).to eq ['Send at is not a valid date format (send_at: bananas)']
-      end
-
-      it 'does not create the message' do
-        expect { op_result }.to_not(change { Message.count })
-      end
     end
   end
 end

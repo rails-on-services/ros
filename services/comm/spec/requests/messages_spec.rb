@@ -108,26 +108,6 @@ RSpec.describe 'Messages', type: :request do
             expect(response).to be_successful
           end
         end
-
-        context 'when the payload is invalid' do
-          let(:post_data) do
-            {
-              data: {
-                attributes: {
-                  body: 'HELLO DEAR HELLO',
-                  to: '+6587173612',
-                  from: 'PerxTest',
-                  provider_id: nil,
-                  channel: 'sms'
-                }
-              }
-            }.to_json
-          end
-
-          it 'should fail message sending' do
-            expect(response).not_to be_successful
-          end
-        end
       end
     end
   end
