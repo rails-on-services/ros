@@ -262,12 +262,12 @@ module Ros
       end
 
       initializer 'ros_core.initialize_bullet' do
-        Bullet.enable = Settings.bullet.enabled
+        Bullet.enable = Settings.dig(:bullet, :enabled) || false
       end
 
       config.after_initialize do
         require_relative 'console' unless Rails.const_defined?('Server')
-        if Settings.event_logging.enabled
+        if Settings.dig(:event_logging, :enabled)
           if Settings.event_logging.provider.eql? 'fluentd'
             require_relative '../cloudevents/fluentd_avro_logger'
             Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(
