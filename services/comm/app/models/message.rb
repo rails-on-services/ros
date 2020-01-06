@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Message < Comm::ApplicationRecord
-  belongs_to :provider
+  belongs_to :provider, optional: true
   belongs_to :owner, polymorphic: true, optional: true
 
   def self.sent_to(phone_number)
