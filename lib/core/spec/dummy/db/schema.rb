@@ -10,6 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2019_02_15_104922) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "platform_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
+  create_table "tenant_events", force: :cascade do |t|
+    t.string "resource"
+    t.string "event"
+    t.string "destination"
+  end
+
+  create_table "tenants", force: :cascade do |t|
+    t.string "schema_name", null: false
+    t.jsonb "properties", default: {}, null: false
+    t.jsonb "platform_properties", default: {}, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
+  end
 
 end

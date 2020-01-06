@@ -24,7 +24,7 @@ describe JsonSchemaValidator do
       }
     end
 
-    it 'is valid' do
+    xit 'is valid' do
       expect(subject).to be_valid
     end
   end
