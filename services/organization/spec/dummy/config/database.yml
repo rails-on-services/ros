@@ -14,10 +14,12 @@ default: &default
 development:
   <<: *default
   database: organization_development
+  gssencmode: disable
 
 test:
   <<: *default
   database: organization_test
+  gssencmode: disable
 
 production:
   <<: *default
