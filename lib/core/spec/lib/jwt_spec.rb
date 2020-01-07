@@ -6,7 +6,7 @@ RSpec.describe Ros::Jwt do
   let(:aud) { Settings.jwt.aud }
   let(:iss) { Settings.jwt.iss }
   let(:alg) { Settings.jwt.alg }
-  let(:encryption_key) { Settings.jwt.encryption_ke }
+  let(:encryption_key) { Settings.jwt.encryption_key }
 
   subject { described_class.new('Bearer something')}
 
@@ -38,12 +38,19 @@ RSpec.describe Ros::Jwt do
 
   context 'when decoding successfully' do
     it 'assigns value to claims' do
-      # allow(JWT).to receive(:decode).with('something', encryption_key, alg).and_return([{data: {}}, {header: {}}])
+      data = {key1: 'some value'}
+      allow(JWT).to receive(:decode).with('something', encryption_key, alg).and_return([data, {header: {}}])
 
+      expect(subject.claims).to eq HashWithIndifferentAccess.new(data)
     end
   end
 
   context 'when an error occurs while decoding' do
+    it 'assigns empty hash to claims' do
+      allow(JWT).to receive(:decode).and_raise(JWT::DecodeError)
+
+      expect(subject.claims).to eq HashWithIndifferentAccess.new
+    end
   end
 
   context 'when encoding' do
