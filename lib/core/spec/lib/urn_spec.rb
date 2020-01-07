@@ -27,7 +27,7 @@ RSpec.describe Ros::Urn do
 
     context 'when decoding successfully' do
       it 'returns a new object' do
-        allow_any_instance_of(Ros::Jwt).to receive(:decode).and_return({'sub' => 'urn:ros:campaign::1:entity/1'})
+        allow_any_instance_of(Ros::Jwt).to receive(:decode).and_return('sub' => 'urn:ros:campaign::1:entity/1')
 
         expect(described_class.from_jwt('token')).to be_an_instance_of(described_class)
       end
@@ -51,7 +51,7 @@ RSpec.describe Ros::Urn do
   end
 
   context 'instance methods' do
-    subject { described_class.new('urn', 'ros', 'campaign', 1, 'entity/1', 'xxx')}
+    subject { described_class.new('urn', 'ros', 'campaign', 1, 'entity/1', 'xxx') }
 
     it { is_expected.to respond_to(:txt) }
     it { is_expected.to respond_to(:partition_name) }

@@ -8,20 +8,20 @@ RSpec.describe Ros::Jwt do
   let(:alg) { Settings.jwt.alg }
   let(:encryption_key) { Settings.jwt.encryption_key }
 
-  subject { described_class.new('Bearer something')}
+  subject { described_class.new('Bearer something') }
 
   context 'when payload is a hash' do
     subject { described_class.new({}) }
 
     it 'sets default payload' do
-      expect(subject.claims[:iss]).to eq "https://iam.api.development.whistler.perxtech.io"
-      expect(subject.claims[:aud]).to eq "https://api.development.whistler.perxtech.io"
+      expect(subject.claims[:iss]).to eq 'https://iam.api.development.whistler.perxtech.io'
+      expect(subject.claims[:aud]).to eq 'https://api.development.whistler.perxtech.io'
       expect(subject.claims[:iat]).to be_an_instance_of Integer
     end
   end
 
   context 'when payload is not a hash' do
-    subject { described_class.new('Bearer something')}
+    subject { described_class.new('Bearer something') }
 
     it 'sets value to the token' do
       expect(subject.token).to_not be_empty
@@ -38,8 +38,8 @@ RSpec.describe Ros::Jwt do
 
   context 'when decoding successfully' do
     it 'assigns value to claims' do
-      data = {key1: 'some value'}
-      allow(JWT).to receive(:decode).with('something', encryption_key, alg).and_return([data, {header: {}}])
+      data = { key1: 'some value' }
+      allow(JWT).to receive(:decode).with('something', encryption_key, alg).and_return([data, { header: {} }])
 
       expect(subject.claims).to eq HashWithIndifferentAccess.new(data)
     end
