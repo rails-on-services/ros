@@ -5,7 +5,7 @@ require 'rails_helper'
 class Validatable
   include ActiveModel::Validations
 
-  SCHEMA = Pathname.new("#{File.expand_path(File.dirname(__FILE__))}/schemas/validatable.json")
+  SCHEMA = Pathname.new("#{__dir__}/schemas/validatable.json")
   attr_accessor :properties
 
   validates :properties, json_schema: { schema: SCHEMA }
@@ -70,7 +70,7 @@ describe JsonSchemaValidator do
       subject.properties = {
         'title' => 'TITLE',
         'button' => 'BUTTON',
-        'closed_pinata_img_url' => 'url',
+        'closed_pinata_img_url' => 'url'
       }
 
       expect(subject).to be_invalid
