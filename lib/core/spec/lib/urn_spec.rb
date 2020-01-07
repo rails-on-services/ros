@@ -24,41 +24,42 @@ RSpec.describe Ros::Urn do
     it 'responds to `from_jwt`' do
       expect(described_class.respond_to?(:from_jwt)).to be_truthy
     end
-  end
 
-  xcontext 'urn flattening' do
-    it 'flattens normal urn' do
-      flatten_urn = described_class.flatten('urn:ros:campaign::222222222:entity')
-      expect(flatten_urn).to eq('urn:ros:campaign::222222222:entity')
+    context 'when decoding successfully' do
+      it 'returns a new object' do
+        allow_any_instance_of(Ros::Jwt).to receive(:decode).and_return({'sub' => 'urn:ros:campaign::1:entity/1'})
+
+        expect(described_class.from_jwt('token')).to be_an_instance_of(described_class)
+      end
     end
 
-    it 'flattens urn with one wildcarded segmet in the end' do
-      flatten_urn = described_class.flatten('urn:ros:campaign::222222222:*')
-      expect(flatten_urn).to eq('urn:ros:campaign::222222222:*')
+    context 'when decoding returns an empty hash' do
+      it 'returns nil' do
+        allow_any_instance_of(Ros::Jwt).to receive(:decode).and_return({})
+
+        expect(described_class.from_jwt('token')).to be_nil
+      end
     end
 
-    it 'flattens urn with several wildcarded segmets in the end' do
-      flatten_urn = described_class.flatten('urn:ros:*')
-      expect(flatten_urn).to eq('urn:ros:*:*:*:*')
-    end
+    context 'when an error occurs while decoding' do
+      it 'returns nil' do
+        allow_any_instance_of(Ros::Jwt).to receive(:decode).and_raise(JWT::DecodeError)
 
-    it 'flattens urn with one wildcarded segmet in the middle' do
-      flatten_urn = described_class.flatten('urn:ros:campaign::*:entity')
-      expect(flatten_urn).to eq('urn:ros:campaign::*:entity')
-    end
-
-    it 'flattens urn with several wildcarded segmets in the middle' do
-      # flatten_urn = described_class.flatten('urn:*:entity')
-      # expect(flatten_urn).to eq('urn:*:*:*:*:entity')
-      expect { described_class.flatten('urn:*:entity') }.to raise_error(NotImplementedError)
-    end
-
-    it 'throws an error when try to flatten urn with several wildcarded segmets' do
-      expect { described_class.flatten('urn:*::*:entity') }.to raise_error(ArgumentError)
+        expect(described_class.from_jwt('token')).to be_nil
+      end
     end
   end
 
   context 'instance methods' do
+    subject { described_class.new('urn', 'ros', 'campaign', 1, 'entity/1', 'xxx')}
+
+    it { is_expected.to respond_to(:txt) }
+    it { is_expected.to respond_to(:partition_name) }
+    it { is_expected.to respond_to(:service_name) }
+    it { is_expected.to respond_to(:region) }
+    it { is_expected.to respond_to(:account_id) }
+    it { is_expected.to respond_to(:resource) }
+
     it 'returns correct resource_type' do
       expect(urn_object.respond_to?(:resource_type)).to be_truthy
       expect(urn_object.resource_type).to eq('entity')
