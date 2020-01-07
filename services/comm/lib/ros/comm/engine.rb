@@ -42,8 +42,11 @@ module Ros
 
       config.ros_cable = Ros::Comm.cable
       config.ros_cable.mount_path = '/websocket'
+      # TODO: this line is temporary here
       config.ros_cable.disable_request_forgery_protection = true
+      # config.action_cable.allowed_request_origins = ['https://rubyonrails.com', %r{http://ruby.*}]
       config.ros_cable.connection_class = -> { Ros::Comm::Connection }
+      config.action_cable.worker_pool_size = 4
 
       initializer 'ros.cable.config' do |app|
         config_path = root.join('config', 'cable.yml')

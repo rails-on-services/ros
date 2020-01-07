@@ -8,4 +8,3 @@ production:
   adapter: redis
   url: some_redis_url
   channel_prefix: appname_production
-  
