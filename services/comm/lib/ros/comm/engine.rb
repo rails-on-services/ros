@@ -43,7 +43,7 @@ module Ros
       config.ros_cable = Ros::Comm.cable
       config.ros_cable.mount_path = '/websocket'
       config.ros_cable.disable_request_forgery_protection = true
-      # config.ros_cable.connection_class = -> { Ros::Comm::Connection }
+      config.ros_cable.connection_class = -> { Ros::Comm::Connection }
 
       initializer 'ros.cable.config' do |app|
         config_path = root.join('config', 'cable.yml')
