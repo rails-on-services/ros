@@ -4,19 +4,21 @@ import os
 import json
 from locust import HttpLocust, task, seq_task, TaskSet, TaskSequence
 
+from lib.iam import user
 # from lib.service_name import model_name
 
 class <%=values.service_name%>(TaskSequence):
-  def on_start(self):
-    helper.create_and_login_as_cognito_user(self)
+  response = {}
+
+  def setup(self):
+    iam_response = user.login_as_iam_user(self, account_id, username, password)
+    self.response['iam_header'] = { "authorization": iam_response.headers['Authorization'], 'content-type': 'application/vnd.api+json' }
 
   # @seq_task(1)
-  # @task(2)
   # def do_task_1(self):
   # model_name.endpoint_library_method(self)
 
   # @seq_task(2)
-  # @task(2)
   # def do_task_2(self):
   # model_name.endpoint_library_method(self)
 

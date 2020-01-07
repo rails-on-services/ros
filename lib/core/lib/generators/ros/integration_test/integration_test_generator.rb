@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Ros
-  class IntegrationTestGenerator < Rails::Generators::Base
+  class IntegrationTestGenerator < Rails::Generators::NamedBase
     def create_files
-      template(source, "#{destination}/#{Settings.service.name}.py", values)
+      template(source, "#{destination}/#{name}.py", values)
     end
 
     private
