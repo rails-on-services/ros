@@ -50,6 +50,10 @@ module Ros
                 end
     end
 
+    def environment_root
+      Settings.dig(:environment, :config, :root) || "#{root}/services/.env"
+    end
+
     def spec_root; @spec_root ||= Pathname.new(__FILE__).join('../../../spec') end
 
     def dummy_mount_path; @dummy_mount_path ||= "/#{host_env.os? ? Settings.service.name : ''}" end

@@ -95,3 +95,8 @@ components:
                               region: ap-southeast-1
                               provider: aws
                               bucket_name: app-development-demo-cnfs-io
+              cognito:
+                environment:
+                  platform:
+                    metabase:
+                      encryption_key: metabase_encryption_key

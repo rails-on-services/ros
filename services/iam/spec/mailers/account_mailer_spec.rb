@@ -19,6 +19,7 @@ RSpec.describe AccountMailer, type: :mailer do
     let(:url) { "#{base_url}/password/new?reset_password_token=#{jwt}" }
 
     before do
+      freeze_time
       # NOTE: Ensuring that the current tenant has the base url set
       Tenant.current_tenant.update(properties: { base_url: base_url })
       allow_any_instance_of(User).to receive(:set_reset_password_token).and_return(reset_password_token)

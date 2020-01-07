@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'bullet'
-
 module Ros
   module Core
     # rubocop:disable Metrics/ClassLength
@@ -35,7 +33,7 @@ module Ros
       initializer 'ros_core.load_platform_config' do |_app|
         # The location of the environment files is the parent services/.env dir
         # This dir is soft linked to the compose directory of the current deployment
-        if Ros.host_env.os? && Dir.exist?("#{Ros.root}/services/.env")
+        if Ros.host_env.os? && Dir.exist?(Ros.environment_root)
           configs = ['platform']
           ary = Settings.instance_variable_get('@config_sources').select do |config|
             config.instance_variable_get('@hash')&.keys&.include?(:service)
@@ -45,21 +43,21 @@ module Ros
           end
           require 'dotenv'
           configs.each do |env_name|
-            env_file = "#{Ros.root}/services/.env/#{env_name}.env"
+            env_file = File.join Ros.environment_root, "#{env_name}.env"
             Dotenv.load(env_file) if File.exist?(env_file)
           end
           # Set ENVs that allow the local server to access compose cluster services
           # TODO: Figure out how core/config/settings.local.yml can override the ENVs
-          ENV['PLATFORM__CONNECTION__HOST__HOST'] = 'localhost'
-          ENV['PLATFORM__CONNECTION__HOST__FORCE_PATH_STYLE'] = 'true'
-          ENV['PLATFORM__REQUEST_LOGGING__ENABLED'] = 'false'
-          ENV['PLATFORM__EVENT_LOGGING__ENABLED'] = 'false'
-          ENV['RAILS_DATABASE_HOST'] = 'localhost'
-          ENV['REDIS_URL'] = 'redis://localhost:6379'
-          ENV['PLATFORM__REQUEST_LOGGING__CONFIG__HOST'] = 'localhost'
-          ENV['PLATFORM__INFRA__SERVICES__STORAGE__AWS__ENDPOINT'] = 'http://localhost:4572'
-          ENV['PLATFORM__INFRA__SERVICES__MQ__AWS__ENDPOINT'] = 'http://localhost:4576'
-          ENV['BUCKET_ENDPOINT_URL'] = 'http://localhost:4572'
+          #   ENV['PLATFORM__CONNECTION__HOST__HOST'] = 'localhost'
+          #   ENV['PLATFORM__CONNECTION__HOST__FORCE_PATH_STYLE'] = 'true'
+          #   ENV['PLATFORM__REQUEST_LOGGING__ENABLED'] = 'false'
+          #   ENV['PLATFORM__EVENT_LOGGING__ENABLED'] = 'false'
+          #   ENV['RAILS_DATABASE_HOST'] = 'localhost'
+          #   ENV['REDIS_URL'] = 'redis://localhost:6379'
+          #   ENV['PLATFORM__REQUEST_LOGGING__CONFIG__HOST'] = 'localhost'
+          #   ENV['PLATFORM__INFRA__SERVICES__STORAGE__AWS__ENDPOINT'] = 'http://localhost:4572'
+          #   ENV['PLATFORM__INFRA__SERVICES__MQ__AWS__ENDPOINT'] = 'http://localhost:4576'
+          #   ENV['BUCKET_ENDPOINT_URL'] = 'http://localhost:4572'
         end
         Settings.reload!
       end
@@ -262,12 +260,15 @@ module Ros
       end
 
       initializer 'ros_core.initialize_bullet' do
-        Bullet.enable = Settings.bullet.enabled
+        if Settings.dig(:bullet, :enabled)
+          require 'bullet'
+          Bullet.enable = true
+        end
       end
 
       config.after_initialize do
         require_relative 'console' unless Rails.const_defined?('Server')
-        if Settings.event_logging.enabled
+        if Settings.dig(:event_logging, :enabled)
           if Settings.event_logging.provider.eql? 'fluentd'
             require_relative '../cloudevents/fluentd_avro_logger'
             Rails.configuration.x.event_logger = Ros::CloudEvents::FluentdAvroLogger.new(
