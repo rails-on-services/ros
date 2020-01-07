@@ -16,13 +16,13 @@ module Ros
     def self.from_urn(urn_string)
       return nil unless urn_string
 
-      urn_array = urn_string.split(':'.freeze)
+      urn_array = urn_string.split(':')
       new(*urn_array)
     end
 
     def self.from_jwt(token)
       jwt = Jwt.new(token)
-      return unless (urn_string = jwt.decode['sub'.freeze])
+      return unless (urn_string = jwt.decode['sub'])
 
       from_urn(urn_string)
 
@@ -31,9 +31,9 @@ module Ros
       nil
     end
 
-    def resource_type; resource.split('/'.freeze).first end
+    def resource_type; resource.split('/').first end
 
-    def resource_id; resource.split('/'.freeze).last end
+    def resource_id; resource.split('/').last end
 
     def model_name; resource_type.classify end
 
@@ -41,6 +41,6 @@ module Ros
 
     def instance; model.find_by_urn(resource_id) end
 
-    def to_s; [txt, partition_name, service_name, region, account_id, resource].join(':'.freeze) end
+    def to_s; [txt, partition_name, service_name, region, account_id, resource].join(':') end
   end
 end
