@@ -1,22 +1,25 @@
-FROM ruby:2.6.5-stretch as base
+FROM ruby:2.6.5-buster as base
 
 # WORKDIR needs to be the same as in the final base image or compiled gems will point to an invalid directory
 # NOTE: For the compiled gems to be shared across services then the WORKDIR needs to be same for all images
 RUN mkdir -p /home/rails/services/app
 WORKDIR /home/rails/services/app
+ENV GEM_HOME=/usr/local/bundle/ruby/2.6.0
+ENV PATH $GEM_HOME/bin:$PATH
 
 # Install gems that need compiling first b/c they can take a long time to compile
 RUN gem install \
-    bundler:2.1.2 \
-    nokogiri:1.10.4 \
-    ffi:1.11.1 \
+    nokogiri:1.10.7 \
+    ffi:1.11.3 \
     grpc:1.23.0 \
     mini_portile2:2.4.0 \
     msgpack:1.3.1 \
-    pg:1.1.4 \
-    nio4r:2.5.1 \
-    puma:4.1.1 \
+    pg:1.2.1 \
+    nio4r:2.5.2 \
+    puma:4.3.1 \
     eventmachine:1.2.7
+
+RUN gem install bundler:2.1.2
 
 # NOTE: Copy in a generic Gemfile and the dependent gem's gemspecs so that their dependencies are also installed
 COPY services/Gemfile* ./
@@ -25,11 +28,12 @@ COPY lib/sdk/*.gemspec ../../lib/sdk/
 
 # Don't use the --deployment flag since this is a container. See: http://bundler.io/man/bundle-install.1.html#DEPLOYMENT-MODE
 ARG GEM_SERVER
-ARG bundle_string='--without development test'
+ARG bundle_string='development test'
+RUN bundle config set without ${bundle_string}
 # Build a layer with gems from just the common Gemfile
 # Remove reference to git in spec.files
 RUN sed -i '/git/d' ../../lib/sdk/*.gemspec \
- && bundle install ${bundle_string} \
+ && bundle install \
  && find /usr/local/bundle -iname '*.o' -exec rm -rf {} \; \
  && find /usr/local/bundle -iname '*.a' -exec rm -rf {} \; \
  && mv Gemfile ..
@@ -40,12 +44,12 @@ ARG project=user
 COPY services/${project}/Gemfile* ./
 COPY services/${project}/ros-${project}.gemspec ./
 
-RUN bundle install ${bundle_string} \
+RUN bundle install \
  && find /usr/local/bundle -iname '*.o' -exec rm -rf {} \; \
  && find /usr/local/bundle -iname '*.a' -exec rm -rf {} \;
 
 # Runtime container
-FROM ruby:2.6.5-slim-stretch
+FROM ruby:2.6.5-slim-buster
 
 # Install OS packages and create a non-root user to run the application
 # To compile pg gem: libpq-dev
@@ -98,4 +102,6 @@ ARG project=user
 COPY --chown=rails:rails services/${project}/. ./
 
 ARG rails_env=production
+ENV GEM_HOME=/usr/local/bundle/ruby/2.6.0
+ENV PATH $GEM_HOME/bin:$PATH
 ENV RAILS_ENV=${rails_env} EDITOR=vim TERM=xterm RAILS_LOG_TO_STDOUT=yes
