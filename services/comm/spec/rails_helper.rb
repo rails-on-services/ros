@@ -8,6 +8,7 @@ require File.expand_path('dummy/config/environment.rb', __dir__)
 # Prevent database truncation if the environment is production
 require 'rspec/rails'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
+require 'action_cable/testing/rspec'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 Dir[Ros.spec_root.join('support/**/*.rb')].sort.each { |f| require f }

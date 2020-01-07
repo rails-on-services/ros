@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '~> 6.0.2.1'
   spec.add_dependency 'twilio-ruby'
   spec.add_dependency 'aws-sdk-sns'
+  spec.add_dependency 'action-cable-testing'
   spec.add_dependency 'ros-core', '~> 0.1.0'
   spec.add_dependency 'ros_sdk', '~> 0.1.0'
 end
