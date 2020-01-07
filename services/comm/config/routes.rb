@@ -7,4 +7,5 @@ Ros::Comm::Engine.routes.draw do
   jsonapi_resources :events
   jsonapi_resources :messages
   jsonapi_resources :whatsapps
+  mount Ros::Comm::Engine.server => Ros::Comm.cable.mount_path
 end

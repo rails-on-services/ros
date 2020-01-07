@@ -14,9 +14,10 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.add_dependency 'rails', '~> 6.0.2.1'
+  spec.add_dependency 'rails', '~> 6.0.0.rc2'
   spec.add_dependency 'twilio-ruby'
   spec.add_dependency 'aws-sdk-sns'
+  spec.add_dependency 'puma'
   spec.add_dependency 'ros-core', '~> 0.1.0'
   spec.add_dependency 'ros_sdk', '~> 0.1.0'
 end
