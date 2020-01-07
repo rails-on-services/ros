@@ -6,5 +6,5 @@ test:
 
 production:
   adapter: redis
-  url: some_redis_url
+  url: <%= ENV['REDIS_URL'] %>
   channel_prefix: appname_production
