@@ -30,5 +30,5 @@ development:
   <<: *amazon_app
 
 test:
-  # <<: *disk
-  <<: *localstack
+  <<: *disk
+  # <<: *localstack
