@@ -10,7 +10,7 @@ class AvroGenerator < Rails::Generators::NamedBase
 
     create_file "#{Settings.event_logging.config.schemas_path}/#{service_name}/#{name}.avsc" do
       avro_builder = AvroBuilder.new(name, service_name)
-      JSON.pretty_generate avro_builder.build_model_attributes
+      "#{JSON.pretty_generate(avro_builder.build_model_attributes)}\n"
     end
   end
 
