@@ -31,10 +31,3 @@
 
 en:
   hello: "Hello world"
-  activemodel:
-    errors:
-      models:
-        validatable:
-          attributes:
-            properties:
-              json_schema_mismatch: JSON schema mismatched

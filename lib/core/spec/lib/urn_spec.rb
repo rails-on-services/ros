@@ -53,12 +53,29 @@ RSpec.describe Ros::Urn do
   context 'instance methods' do
     subject { described_class.new('urn', 'ros', 'campaign', 1, 'entity/1', 'xxx') }
 
-    it { is_expected.to respond_to(:txt) }
-    it { is_expected.to respond_to(:partition_name) }
-    it { is_expected.to respond_to(:service_name) }
-    it { is_expected.to respond_to(:region) }
-    it { is_expected.to respond_to(:account_id) }
-    it { is_expected.to respond_to(:resource) }
+    it 'returns correct txt' do
+      expect(subject.txt).to eq 'urn'
+    end
+
+    it 'returns correct partition_name' do
+      expect(subject.partition_name).to eq 'ros'
+    end
+
+    it 'returns correct service_name' do
+      expect(subject.service_name).to eq 'campaign'
+    end
+
+    it 'returns correct region' do
+      expect(subject.region).to eq 1
+    end
+
+    it 'returns correct account_id' do
+      expect(subject.account_id).to eq 'entity/1'
+    end
+
+    it 'returns correct account_id' do
+      expect(subject.resource).to eq 'xxx'
+    end
 
     it 'returns correct resource_type' do
       expect(urn_object.respond_to?(:resource_type)).to be_truthy
