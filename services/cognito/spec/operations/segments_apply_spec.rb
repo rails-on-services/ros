@@ -11,7 +11,10 @@ RSpec.describe SegmentsApply, type: :operation do
   end
 
   it 'returns successfull result' do
-    expect(op_result.success?).to be_truthy
+    expect(op_result.success?).to eq true
     expect(op_result.model.size).to eq(5)
   end
+
+  # TODO: cover case where multiple segments are passed and one of them fails
+  # TODO: cover case where segment is inexistent (NameError raised)
 end

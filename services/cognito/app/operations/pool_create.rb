@@ -39,6 +39,8 @@ class PoolCreate < Ros::ActivityBase
   end
 
   def fetch_users(ctx, base_pool:, params:, **)
+    # TODO: handle scenario where SegmentsApply fails
+    # TODO: handle scenario where SegmentsApply has an empty pool
     ctx[:users] = SegmentsApply.call(users: base_pool.users, segments: params[:segments]).model
     # NOTE: don't create an empty pool
     ctx[:users].count.positive?
