@@ -22,7 +22,7 @@ RSpec.describe Segments::Birthday, type: :operation do
   context 'birthday this day' do
     let(:segment) { 'this_day' }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(2)
     end
@@ -31,7 +31,7 @@ RSpec.describe Segments::Birthday, type: :operation do
   context 'birthday this month' do
     let(:segment) { 'this_month' }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(5)
     end
@@ -40,7 +40,7 @@ RSpec.describe Segments::Birthday, type: :operation do
   context 'wrong segment value' do
     let(:segment) { 'wrong_walue' }
 
-    it 'returns ussuccessfull result' do
+    it 'returns unsuccessful result' do
       expect(op_result.success?).to be_falsey
     end
   end

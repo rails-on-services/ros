@@ -8,8 +8,8 @@ class PoolCreate < Ros::ActivityBase
 
   step :find_base_pool
   failed :base_pool_not_found, Output(:success) => End(:failure)
-  step :fetch_users
-  failed :users_not_fetched, Output(:success) => End(:failure)
+  step :apply_segment
+  failed :fail_to_apply_segment, Output(:success) => End(:failure)
   step :create_pool
   failed :pool_not_created, Output(:success) => End(:failure)
   step :add_users_to_pool
@@ -38,14 +38,15 @@ class PoolCreate < Ros::ActivityBase
     errors.add(:base_pool, "Can't find base pool with id: #{params[:base_pool_id]}")
   end
 
-  def fetch_users(ctx, base_pool:, params:, **)
-    ctx[:users] = SegmentsApply.call(users: base_pool.users, segments: params[:segments]).model
-    # NOTE: don't create an empty pool
-    ctx[:users].count.positive?
+  def apply_segment(ctx, base_pool:, params:, **)
+    segment_result = SegmentsApply.call(users: base_pool.users, segments: params[:segments])
+    return false unless segment_result.success?
+
+    ctx[:users] = segment_result.model
   end
 
-  def users_not_fetched(_ctx, errors:, **)
-    errors.add(:users, "Can't fetch users for pool")
+  def fail_to_apply_segment(_ctx, errors:, **)
+    errors.add(:users, 'Failed to apply segment')
   end
 
   def create_pool(ctx, **)
