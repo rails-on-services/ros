@@ -39,7 +39,6 @@ class PoolCreate < Ros::ActivityBase
   end
 
   def apply_segment(ctx, base_pool:, params:, **)
-    # TODO: handle scenario where SegmentsApply has an empty pool
     segment_result = SegmentsApply.call(users: base_pool.users, segments: params[:segments])
     return false unless segment_result.success?
 

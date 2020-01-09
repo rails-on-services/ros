@@ -71,7 +71,4 @@ RSpec.describe PoolCreate, type: :operation do
       end
     end
   end
-
-  # TODO: handle case where SegmentsApply operation fails
-  # TODO: handle case where SegmentsApply count is zero -> should still create the pool
 end
