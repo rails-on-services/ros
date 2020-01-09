@@ -3,19 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe Ros::Jwt do
-  let(:aud) { Settings.jwt.aud }
-  let(:iss) { Settings.jwt.iss }
-  let(:alg) { Settings.jwt.alg }
-  let(:encryption_key) { Settings.jwt.encryption_key }
-
   subject { described_class.new('Bearer something') }
 
   context 'when payload is a hash' do
     subject { described_class.new({}) }
 
     it 'sets default payload' do
-      expect(subject.claims[:iss]).to eq 'https://iam.api.development.whistler.perxtech.io'
-      expect(subject.claims[:aud]).to eq 'https://api.development.whistler.perxtech.io'
+      mock = double('mock', aud: 'aud', iss: 'iss', alg: 'alg')
+      allow(Settings).to receive(:jwt).and_return(mock)
+
+      expect(subject.claims[:iss]).to eq 'iss'
+      expect(subject.claims[:aud]).to eq 'aud'
       expect(subject.claims[:iat]).to be_an_instance_of Integer
     end
   end
@@ -38,8 +36,11 @@ RSpec.describe Ros::Jwt do
 
   context 'when decoding successfully' do
     it 'assigns value to claims' do
+      mock = double('mock', encryption_key: 'encryption_key', alg: 'alg')
       data = { key1: 'some value' }
-      allow(JWT).to receive(:decode).with('something', encryption_key, alg).and_return([data, { header: {} }])
+
+      allow(Settings).to receive(:jwt).and_return(mock)
+      allow(JWT).to receive(:decode).with('something', 'encryption_key', 'alg').and_return([data, { header: {} }])
 
       expect(subject.claims).to eq HashWithIndifferentAccess.new(data)
     end
