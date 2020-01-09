@@ -24,6 +24,7 @@ RSpec.describe SegmentsApply, type: :operation do
     it 'returns failure result' do
       expect(op_result.failure?).to eq true
       expect(op_result.model).to eq nil
+      expect(op_result.errors.full_messages).to eq ["Segment can't find segmentation class"]
     end
   end
 

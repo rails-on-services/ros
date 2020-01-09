@@ -30,7 +30,7 @@ class SegmentsApply < Ros::ActivityBase
     segment_class = "Segments::#{segment_key.classify}".constantize
     segment_class.call(users: users, segment: segment_value)
   rescue NameError => _e
-    errors.add(:segment, "Can't find segmentation class")
+    errors.add(:segment, "can't find segmentation class")
     nil
   end
 
