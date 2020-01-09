@@ -58,6 +58,8 @@ class PoolCreate < Ros::ActivityBase
   end
 
   def add_users_to_pool(_ctx, model:, users:, **)
+    return true if users.empty?
+
     model.users << users
   end
 end
