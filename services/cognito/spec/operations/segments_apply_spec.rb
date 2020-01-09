@@ -3,15 +3,49 @@
 require 'rails_helper'
 
 RSpec.describe SegmentsApply, type: :operation do
-  let(:op_params) { { users: User.all, segments: {} } }
   let(:op_result) { described_class.call(op_params) }
+  let(:op_params) { { users: User.all, segments: segments } }
+  let(:segments) { {} }
 
   before do
     create_list(:user, 5)
   end
 
-  it 'returns successfull result' do
-    expect(op_result.success?).to be_truthy
-    expect(op_result.model.size).to eq(5)
+  context 'no segments are passed' do
+    it 'returns successful result' do
+      expect(op_result.success?).to eq true
+      expect(op_result.model.size).to eq(5)
+    end
+  end
+
+  context 'multiple segments are sent as attribute' do
+    context 'when one segment does not exist' do
+      let(:segments) { { 'bananas': '10', 'gender': 'male' }.as_json }
+
+      it 'returns failure result' do
+        expect(op_result.failure?).to eq true
+        expect(op_result.model).to eq nil
+        expect(op_result.errors.full_messages).to eq ["Segment can't find segmentation class"]
+      end
+    end
+
+    context 'when one segment fails to apply' do
+      let(:segments) { { 'age': { 'from': '10', 'to': '15' }, 'gender': 'male' }.as_json }
+      let(:dummy_errors) do
+        errors = ActiveModel::Errors.new(Segments::Age.new)
+        errors.add(:model, "can't apply age segment")
+        errors
+      end
+
+      before do
+        allow(Segments::Age).to receive(:call).and_return(OpenStruct.new("failure?": true, errors: dummy_errors))
+      end
+
+      it 'returns failure result' do
+        expect(op_result.failure?).to eq true
+        expect(op_result.model).to eq nil
+        expect(op_result.errors.full_messages).to eq ["Model can't apply age segment"]
+      end
+    end
   end
 end

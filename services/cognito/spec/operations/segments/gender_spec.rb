@@ -15,7 +15,7 @@ RSpec.describe Segments::Gender, type: :operation do
   context 'specific gender' do
     let(:segment) { 'male' }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(1)
     end
@@ -24,7 +24,7 @@ RSpec.describe Segments::Gender, type: :operation do
   context 'any gender' do
     let(:segment) { 'any' }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(3)
     end
@@ -33,7 +33,7 @@ RSpec.describe Segments::Gender, type: :operation do
   context 'several genders' do
     let(:segment) { %w[male other] }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(2)
     end

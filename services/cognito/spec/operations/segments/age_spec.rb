@@ -15,7 +15,7 @@ RSpec.describe Segments::Age, type: :operation do
   context 'specific age' do
     let(:segment) { 21 }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(1)
     end
@@ -24,7 +24,7 @@ RSpec.describe Segments::Age, type: :operation do
   context 'age range' do
     let(:segment) { { from: 18, to: 21 } }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(3)
     end
@@ -33,7 +33,7 @@ RSpec.describe Segments::Age, type: :operation do
   context 'age array' do
     let(:segment) { [16, 32, 64, 70] }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(3)
     end
@@ -48,7 +48,7 @@ RSpec.describe Segments::Age, type: :operation do
       ]
     end
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to be_truthy
       expect(op_result.model.size).to eq(6)
     end
