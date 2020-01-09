@@ -10,7 +10,7 @@ RSpec.describe SegmentsApply, type: :operation do
     create_list(:user, 5)
   end
 
-  it 'returns successfull result' do
+  it 'returns successful result' do
     expect(op_result.success?).to eq true
     expect(op_result.model.size).to eq(5)
   end

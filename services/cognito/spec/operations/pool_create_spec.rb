@@ -10,7 +10,7 @@ RSpec.describe PoolCreate, type: :operation do
     let(:pool_name) { 'sample pool' }
     let(:op_params) { { name: pool_name } }
 
-    it 'returns successfull result' do
+    it 'returns successful result' do
       expect(op_result.success?).to eq true
       expect(op_result.model.persisted?).to eq true
       expect(op_result.model.system_generated?).to eq false

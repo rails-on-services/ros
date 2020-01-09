@@ -9,7 +9,7 @@ RSpec.describe Segments::ExceptIds, type: :operation do
 
   let(:segment) { users.sample(3).pluck(:id) }
 
-  it 'returns successfull result' do
+  it 'returns successful result' do
     expect(op_result.success?).to be_truthy
     expect(op_result.model.size).to eq(2)
   end
