@@ -41,7 +41,7 @@ module Segments
     end
 
     def segment_not_applied(_ctx, errors:, segment:, **)
-      errors.add(:model, "Can't apply age segment: #{segment}")
+      errors.add(:model, "can't apply age segment: #{segment}")
     end
 
     def segment_element_valid?(element)

@@ -27,8 +27,6 @@ class SegmentsApply < Ros::ActivityBase
   end
 
   def apply_segment(segment_key, segment_value, users, errors)
-    binding.pry
-
     segment_class = "Segments::#{segment_key.classify}".constantize
     segment_class.call(users: users, segment: segment_value)
   rescue NameError => _e

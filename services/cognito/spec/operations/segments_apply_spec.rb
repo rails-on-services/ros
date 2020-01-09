@@ -31,15 +31,20 @@ RSpec.describe SegmentsApply, type: :operation do
 
     context 'when one segment fails to apply' do
       let(:segments) { { 'age': { 'from': '10', 'to': '15' }, 'gender': 'male' }.as_json }
+      let(:dummy_errors) do
+        errors = ActiveModel::Errors.new(Segments::Age.new)
+        errors.add(:model, "can't apply age segment")
+        errors
+      end
 
       before do
-        allow(Segments::Age).to receive(:call).and_return(OpenStruct.new("failure?": true))
+        allow(Segments::Age).to receive(:call).and_return(OpenStruct.new("failure?": true, errors: dummy_errors))
       end
 
       it 'returns failure result' do
         expect(op_result.failure?).to eq true
         expect(op_result.model).to eq nil
-        expect(op_result.errors.full_messages).to eq ["Segment can't find segmentation class"]
+        expect(op_result.errors.full_messages).to eq ["Model can't apply age segment"]
       end
     end
   end
