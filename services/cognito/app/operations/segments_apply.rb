@@ -3,6 +3,7 @@
 class SegmentsApply < Ros::ActivityBase
   step :init
   step :apply_segments
+  failed :unset_model
 
   private
 
@@ -31,5 +32,9 @@ class SegmentsApply < Ros::ActivityBase
   rescue NameError => _e
     errors.add(:segment, "Can't find segmentation class")
     nil
+  end
+
+  def unset_model(ctx, **)
+    ctx[:model] = nil
   end
 end
