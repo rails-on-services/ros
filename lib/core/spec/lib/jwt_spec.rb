@@ -6,15 +6,32 @@ RSpec.describe Ros::Jwt do
   subject { described_class.new('Bearer something') }
 
   context 'when payload is a hash' do
-    subject { described_class.new({}) }
+    context 'when the hash contain value' do
+      subject { described_class.new(some: 'thing', else: 'here') }
 
-    it 'sets default payload' do
-      mock = double('mock', aud: 'aud', iss: 'iss', alg: 'alg')
-      allow(Settings).to receive(:jwt).and_return(mock)
+      it 'sets default payload' do
+        mock = double('mock', aud: 'aud', iss: 'iss', alg: 'alg')
+        allow(Settings).to receive(:jwt).and_return(mock)
 
-      expect(subject.claims[:iss]).to eq 'iss'
-      expect(subject.claims[:aud]).to eq 'aud'
-      expect(subject.claims[:iat]).to be_an_instance_of Integer
+        expect(subject.claims[:some]).to eq 'thing'
+        expect(subject.claims[:else]).to eq 'here'
+        expect(subject.claims[:iss]).to eq 'iss'
+        expect(subject.claims[:aud]).to eq 'aud'
+        expect(subject.claims[:iat]).to be_an_instance_of Integer
+      end
+    end
+
+    context 'when the hash is empty' do
+      subject { described_class.new({}) }
+
+      it 'sets default payload' do
+        mock = double('mock', aud: 'aud', iss: 'iss', alg: 'alg')
+        allow(Settings).to receive(:jwt).and_return(mock)
+
+        expect(subject.claims[:iss]).to eq 'iss'
+        expect(subject.claims[:aud]).to eq 'aud'
+        expect(subject.claims[:iat]).to be_an_instance_of Integer
+      end
     end
   end
 
