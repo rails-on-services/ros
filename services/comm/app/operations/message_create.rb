@@ -31,9 +31,7 @@ class MessageCreate < Ros::ActivityBase
   end
 
   def valid_recipient_and_phone_number(ctx, **)
-    return false if ctx[:params][:recipient_id].blank? && ctx[:params][:to].blank?
-
-    true
+    ctx[:params][:recipient_id].present? || ctx[:params][:to].present?
   end
 
   def invalid_recipient_and_phone_number(ctx, **)
