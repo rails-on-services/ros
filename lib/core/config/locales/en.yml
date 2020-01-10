@@ -1,12 +1,5 @@
 en:
-  activerecord:
+  activemodel:
     errors:
       messages:
         json_schema_mismatch: "does not match specified schema: %{errors_summary}"
-  activemodel:
-    errors:
-      models:
-        validatable:
-          attributes:
-            properties:
-              json_schema_mismatch: "does not match specified schema: %{errors_summary}"
