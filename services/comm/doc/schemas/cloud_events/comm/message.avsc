@@ -93,6 +93,13 @@
       "default": null
     },
     {
+      "name": "recipient_id",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    {
       "name": "urn",
       "type": [
         "null",

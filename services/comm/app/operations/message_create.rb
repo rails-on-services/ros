@@ -3,6 +3,12 @@
 class MessageCreate < Ros::ActivityBase
   # step :check_permission
   # failed :not_permitted, Output(:success) => End(:failure)
+  step :valid_recipient_and_phone_number
+  failed :invalid_recipient_and_phone_number, Output(:success) => End(:failure)
+  step :match_recipient_and_phone_number
+  failed :mismatched_recipient_and_phone_number, Output(:success) => End(:failure)
+  step :valid_recipient
+  failed :invalid_recipient, Output(:success) => End(:failure)
   step :valid_send_at
   failed :invalid_send_at, Output(:success) => End(:failure)
   step :setup_message
@@ -22,6 +28,55 @@ class MessageCreate < Ros::ActivityBase
 
   def not_permitted(ctx, **)
     ctx[:errors].add(:user, 'not permitted to send message')
+  end
+
+  def valid_recipient_and_phone_number(ctx, **)
+    return false if ctx[:params][:recipient_id].blank? && ctx[:params][:to].blank?
+
+    true
+  end
+
+  def invalid_recipient_and_phone_number(ctx, **)
+    ctx[:errors].add(:recipient, 'or phone number is missing')
+  end
+
+  def match_recipient_and_phone_number(ctx, **)
+    params = ctx[:params]
+    recipient_id = params[:recipient_id]
+    to = params[:to]
+
+    if recipient_id.present? && to.present?
+
+      user = Ros::Cognito::User.find(recipient_id).first
+
+      return false unless user.phone_number == to
+    end
+
+    true
+  end
+
+  def mismatched_recipient_and_phone_number(ctx, **)
+    ctx[:errors].add(:recipient, 'and phone number is not matched')
+  end
+
+  def valid_recipient(ctx, **)
+    params = ctx[:params]
+    recipient_id = params[:recipient_id]
+    to = params[:to]
+
+    if recipient_id.present? && to.blank?
+      user = Ros::Cognito::User.find(recipient_id).first
+
+      return false if user.blank?
+
+      ctx[:params][:to] = user.phone_number
+    end
+
+    true
+  end
+
+  def invalid_recipient(ctx, **)
+    ctx[:errors].add(:recipient, 'is not valid')
   end
 
   def valid_send_at(ctx, **)
