@@ -15,7 +15,7 @@ namespace :ros do
       next unless Settings.event_logging.enabled
 
       model = args[:model].to_s.classify.constantize
-      timestamp = Time.zone.parse(args[:timestamp] || '0000-01-01')
+      timestamp = Time.zone.parse(args[:timestamp] || '1970-01-01')
       type = "#{Settings.service_name}.#{model.name.underscore.downcase}"
       Tenant.all.each do |t|
         next if t.schema_name == 'public'
