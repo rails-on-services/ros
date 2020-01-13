@@ -5,9 +5,11 @@ class MessageCreate < Ros::ActivityBase
   # failed :not_permitted, Output(:success) => End(:failure)
   step :valid_recipient_and_phone_number
   failed :invalid_recipient_and_phone_number, Output(:success) => End(:failure)
+  step :set_user
+  failed :user_not_found, Output(:success) => End(:failure)
   step :match_recipient_and_phone_number
   failed :mismatched_recipient_and_phone_number, Output(:success) => End(:failure)
-  step :valid_recipient
+  step :set_final_to
   failed :invalid_recipient, Output(:success) => End(:failure)
   step :valid_send_at
   failed :invalid_send_at, Output(:success) => End(:failure)
@@ -30,24 +32,38 @@ class MessageCreate < Ros::ActivityBase
     ctx[:errors].add(:user, 'not permitted to send message')
   end
 
-  def valid_recipient_and_phone_number(ctx, **)
-    ctx[:params][:recipient_id].present? || ctx[:params][:to].present?
+  def valid_recipient_and_phone_number(ctx, params:, **)
+    params[:recipient_id].present? || params[:to].present?
   end
 
   def invalid_recipient_and_phone_number(ctx, **)
     ctx[:errors].add(:recipient, 'or phone number is missing')
   end
 
-  def match_recipient_and_phone_number(ctx, **)
-    params = ctx[:params]
+  def set_user(ctx, params:, **)
+    recipient_id = params[:recipient_id]
+
+    if recipient_id.present?
+      begin
+        ctx[:user] = Ros::Cognito::User.find(recipient_id).first
+      rescue JsonApiClient::Errors::NotFound
+        return false
+      end
+    end
+
+    ctx[:user].present?
+  end
+
+  def user_not_found(ctx, params:, **)
+    ctx[:errors].add(:recipient, "#{params[:recipient_id]} cannot be found")
+  end
+
+  def match_recipient_and_phone_number(ctx, params:, **)
     recipient_id = params[:recipient_id]
     to = params[:to]
 
     if recipient_id.present? && to.present?
-
-      user = Ros::Cognito::User.find(recipient_id).first
-
-      return false unless user.phone_number == to
+        return false unless ctx[:user].phone_number == to
     end
 
     true
@@ -57,17 +73,12 @@ class MessageCreate < Ros::ActivityBase
     ctx[:errors].add(:recipient, 'and phone number is not matched')
   end
 
-  def valid_recipient(ctx, **)
-    params = ctx[:params]
+  def set_final_to(ctx, params:, **)
     recipient_id = params[:recipient_id]
     to = params[:to]
 
     if recipient_id.present? && to.blank?
-      user = Ros::Cognito::User.find(recipient_id).first
-
-      return false if user.blank?
-
-      ctx[:params][:to] = user.phone_number
+      ctx[:params][:to] = ctx[:user].phone_number
     end
 
     true

@@ -19,7 +19,7 @@ RSpec.describe MessageCreate, type: :operation do
         owner_type: message_owner.class.name,
         owner_id: message_owner.id,
         from: 'PerxTech',
-        to: '+6587173612',
+        to: '+6512345678',
         body: 'hello'
       },
       user: user
@@ -59,7 +59,7 @@ RSpec.describe MessageCreate, type: :operation do
             owner_type: message_owner.class.name,
             owner_id: message_owner.id,
             from: 'PerxTech',
-            to: '+6587173612',
+            to: '+6512345678',
             body: 'hello'
           },
           user: user,
@@ -89,7 +89,7 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       it 'saves the message with phone number of the recipient' do
-        mocked_phone_number = '+6587173612'
+        mocked_phone_number = '+6512345678'
         allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: mocked_phone_number, id: 1)])
 
         op_result
@@ -107,7 +107,7 @@ RSpec.describe MessageCreate, type: :operation do
           owner_type: message_owner.class.name,
           owner_id: message_owner.id,
           from: 'PerxTech',
-          to: '+6587173612',
+          to: '+6512345678',
           body: 'hello'
         },
         user: user
@@ -132,7 +132,7 @@ RSpec.describe MessageCreate, type: :operation do
             owner_type: message_owner.class.name,
             owner_id: message_owner.id,
             from: 'PerxTech',
-            to: '+6587173612',
+            to: '+6512345678',
             body: 'hello'
           },
           user: user,
@@ -189,7 +189,7 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       before do
-        allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: '+6587173612', id: 1)])
+        allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: '+6512345678', id: 1)])
       end
 
       it 'returns unsuccessful operation with error' do
@@ -220,7 +220,7 @@ RSpec.describe MessageCreate, type: :operation do
 
       it 'returns unsuccessful operation with error' do
         expect(op_result.success?).to eq false
-        expect(op_result.errors.full_messages).to eq ['Recipient is not valid']
+        expect(op_result.errors.full_messages).to eq ['Recipient 1 cannot be found']
       end
     end
   end
