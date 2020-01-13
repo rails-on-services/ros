@@ -6,6 +6,10 @@ namespace :ros do
     task :backfill, %i[timestamp] => :environment do |_task, args|
       next unless Settings.event_logging.enabled
 
+      Dir[Rails.root + 'app/models/**/*.rb'].each do |path|
+        require path
+      end
+
       ApplicationRecord.descendants.each do |model|
         Rake::Task['ros:cloud_event_stream:backfill_a_model'].invoke(model, args[:timestamp])
       end
