@@ -46,9 +46,13 @@ module Ros
       end
 
       def type_of_callback_trigger
+        triggered_action = 'update'
+
         %i[create update destroy].each do |action|
-          return action.to_s if transaction_include_any_action?([action])
+          triggered_action = action.to_s if transaction_include_any_action?([action])
         end
+
+        triggered_action
       end
     end
   end
