@@ -36,7 +36,7 @@ class MessageCreate < Ros::ActivityBase
   end
 
   def invalid_recipient_and_phone_number(ctx, **)
-    ctx[:errors].add(:recipient, 'or phone number is missing')
+    ctx[:errors].add(:recipient, 'Recipient or phone number is missing')
   end
 
   def set_user(ctx, params:, **)
@@ -54,7 +54,7 @@ class MessageCreate < Ros::ActivityBase
   end
 
   def user_not_found(ctx, params:, **)
-    ctx[:errors].add(:recipient, "#{params[:recipient_id]} cannot be found")
+    ctx[:errors].add(:recipient, "Recipient #{params[:recipient_id]} cannot be found")
   end
 
   def match_recipient_and_phone_number(ctx, params:, **)
@@ -69,7 +69,7 @@ class MessageCreate < Ros::ActivityBase
   end
 
   def mismatched_recipient_and_phone_number(ctx, **)
-    ctx[:errors].add(:recipient, 'and phone number is not matched')
+    ctx[:errors].add(:recipient, 'Recipient and phone number is not matched')
   end
 
   def set_final_to(ctx, params:, **)

@@ -167,7 +167,7 @@ RSpec.describe MessageCreate, type: :operation do
 
       it 'returns unsuccessful operation with error' do
         expect(op_result.success?).to eq false
-        expect(op_result.errors.full_messages).to eq ['Recipient or phone number is missing']
+        expect(op_result.errors.full_messages).to eq ['Recipient Recipient or phone number is missing']
       end
     end
 
@@ -194,7 +194,7 @@ RSpec.describe MessageCreate, type: :operation do
 
       it 'returns unsuccessful operation with error' do
         expect(op_result.success?).to eq false
-        expect(op_result.errors.full_messages).to eq ['Recipient and phone number is not matched']
+        expect(op_result.errors.full_messages).to eq ['Recipient Recipient and phone number is not matched']
       end
     end
 
@@ -220,7 +220,7 @@ RSpec.describe MessageCreate, type: :operation do
 
       it 'returns unsuccessful operation with error' do
         expect(op_result.success?).to eq false
-        expect(op_result.errors.full_messages).to eq ['Recipient 1 cannot be found']
+        expect(op_result.errors.full_messages).to eq ['Recipient Recipient 1 cannot be found']
       end
     end
   end
