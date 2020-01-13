@@ -7,7 +7,7 @@ RSpec.describe Ros::Jwt do
 
   context 'when payload is a hash' do
     context 'when the hash contain value' do
-      subject { described_class.new(some: 'thing', else: 'here') }
+      subject { described_class.new(some: 'thing', else: 'here', aud: 'banana') }
 
       it 'sets default payload' do
         mock = double('mock', aud: 'aud', iss: 'iss', alg: 'alg')
