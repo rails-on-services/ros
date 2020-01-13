@@ -180,7 +180,7 @@ RSpec.describe MessageCreate, type: :operation do
             owner_type: message_owner.class.name,
             owner_id: message_owner.id,
             from: 'PerxTech',
-            to: '+6511112222',
+            to: '+6512345678',
             body: 'hello',
             recipient_id: 1
           },
