@@ -215,7 +215,7 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       before do
-        allow(Ros::Cognito::User).to receive(:find).and_return([])
+        allow(Ros::Cognito::User).to receive(:find).and_raise(JsonApiClient::Errors::NotFound.new('record not found'))
       end
 
       it 'returns unsuccessful operation with error' do
