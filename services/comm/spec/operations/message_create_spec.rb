@@ -189,7 +189,7 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       before do
-        allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: '+6512345678', id: 1)])
+        allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: '+6511112222', id: 1)])
       end
 
       it 'returns unsuccessful operation with error' do
