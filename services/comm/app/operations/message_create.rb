@@ -10,7 +10,6 @@ class MessageCreate < Ros::ActivityBase
   step :match_recipient_and_phone_number
   failed :mismatched_recipient_and_phone_number, Output(:success) => End(:failure)
   step :set_final_to
-  failed :invalid_recipient, Output(:success) => End(:failure)
   step :valid_send_at
   failed :invalid_send_at, Output(:success) => End(:failure)
   step :setup_message
@@ -74,16 +73,11 @@ class MessageCreate < Ros::ActivityBase
   end
 
   def set_final_to(ctx, params:, **)
-    recipient_id = params[:recipient_id]
-    to = params[:to]
+    return true if params[:to].present?
 
-    ctx[:params][:to] = ctx[:user].phone_number if recipient_id.present? && to.blank?
+    ctx[:params][:to] = ctx[:user].phone_number
 
     true
-  end
-
-  def invalid_recipient(ctx, **)
-    ctx[:errors].add(:recipient, 'is not valid')
   end
 
   def valid_send_at(ctx, **)
