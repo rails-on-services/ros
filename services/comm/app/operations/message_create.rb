@@ -32,7 +32,7 @@ class MessageCreate < Ros::ActivityBase
     ctx[:errors].add(:user, 'not permitted to send message')
   end
 
-  def valid_recipient_and_phone_number(ctx, params:, **)
+  def valid_recipient_and_phone_number(_ctx, params:, **)
     params[:recipient_id].present? || params[:to].present?
   end
 
@@ -63,7 +63,7 @@ class MessageCreate < Ros::ActivityBase
     to = params[:to]
 
     if recipient_id.present? && to.present?
-        return false unless ctx[:user].phone_number == to
+      return false unless ctx[:user].phone_number == to
     end
 
     true
@@ -77,9 +77,7 @@ class MessageCreate < Ros::ActivityBase
     recipient_id = params[:recipient_id]
     to = params[:to]
 
-    if recipient_id.present? && to.blank?
-      ctx[:params][:to] = ctx[:user].phone_number
-    end
+    ctx[:params][:to] = ctx[:user].phone_number if recipient_id.present? && to.blank?
 
     true
   end
