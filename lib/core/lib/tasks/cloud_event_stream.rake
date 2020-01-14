@@ -21,6 +21,7 @@ namespace :ros do
         next if model.abstract_class
 
         Rake::Task["#{ros_task_prefix}ros:cloud_event_stream:backfill_a_model"].invoke(model.to_s, args[:timestamp])
+        Rake::Task["#{ros_task_prefix}ros:cloud_event_stream:backfill_a_model"].reenable
       end
     end
 
