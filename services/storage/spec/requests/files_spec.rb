@@ -25,7 +25,7 @@ RSpec.describe 'Files requests', type: :request do
       context 'Image upload' do
         let(:file) { fixture_file_upload(Rails.root.join('..', 'fixtures', 'image_fixture.jpg'), 'image/png') }
 
-        it 'returns successfull response' do
+        it 'returns successful response' do
           expect(response).to be_successful
         end
 
@@ -37,7 +37,7 @@ RSpec.describe 'Files requests', type: :request do
       context 'Document upload' do
         let(:file) { fixture_file_upload(Rails.root.join('..', 'fixtures', 'csv_fixture.csv'), 'text/csv') }
 
-        it 'returns successfull response' do
+        it 'returns successful response' do
           expect(response).to be_successful
         end
 
