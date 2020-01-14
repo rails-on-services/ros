@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+def ros_task_prefix
+  @ros_task_prefix ||= Dir['lib/**/engine.rb'].any? ? 'app:' : ''
+end
+
 namespace :ros do
   namespace :cloud_event_stream do
     desc 'backfill active records of each TENANTS from a SERVICE'
@@ -14,7 +18,9 @@ namespace :ros do
       end
 
       ApplicationRecord.descendants.each do |model|
-        Rake::Task['ros:cloud_event_stream:backfill_a_model'].invoke(model.to_s, args[:timestamp])
+        next if model.abstract_class
+
+        Rake::Task["#{ros_task_prefix}ros:cloud_event_stream:backfill_a_model"].invoke(model.to_s, args[:timestamp])
       end
     end
 
@@ -33,7 +39,7 @@ namespace :ros do
 
       model = args[:model].to_s.classify.constantize
       timestamp = Time.zone.parse(args[:timestamp] || '1970-01-01')
-      type = "#{Settings.service_name}.#{model.name.underscore.downcase}"
+      type = "#{Settings.service.name}.#{model.name.underscore.downcase}"
 
       Tenant.all.each do |t|
         next if t.schema_name == 'public'
