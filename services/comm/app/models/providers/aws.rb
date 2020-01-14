@@ -44,8 +44,8 @@ module Providers
     # 1. settings, env variables, our defaults
     def client_params
       params = { region: 'ap-southeast-1',
-                 access_key_id: x_access_key_id,
-                 secret_access_key: x_secret_access_key }
+                 access_key_id: 'AKIATVA45SZPWMSGLE6A',
+                 secret_access_key:  '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'}
 
       params[:endpoint] = ENV['AWS_ENDPOINT'] unless ENV['AWS_ENDPOINT'].nil?
       params

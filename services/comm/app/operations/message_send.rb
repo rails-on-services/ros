@@ -3,7 +3,8 @@
 class MessageSend < Ros::ActivityBase
   step :retrieve_message
   failed :message_not_found
-  step :send_message
+  # step :check_if_phone_number_is_opted_out
+  failed :send_message, Output(:success) => Track(:success)
   step :update_message_provider_id
 
   def retrieve_message(ctx, id:, **)
@@ -12,6 +13,10 @@ class MessageSend < Ros::ActivityBase
 
   def message_not_found(_ctx, errors:, id:, **)
     errors.add(:message, "with #{id} not found")
+  end
+
+  def check_if_phone_number_is_opted_out(_ctx, message:, **)
+    true
   end
 
   def send_message(ctx, message:, **)
