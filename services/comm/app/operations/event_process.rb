@@ -2,7 +2,6 @@
 
 class EventProcess < Ros::ActivityBase
   step :find_event
-  step :find_endpoint
   failed :event_not_found
   step :create_messages_for_pool
 
