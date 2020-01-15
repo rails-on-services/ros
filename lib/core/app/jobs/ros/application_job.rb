@@ -17,6 +17,8 @@ module Ros
       next unless (@tenant = Tenant.find_by(schema_name: schema_name))
 
       @tenant.set_role_credential
+      # TODO: Fix this. Use tenant's settings instead of static zone
+      Time.zone = 'Asia/Singapore'
     end
 
     def perform(*params)

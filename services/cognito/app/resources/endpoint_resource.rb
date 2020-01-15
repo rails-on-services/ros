@@ -3,6 +3,7 @@
 class EndpointResource < Cognito::ApplicationResource
   attributes :url, :properties, :target_type, :target_id
 
+  filters :target_type, :target_id
   filter :url
 
   def custom_links(options)

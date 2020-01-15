@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class MessageCreate < Ros::ActivityBase
-  step :check_permission
-  failed :not_permitted, Output(:success) => End(:failure)
+  # step :check_permission
+  # failed :not_permitted, Output(:success) => End(:failure)
   step :valid_send_at
   failed :invalid_send_at, Output(:success) => End(:failure)
   step :setup_message

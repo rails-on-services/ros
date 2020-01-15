@@ -44,6 +44,7 @@ RSpec.describe MessageCreate, type: :operation do
         allow(MessageSendJob).to receive(:perform_now).and_return true
         op_result
       end
+
       it 'sends the message to the provider' do
         expect(MessageSendJob).to have_received(:perform_now).once
       end
@@ -67,7 +68,7 @@ RSpec.describe MessageCreate, type: :operation do
       end
 
       it 'enqueues the the message to be sent to the provider' do
-        expect { op_result }.to have_enqueued_job
+        expect { op_result }.to have_enqueued_job(MessageSendJob)
       end
     end
   end
