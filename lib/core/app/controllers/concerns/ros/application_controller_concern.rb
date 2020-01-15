@@ -25,8 +25,10 @@ module Ros
             @cognito_user_id = cognito_user_urn.resource_id
           end
         end
+        @internal_call = current_jwt.claims.key?(:__internal).present?
         # TODO: Credential.authorization must be an instance variable
         current_jwt.add_claims(user: current_user.to_json) unless current_jwt.claims.key?(:user)
+        current_jwt.add_claims(__internal: true) unless @internal_call
         Ros::Sdk::Credential.authorization = "Bearer #{current_jwt.encode(:internal)}"
       end
 
