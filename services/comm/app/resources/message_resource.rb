@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MessageResource < Comm::ApplicationResource
-  attributes :from, :to, :body, :provider_id, :owner_id, :owner_type, :channel
+  attributes :from, :to, :body, :provider_id, :owner_id, :recipient_id, :owner_type, :channel
 
   filters :owner_id, :owner_type
 

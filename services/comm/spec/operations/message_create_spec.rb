@@ -19,7 +19,7 @@ RSpec.describe MessageCreate, type: :operation do
         owner_type: message_owner.class.name,
         owner_id: message_owner.id,
         from: 'PerxTech',
-        to: '+6587173612',
+        to: '+6512345678',
         body: 'hello'
       },
       user: user
@@ -59,7 +59,7 @@ RSpec.describe MessageCreate, type: :operation do
             owner_type: message_owner.class.name,
             owner_id: message_owner.id,
             from: 'PerxTech',
-            to: '+6587173612',
+            to: '+6512345678',
             body: 'hello'
           },
           user: user,
@@ -69,6 +69,32 @@ RSpec.describe MessageCreate, type: :operation do
 
       it 'enqueues the the message to be sent to the provider' do
         expect { op_result }.to have_enqueued_job(MessageSendJob)
+      end
+    end
+
+    context 'when recipient id is provided' do
+      let(:op_params) do
+        {
+          params: {
+            provider_id: message_owner.provider_id,
+            channel: 'sms',
+            owner_type: message_owner.class.name,
+            owner_id: message_owner.id,
+            from: 'PerxTech',
+            recipient_id: 1,
+            body: 'hello'
+          },
+          user: user
+        }
+      end
+
+      it 'saves the message with phone number of the recipient' do
+        mocked_phone_number = '+6512345678'
+        allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: mocked_phone_number, id: 1)])
+
+        op_result
+
+        expect(Message.first.to).to eq mocked_phone_number
       end
     end
   end
@@ -81,7 +107,7 @@ RSpec.describe MessageCreate, type: :operation do
           owner_type: message_owner.class.name,
           owner_id: message_owner.id,
           from: 'PerxTech',
-          to: '+6587173612',
+          to: '+6512345678',
           body: 'hello'
         },
         user: user
@@ -106,7 +132,7 @@ RSpec.describe MessageCreate, type: :operation do
             owner_type: message_owner.class.name,
             owner_id: message_owner.id,
             from: 'PerxTech',
-            to: '+6587173612',
+            to: '+6512345678',
             body: 'hello'
           },
           user: user,
@@ -121,6 +147,80 @@ RSpec.describe MessageCreate, type: :operation do
 
       it 'does not create the message' do
         expect { op_result }.to_not(change { Message.count })
+      end
+    end
+
+    context 'when phone number and recipient id are missing' do
+      let(:op_params) do
+        {
+          params: {
+            provider_id: message_owner.provider_id,
+            channel: 'sms',
+            owner_type: message_owner.class.name,
+            owner_id: message_owner.id,
+            from: 'PerxTech',
+            body: 'hello'
+          },
+          user: user
+        }
+      end
+
+      it 'returns unsuccessful operation with error' do
+        expect(op_result.success?).to eq false
+        expect(op_result.errors.full_messages).to eq ['Recipient is missing']
+      end
+    end
+
+    context 'when phone number and recipient id are not matched' do
+      let(:op_params) do
+        {
+          params: {
+            provider_id: message_owner.provider_id,
+            channel: 'sms',
+            owner_type: message_owner.class.name,
+            owner_id: message_owner.id,
+            from: 'PerxTech',
+            to: '+6512345678',
+            body: 'hello',
+            recipient_id: 1
+          },
+          user: user
+        }
+      end
+
+      before do
+        allow(Ros::Cognito::User).to receive(:find).and_return([OpenStruct.new(phone_number: '+6511112222', id: 1)])
+      end
+
+      it 'returns unsuccessful operation with error' do
+        expect(op_result.success?).to eq false
+        expect(op_result.errors.full_messages).to eq ['Recipient mismatch']
+      end
+    end
+
+    context 'when recipient id is not valid' do
+      let(:op_params) do
+        {
+          params: {
+            provider_id: message_owner.provider_id,
+            channel: 'sms',
+            owner_type: message_owner.class.name,
+            owner_id: message_owner.id,
+            from: 'PerxTech',
+            body: 'hello',
+            recipient_id: 1
+          },
+          user: user
+        }
+      end
+
+      before do
+        allow(Ros::Cognito::User).to receive(:find).and_raise(JsonApiClient::Errors::NotFound.new('record not found'))
+      end
+
+      it 'returns unsuccessful operation with error' do
+        expect(op_result.success?).to eq false
+        expect(op_result.errors.full_messages).to eq ['Recipient 1 cannot be found']
       end
     end
   end
