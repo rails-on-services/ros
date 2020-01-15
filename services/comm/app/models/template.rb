@@ -37,6 +37,10 @@ class Template < Comm::ApplicationRecord
     mapped_key = key_map[sanitized_key]
     return key if mapped_key.nil? || properties[mapped_key[:property]].nil?
 
-    properties[mapped_key[:property]].send(mapped_key[:value])
+    if sanitized_key != 'campaignUrl'
+      properties[mapped_key[:property]].send(mapped_key[:value])
+    else
+      "#{properties[mapped_key[:property]].send(mapped_key[:value])}?cid=#{campaign.owner_id}&pid=#{user.primary_identifier}"
+    end
   end
 end
