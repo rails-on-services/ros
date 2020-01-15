@@ -27,7 +27,7 @@ module Ros
       end
 
       def cloud_event_data
-        attributes_to_modify = %i[jsonb datetime]
+        attributes_to_modify = %i[jsonb datetime decimal]
         avro_attributes = attributes.map do |name, value|
           next [name, value] unless attributes_to_modify.include? column_for_attribute(name).type
 
@@ -42,6 +42,8 @@ module Ros
           [name, value.to_s]
         elsif column_for_attribute(name).type == :datetime
           [name, (value.to_f * 1000).to_i]
+        elsif column_for_attribute(name).type == :decimal
+          [name, value.to_s('F')]
         end
       end
 
