@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ros-apartment', '2.3.0'
   spec.add_dependency 'ros-apartment-sidekiq', '1.2.0'
   spec.add_dependency 'attr_encrypted', '~> 3.1.0'
-  spec.add_dependency 'ros-avro_turf', '~> 0.1.0'
+  spec.add_dependency 'ros-avro_turf', '~> 0.1.1'
   spec.add_dependency 'aws-sdk-s3'
   spec.add_dependency 'bullet', '~> 6.1.0'
   spec.add_dependency 'config', '1.7.1'
