@@ -19,11 +19,12 @@
 module Ros
   module Scheduler
     class TenantHandler
-      attr_reader :count, :job_class, :queue
+      attr_reader :count, :job_class, :queue, :transaction_klass
 
-      def initialize(job_class:, queue_name: nil)
+      def initialize(job_class:, queue_name: nil, transaction_klass: '::Transaction')
         @count = 0
         @job_class = job_class
+        @transaction_klass = transaction_klass
         @queue = Sidekiq::Queue.new(queue_name || job_class.queue_name)
       end
 
@@ -36,7 +37,7 @@ module Ros
 
       # NOTE: Override in subclass to implement a custom block
       def perform_later(tenant)
-        job_class.perform_later(params: { account_id: tenant.account_id })
+        job_class.perform_later(params: { account_id: tenant.account_id, transaction_klass: transaction_klass })
       end
 
       def per_tenant
