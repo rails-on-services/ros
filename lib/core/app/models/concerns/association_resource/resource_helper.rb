@@ -11,7 +11,6 @@ module AssociationResource
       def type_for_source(source)
         resource = source.public_send(name)
         return resource.class._type if resource.is_a? AssociationResource::IncludedResource
-        return resource&.type if polymorphic?
 
         type
       end

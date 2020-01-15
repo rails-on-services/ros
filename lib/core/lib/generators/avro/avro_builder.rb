@@ -9,7 +9,7 @@ class AvroBuilder
     datetime: 'long',
     jsonb: 'string',
     float: 'double',
-    decimal: 'bytes',
+    decimal: 'string',
     boolean: 'boolean'
   }.freeze
 
@@ -48,13 +48,6 @@ class AvroBuilder
       {
         "type": DICTIONARY[column.sql_type_metadata.type],
         "logicalType": 'timestamp-millis'
-      }
-    when :decimal
-      {
-        "type": DICTIONARY[column.sql_type_metadata.type],
-        "logicalType": 'decimal',
-        "precision": column.sql_type_metadata.precision,
-        "scale": column.sql_type_metadata.scale
       }
     else
       DICTIONARY[column.sql_type_metadata.type] || 'string'
