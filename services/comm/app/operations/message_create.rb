@@ -5,8 +5,8 @@ class MessageCreate < Ros::ActivityBase
   # failed :not_permitted, Output(:success) => End(:failure)
   step :valid_recipient_and_phone_number
   failed :invalid_recipient_and_phone_number, Output(:success) => End(:failure)
-  step :set_user
-  failed :user_not_found, Output(:success) => End(:failure)
+  step :set_recipient
+  failed :recipient_not_found, Output(:success) => End(:failure)
   step :match_recipient_and_phone_number
   failed :mismatched_recipient_and_phone_number, Output(:success) => End(:failure)
   step :set_final_to
@@ -39,19 +39,19 @@ class MessageCreate < Ros::ActivityBase
     ctx[:errors].add(:recipient, 'is missing')
   end
 
-  def set_user(ctx, params:, **)
+  def set_recipient(ctx, params:, **)
     recipient_id = params[:recipient_id]
     return true unless recipient_id
 
     begin
-      ctx[:user] = Ros::Cognito::User.find(recipient_id).first
-      ctx[:user].errors.blank?
+      ctx[:recipient] = Ros::Cognito::User.find(recipient_id).first
+      ctx[:recipient].errors.blank?
     rescue JsonApiClient::Errors::NotFound
       false
     end
   end
 
-  def user_not_found(ctx, params:, **)
+  def recipient_not_found(ctx, params:, **)
     ctx[:errors].add(:recipient, "#{params[:recipient_id]} cannot be found")
   end
 
@@ -60,15 +60,15 @@ class MessageCreate < Ros::ActivityBase
     to = params[:to]
     return true unless recipient_id.present? && to.present?
 
-    ctx[:user].phone_number == to
+    ctx[:recipient].phone_number == to
   end
 
   def mismatched_recipient_and_phone_number(ctx, **)
     ctx[:errors].add(:recipient, 'mismatch')
   end
 
-  def set_final_to(_ctx, params:, user:, **)
-    params[:to] ||= user.phone_number
+  def set_final_to(ctx, params:, **)
+    params[:to] ||= ctx[:recipient].phone_number
   end
 
   def valid_send_at(ctx, **)
