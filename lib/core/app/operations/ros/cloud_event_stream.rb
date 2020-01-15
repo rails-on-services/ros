@@ -6,6 +6,11 @@ module Ros
     failed :log_error
 
     def log_event(ctx, type:, message_id:, data:, **)
+      unless Settings.event_logging.enabled
+        Rails.logger.warn('Tried to log event but event logging is disabled')
+        return true
+      end
+
       ctx[:res] = Rails.configuration.x.event_logger.log_event(type, message_id, data) # => Faraday::Response
       ctx[:res].success?
     rescue Faraday::Error => e
