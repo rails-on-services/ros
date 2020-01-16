@@ -40,7 +40,15 @@ class Template < Comm::ApplicationRecord
     if sanitized_key != 'campaignUrl'
       properties[mapped_key[:property]].send(mapped_key[:value])
     else
-      "#{properties[mapped_key[:property]].send(mapped_key[:value])}?cid=#{campaign.owner_id}&pid=#{user.primary_identifier}"
+      "#{properties[mapped_key[:property]].send(mapped_key[:value])}?#{campaign_query_params}&#{owner_query_params}"
     end
+  end
+
+  def campaign_query_params
+    "cid=#{properties.campaign.owner_id}"
+  end
+
+  def owner_query_params
+    "pid=#{properties.user.primary_identifier}"
   end
 end
