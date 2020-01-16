@@ -30,7 +30,7 @@ module Providers
     end
 
     def is_phone_number_opted_out?(phone_number)
-      client.check_if_phone_number_is_opted_out({ phone_number: phone_number }).is_opted_out
+      false
     end
 
     def call(_message)
