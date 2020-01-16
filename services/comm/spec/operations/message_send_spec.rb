@@ -7,11 +7,15 @@ RSpec.describe MessageSend, type: :operation do
   let(:target)    { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   let(:message)   { create(:message) }
 
+  before do
+    allow_any_instance_of(Providers::Aws).to receive(:sms).and_return true
+    allow_any_instance_of(Providers::Aws).to receive(:is_phone_number_opted_out?).and_return true
+  end
+
   context 'when message is sent' do
     let(:op_params) { { id: message.id } }
 
     before do
-      allow_any_instance_of(Providers::Aws).to receive(:sms).and_return true
       target
       op_result
     end
@@ -25,13 +29,24 @@ RSpec.describe MessageSend, type: :operation do
     let(:op_params) { { id: rand(100..500) } }
 
     before do
-      allow_any_instance_of(Providers::Aws).to receive(:sms).and_return true
       target
       op_result
     end
 
     it 'throws errors' do
       expect(op_result.errors.size).to be_positive
+    end
+  end
+
+  context 'when phone number is opted out' do
+    before do
+      allow_any_instance_of(Providers::Aws).to receive(:is_phone_number_opted_out?).and_return true
+    end
+
+    context 'aws' do
+    end
+
+    context 'twilio' do
     end
   end
 end

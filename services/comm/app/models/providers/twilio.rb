@@ -29,6 +29,10 @@ module Providers
       Rails.logger.debug message
     end
 
+    def is_phone_number_opted_out?(phone_number)
+      client.check_if_phone_number_is_opted_out({ phone_number: phone_number }).is_opted_out
+    end
+
     def call(_message)
       # to = whatup.From.gsub('whatsapp:', '')
       client.calls.create(from: from, to: to, url: 'http://demo.twilio.com/docs/voice.xml')
