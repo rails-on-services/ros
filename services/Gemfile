@@ -3,9 +3,10 @@
 source ENV['GEM_SERVER'] || 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'pry-rails'
 gem 'awesome_print'
+gem 'karafka'
 gem 'pg'
+gem 'pry-rails'
 
 gem 'ros-core', path: '../../lib/core'
 gem 'ros_sdk', path: '../../lib/sdk'
