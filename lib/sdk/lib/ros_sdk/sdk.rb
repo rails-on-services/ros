@@ -25,6 +25,11 @@ module Ros
 
     class Base < JsonApiClient::Resource
       self.paginator = JsonApiPaginator
+      # TODO: the way our helpers are designed, find is called without params so
+      # we cannot set this to true, but we really should redesign the general
+      # resource helpers and change this
+      self.raise_on_blank_find_param = false
+
       attr_writer :to_gid
 
       def to_gid
