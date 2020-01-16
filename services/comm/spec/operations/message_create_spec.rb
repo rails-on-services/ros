@@ -99,7 +99,7 @@ RSpec.describe MessageCreate, type: :operation do
     end
   end
 
-  context 'when some attributes are not valid' do
+  context 'when provider is not given' do
     let(:op_params) do
       {
         params: {
@@ -108,22 +108,31 @@ RSpec.describe MessageCreate, type: :operation do
           owner_id: message_owner.id,
           from: 'PerxTech',
           to: '+6512345678',
-          body: 'hello'
+          body: 'hi'
         },
         user: user
       }
     end
 
-    xit 'returns unsuccessful operation with error' do
-      expect(op_result.success?).to eq false
-      expect(op_result.errors.full_messages).to eq ['Provider must exist']
+    context 'with AWS provider setup' do
+      it 'falls back to aws provider as default' do
+        expect(op_result.success?).to eq true
+        expect(op_result.model.provider.type).to eq 'Providers::Aws'
+      end
     end
 
-    xit 'does not create the message' do
-      expect { op_result }.to_not(change { Message.count })
+    context 'without AWS provider setup' do
+      before do
+        message_owner.provider.update!(type: 'Providers::Twilio')
+      end
+
+      it 'returns unsuccessful operation with error if ' do
+        expect(op_result.success?).to eq false
+        expect(op_result.errors.full_messages).to eq ['Provider must exist']
+      end
     end
 
-    xcontext 'when send_at is not a date time' do
+    context 'when send_at is not a date time' do
       let(:op_params) do
         {
           params: {
