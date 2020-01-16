@@ -29,7 +29,7 @@ class Template < Comm::ApplicationRecord
       'userFirstName' => { property: :user, value: :first_name },
       'userLastName' => { property: :user, value: :last_name },
       'userId' => { property: :user, value: :primary_identifier },
-      'campaignUrl' => { property: :campaign, value: :base_url } }
+      'campaignUrl' => { property: :campaign, value: :final_url } }
   end
 
   def value_for(key)
@@ -49,6 +49,6 @@ class Template < Comm::ApplicationRecord
   end
 
   def owner_query_params
-    "pid=#{properties.user.primary_identifier}"
+    "pi=#{properties.user.primary_identifier}"
   end
 end
