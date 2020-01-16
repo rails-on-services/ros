@@ -10,7 +10,7 @@ RSpec.describe MessageSend, type: :operation do
 
   before do
     allow_any_instance_of(Providers::Aws).to receive(:sms).and_return true
-    allow_any_instance_of(Providers::Aws).to receive(:is_phone_number_opted_out?).and_return false
+    allow_any_instance_of(Providers::Aws).to receive(:phone_number_opted_out?).and_return false
   end
 
   context 'when message is sent' do
@@ -39,7 +39,7 @@ RSpec.describe MessageSend, type: :operation do
 
   context 'when phone number is opted out' do
     before do
-      allow_any_instance_of(Providers::Aws).to receive(:is_phone_number_opted_out?).and_return true
+      allow_any_instance_of(Providers::Aws).to receive(:phone_number_opted_out?).and_return true
     end
 
     it 'throws errors' do

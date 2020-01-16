@@ -29,7 +29,7 @@ module Providers
       Rails.logger.debug message
     end
 
-    def is_phone_number_opted_out?(phone_number)
+    def phone_number_opted_out?(phone_number)
       false
     end
 

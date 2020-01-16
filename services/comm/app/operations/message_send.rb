@@ -17,7 +17,7 @@ class MessageSend < Ros::ActivityBase
   end
 
   def check_if_phone_number_is_opted_in(_ctx, message:, **)
-    !message.provider.is_phone_number_opted_out?(message.to)
+    !message.provider.phone_number_opted_out?(message.to)
   end
 
   def phone_number_opted_out(_ctx, errors:, message:, **)
