@@ -48,7 +48,7 @@ class KarafkaApp < Karafka::App
   consumer_groups.draw do
     consumer_group :chown_manager do
       topic :chown_enqueued do
-        consumer ChownEqueuedConsumer
+        consumer ChownEnqueuedConsumer
       end
     end
     # topic :example do
