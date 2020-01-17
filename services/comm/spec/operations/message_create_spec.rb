@@ -108,7 +108,7 @@ RSpec.describe MessageCreate, type: :operation do
           owner_id: message_owner.id,
           from: 'PerxTech',
           to: '+6512345678',
-          body: 'hi'
+          body: 'hello'
         },
         user: user
       }
@@ -126,7 +126,7 @@ RSpec.describe MessageCreate, type: :operation do
         message_owner.provider.update!(type: 'Providers::Twilio')
       end
 
-      it 'returns unsuccessful operation with error if ' do
+      it 'returns unsuccessful operation with error' do
         expect(op_result.success?).to eq false
         expect(op_result.errors.full_messages).to eq ['Provider must exist']
       end
