@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'grpc', '1.23.0'
   spec.add_dependency 'json_schemer', '0.2.6'
   spec.add_dependency 'jsonapi-authorization', '3.0.1'
-  spec.add_dependency 'jsonapi-resources', '0.9.10'
+  spec.add_dependency 'jsonapi-resources', '~> 0.9.10'
   spec.add_dependency 'jwt', '2.2.1'
   spec.add_dependency 'prometheus_exporter', '0.4.13'
   spec.add_dependency 'pry-rails', '0.3.9'
