@@ -29,7 +29,8 @@ module Providers
       Rails.logger.debug message
     end
 
-    def phone_number_opted_out?(phone_number)
+    def phone_number_opted_out?(_phone_number)
+      # TODO: Implement the Twilio API call to check if phone number is opted out or not
       false
     end
 
