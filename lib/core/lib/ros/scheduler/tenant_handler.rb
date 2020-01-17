@@ -44,6 +44,7 @@ module Ros
           Tenant.find_each do |tenant|
             next if job_enqueued(tenant)
 
+            sleep(1)
             tenant.switch do
               Rails.logger.debug "Running job on #{tenant.account_id} (#{count})"
               yield tenant
