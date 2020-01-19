@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# ActiveSupport::Inflector.inflections do |inflect|
+#   inflect.uncountable %w[aws]
+# end
+
 module Ros
   module Core
     # rubocop:disable Metrics/ClassLength
@@ -70,9 +74,9 @@ module Ros
       end
 
       initializer 'ros_core.initialize_infra_services' do |_app|
-        if (resources = Settings.dig(:infra, :resources))
+        if (config = Settings.dig(:infra))
           require 'ros/infra'
-          Ros::Infra.initialize(resources)
+          Ros::Infra.initialize(config)
         end
       end
 

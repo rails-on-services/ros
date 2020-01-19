@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-sqs'
-require_relative 'settings'
+# require_relative 'settings'
 
 module Ros
   module Infra
@@ -41,26 +41,31 @@ module Ros
 
       # An instance of this class represents a single Queue
       class Mq
-        include Ros::Infra::Aws::Settings
         include Ros::Infra::Mq
         attr_accessor :config, :name, :client, :resource, :status, :attrbutes, :bucket_name
 
-        def initialize(config)
-          self.name = config.name
-          self.config = config.to_hash.slice(:region)
-          self.client = ::Aws::SQS::Client.new(credentials.merge(@config))
+        def initialize(resource_config, client_config)
+          # binding.pry
+          self.name = resource_config.name
+          # self.config = config.to_hash.slice(:region)
           self.status = :not_configured
-          self.bucket_name = config.bucket_name
+          self.bucket_name = resource_config.bucket_name
 
           begin
+            # binding.pry
+            self.client = ::Aws::SQS::Client.new(client_config)
             self.resource = client.create_queue(queue_name: name, attributes: create_attributes)
             client.set_queue_attributes(queue_url: resource.queue_url, attributes: policy_attributes)
             attributes # set's the member variable
             self.status = :ok
+          rescue ::Aws::Errors::MissingRegionError => error
+            self.status = error.message
+            Rails.logger.warn(error.message)
           rescue ::Aws::SQS::Errors::InvalidClientTokenId
             Rails.logger.warn('Invalid credentials')
             # TODO: Send exception report to Sentry
           rescue StandardError => error
+            # binding.pry
             self.status = error.message
             Rails.logger.warn("Unkown error creating queue #{name}. #{status}")
             # TODO: Send exception report to Sentry

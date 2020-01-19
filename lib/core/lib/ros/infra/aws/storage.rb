@@ -1,36 +1,35 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-s3'
-require_relative 'settings'
+# require_relative 'settings'
 
 module Ros
   module Infra
     module Aws
       # rubocop:disable Metrics/ClassLength
       class Storage
-        include Ros::Infra::Aws::Settings
         include Ros::Infra::Storage
-        attr_accessor :config, :name, :client, :resource, :status, :notification_configuration
+        attr_accessor :name, :client, :resource, :status, :notification_configuration
 
-        def initialize(user_config)
-          self.name = user_config.name
-          self.config = user_config.to_hash.slice(:region)
-          # self.client = ::Aws::S3::Client.new(credentials.merge(config))
-          self.client = ::Aws::S3::Client.new(region: credentials[:region])
-          self.status = :not_configured
-          if user_config.notifications
-            self.notification_configuration = { bucket: name, notification_configuration: user_config.notifications.to_hash }
-          else
-            self.notification_configuration = {}
+        def initialize(resource_config, client_config)
+          @name = resource_config.name
+          @status = :not_configured
+          @notification_configuration = {}
+          if resource_config.notifications
+            @notification_configuration = { bucket: name, notification_configuration: resource_config.notifications.to_hash }
           end
 
-          # We rescue here, report errors and continue because the application
-          # should still be able to run even without access to external storage or queue service
+          # Rescue from and report errors then continue so that the application
+          # will continue to run even without access to this resource
           begin
+            self.client = ::Aws::S3::Client.new(client_config)
             client.head_bucket(bucket: name)
             self.status = :ok
             self.resource = ::Aws::S3::Resource.new(client: client).bucket(name)
             configure_notifications unless notification_configuration.empty?
+          rescue ::Aws::Errors::MissingRegionError => error
+            self.status = error.message
+            Rails.logger.warn(error.message)
           rescue ::Aws::S3::Errors::Forbidden => error
             self.status = error.code
             Rails.logger.warn('Configured for S3 but no valid credentials')
@@ -42,17 +41,17 @@ module Ros
             self.status = error.code
             Rails.logger.warn("Unable to create bucket #{name}")
             # TODO: Send exception report to Sentry
-          # TODO: On not found if the option to create has been passed then this should be good
-          # rescue ::Aws::S3::Errors::NotFound
-          #   begin
-          #     client.create_bucket(bucket: name)
-          #     self.status = :ok
-          #   rescue ::Aws::S3::Errors::InvalidBucketName => error
-          #     # TODO: Get the excpetion type and report it to Sentry
-          #     self.status = error.code
-          #     Rails.logger.warn("Unable to create bucket #{name}")
-          #     # TODO: Send exception report to Sentry
-          #   end
+          rescue ::Aws::S3::Errors::NotFound
+            if client_config[:region].eql? 'localstack'
+              client.create_bucket(bucket: name)
+              retry
+            else
+              self.status = error.code
+              Rails.logger.warn("Unable to create bucket #{name}")
+            end
+          # rescue ::Aws::S3::Errors::InvalidBucketName => error
+          #   self.status = error.code
+          #   Rails.logger.warn("Unable to create bucket #{name}")
           rescue StandardError => error
             self.status = error.message
             Rails.logger.warn("Unkown error creating/listing bucket '#{name}'\nError: #{error}")
@@ -113,7 +112,7 @@ module Ros
         end
 
         def presigned_url(path)
-          ::Aws::S3::Presigner.new.presigned_url(:get_object, bucket: name, key: path)
+          ::Aws::S3::Presigner.new(client: client).presigned_url(:get_object, bucket: name, key: path)
         end
 
         # Ros::Infra.resources.storage.app.cp(source, target)
@@ -123,8 +122,15 @@ module Ros
         # cp('fs:this/file') #
         # cp('fs:this/file', 'that/name')
         def cp(source, target = nil, metadata = {})
-          storage = source.start_with?('fs:') ? :target : :source
-          cmd = storage.eql?(:source) ? :get : :put
+          src = source.start_with?('fs:')
+          dest = target.start_with?('fs:')
+          return unless src_service ^ dest_service
+
+          # service_name = src.index(':') ? src.split(':')[0] : dest.split(':')[0]
+          # response.add(exec: "docker cp #{src} #{dest}".gsub("#{service_name}:", "#{service_id(service_name)}:"))
+
+          storage = src ? :target : :source
+          cmd = src ? :get : :put
           source = source.gsub(/^fs:/, '')
           target ||= File.basename(source)
           exec(cmd, source, target, metadata)
@@ -155,35 +161,6 @@ module Ros
           Dir.mkdir_p(prefix) unless Dir.exist? prefix
           prefix
         end
-=begin
-        def get(source, target)
-          unless status.eql?(:ok)
-            Rails.logger.warn("Failed attempt to get #{source} from bucket #{name} with status #{status}")
-            return
-          end
-          # local_path = File.dirname(source)
-          # FileUtils.mkdir_p(local_path) unless Dir.exist?(local_path)
-          resource.object(source).get(response_target: target)
-        rescue StandardError => error
-          Rails.logger.warn("Failed attempt to get #{source} from bucket #{name} with error #{error.message}")
-          # TODO: Send exception report to Sentry
-        end
-
-        def put(source, target)
-          unless status.eql?(:ok)
-            Rails.logger.warn("Failed attempt to put #{source} to bucket #{name} when status #{status}")
-            return
-          end
-          resource.object(target).upload_file(source)
-        rescue ::Aws::S3::Errors::InvalidAccessKeyId
-          self.status = error.code
-          Rails.logger.warn('Invalid credentials')
-          # TODO: Send exception report to Sentry
-        rescue StandardError => error
-          Rails.logger.warn("Failed attempt to put #{source} to bucket #{name} with error #{error.message}")
-          # TODO: Send exception report to Sentry
-        end
-=end
       end
       # rubocop:enable Metrics/ClassLength
     end
