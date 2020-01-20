@@ -9,7 +9,7 @@ module Ros
         @tenant = Tenant.find_by(schema_name: schema_name)
 
         unless @tenant
-          Rails.logger.error "[OUTCOME_SERVICE] TenantUpdate received tenant that does not exist #{schema_name}"
+          Rails.logger.error "[#{Settings.service.name}] TenantUpdate received tenant that does not exist #{schema_name}"
           raise 'Missing Tenant'
         end
 
