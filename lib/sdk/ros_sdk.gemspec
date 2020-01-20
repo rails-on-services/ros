@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'json_api_client', '1.15.0'
   spec.add_dependency 'jwt', '2.2.1'
   spec.add_dependency 'pry', '0.12.2'
+  spec.add_dependency 'request_store', '1.5.0'
 
   spec.add_development_dependency 'awesome_print', '1.8.0'
   spec.add_development_dependency 'bundler', '~> 2.0'
