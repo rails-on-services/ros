@@ -26,11 +26,15 @@ class EventProcess < Ros::ActivityBase
     # which will be all returned here (or not if the server goes down)
     event.users.each do |user|
       content = template.render(user: user, campaign: campaign)
-      MessageCreate.call(params: { to: user.phone_number,
-                                   provider: event.provider,
-                                   channel: event.channel,
-                                   body: content,
-                                   owner: event })
+      MessageProcessJob.perform_later(
+        params: {
+          to: user.phone_number,
+          provider: event.provider,
+          channel: event.channel,
+          body: content,
+          owner: event
+        }
+      )
     end
     event.publish!
   end
