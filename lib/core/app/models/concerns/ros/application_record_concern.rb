@@ -21,10 +21,6 @@ module Ros
 
       after_commit :stream_cloud_event, if: -> { Settings.event_logging.enabled }
 
-      def publish_event(topic)
-        WaterDrop::SyncProducer.call(to_json, topic: topic)
-      end
-
       def stream_cloud_event
         type = "#{Settings.service.name}.#{self.class.name.underscore.downcase}"
         Ros::CloudEventStreamJob.perform_later(type: type, message_id: id, data: cloud_event_data)

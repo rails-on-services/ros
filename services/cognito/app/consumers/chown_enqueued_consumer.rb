@@ -7,7 +7,7 @@ class ChownEnqueuedConsumer < ApplicationConsumer
 
   def consume
     params_batch.each do |params|
-      schema_name = params['schema_name']
+      schema_name = params['payload']['schema_name']
 
       Apartment::Tenant.switch!(schema_name)
       next unless (@tenant = Tenant.find_by(schema_name: schema_name))
@@ -36,7 +36,6 @@ class ChownEnqueuedConsumer < ApplicationConsumer
         next
       end
       params['record_urn'] = record_urn
-      params['schema_name'] = Tenant.account_id_to_schema(record_urn.account_id)
     end
   end
 end

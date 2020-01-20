@@ -16,11 +16,11 @@ class Tenant < Iam::ApplicationRecord
   end
 
   def publish_create_event
-    publish_event('tenant_created')
+    Ros::KarafkaPublisher.publish_to('tenant_created', record: self)
   end
 
   def publish_update_event
-    publish_event('tenant_updated')
+    Ros::KarafkaPublisher.publish_to('tenant_updated', record: self)
   end
 
   def fixed_values_unchanged_x
