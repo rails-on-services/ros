@@ -25,11 +25,11 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.add_dependency "rails", "~> 6.0.0.rc2"
-  spec.add_dependency 'shoryuken'
-  spec.add_dependency 'aasm'
-  spec.add_dependency 'aws-sdk-sqs'
-  spec.add_dependency 'net-sftp'
+  spec.add_dependency 'rails', '~> 6.0.2.1'
+  spec.add_dependency 'shoryuken', '~> 5.0.3'
+  spec.add_dependency 'aasm', '~> 5.0.6'
+  spec.add_dependency 'aws-sdk-sqs', '~> 1.23.1'
+  spec.add_dependency 'net-sftp', '~> 2.1.2'
   spec.add_dependency 'ros-core', '~> 0.1.0'
   spec.add_dependency 'ros-sdk', '~> 0.1.0'
 end
