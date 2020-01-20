@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class ChownEnqueuedConsumer < ApplicationConsumer
-  include Karafka::Consumers::Callbacks
-
-  after_fetch :set_tenant_env
-
   def consume
     params_batch.each do |params|
       schema_name = params['payload']['schema_name']
@@ -25,17 +21,5 @@ class ChownEnqueuedConsumer < ApplicationConsumer
     ChownResult.create(chown_request_id: params['record_urn'].resource_id,
                        service_name: payload['service_name'],
                        from_id: payload['from_id'], to_id: payload['to_id'], status: 'pending')
-  end
-
-  def set_tenant_env
-    params_batch.each do |params|
-      payload = params['payload']
-      record_urn = Ros::Urn.from_urn(payload['record']['urn'])
-      if record_urn.nil?
-        Rails.logger.debug("record_urn is nil. PAYLOAD: #{payload.inspect}")
-        next
-      end
-      params['record_urn'] = record_urn
-    end
   end
 end
