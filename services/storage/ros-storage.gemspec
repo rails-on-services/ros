@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk-sqs'
   spec.add_dependency 'net-sftp'
   spec.add_dependency 'ros-core', '~> 0.1.0'
-  spec.add_dependency 'ros_sdk', '~> 0.1.0'
+  spec.add_dependency 'ros-sdk', '~> 0.1.0'
 end

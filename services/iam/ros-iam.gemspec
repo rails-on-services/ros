@@ -19,5 +19,5 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'devise-jwt', '~> 0.5.8'
   spec.add_dependency 'devise', '~> 4.7.1'
   spec.add_dependency 'ros-core', '~> 0.1.0'
-  spec.add_dependency 'ros_sdk', '~> 0.1.0'
+  spec.add_dependency 'ros-sdk', '~> 0.1.0'
 end
