@@ -7,7 +7,6 @@
 ENV['RAILS_ENV'] ||= 'development'
 ENV['KARAFKA_ENV'] ||= ENV['RAILS_ENV']
 require ::File.expand_path('../spec/dummy/config/environment', __FILE__)
-
 Rails.application.eager_load!
 
 # This lines will make Karafka print to stdout like puma or unicorn
@@ -49,6 +48,9 @@ class KarafkaApp < Karafka::App
     consumer_group :chown_manager do
       topic :chown_enqueued do
         consumer ChownEnqueuedConsumer
+      end
+      topic :chown_status_changed do
+        consumer ChownStatusChangedConsumer
       end
     end
     # topic :example do
