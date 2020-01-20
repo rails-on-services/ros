@@ -45,6 +45,14 @@ class KarafkaApp < Karafka::App
   # )
 
   consumer_groups.draw do
+    topic :tenant_created do
+      consumer Ros::TenantCreateConsumer
+    end
+
+    topic :tenant_updated do
+      consumer Ros::TenantUpdateConsumer
+    end
+
     consumer_group :chown_manager do
       topic :chown_enqueued do
         consumer ChownEnqueuedConsumer
