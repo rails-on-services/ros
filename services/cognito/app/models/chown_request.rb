@@ -9,9 +9,8 @@ class ChownRequest < Cognito::ApplicationRecord
 
   def publish_create_event
     from_ids.each do |from_id|
-      puts "Producing event! #{{ record: self, from_id: from_id }.to_json}"
+      puts "[CHOWN REQUEST]: Producing event! #{{ record: self, from_id: from_id }.to_json}"
       WaterDrop::SyncProducer.call({ record: self, from_id: from_id }.to_json, topic: 'chown_created')
     end
-    # ChownRequestProcess.call(id: id, from_ids: from_ids, to_id: to_id)
   end
 end
