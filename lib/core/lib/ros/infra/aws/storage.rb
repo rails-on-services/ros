@@ -119,8 +119,8 @@ module Ros
         # Ros::Infra.resources.storage.app.cp(source, target)
         # by default source is 'storage' unless the prefix 'fs:' is part of the source name
         # cp('this/file.txt') # => Copies storage:this/file.txt to fs:file.txt
-        # cp('this/file.txt', 'that/name') If 
-        # cp('fs:this/file') # 
+        # cp('this/file.txt', 'that/name') If
+        # cp('fs:this/file') #
         # cp('fs:this/file', 'that/name')
         def cp(source, target = nil, metadata = {})
           storage = source.start_with?('fs:') ? :target : :source
@@ -150,7 +150,11 @@ module Ros
           # TODO: Send exception report to Sentry
         end
 
-        def local_prefix; "#{Rails.root}/tmp/fs" end
+        def local_prefix
+          prefix = "#{Rails.root}/tmp/fs"
+          Dir.mkdir_p(prefix) unless Dir.exist? prefix
+          prefix
+        end
 =begin
         def get(source, target)
           unless status.eql?(:ok)

@@ -7,11 +7,12 @@ module AssociationResource
     def stubbed_resource(resource:, attributes:)
       attributes = Array.wrap(attributes)
 
+      allow(resource).to receive(:all).and_return attributes
       allow(resource).to receive(:find).and_return attributes
       allow(resource).to receive(:first).and_return attributes.first
-      allow(resource).to receive(:all).and_return attributes
-      allow(resource).to receive(:where).and_return resource
       allow(resource).to receive(:includes).and_return resource
+      allow(resource).to receive(:where).and_return resource
+      allow(resource).to receive(:with_params).and_return attributes
     end
 
     def stub_resource(model:, resource:, attributes:)

@@ -16,11 +16,11 @@ module Providers
     end
 
     def x_access_key_id
-      access_key_id || current_tenant.platform_aws_enabled ? ENV['AWS_ACCESS_KEY_ID'] : nil
+      access_key_id || (current_tenant.platform_aws_enabled ? ENV['AWS_ACCESS_KEY_ID'] : nil)
     end
 
     def x_secret_access_key
-      secret_access_key || current_tenant.platform_aws_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil
+      secret_access_key || (current_tenant.platform_aws_enabled ? ENV['AWS_SECRET_ACCESS_KEY'] : nil)
     end
 
     def provider_from

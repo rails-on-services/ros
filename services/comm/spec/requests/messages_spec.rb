@@ -90,7 +90,7 @@ RSpec.describe 'Messages', type: :request do
         post url, params: post_data, headers: request_headers
       end
 
-      context 'cognito user attempts to send message' do
+      xcontext 'cognito user attempts to send message' do
         let(:cognito_user_id) { 1 }
 
         include_context 'cognito user'
@@ -109,7 +109,7 @@ RSpec.describe 'Messages', type: :request do
           end
         end
 
-        context 'when the payload is invalid' do
+        xcontext 'when the payload is invalid' do
           let(:post_data) do
             {
               data: {
