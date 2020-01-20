@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'globalid'
+require 'request_store'
 
 module Ros
   module Sdk
