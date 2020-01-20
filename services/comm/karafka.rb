@@ -20,7 +20,10 @@ end
 
 class KarafkaApp < Karafka::App
   setup do |config|
-    config.kafka.seed_brokers = %w[kafka://127.0.0.1:9092]
+    kafka_enabled = Settings.dig(:infra, :services, :kafka, :enabled)
+    next unless kafka_enabled
+
+    config.kafka.seed_brokers = [Settings.infra.services.kafka.seed_brokers]
     config.client_id = 'comm-service'
     config.logger = Rails.logger
   end
