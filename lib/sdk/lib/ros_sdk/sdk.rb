@@ -57,30 +57,27 @@ module Ros
         end
 
         def request_headers=(value)
-          RequestStore.store[:request_headers] = value
+          ::RequestStore.store[:request_headers] = value
         end
 
         def request_headers
-          # @request_headers ||= {}
-          RequestStore.store[:request_headers] ||= {}
+          ::RequestStore.store[:request_headers] ||= {}
         end
 
         def partition
-          # @partition ||= Settings.partition_name
-          RequestStore.store[:partition] ||= Setting.partition_name
+          ::RequestStore.store[:partition] ||= Setting.partition_name
         end
 
         def partition=(value)
-          RequestStore.store[:partition] = value
+          ::RequestStore.store[:partition] = value
         end
 
         def authorization
-          # @authorization ||= "#{Settings.auth_type} #{access_key_id}:#{secret_access_key}"
-          RequestStore.store[:authorization] ||= "#{Settings.auth_type} #{access_key_id}:#{secret_access_key}"
+          ::RequestStore.store[:authorization] ||= "#{Settings.auth_type} #{access_key_id}:#{secret_access_key}"
         end
 
         def authorization=(value)
-          RequestStore.store[:authorization] = value
+          ::RequestStore.store[:authorization] = value
         end
       end
     end
