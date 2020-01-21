@@ -20,12 +20,12 @@ module Ros
       # if the gem has been included in an application, i.e. it is not running in the dummy app
       # https://github.com/rails/rails/issues/22261
       initializer 'service.configure_migrations' do |app|
-        unless Rails.root.to_s.end_with?('spec/dummy')
-          config.paths['db/migrate'].expanded.each do |expanded_path|
-            app.config.paths['db/migrate'] << expanded_path
-            ActiveRecord::Migrator.migrations_paths << expanded_path
-          end
+        # unless Rails.root.to_s.end_with?('spec/dummy')
+        config.paths['db/migrate'].expanded.each do |expanded_path|
+          app.config.paths['db/migrate'] << expanded_path
+          ActiveRecord::Migrator.migrations_paths << expanded_path
         end
+        # end
       end
 
       initializer 'service.set_factory_paths', before: 'ros_core.set_factory_paths' do
