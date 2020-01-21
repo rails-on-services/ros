@@ -12,11 +12,11 @@ module Providers
     end
 
     def x_account_sid
-      account_sid || current_tenant.platform_twilio_enabled ? ENV['TWILIO_ACCOUNT_SID'] : nil
+      account_sid || (current_tenant.platform_twilio_enabled ? ENV['TWILIO_ACCOUNT_SID'] : nil)
     end
 
     def x_auth_token
-      auth_token || current_tenant.platform_twilio_enabled ? ENV['TWILIO_AUTH_TOKEN'] : nil
+      auth_token || (current_tenant.platform_twilio_enabled ? ENV['TWILIO_AUTH_TOKEN'] : nil)
     end
 
     def sms(from, to, body)

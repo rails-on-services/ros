@@ -11,7 +11,7 @@ module Ros
     #   The path to the file on the bucket
     # It then determines the file type and does whatever it is supposed to do for a file of this type
     def self.call(json)
-      new.call(json)
+      new.call(*json)
     end
 
     def call(json)

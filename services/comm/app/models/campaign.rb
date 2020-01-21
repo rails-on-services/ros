@@ -10,4 +10,8 @@ class Campaign < Comm::ApplicationRecord
     # https://{{tenant}}-blackcomb-sales.uat.whistler.perxtech.io/
     self.base_url ||= current_tenant.properties.fetch(:campaign_base_url, '')
   end
+
+  def final_url
+    "#{base_url}loading/"
+  end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MessageResource < Comm::ApplicationResource
-  attributes :from, :to, :body, :provider_id, :owner_id, :owner_type, :channel
+  attributes :from, :to, :body, :provider_id, :owner_id, :recipient_id, :owner_type, :channel
 
   filters :owner_id, :owner_type
 
@@ -16,12 +16,6 @@ class MessageResource < Comm::ApplicationResource
 
     records.sent_to(user.phone_number)
   }
-
-  def provider_id=(_provider_id)
-    # TODO: If the tenant has a provider set, use the tenant's provider
-    # else default to platform default provider
-    @model.provider_id = Providers::Aws.first.id
-  end
 
   def fetchable_fields
     super + [:provider_msg_id]

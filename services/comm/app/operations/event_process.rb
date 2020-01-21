@@ -21,13 +21,20 @@ class EventProcess < Ros::ActivityBase
 
   def create_messages_for_pool(_ctx, event:, template:, campaign:, **)
     event.process!
+    # TODO: We need to somehow paginate these users otherwise its going
+    # to burst the server. A pool (event target, can have millions of users)
+    # which will be all returned here (or not if the server goes down)
     event.users.each do |user|
       content = template.render(user: user, campaign: campaign)
-      MessageCreate.call(params: { to: user.phone_number,
-                                   provider: event.provider,
-                                   channel: event.channel,
-                                   body: content,
-                                   owner: event })
+      MessageProcessJob.perform_later(
+        params: {
+          to: user.phone_number,
+          provider: event.provider,
+          channel: event.channel,
+          body: content,
+          owner: event
+        }
+      )
     end
     event.publish!
   end

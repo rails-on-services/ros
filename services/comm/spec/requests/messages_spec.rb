@@ -90,7 +90,7 @@ RSpec.describe 'Messages', type: :request do
         post url, params: post_data, headers: request_headers
       end
 
-      context 'cognito user attempts to send message' do
+      xcontext 'cognito user attempts to send message' do
         let(:cognito_user_id) { 1 }
 
         include_context 'cognito user'
@@ -106,6 +106,26 @@ RSpec.describe 'Messages', type: :request do
         context 'when the payload is valid' do
           it 'should send message successfully' do
             expect(response).to be_successful
+          end
+        end
+
+        xcontext 'when the payload is invalid' do
+          let(:post_data) do
+            {
+              data: {
+                attributes: {
+                  body: 'HELLO DEAR HELLO',
+                  to: '+6587173612',
+                  from: 'PerxTest',
+                  provider_id: nil,
+                  channel: 'sms'
+                }
+              }
+            }.to_json
+          end
+
+          it 'should fail message sending' do
+            expect(response).not_to be_successful
           end
         end
       end

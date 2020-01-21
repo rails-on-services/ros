@@ -29,7 +29,7 @@ class Template < Comm::ApplicationRecord
       'userFirstName' => { property: :user, value: :first_name },
       'userLastName' => { property: :user, value: :last_name },
       'userId' => { property: :user, value: :primary_identifier },
-      'campaignUrl' => { property: :campaign, value: :base_url } }
+      'campaignUrl' => { property: :campaign, value: :final_url } }
   end
 
   def value_for(key)
@@ -37,6 +37,18 @@ class Template < Comm::ApplicationRecord
     mapped_key = key_map[sanitized_key]
     return key if mapped_key.nil? || properties[mapped_key[:property]].nil?
 
-    properties[mapped_key[:property]].send(mapped_key[:value])
+    if sanitized_key != 'campaignUrl'
+      properties[mapped_key[:property]].send(mapped_key[:value])
+    else
+      "#{properties[mapped_key[:property]].send(mapped_key[:value])}?#{campaign_query_params}&#{owner_query_params}"
+    end
+  end
+
+  def campaign_query_params
+    "cid=#{properties.campaign.owner_id}"
+  end
+
+  def owner_query_params
+    "pi=#{properties.user.primary_identifier}"
   end
 end
