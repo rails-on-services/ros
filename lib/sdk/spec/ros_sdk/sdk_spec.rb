@@ -12,7 +12,7 @@ RSpec.describe Ros::Sdk::Credential do
       expect(described_class.access_key_id).to eq 'secret'
     end
 
-    it 'stores request headers in RequestStore' do
+    it 'stores secret access key correctly' do
       expect(described_class.secret_access_key).to eq 'another secret'
     end
   end
@@ -50,11 +50,11 @@ RSpec.describe Ros::Sdk::Credential do
       described_class.authorization = 'anything'
     end
 
-    it 'sets partition correctly' do
+    it 'sets authorization correctly' do
       expect(described_class.authorization).to eq 'anything'
     end
 
-    it 'stores partition in RequestStore' do
+    it 'stores authorization in RequestStore' do
       expect(::RequestStore.store[:authorization]).to eq described_class.authorization
     end
   end
