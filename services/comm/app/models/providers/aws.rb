@@ -35,6 +35,10 @@ module Providers
       Rails.logger.warn("No AWS client configured for tenant.account_id. #{e.inspect}")
     end
 
+    def phone_number_opted_out?(phone_number)
+      client.check_if_phone_number_is_opted_out(phone_number: phone_number).is_opted_out
+    end
+
     private
 
     # TODO: Cleanup this logic. This should probably live in an initializer.

@@ -27,7 +27,7 @@ RSpec.describe MessageCreate, type: :operation do
   end
 
   before do
-    allow_any_instance_of(Providers::Aws).to receive(:sms).and_return true
+    allow_any_instance_of(Providers::Aws).to receive(:phone_number_opted_out?).and_return false
   end
 
   context 'when all attributes are valid' do

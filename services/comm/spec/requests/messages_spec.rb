@@ -87,6 +87,7 @@ RSpec.describe 'Messages', type: :request do
 
     context 'Authenticated user' do
       before do
+        allow_any_instance_of(Providers::Aws).to receive(:phone_number_opted_out?).and_return false
         post url, params: post_data, headers: request_headers
       end
 

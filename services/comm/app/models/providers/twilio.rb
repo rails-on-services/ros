@@ -29,6 +29,11 @@ module Providers
       Rails.logger.debug message
     end
 
+    def phone_number_opted_out?(_phone_number)
+      # TODO: Implement the Twilio API call to check if phone number is opted out or not
+      false
+    end
+
     def call(_message)
       # to = whatup.From.gsub('whatsapp:', '')
       client.calls.create(from: from, to: to, url: 'http://demo.twilio.com/docs/voice.xml')
