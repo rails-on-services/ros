@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
+require 'ros/iam/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'ros-iam'
-  spec.version     = '0.1.0'
+  spec.name        = 'cnfs-iam'
+  spec.version     = Ros::Iam::VERSION
   spec.authors     = ['Robert Roach']
   spec.email       = ['rjayroach@gmail.com']
   spec.homepage    = 'https://github.com/rails-on-services'
@@ -16,8 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'bcrypt', '~> 3.1.12'
   spec.add_dependency 'rails', '~> 6.0.2.1'
-  # spec.add_dependency 'devise-jwt', '~> 0.5.8'
   spec.add_dependency 'devise', '~> 4.7.1'
-  spec.add_dependency 'ros-core', '~> 0.1.0'
-  spec.add_dependency 'ros_sdk', '~> 0.1.0'
+  spec.add_dependency 'cnfs-core', '= 0.0.1alpha'
+  spec.add_dependency 'cnfs_sdk', '= 0.0.1alpha'
 end
