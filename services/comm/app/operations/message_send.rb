@@ -2,7 +2,9 @@
 
 class MessageSend < Ros::ActivityBase
   step :retrieve_message
-  failed :message_not_found
+  failed :message_not_found, Output(:success) => End(:failure)
+  step :fetch_provider
+  failed :cannot_provider, Output(:success) => End(:failure)
   step :send_message
   step :update_message_provider_id
 
@@ -14,8 +16,16 @@ class MessageSend < Ros::ActivityBase
     errors.add(:message, "with #{id} not found")
   end
 
-  def send_message(ctx, message:, **)
-    ctx[:msg_id] = message.provider.send(message.channel, message.from, message.to, message.body)
+  def fetch_provider(ctx, message:, **)
+    ctx[:provider] = message.provider || Apartment::Tenant.current.provider || Tenant.find_by_schema_or_alias('public').provider
+  end
+
+  def cannot_provider(_ctx, errors:, **)
+    errors.add(:provider, "for #{Apartment::Tenant.current.schema_name} not found")
+  end
+
+  def send_message(ctx, message:, provider:, **)
+    ctx[:msg_id] = provider.send(message.channel, message.from, message.to, message.body)
   end
 
   def update_message_provider_id(ctx, message:, **)

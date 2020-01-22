@@ -3,7 +3,6 @@ class CreateMessages < ActiveRecord::Migration[6.0]
     create_table :messages do |t|
       t.references :provider, foreign_key: true
       t.references :owner, polymorphic: true
-      # t.integer :cognito_user_id, null: false
       t.string :channel
       t.string :from
       t.string :to
