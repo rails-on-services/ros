@@ -7,6 +7,10 @@ RSpec.describe MessageSend, type: :operation do
   let(:target)    { stubbed_resource(resource: Ros::Cognito::Pool, attributes: OpenStruct.new) }
   let(:message)   { create(:message) }
 
+  before do
+    Tenant.create(schema_name: 'public')
+  end
+
   context 'when message is sent' do
     let(:op_params) { { id: message.id } }
 
