@@ -104,7 +104,8 @@ ActiveRecord::Schema.define(version: 2020_01_21_082443) do
     t.jsonb "platform_properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "provider_id"
+    t.bigint "provider_id"
+    t.index ["provider_id"], name: "index_tenants_on_provider_id"
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end
 
@@ -127,4 +128,6 @@ ActiveRecord::Schema.define(version: 2020_01_21_082443) do
   add_foreign_key "events", "campaigns"
   add_foreign_key "events", "providers"
   add_foreign_key "events", "templates"
+  add_foreign_key "messages", "providers"
+  add_foreign_key "tenants", "providers"
 end
