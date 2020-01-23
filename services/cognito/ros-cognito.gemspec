@@ -3,15 +3,15 @@
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 
 # Maintain your gem's version:
-# require 'ros/cognito/version'
+require 'ros/cognito/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |spec|
-  spec.name        = 'ros-cognito'
-  spec.version     = '0.1.0' # Ros::Cognito::VERSION
-  spec.authors     = ['Robert Roach']
-  spec.email       = ['rjayroach@gmail.com']
-  spec.homepage    = ''
+  spec.name        = 'cnfs-cognito'
+  spec.version     = Ros::Cognito::VERSION
+  spec.authors     = ['Robert Roach', 'Rui Baltazar']
+  spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
+  spec.homepage    = 'http://guides.rails-on-services.org/'
   spec.summary     = ': Summary of Ros::Cognito.'
   spec.description = ': Description of Ros::Cognito.'
   spec.license     = 'MIT'
@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
   spec.add_dependency 'rails', '~> 6.0.2.1'
-
-  # spec.add_development_dependency 'sqlite3'
+  spec.add_dependency 'cnfs-core', '= 0.0.1alpha'
+  spec.add_dependency 'cnfs_sdk', '= 0.0.1alpha'
 end
