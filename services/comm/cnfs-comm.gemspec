@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
+  spec.add_dependency 'aasm', '~> 5.0.6'
   spec.add_dependency 'aws-sdk-sns', '~> 1.21.0'
   spec.add_dependency 'cnfs-core', '= 0.0.1alpha'
   spec.add_dependency 'cnfs_sdk', '= 0.0.1alpha'
