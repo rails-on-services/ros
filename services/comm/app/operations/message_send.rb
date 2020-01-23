@@ -6,7 +6,7 @@ class MessageSend < Ros::ActivityBase
   step :fetch_message_provider, Output(:success) => Id(:send_message), Output(:failure) => Id(:fetch_tenant_provider)
   step :fetch_tenant_provider, Output(:success) => Id(:send_message), Output(:failure) => Id(:fetch_platform_provider)
   step :fetch_platform_provider
-  failed :cannot_provider, Output(:success) => End(:failure)
+  failed :cannot_fetch_provider, Output(:success) => End(:failure)
   step :send_message
   step :update_message_provider_id
 
@@ -27,7 +27,9 @@ class MessageSend < Ros::ActivityBase
   end
 
   def fetch_platform_provider(ctx, message:, **)
-    ctx[:provider] = Tenant.find_by(schema_name: 'public').default_provider_for(message.channel)
+    Apartment::Tenant.switch('public') do
+      ctx[:provider] = Tenant.find_by(schema_name: Apartment::Tenant.current).default_provider_for(message.channel)
+    end
   end
 
   def cannot_fetch_provider(_ctx, message:, errors:, **)
