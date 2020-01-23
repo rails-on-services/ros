@@ -3,8 +3,8 @@
 class MessageSend < Ros::ActivityBase
   step :retrieve_message
   failed :message_not_found, Output(:success) => End(:failure)
-  step :fetch_message_provider, Output(:success) => It(:send_message), Output(:failure) => It(:fetch_tenant_provider)
-  step :fetch_tenant_provider, Output(:success) => It(:send_message), Output(:failure) => It(:fetch_platform_provider)
+  step :fetch_message_provider, Output(:success) => Id(:send_message), Output(:failure) => Id(:fetch_tenant_provider)
+  step :fetch_tenant_provider, Output(:success) => Id(:send_message), Output(:failure) => Id(:fetch_platform_provider)
   step :fetch_platform_provider
   failed :cannot_provider, Output(:success) => End(:failure)
   step :send_message
