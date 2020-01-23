@@ -6,9 +6,9 @@ require 'ros/iam/version'
 Gem::Specification.new do |spec|
   spec.name        = 'cnfs-iam'
   spec.version     = Ros::Iam::VERSION
-  spec.authors     = ['Robert Roach']
-  spec.email       = ['rjayroach@gmail.com']
-  spec.homepage    = 'https://github.com/rails-on-services'
+  spec.authors     = ['Robert Roach', 'Rui Baltazar']
+  spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
+  spec.homepage    = 'http://guides.rails-on-services.org/'
   spec.summary     = 'Provides Identity and Access Management for the Ros Platform'
   spec.description = 'Facilities to manage Users, Groups and Roles permission to Platform Resources'
   spec.license     = 'MIT'
