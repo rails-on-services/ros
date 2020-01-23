@@ -8,7 +8,7 @@ require 'ros/organization/version'
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |spec|
   spec.name        = 'cnfs-organization'
-  spec.version     = Ros::Cognito::VERSION
+  spec.version     = Ros::Organization::VERSION
   spec.authors     = ['Robert Roach', 'Rui Baltazar']
   spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
   spec.homepage    = 'http://guides.rails-on-services.org/'
