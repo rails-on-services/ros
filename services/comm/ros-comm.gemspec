@@ -1,22 +1,26 @@
 # frozen_string_literal: true
 
-$:.push File.expand_path("lib", __dir__)
+$LOAD_PATH.push File.expand_path('lib', __dir__)
+
+# Maintain your gem's version:
+require 'ros/comm/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'ros-comm'
-  spec.version     = '0.1.0'
-  spec.authors     = ['Robert Roach']
-  spec.email       = ['rjayroach@gmail.com']
-  spec.homepage    = 'https://github.com/rails-on-services'
+  spec.name        = 'cnfs-comm'
+  spec.version     = Ros::Comm::VERSION
+  spec.authors     = ['Robert Roach', 'Rui Baltazar']
+  spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
+  spec.homepage    = 'http://guides.rails-on-services.org/'
   spec.summary     = 'Provides communication tools, e.g. Twilio to the Ros Platform'
   spec.description = '3rd party communication services can be invoked by other services per tenant'
   spec.license     = 'MIT'
+  spec.required_ruby_version = ['> 2.6.0', '< 2.7' ]
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
+  spec.add_dependency 'aws-sdk-sns', '~> 1.21.0'
+  spec.add_dependency 'cnfs-core', '= 0.0.1alpha'
+  spec.add_dependency 'cnfs_sdk', '= 0.0.1alpha'
   spec.add_dependency 'rails', '~> 6.0.2.1'
-  spec.add_dependency 'twilio-ruby'
-  spec.add_dependency 'aws-sdk-sns'
-  spec.add_dependency 'ros-core', '~> 0.1.0'
-  spec.add_dependency 'ros_sdk', '~> 0.1.0'
+  spec.add_dependency 'twilio-ruby', '~> 5.31.0'
 end
