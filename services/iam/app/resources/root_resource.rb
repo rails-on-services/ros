@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RootResource < Iam::ApplicationResource
-  attributes :email, :jwt_payload
+  attributes :email, :jwt_payload, :password
   attributes :attached_policies, :attached_actions
 
   has_many :credentials

@@ -27,7 +27,7 @@ module Ros
     included do
       attr_reader :account_id
 
-      validates :schema_name, presence: true
+      validates :schema_name, presence: true, uniqueness: true
 
       validates :schema_name, length: { is: 11 }, unless: proc { |record| record.schema_name.eql?('public') }
 
