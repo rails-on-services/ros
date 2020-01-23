@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros
-  module IAM
+  module Ros::Iam
     class Client < Ros::Platform::Client; end
     class Base < Ros::Sdk::Base; end
 

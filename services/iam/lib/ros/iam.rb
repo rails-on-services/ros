@@ -12,7 +12,7 @@ module Ros
   class << self
     def excluded_models; %w[Tenant Root] end
   end
-  module Iam
+  module Ros::Iam
     # Your code goes here...
   end
 end

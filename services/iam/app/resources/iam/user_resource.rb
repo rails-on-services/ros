@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Iam
+module Ros::Iam
   class UserResource < Iam::ApplicationResource
     attributes :username, :api, :console, :time_zone, :properties,
               :display_properties, :jwt_payload, :attached_policies,

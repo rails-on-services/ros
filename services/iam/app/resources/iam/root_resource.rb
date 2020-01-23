@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Iam
+module Ros::Iam
   class RootResource < Iam::ApplicationResource
     attributes :email, :jwt_payload
     attributes :attached_policies, :attached_actions

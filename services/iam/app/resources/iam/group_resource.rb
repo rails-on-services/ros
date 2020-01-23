@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Iam
+module Ros::Iam
   class GroupResource < Iam::ApplicationResource
     attributes :name
     has_many :users
