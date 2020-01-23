@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 
 class MessageSend < Ros::ActivityBase
-  step :init
   step :retrieve_message
   failed :message_not_found, Output(:success) => End(:failure)
-  step :fetch_provider
+  step :fetch_message_provider, Output(:success) => It(:send_message), Output(:failure) => It(:fetch_tenant_provider)
+  step :fetch_tenant_provider, Output(:success) => It(:send_message), Output(:failure) => It(:fetch_platform_provider)
+  step :fetch_platform_provider
   failed :cannot_provider, Output(:success) => End(:failure)
   step :send_message
   step :update_message_provider_id
-
-  def init(ctx, **)
-    ctx[:providers] = {
-      platrorm: Tenant.find_by(schema_name: 'public').provider,
-      tenant: Tenant.find_by(schema_name: Apartment::Tenant.current).provider
-    }
-  end
 
   def retrieve_message(ctx, id:, **)
     ctx[:message] = Message.find_by(id: id)
@@ -24,12 +18,20 @@ class MessageSend < Ros::ActivityBase
     errors.add(:message, "with #{id} not found")
   end
 
-  def fetch_provider(ctx, message:, providers:, **)
-    ctx[:provider] = message.provider || providers[:tenant] || providers[:platform]
+  def fetch_message_provider(ctx, message:, **)
+    ctx[:provider] = message.provider
   end
 
-  def cannot_provider(_ctx, errors:, **)
-    errors.add(:provider, "for tenant #{Apartment::Tenant.current} not found")
+  def fetch_tenant_provider(ctx, message:, **)
+    ctx[:provider] = Tenant.find_by(schema_name: Apartment::Tenant.current).default_provider_for(message.channel)
+  end
+
+  def fetch_platform_provider(ctx, message:, **)
+    ctx[:provider] = Tenant.find_by(schema_name: 'public').default_provider_for(message.channel)
+  end
+
+  def cannot_fetch_provider(_ctx, message:, errors:, **)
+    errors.add(:provider, "for channel #{message.channel} not found")
   end
 
   def send_message(ctx, message:, provider:, **)

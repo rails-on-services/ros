@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_21_082443) do
+ActiveRecord::Schema.define(version: 2020_01_23_033716) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,8 @@ ActiveRecord::Schema.define(version: 2020_01_21_082443) do
     t.string "encrypted_credential_3_iv"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.jsonb "channels", default: [], null: false
+    t.jsonb "default_for", default: [], null: false
   end
 
   create_table "templates", force: :cascade do |t|
@@ -104,8 +106,6 @@ ActiveRecord::Schema.define(version: 2020_01_21_082443) do
     t.jsonb "platform_properties", default: {}, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "provider_id"
-    t.index ["provider_id"], name: "index_tenants_on_provider_id"
     t.index ["schema_name"], name: "index_tenants_on_schema_name", unique: true
   end
 
@@ -129,5 +129,4 @@ ActiveRecord::Schema.define(version: 2020_01_21_082443) do
   add_foreign_key "events", "providers"
   add_foreign_key "events", "templates"
   add_foreign_key "messages", "providers"
-  add_foreign_key "tenants", "providers"
 end

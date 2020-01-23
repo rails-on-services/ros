@@ -14,8 +14,8 @@ class Message < Comm::ApplicationRecord
   validate :provider_channel, if: :provider
 
   def provider_channel
-    return if channel.in? provider.class.services
+    return if channel.in? provider.channels
 
-    errors.add(:channel, "must be one of: #{provider.class.services.join(' ')}")
+    errors.add(:channel, "must be one of: #{provider.channels.join(' ')}")
   end
 end
