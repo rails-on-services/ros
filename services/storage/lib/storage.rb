@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'aasm'
 require 'ros/core'
 require 'storage/engine'
 
