@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < Iam::ApplicationRecord
+class User < Ros::Iam::ApplicationRecord
   has_many :credentials, as: :owner
   has_many :public_keys
 

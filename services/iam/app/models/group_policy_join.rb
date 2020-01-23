@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class GroupPolicyJoin < Iam::ApplicationRecord
+class GroupPolicyJoin < Ros::Iam::ApplicationRecord
   belongs_to :group
   belongs_to :policy
 

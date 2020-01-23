@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Policy < Iam::ApplicationRecord
+class Policy < Ros::Iam::ApplicationRecord
   has_many :policy_actions
   has_many :actions, through: :policy_actions
 

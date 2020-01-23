@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Tenant < Iam::ApplicationRecord
+class Tenant < Ros::Iam::ApplicationRecord
   include Ros::TenantConcern
 
   belongs_to :root

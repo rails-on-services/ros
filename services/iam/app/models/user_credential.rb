@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserCredential < Iam::ApplicationRecord
+class UserCredential < Ros::Iam::ApplicationRecord
   belongs_to :user
   belongs_to :credential
 
