@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros::Iam
-  class CredentialResource < Iam::ApplicationResource
+  class CredentialResource < Ros::Iam::ApplicationResource
     attributes :access_key_id, :owner_type, :owner_id, :secret_access_key
 
     filter :access_key_id

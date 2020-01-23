@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros::Iam
-  class TenantResource < Iam::ApplicationResource
+  class TenantResource < Ros::Iam::ApplicationResource
     attributes :account_id, :root_id, :alias, :name, :display_properties # :locale
 
     filter :schema_name

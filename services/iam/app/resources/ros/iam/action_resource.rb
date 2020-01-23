@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros::Iam
-  class ActionResource < Iam::ApplicationResource
+  class ActionResource < Ros::Iam::ApplicationResource
     # caching
     attributes :name, :resource, :action_type
 

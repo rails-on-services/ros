@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros::Iam
-  class UserResource < Iam::ApplicationResource
+  class UserResource < Ros::Iam::ApplicationResource
     attributes :username, :api, :console, :time_zone, :properties,
               :display_properties, :jwt_payload, :attached_policies,
               :attached_actions, :email, :password, :password_confirmation, :unconfirmed_email

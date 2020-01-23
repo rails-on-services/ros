@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ros::Iam
-  class PolicyResource < Iam::ApplicationResource
+  class PolicyResource < Ros::Iam::ApplicationResource
     # caching
     attributes :name
     filter :name
