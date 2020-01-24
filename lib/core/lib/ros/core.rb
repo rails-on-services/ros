@@ -28,6 +28,7 @@ require_relative 'scheduler/tenant_handler'
 require_relative 'tenant_middleware'
 require_relative 'url_builder'
 require_relative 'urn'
+require_relative 'karafka_publisher'
 
 require 'ros/core/engine'
 

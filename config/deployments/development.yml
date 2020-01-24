@@ -70,6 +70,10 @@ components:
                 event_logging:
                   enabled: no
                 infra:
+                  services:
+                    kafka:
+                      enabled: yes
+                      seed_brokers: kafka://127.0.0.1:9092
                   resources:
                     storage:
                       config: &infra_services_object_storage

@@ -8,19 +8,19 @@ class Tenant < Iam::ApplicationRecord
   before_validation :generate_values, on: :create
   validate :fixed_values_unchanged_x, if: :persisted?
 
-  # after_commit :create_service_tenants, on: :create
+  after_commit :publish_create_event, on: :create
+  after_commit :publish_update_event, on: :update
 
   def enabled?
     state.eql? 'active'
   end
 
-  def create_service_tenants
-    Ros::Sdk.configured_services.each do |name, service|
-      next if name.eql? 'iam'
+  def publish_create_event
+    Ros::KarafkaPublisher.publish_to('tenant_created', record: self)
+  end
 
-      service::Tenant.create(schema_name: schema_name)
-      # TODO: Log a warning if any call fails
-    end
+  def publish_update_event
+    Ros::KarafkaPublisher.publish_to('tenant_updated', record: self)
   end
 
   def fixed_values_unchanged_x

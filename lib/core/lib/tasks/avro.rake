@@ -8,6 +8,7 @@ namespace :ros do
       next unless Settings.event_logging.enabled
 
       Dir['./doc/schemas/**/*.avsc'].each do |schema|
+        puts "Registering schema #{schema}"
         parsed_content = JSON.parse(File.read(schema))
         avro = Rails.configuration.x.event_logger.avro
         avro.send(:register_schema, "#{parsed_content['name']}-value", parsed_content['name'], nil)
