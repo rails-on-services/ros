@@ -5,9 +5,9 @@ after 'development:tenants' do
     # next if tenant.id.eql? 1
     tenant.switch do
       Providers::Twilio.create(name: "Marketing Team's Twilio", account_sid: ENV['TWILIO_ACCOUNT_SID'],
-                               auth_token: ENV['TWILIO_AUTH_TOKEN'])
+                               auth_token: ENV['TWILIO_AUTH_TOKEN'], channels: %w[sms call])
       Providers::Aws.create(name: "Tech Team's AWS", access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-                            secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'])
+                            secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'], channels: ['sms'])
       # Campaign.create(owner_type: 'Perx::Survey::Campaign', cognito_endpoint_id: 2, owner_id: 1).tap do |campaign|
       #   template = campaign.templates.create(
       #     content: 'Dear <%= user.title %> <%= user.last_name %>, we are delighted to have you ' \

@@ -10,10 +10,6 @@ class Provider < Comm::ApplicationRecord
 
   validates :type, presence: true
 
-  def self.services
-    []
-  end
-
   def provider_from
     current_tenant.properties.dig(:from) || 'Perx'
   end

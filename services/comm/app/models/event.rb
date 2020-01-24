@@ -69,7 +69,7 @@ class Event < Comm::ApplicationRecord
   def provider_channel
     return unless provider
 
-    channels = provider.class.services + ['weblink']
+    channels = provider.channels + ['weblink']
     return if channel.in? channels
 
     errors.add(:channel, "must be one of: #{channels.join(' ')}")

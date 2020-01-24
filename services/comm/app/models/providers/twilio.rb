@@ -5,8 +5,6 @@ module Providers
     alias_attribute :account_sid, :credential_1
     alias_attribute :auth_token, :credential_2
 
-    def self.services; %w[sms call] end
-
     def client
       @client ||= ::Twilio::REST::Client.new(x_account_sid, x_auth_token) if x_account_sid && x_auth_token
     end
