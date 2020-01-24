@@ -109,6 +109,22 @@
       "default": null
     },
     {
+      "name": "channels",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "default_for",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
       "name": "urn",
       "type": [
         "null",

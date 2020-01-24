@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_27_070152) do
+ActiveRecord::Schema.define(version: 2020_01_23_033716) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,8 @@ ActiveRecord::Schema.define(version: 2019_11_27_070152) do
     t.string "encrypted_credential_3_iv"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.jsonb "channels", default: [], null: false
+    t.jsonb "default_for", default: [], null: false
   end
 
   create_table "templates", force: :cascade do |t|

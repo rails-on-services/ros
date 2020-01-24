@@ -5,10 +5,6 @@ module Providers
     alias_attribute :access_key_id, :credential_1
     alias_attribute :secret_access_key, :credential_2
 
-    def self.services
-      %w[sms]
-    end
-
     def client
       return unless x_access_key_id && x_secret_access_key
 
