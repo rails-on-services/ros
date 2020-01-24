@@ -29,7 +29,7 @@ class KarafkaApp < Karafka::App
     next unless kafka_enabled
 
     config.kafka.seed_brokers = Settings.infra.services.kafka.bootstrap_servers.split(',').map do |broker|
-      broker = "kafka://#{broker}" unless broker.starts_with? "kafka://"
+      "kafka://#{broker}" unless broker.starts_with? "kafka://"
     end
 
     if Settings.infra.services.kafka.security_protocol == 'SASL_SSL' && Settings.infra.services.kafka.sasl_mechanism == 'PLAIN'
