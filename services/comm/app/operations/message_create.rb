@@ -110,7 +110,7 @@ class MessageCreate < Ros::ActivityBase
     if ctx[:send_at].present?
       MessageSendJob.set(wait_until: ctx[:send_at]).perform_later(id: model.id)
     else
-      MessageSendJob.perform_now(id: model.id)
+      MessageSendJob.perform_later(id: model.id)
     end
   end
 end
