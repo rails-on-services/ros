@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'globalid'
+require 'request_store'
 
 module Ros
   module Sdk
@@ -50,23 +51,34 @@ module Ros
     class Credential
       class << self
         attr_accessor :access_key_id, :secret_access_key, :region
-        attr_writer :partition, :authorization, :request_headers
 
         def configure(access_key_id: nil, secret_access_key: nil)
           self.access_key_id = access_key_id
           self.secret_access_key = secret_access_key
         end
 
+        def request_headers=(value)
+          ::RequestStore.store[:request_headers] = value
+        end
+
         def request_headers
-          @request_headers ||= {}
+          ::RequestStore.store[:request_headers] ||= {}
         end
 
         def partition
-          @partition ||= Settings.partition_name
+          ::RequestStore.store[:partition] ||= Setting.partition_name
+        end
+
+        def partition=(value)
+          ::RequestStore.store[:partition] = value
         end
 
         def authorization
-          @authorization ||= "#{Settings.auth_type} #{access_key_id}:#{secret_access_key}"
+          ::RequestStore.store[:authorization] ||= "#{Settings.auth_type} #{access_key_id}:#{secret_access_key}"
+        end
+
+        def authorization=(value)
+          ::RequestStore.store[:authorization] = value
         end
       end
     end
