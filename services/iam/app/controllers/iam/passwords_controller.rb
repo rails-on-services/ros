@@ -1,54 +1,56 @@
 # frozen_string_literal: true
 
-module Ros::Iam
-  class PasswordsController < Devise::PasswordsController
-    include IsTenantScoped
+module Ros
+  module Iam
+    class PasswordsController < Devise::PasswordsController
+      include IsTenantScoped
 
-    skip_before_action :authenticate_it!, only: %i[create update]
+      skip_before_action :authenticate_it!, only: %i[create update]
 
-    respond_to :json
+      respond_to :json
 
-    # POST /resource/password
-    def create
-      Apartment::Tenant.switch tenant_schema(password_params) do
-        return super unless find_user!
+      # POST /resource/password
+      def create
+        Apartment::Tenant.switch tenant_schema(password_params) do
+          return super unless find_user!
 
-        @current_user.send_reset_password_instructions
+          @current_user.send_reset_password_instructions
 
-        if successfully_sent?(@current_user)
-          render status: :ok, json: { message: 'ok' }
-        else
-          render status: :bad_request
+          if successfully_sent?(@current_user)
+            render status: :ok, json: { message: 'ok' }
+          else
+            render status: :bad_request
+          end
         end
       end
-    end
 
-    # PUT /resource/password
-    def update
-      mail_token = begin
-                     Ros::Jwt.new(reset_params[:token]).decode
-                   rescue JWT::DecodeError => e
-                     render status: :bad_request, json: { errors: e }
-                     return
-                   end
+      # PUT /resource/password
+      def update
+        mail_token = begin
+                      Ros::Jwt.new(reset_params[:token]).decode
+                    rescue JWT::DecodeError => e
+                      render status: :bad_request, json: { errors: e }
+                      return
+                    end
 
-      return unless mail_token
+        return unless mail_token
 
-      Apartment::Tenant.switch tenant_schema(mail_token) do
-        decoded_params = {
-          reset_password_token: mail_token[:token],
-          password: reset_params[:password],
-          password_confirmation: reset_params[:password_confirmation]
-        }
+        Apartment::Tenant.switch tenant_schema(mail_token) do
+          decoded_params = {
+            reset_password_token: mail_token[:token],
+            password: reset_params[:password],
+            password_confirmation: reset_params[:password_confirmation]
+          }
 
-        res = User.reset_password_by_token(decoded_params)
+          res = User.reset_password_by_token(decoded_params)
 
-        if res.persisted?
-          res.confirm unless res.confirmed?
-          @current_jwt = Ros::Jwt.new(res.jwt_payload)
-          render status: :ok, json: { message: 'ok' }
-        else
-          render status: :bad_request, json: { errors: res.errors }
+          if res.persisted?
+            res.confirm unless res.confirmed?
+            @current_jwt = Ros::Jwt.new(res.jwt_payload)
+            render status: :ok, json: { message: 'ok' }
+          else
+            render status: :bad_request, json: { errors: res.errors }
+          end
         end
       end
     end

@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
-module Ros::Iam
-  class RootResource < Ros::Iam::ApplicationResource
-    attributes :email, :jwt_payload
-    attributes :attached_policies, :attached_actions
+module Ros
+  module Iam
+    class RootResource < Ros::Iam::ApplicationResource
+      attributes :email, :jwt_payload
+      attributes :attached_policies, :attached_actions
 
-    has_many :credentials
+      has_many :credentials
 
-    filter :email
+      filter :email
 
-    def attached_policies; {} end
+      def attached_policies; {} end
 
-    def attached_actions; {} end
+      def attached_actions; {} end
+    end
   end
 end

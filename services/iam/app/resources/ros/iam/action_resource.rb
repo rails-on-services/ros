@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-module Ros::Iam
-  class ActionResource < Ros::Iam::ApplicationResource
-    # caching
-    attributes :name, :resource, :action_type
+module Ros
+  module Iam
+    class ActionResource < Ros::Iam::ApplicationResource
+      # caching
+      attributes :name, :resource, :action_type
 
-    def action_type
-      @model.type
+      def action_type
+        @model.type
+      end
     end
   end
 end
