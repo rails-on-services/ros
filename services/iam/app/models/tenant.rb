@@ -6,6 +6,8 @@ class Tenant < Iam::ApplicationRecord
   belongs_to :root
 
   before_validation :generate_values, on: :create
+
+  validates :root_id, uniqueness: true
   validate :fixed_values_unchanged_x, if: :persisted?
 
   # after_commit :create_service_tenants, on: :create
