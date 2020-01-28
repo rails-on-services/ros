@@ -7,8 +7,8 @@ gem 'pry-rails'
 gem 'awesome_print'
 gem 'pg'
 
-gem 'ros-core', path: '../../lib/core'
-gem 'ros_sdk', path: '../../lib/sdk'
+gem 'cnfs-core', path: '../../lib/core'
+gem 'cnfs_sdk', path: '../../lib/sdk'
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
