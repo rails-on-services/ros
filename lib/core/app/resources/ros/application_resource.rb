@@ -21,13 +21,13 @@ module Ros
     class << self
       def descriptions; {} end
 
-      def apply_filter(records, filter, value, options)
+      def apply_filter(records, filter, value, _options)
         return super(records, filter, value) unless _allowed_filters[filter][:ilike]
 
         items = Array.wrap(value[0])
         items = items.map { |n| "%#{n}%" }
 
-        records = records.where("#{filter} ILIKE ANY (array[?])", items)
+        records.where("#{filter} ILIKE ANY (array[?])", items)
       end
     end
   end
