@@ -22,7 +22,7 @@ module Ros
       def descriptions; {} end
 
       def apply_filter(records, filter, value, _options)
-        return super(records, filter, value) unless _allowed_filters[filter][:ilike]
+        return super(records, filter, value) unless _allowed_filters.dig(filter, :ilike)
 
         items = Array.wrap(value[0])
         items = items.map { |n| "%#{n}%" }
