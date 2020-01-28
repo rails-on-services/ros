@@ -18,6 +18,17 @@ module Ros
     #   }
     # end
 
-    def self.descriptions; {} end
+    class << self
+      def descriptions; {} end
+
+      def apply_filter(records, filter, value, _options)
+        return super(records, filter, value) unless _allowed_filters.dig(filter, :ilike)
+
+        items = Array.wrap(value[0])
+        items = items.map { |n| "%#{n}%" }
+
+        records.where("#{filter} ILIKE ANY (array[?])", items)
+      end
+    end
   end
 end
