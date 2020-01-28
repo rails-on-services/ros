@@ -11,4 +11,8 @@ class RootResource < Iam::ApplicationResource
   def attached_policies; {} end
 
   def attached_actions; {} end
+
+  def fetchable_fields
+    super - [:password]
+  end
 end
