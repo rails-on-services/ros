@@ -2,11 +2,9 @@
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 
-require 'ros_sdk/version'
-
 Gem::Specification.new do |spec|
   spec.name          = 'cnfs_sdk'
-  spec.version       = RosSdk::VERSION
+  spec.version       = '0.0.1.alpha'
   spec.authors       = ['Robert Roach']
   spec.email         = ['rjayroach@gmail.com']
 

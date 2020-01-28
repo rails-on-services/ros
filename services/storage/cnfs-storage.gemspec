@@ -2,13 +2,10 @@
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 
-# Maintain your gem's version:
-require 'ros/storage/version'
-
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |spec|
   spec.name        = 'cnfs-storage'
-  spec.version     = Ros::Storage::VERSION
+  spec.version     = '0.0.1.alpha'
   spec.authors     = ['Robert Roach', 'Rui Baltazar']
   spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
   spec.homepage    = 'http://guides.rails-on-services.org/'
