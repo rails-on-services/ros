@@ -16,7 +16,7 @@ require 'action_view/railtie'
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
-require 'storage'
+require 'ros/storage'
 
 module Dummy
   class Application < Rails::Application
