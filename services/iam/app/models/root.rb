@@ -6,7 +6,7 @@ class Root < Iam::ApplicationRecord
   # has_many :ssh_keys
 
   def to_urn
-    "#{self.class.urn_base}:#{tenant.account_id}:root/#{id}" if tenant.present?
+    "#{self.class.urn_base}:#{tenant&.account_id || 0}:root/#{id}"
   end
 
   # Include default devise modules. Others available are:
