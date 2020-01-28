@@ -2,16 +2,13 @@
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 
-# Maintain your gem's version:
-require 'ros/comm/version'
-
 Gem::Specification.new do |spec|
   spec.name        = 'cnfs-comm'
-  spec.version     = Ros::Comm::VERSION
+  spec.version     = '0.0.1.alpha'
   spec.authors     = ['Robert Roach', 'Rui Baltazar']
   spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
   spec.homepage    = 'http://guides.rails-on-services.org/'
-  spec.summary     = 'Provides communication tools, e.g. Twilio to the Ros Platform'
+  spec.summary     = 'Provides communication tools, e.g. Twilio to the CNFS Platform'
   spec.description = '3rd party communication services can be invoked by other services per tenant'
   spec.license     = 'MIT'
   spec.required_ruby_version = ['> 2.6.0', '< 2.7' ]

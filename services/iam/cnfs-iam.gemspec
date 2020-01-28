@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
-require 'ros/iam/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'cnfs-iam'
-  spec.version     = Ros::Iam::VERSION
+  spec.version     = '0.0.1.alpha'
   spec.authors     = ['Robert Roach', 'Rui Baltazar']
   spec.email       = ['rjayroach@gmail.com', 'rui.p.baltazar@gmail.com']
   spec.homepage    = 'http://guides.rails-on-services.org/'
