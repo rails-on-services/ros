@@ -220,7 +220,7 @@ GEM
       raabro (~> 1.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    google-protobuf (3.11.2-universal-darwin)
+    google-protobuf (3.11.2)
     googleapis-common-protos-types (1.0.4)
       google-protobuf (~> 3.0)
     grpc (1.23.1)
