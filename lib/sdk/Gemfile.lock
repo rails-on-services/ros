@@ -9,6 +9,7 @@ PATH
       inifile (~> 3.0.0)
       json_api_client (~> 1.15.0)
       jwt (~> 2.2.1)
+      request_store (= 1.5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -115,6 +116,7 @@ DEPENDENCIES
   cnfs_sdk!
   pry (~> 0.12.2)
   rake (~> 12.0)
+  rspec (~> 3.9.0)
 
 BUNDLED WITH
    2.1.4
