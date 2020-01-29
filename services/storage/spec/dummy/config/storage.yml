@@ -29,6 +29,9 @@ development:
   # <<: *disk
   <<: *amazon_app
 
+production:
+  <<: *amazon_app
+
 test:
   <<: *disk
   # <<: *localstack
