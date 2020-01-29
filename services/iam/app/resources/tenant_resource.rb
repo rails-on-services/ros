@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TenantResource < Iam::ApplicationResource
-  attributes :schema_name, :account_id, :root_id, :alias, :name, :display_properties # :locale
+  attributes :schema_name, :account_id, :root_id, :alias, :name, :display_properties, :properties # :locale
 
   filter :schema_name
 
