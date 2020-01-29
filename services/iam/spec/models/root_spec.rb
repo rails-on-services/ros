@@ -7,7 +7,7 @@ RSpec.describe Root, type: :model do
     subject { create(:root) }
 
     it 'returns nil' do
-      expect(subject.to_urn).to eq "urn:ros:iam::0:root/#{subject.id}"
+      expect(subject.to_urn).to eq "#{described_class.urn_base}:0:root/#{subject.id}"
     end
   end
 
