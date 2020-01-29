@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :pool do
-    sequence(:name) { |n| "Pool-#{n}-Name" }
+    name { "#{Faker::Job.title}-#{SecureRandom.uuid}" }
     properties { '' }
   end
 end

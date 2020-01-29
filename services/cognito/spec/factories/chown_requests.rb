@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :chown_request do
-    to_id { 1 }
-    from_ids { [1] }
+    to_id { SecureRandom.random_number(1_000_000) }
+    from_ids { [SecureRandom.random_number(1_000_000)] }
   end
 end

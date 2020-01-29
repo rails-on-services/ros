@@ -10,19 +10,53 @@ after 'development:tenants' do
       # User.reset
       # file_name = 'cognito_pools.csv'
       # User.load_csv(file_name)
-      Pool.create(name: 'Developers').tap do |pool|
-        pool.users.create(primary_identifier: 'developer', title: 'Mr', last_name: 'Developer',
-                          phone_number: '+15855551212')
+      FactoryBot.create(:pool).tap do |pool|
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Mr',
+          last_name: 'Developer',
+          phone_number: '+15855551212'
+        )
       end
-      Pool.create(name: 'Gold Tier').tap do |pool|
-        pool.users.create(primary_identifier: 'jones', title: 'Mr', last_name: 'Jones', phone_number: '+1388200363')
-        pool.users.create(primary_identifier: 'miller', title: 'Mrs', last_name: 'Miller', phone_number: '+1396537757')
-        pool.users.create(primary_identifier: 'doe', title: 'Miss', last_name: 'Doe', phone_number: '+1382800710')
+      FactoryBot.create(:pool).tap do |pool|
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Mr',
+          last_name: 'Jones',
+          phone_number: '+1388200363'
+        )
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Mrs',
+          last_name: 'Miller',
+          phone_number: '+1396537757'
+        )
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Miss',
+          last_name: 'Doe',
+          phone_number: '+1382800710'
+        )
       end
-      Pool.create(name: 'Silver Tier').tap do |pool|
-        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Ms', last_name: 'Shelly', phone_number: '')
-        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Homes', phone_number: '')
-        pool.users.create(primary_identifier: SecureRandom.uuid, title: 'Mr', last_name: 'Lucas', phone_number: '')
+      FactoryBot.create(:pool).tap do |pool|
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Ms',
+          last_name: 'Shelly',
+          phone_number: ''
+        )
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Mr',
+          last_name: 'Homes',
+          phone_number: ''
+        )
+        pool.users.find_or_create_by(
+          primary_identifier: "#{Faker::Job.title}-#{SecureRandom.uuid}",
+          title: 'Mr',
+          last_name: 'Lucas',
+          phone_number: ''
+        )
       end
     end
   end

@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :identifier do
-    name { 'MyString' }
-    value { 'MyString' }
+    name { Faker::Job.title }
+    value { Faker::Job.title }
     user
     properties { {} }
   end
