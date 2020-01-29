@@ -2,7 +2,8 @@
 
 module Ros
   module Iam
-    class ApplicationController < ::ApplicationController
+    class ApplicationResource < ::ApplicationResource
+      abstract
     end
   end
 end

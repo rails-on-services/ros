@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Root < Iam::ApplicationRecord
+class Root < Ros::Iam::ApplicationRecord
   has_one :tenant
   has_many :credentials, as: :owner
   # has_many :ssh_keys

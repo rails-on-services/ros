@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Credential < Iam::ApplicationRecord
+class Credential < Ros::Iam::ApplicationRecord
   # NOTE: to manually authenticate a password from the console
   # credential.authenticate_secret_access_key(secret_access_key_plaintext)
   # See: https://blog.bigbinary.com/2019/04/23/rails-6-allows-configurable-attribute-name-on-has_secure_password.html

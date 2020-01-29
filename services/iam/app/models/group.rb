@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Group < Iam::ApplicationRecord
+class Group < Ros::Iam::ApplicationRecord
   has_many :group_policies, class_name: 'GroupPolicyJoin'
   has_many :policies, through: :group_policies
   has_many :actions, through: :policies

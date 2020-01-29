@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserGroup < Iam::ApplicationRecord
+class UserGroup < Ros::Iam::ApplicationRecord
   belongs_to :user
   belongs_to :group
 

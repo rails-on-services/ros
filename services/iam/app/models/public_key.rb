@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PublicKey < Iam::ApplicationRecord
+class PublicKey < Ros::Iam::ApplicationRecord
   belongs_to :user
 
   after_commit :enqueue

@@ -3,6 +3,8 @@
 module Ros
   module Iam
     class Engine < ::Rails::Engine
+      isolate_namespace Ros::Iam
+
       config.generators.api_only = true
       config.generators do |g|
         g.test_framework :rspec, fixture: true

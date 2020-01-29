@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Role < Iam::ApplicationRecord
+class Role < Ros::Iam::ApplicationRecord
   has_many :role_policies, class_name: 'RolePolicyJoin'
   has_many :policies, through: :role_policies
   has_many :actions, through: :policies
