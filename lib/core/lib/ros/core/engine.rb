@@ -24,7 +24,6 @@ module Ros
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
       # export PLATFORM__CREDENTIALS__JWT_ENCRYPTION_KEY='test'
       initializer 'ros_core.set_platform_config' do |_app|
-
         settings_path = root.join('config/settings')
         # NOTE: Sources are prepended in reverse order, meaning the first prepend is loaded last
         Settings.prepend_source!(credentials: Rails.application.credentials.config)
@@ -74,6 +73,27 @@ module Ros
         if (resources = Settings.dig(:infra, :resources))
           require 'ros/infra'
           Ros::Infra.initialize(resources)
+        end
+      end
+
+      # Configure WaterDrop. Used to send messages from application to kafka
+      initializer 'service.water_drop', after: 'ros_core.load_platform_config' do |_app|
+        WaterDrop.setup do |config|
+          kafka_enabled = Settings.dig(:infra, :services, :kafka, :enabled)
+          next unless kafka_enabled
+
+          config.kafka.seed_brokers = Settings.infra.services.kafka.bootstrap_servers.split(',').map do |broker|
+            next broker if broker.starts_with? 'kafka://'
+
+            "kafka://#{broker}"
+          end
+
+          if Settings.infra.services.kafka.security_protocol == 'SASL_SSL' && Settings.infra.services.kafka.sasl_mechanism == 'PLAIN'
+            config.kafka.sasl_plain_username = Settings.infra.services.kafka.username
+            config.kafka.sasl_plain_password = Settings.infra.services.kafka.password
+          end
+          config.client_id = "#{Settings.service.name}-service"
+          config.logger = Rails.logger
         end
       end
 
