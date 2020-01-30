@@ -91,10 +91,7 @@ class MessageCreate < Ros::ActivityBase
   end
 
   def setup_message(ctx, params:, **)
-    # TODO: If the tenant has a provider set, use the tenant's provider
-    # else default to platform default provider
     ctx[:model] = Message.new(params)
-    ctx[:model].provider_id = Providers::Aws.first&.id
     ctx[:model].valid?
   end
 
