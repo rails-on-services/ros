@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :sftp_file do
-    name { 'MyString' }
-    key { 'MyString' }
+    name { Faker::Company.name }
+    key { SecureRandom.uuid }
   end
 end

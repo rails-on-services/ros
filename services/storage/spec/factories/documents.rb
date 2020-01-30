@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :document do
-    header { 'MyString' }
-    transfer_map_id { 1 }
+    header { Faker::Lorem.sentence }
+
+    association :transfer_map
   end
 end

@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :transfer_map do
-    name { 'MyString' }
-    description { 'MyString' }
-    service { 'MyString' }
-    target { 'MyString' }
+    name { Faker::Lorem.word }
+    description { Faker::Lorem.paragraph }
+    service { Faker::Lorem.word }
+    target { Faker::Lorem.word }
   end
 end

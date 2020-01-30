@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :column_map do
     association :transfer_map
-    name { 'MyString' }
-    user_name { 'MyString' }
+    name { Faker::Lorem.word }
+    user_name { Faker::Name.first_name }
   end
 end
