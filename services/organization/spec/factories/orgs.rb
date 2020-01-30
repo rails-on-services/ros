@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :org do
-    name { 'MyString' }
-    description { 'MyString' }
+    name { Faker::Company.name }
+    description { Faker::Lorem.paragraph }
     properties { {} }
   end
 end

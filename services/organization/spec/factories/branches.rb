@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :branch do
-    name { 'MyString' }
+    name { Faker::Company.name }
     properties { {} }
     org
   end
