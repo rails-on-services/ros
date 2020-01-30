@@ -24,6 +24,7 @@ module Ros
       # NOTE: ENV vars indicate hierarchy with two underscores '__'
       # export PLATFORM__CREDENTIALS__JWT_ENCRYPTION_KEY='test'
       initializer 'ros_core.set_platform_config' do |_app|
+
         settings_path = root.join('config/settings')
         # NOTE: Sources are prepended in reverse order, meaning the first prepend is loaded last
         Settings.prepend_source!(credentials: Rails.application.credentials.config)

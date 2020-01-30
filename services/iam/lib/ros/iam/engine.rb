@@ -46,6 +46,26 @@ module Ros
       initializer 'service.configure_console_methods', before: 'ros_core.configure_console_methods' do |_app|
         require_relative 'console' if Rails.env.development? && !Rails.const_defined?('Server') && File.exist?('console.rb')
       end
+
+      initializer 'service.water_drop', after: 'ros_core.load_platform_config' do |_app|
+        WaterDrop.setup do |config|
+          kafka_enabled = Settings.dig(:infra, :services, :kafka, :enabled)
+          next unless kafka_enabled
+
+          config.kafka.seed_brokers = Settings.infra.services.kafka.bootstrap_servers.split(',').map do |broker|
+            next broker if broker.starts_with? 'kafka://'
+
+            "kafka://#{broker}"
+          end
+
+          if Settings.infra.services.kafka.security_protocol == 'SASL_SSL' && Settings.infra.services.kafka.sasl_mechanism == 'PLAIN'
+            config.kafka.sasl_plain_username = Settings.infra.services.kafka.username
+            config.kafka.sasl_plain_password = Settings.infra.services.kafka.password
+          end
+          config.client_id = 'iam-service'
+          config.logger = Rails.logger
+        end
+      end
     end
   end
 end
