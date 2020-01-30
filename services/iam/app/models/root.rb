@@ -6,13 +6,12 @@ class Root < Iam::ApplicationRecord
   # has_many :ssh_keys
 
   def to_urn
-    "#{self.class.urn_base}:#{tenant.account_id}:root/#{id}"
+    "#{self.class.urn_base}:#{tenant&.account_id || 0}:root/#{id}"
   end
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  devise :database_authenticatable, :recoverable, :rememberable, :validatable
   #         :jwt_authenticatable, # jwt_revocation_strategy: self
   #         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TenantResource < Iam::ApplicationResource
-  attributes :account_id, :root_id, :alias, :name, :display_properties # :locale
+  attributes :schema_name, :account_id, :root_id, :alias, :name, :display_properties, :properties # :locale
 
   filter :schema_name
 
@@ -12,10 +12,6 @@ class TenantResource < Iam::ApplicationResource
   end
 
   def self.updatable_fields(context)
-    super - [:root_id]
-  end
-
-  def self.creatable_fields(context)
     super - [:root_id]
   end
 end

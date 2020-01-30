@@ -7,6 +7,7 @@ RSpec.describe Ros::CloudEventStream, type: :operation do
 
   context 'when everything is fine' do
     before do
+      Settings.event_logging.enabled = true
       allow(Rails.configuration.x.event_logger).to receive(:log_event).and_return OpenStruct.new(success?: true)
     end
 

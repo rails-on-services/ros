@@ -3,8 +3,9 @@
 require 'rails_helper'
 
 class Validatable
-  include ActiveRecord::Validations
-  SCHEMA = Rails.root.join('spec', 'schemas', 'validatable.json')
+  include ActiveModel::Validations
+
+  SCHEMA = Pathname.new("#{__dir__}/schemas/validatable.json")
   attr_accessor :properties
 
   validates :properties, json_schema: { schema: SCHEMA }
@@ -12,9 +13,10 @@ end
 
 describe JsonSchemaValidator do
   let(:properties) { {} }
-  subject { Validatable.new(properties: properties) }
 
-  describe 'when attribute respects the schema' do
+  subject { Validatable.new }
+
+  context 'when attribute respects the schema' do
     let(:properties) do
       {
         title: 'TITLE',
@@ -24,31 +26,60 @@ describe JsonSchemaValidator do
       }
     end
 
-    xit 'is valid' do
+    it 'is valid' do
+      subject.properties = properties.stringify_keys
       expect(subject).to be_valid
     end
   end
 
-  # context 'without provider' do
-  #   it 'is valid' do
-  #     expect(subject).to be_valid
-  #   end
-  # end
+  context 'when attribute does not respect the schema' do
+    let(:mismatched_message) { 'does not match specified schema: missing_keys: title, button, closed_pinata_img_url, no_of_taps' }
+    it 'is invalid when title is missing' do
+      subject.properties = {
+        button: 'BUTTON',
+        closed_pinata_img_url: 'url',
+        no_of_taps: 10
+      }
 
-  # context 'with valid provider' do
-  #   it 'is valid' do
-  #     subject.stubs(omniauth_provider: 'facebook')
+      subject.properties = properties.stringify_keys
+      expect(subject).to be_invalid
+      expect(subject.errors.messages[:properties].first).to eq mismatched_message
+    end
 
-  #     expect(subject).to be_valid
-  #   end
-  # end
+    it 'is invalid when button is missing' do
+      subject.properties = {
+        title: 'TITLE',
+        closed_pinata_img_url: 'url',
+        no_of_taps: 10
+      }
 
-  # context 'with unused provider' do
-  #   it 'is invalid' do
-  #     subject.stubs(omniauth_provider: 'twitter')
+      subject.properties = properties.stringify_keys
+      expect(subject).to be_invalid
+      expect(subject.errors.messages[:properties].first).to eq mismatched_message
+    end
 
-  #     expect(subject).not_to be_valid
-  #     expect(subject).to have(1).error_on(:omniauth_provider)
-  #   end
-  # end
+    it 'is invalid when button is closed_pinata_img_url is missing' do
+      subject.properties = {
+        title: 'TITLE',
+        button: 'BUTTON',
+        no_of_taps: 10
+      }
+
+      subject.properties = properties.stringify_keys
+      expect(subject).to be_invalid
+      expect(subject.errors.messages[:properties].first).to eq mismatched_message
+    end
+
+    it 'is invalid when button is no_of_taps is missing' do
+      subject.properties = {
+        title: 'TITLE',
+        button: 'BUTTON',
+        closed_pinata_img_url: 'url'
+      }
+
+      subject.properties = properties.stringify_keys
+      expect(subject).to be_invalid
+      expect(subject.errors.messages[:properties].first).to eq mismatched_message
+    end
+  end
 end
