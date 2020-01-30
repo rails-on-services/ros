@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :event do
+    name { Faker::Lorem.word }
     send_at { Time.zone.now + 10.minutes }
     channel { 'weblink' }
     sequence(:owner_id)
@@ -9,7 +10,7 @@ FactoryBot.define do
     association :provider, factory: :provider_aws
     association :campaign
     template
-    sequence(:target_id)
+    target_id { SecureRandom.random_number(1_000_000) }
     target_type { 'Ros::Cognito::Pool' }
 
     # trait :within_schema do

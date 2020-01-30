@@ -2,8 +2,10 @@
 
 FactoryBot.define do
   factory :template do
+    name { Faker::Company.name }
     content { Faker::ChuckNorris.fact }
     status { 'N/a' }
+    description { Faker::Lorem.paragraph }
 
     trait :within_schema do
       transient do
