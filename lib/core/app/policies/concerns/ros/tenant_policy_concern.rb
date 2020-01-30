@@ -23,5 +23,9 @@ module Ros
         end
       end
     end
+
+    def create?
+      user.root?
+    end
   end
 end

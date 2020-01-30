@@ -1,3 +1,5 @@
 # frozen_string_literal: true
 
-class TenantPolicy < Ros::ApplicationPolicy; end
+class TenantPolicy < Ros::ApplicationPolicy
+  include Ros::TenantPolicyConcern
+end

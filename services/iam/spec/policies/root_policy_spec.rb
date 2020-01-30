@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TenantPolicy, type: :policy do
+RSpec.describe RootPolicy, type: :policy do
   context 'when user is root' do
     let(:user) { double('user', root?: true) }
     subject { described_class.new(user, {}) }
