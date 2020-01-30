@@ -3,10 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe MetabaseCard, type: :model do
-  include_examples 'application record concern' do
-    let(:tenant) { Tenant.first }
-    let!(:subject) { create(factory_name) }
-  end
+  include_examples 'application record concern'
 
   let(:record_one)   { build(factory_name, card_id: rand(1..20), identifier: subject.identifier) }
   let(:record_two)   { build(factory_name, card_id: nil) }

@@ -3,10 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe ChownResult, type: :model do
-  include_examples 'application record concern' do
-    let(:tenant) { Tenant.first }
-    let!(:subject) { create(factory_name) }
-  end
+  include_examples 'application record concern'
 
   pending "add some examples to (or delete) #{__FILE__}"
 end

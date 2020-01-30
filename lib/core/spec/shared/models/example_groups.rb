@@ -7,8 +7,11 @@ RSpec.shared_examples 'application record concern' do
   let(:account_id) { described_class.account_id }
   let(:underscore_name) { described_class.name.underscore }
   let(:urn) { "urn:#{partition_name}:#{service_name}:#{region}:#{account_id}:#{underscore_name}" }
+  let(:tenant) { Tenant.find_by(schema_name: Apartment::Tenant.current) }
 
   let(:factory_name) { described_class.name.underscore.to_sym }
+
+  subject { create(factory_name) }
 
   it 'has a factory' do
     expect { create(factory_name) }.not_to raise_error

@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe Tenant, type: :model do
   include_examples 'application record concern' do
-    let(:tenant) { Tenant.first }
     subject { tenant }
   end
 

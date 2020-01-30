@@ -3,10 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  include_examples 'application record concern' do
-    let(:tenant) { Tenant.first }
-    let(:subject) { create(factory_name) }
-  end
+  include_examples 'application record concern'
 
   describe 'attributes' do
     let(:gender) { { male: 'm', female: 'f', other: 'o' } }
