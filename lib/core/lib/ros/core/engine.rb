@@ -34,7 +34,7 @@ module Ros
         # The location of the environment files is the parent services/.env dir
         # This dir is soft linked to the compose directory of the current deployment
         if Ros.host_env.os? && Dir.exist?(Ros.environment_root)
-          configs = ['platform']
+          configs = %w[application platform]
           ary = Settings.instance_variable_get('@config_sources').select do |config|
             config.instance_variable_get('@hash')&.keys&.include?(:service)
           end
