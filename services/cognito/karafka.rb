@@ -32,7 +32,7 @@ class KarafkaApp < Karafka::App
       config.kafka.sasl_plain_username = Settings.infra.services.kafka.username
       config.kafka.sasl_plain_password = Settings.infra.services.kafka.password
     end
-    config.client_id = 'cognito-service'
+    config.client_id = "#{Settings.service.name}-service"
     config.logger = Rails.logger
   end
 
