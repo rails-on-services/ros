@@ -109,7 +109,7 @@ RSpec.describe 'Messages', type: :request do
           end
         end
 
-        xcontext 'when the payload is invalid' do
+        context 'when the payload does not include provider' do
           let(:post_data) do
             {
               data: {
@@ -124,8 +124,19 @@ RSpec.describe 'Messages', type: :request do
             }.to_json
           end
 
-          it 'should fail message sending' do
-            expect(response).not_to be_successful
+          context 'with AWS provider setup' do
+            let!(:aws_provider) { create :provider_aws }
+
+            it 'should succeed' do
+              post url, params: post_data, headers: request_headers
+              expect(response).to be_successful
+            end
+          end
+
+          xcontext 'without AWS provider setup' do
+            it 'should fail message sending' do
+              expect(response).not_to be_successful
+            end
           end
         end
       end
