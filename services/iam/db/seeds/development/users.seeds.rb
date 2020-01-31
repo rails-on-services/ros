@@ -8,9 +8,9 @@ after 'development:tenants' do
     tenant.switch do
       if Policy.count.zero?
         # Add IAM Policies
-        Policy.create(name: 'AdministratorAccess')
-        Policy.create(name: 'IamUserFullAccess')
-        Policy.create(name: 'IamUserReadOnlyAccess')
+        FactoryBot.create(:policy, name: 'AdministratorAccess')
+        FactoryBot.create(:policy, name: 'IamUserFullAccess')
+        FactoryBot.create(:policy, name: 'IamUserReadOnlyAccess')
       end
       next if User.count.positive?
 
@@ -18,14 +18,14 @@ after 'development:tenants' do
                          console: true,
                          api: true,
                          time_zone: 'Asia/Singapore',
-                         email: 'admin@example.com',
+                         email: Faker::Internet.email,
                          confirmed_at: DateTime.now,
                          password: 'asdfjkl;')
       User.create(username: 'Microsite',
                   console: false,
                   api: true,
                   time_zone: 'Asia/Singapore',
-                  email: 'microsite@example.com',
+                  email: Faker::Internet.email,
                   confirmed_at: DateTime.now)
       # user.locale: 'en-US'
       credential = user.credentials.create
@@ -45,10 +45,10 @@ after 'development:tenants' do
       group_admin.users << User.first
 
       # NOTE: create remainign groups
-      Group.create(name: 'Creator')
-      Group.create(name: 'Customer Support')
-      Group.create(name: 'Manager')
-      Group.create(name: 'Viewer')
+      Group.find_or_create_by(name: 'Creator')
+      Group.find_or_create_by(name: 'Customer Support')
+      Group.find_or_create_by(name: 'Manager')
+      Group.find_or_create_by(name: 'Viewer')
 
       # Role.create(name: 'PerxServiceRoleForIAM')
       # Role.create(name: 'PerxUserReadOnlyAccess')
