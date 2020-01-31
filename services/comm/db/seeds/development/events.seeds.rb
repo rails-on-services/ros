@@ -2,7 +2,8 @@
 
 after 'development:campaigns', 'development:templates', 'development:providers' do
   Tenant.all.each do |tenant|
-    # next if tenant.id.eql? 1
+    next if tenant.id.eql? 1
+
     tenant.switch do
       template = Template.first
       campaign = Campaign.first

@@ -2,6 +2,8 @@
 
 after 'development:tenants' do
   Tenant.all.each do |tenant|
+    next if tenant.id.eql? 1
+
     tenant.switch do
       Providers::Twilio.create(name: "Marketing Team's Twilio", account_sid: ENV['TWILIO_ACCOUNT_SID'],
                                auth_token: ENV['TWILIO_AUTH_TOKEN'], channels: %w[sms call])
