@@ -15,6 +15,9 @@ module Ros
 
         Rails.logger.error "[#{Settings.service.name}] TenantCreate failed to create tenant #{new_tenant.errors.full_messages}"
       end
+    rescue ActiveRecord::StatementInvalid
+      ::ActiveRecord::Base.clear_active_connections!
+      retry
     end
   end
 end
