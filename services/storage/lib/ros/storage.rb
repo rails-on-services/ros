@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'aasm'
 require 'ros/core'
-require 'storage/engine'
+require 'ros/storage/engine'
 
 module Ros
   class << self

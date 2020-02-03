@@ -2,6 +2,6 @@
 
 module Ros
   module Comm
-    VERSION = '0.1.0'
+    VERSION = '0.0.1.alpha1'
   end
 end

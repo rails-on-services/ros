@@ -42,7 +42,7 @@ RUN sed -i '/git/d' ../../lib/sdk/*.gemspec \
 # RUN sed -i '/path/d' Gemfile
 ARG project=user
 COPY services/${project}/Gemfile* ./
-COPY services/${project}/ros-${project}.gemspec ./
+COPY services/${project}/cnfs-${project}.gemspec ./
 
 RUN bundle install \
  && find /usr/local/bundle -iname '*.o' -exec rm -rf {} \; \

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-module Organization
-  VERSION = '0.1.0'
+module Ros
+  module Organization
+    VERSION = '0.0.1.alpha'
+  end
 end

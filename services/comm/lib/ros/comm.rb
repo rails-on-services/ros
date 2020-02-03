@@ -3,6 +3,7 @@
 require 'twilio-ruby'
 require 'aws-sdk-sns'
 
+require 'ros/core'
 require 'ros/comm/engine'
 
 module Ros
