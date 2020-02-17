@@ -49,7 +49,7 @@ module Ros
 
     def internal_claims; public_claims + private_claims end
 
-    def private_claims; %i[user cognito_user] end
+    def private_claims; %i[user cognito_user __internal] end
 
     def public_claims; %i[iss aud iat sub sub_cognito] end
 
