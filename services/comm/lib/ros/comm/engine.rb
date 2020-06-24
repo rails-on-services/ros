@@ -2,7 +2,19 @@
 
 module Ros
   module Comm
+    class << self
+      def cable
+        @cable ||= ActionCable::Server::Configuration.new
+      end
+    end
+
     class Engine < ::Rails::Engine
+      class << self
+        def server
+          @server ||= ActionCable::Server::Base.new(config: Ros::Comm.cable)
+        end
+      end
+
       config.generators.api_only = true
       config.generators do |g|
         g.test_framework :rspec, fixture: true
@@ -26,6 +38,23 @@ module Ros
             ActiveRecord::Migrator.migrations_paths << expanded_path
           end
         end
+      end
+
+      config.ros_cable = Ros::Comm.cable
+      config.ros_cable.mount_path = '/websocket'
+      # TODO: this line is temporary here
+      config.ros_cable.disable_request_forgery_protection = true
+      # config.action_cable.allowed_request_origins = ['https://rubyonrails.com', %r{http://ruby.*}]
+      config.ros_cable.connection_class = -> { Ros::Comm::Connection }
+      config.ros_cable.worker_pool_size = 4
+
+      initializer 'ros.cable.config' do |app|
+        config_path = root.join('config', 'cable.yml')
+        Ros::Comm.cable.cable = app.config_for(config_path).with_indifferent_access
+      end
+
+      initializer 'ros.cable.logger' do
+        Ros::Comm.cable.logger ||= ::Rails.logger
       end
 
       initializer 'service.set_factory_paths', after: 'ros_core.set_factory_paths' do
