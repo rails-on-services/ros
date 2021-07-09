@@ -3,12 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  include_examples 'application record concern' do
-    let(:tenant) { Tenant.first }
-    let!(:subject) { create(factory_name) }
-    let(:unconfirmed_user) { create(:user, password: nil, confirmed_at: nil) }
-    let(:confirmed_user) { create(:user) }
-  end
+  include_examples 'application record concern'
+
+  let(:unconfirmed_user) { create(:user, password: nil, confirmed_at: nil) }
+  let(:confirmed_user) { create(:user) }
 
   # TODO: move this into a proper shared context
   before(:all) { ActiveJob::Base.queue_adapter = :test }
