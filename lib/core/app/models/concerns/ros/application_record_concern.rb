@@ -5,6 +5,7 @@ module Ros
     extend ActiveSupport::Concern
     include AssociationResource
     include UrnConcern
+    # include StreamCloudEventConcern if Settings.event_logging.enabled
 
     class_methods do
       def account_id; Apartment::Tenant.current.to_i end

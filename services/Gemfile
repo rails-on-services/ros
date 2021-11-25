@@ -24,7 +24,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'jsonapi-resources-matchers'
-  gem 'pry-stack_explorer'
+  # gem 'pry-stack_explorer'
   gem 'pundit-matchers'
   gem 'rspec-rails'
   gem 'perx-rubocop'

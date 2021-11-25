@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# ubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/BlockLength
 after 'development:tenants' do
   Tenant.all.each do |tenant|
     next if tenant.id.eql? 1
@@ -64,4 +64,4 @@ after 'development:tenants' do
   STDOUT.puts 'Credentials are next:'
   STDOUT.puts File.read("#{Ros.host_tmp_dir}/credentials.json")
 end
-# ubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/BlockLength

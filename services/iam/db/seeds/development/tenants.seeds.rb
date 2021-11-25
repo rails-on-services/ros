@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# binding.pry
 # NOTE: Disabling event logging
 logging_mem = Settings.event_logging.enabled
 Settings.event_logging.enabled = false

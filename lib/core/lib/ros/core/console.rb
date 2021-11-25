@@ -15,12 +15,12 @@ if Pry::Prompt.respond_to?(:add)
           '[1] [project_name][Rails.env][Apartment::Tenant.current] pry(main)>'
   Pry::Prompt.add 'ros', desc, %w[> *] do |target_self, nest_level, pry, sep|
     "[#{pry.input_ring.size}] [#{Settings.dig(:service, :name)}]" \
-      "[#{PryRails::Prompt.formatted_env}][#{Apartment::Tenant.current}] " \
+    "[#{PryRails::Prompt.formatted_env}][#{Apartment::Tenant.current}] " \
     "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
     "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
   end
 
-  Pry.config.prompt = Pry::Prompt[:ros][:value]
+  Pry.config.prompt = Pry::Prompt[:ros]
 end
 
 module Ros

@@ -68,6 +68,9 @@ jwt:
   iss: ros
   alg: HS256
   valid_claims: ['sub_cognito', 'act', 'act_cognito']
+  # Settings.jwt.encryption_key = SecureRandom.hex
+  encryption_key: 9fb2083a4b6785025be450068d386f05
+
 
 # The host names to which this service responsds
 # See lib/ros/core/engine.rb#platform_hosts initializer

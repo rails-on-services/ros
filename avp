@@ -1,3 +1,0 @@
-#!/bin/bash
-# workaround for https://github.com/ansible/ansible/issues/45214
-echo ${ROS_MASTER_KEY}
