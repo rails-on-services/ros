@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rufus-scheduler', '~> 3.6.0'
   spec.add_dependency 'seedbank', '~> 0.5.0'
   spec.add_dependency 'sentry-raven', '~> 2.13.0'
-  spec.add_dependency 'sidekiq', '~> 6.0.0'
+  spec.add_dependency 'sidekiq', '>= 6.0', '< 6.5'
   spec.add_dependency 'trailblazer-activity', '~> 0.10.0'
   spec.add_dependency 'trailblazer-activity-dsl-linear', '~> 0.2.1'
   spec.add_dependency 'warden', '~> 1.2.8'
