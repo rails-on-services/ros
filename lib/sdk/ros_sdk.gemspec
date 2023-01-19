@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activemodel', '6.1.4'
   spec.add_dependency 'activesupport', '6.1.4'
   spec.add_dependency 'config', '~> 2.2.1'
-  spec.add_dependency 'globalid', '0.4.2'
+  spec.add_dependency 'globalid', '1.0.1'
   spec.add_dependency 'inifile', '3.0.0'
   spec.add_dependency 'json_api_client', '~> 1.16.1'
   spec.add_dependency 'jwt', '2.2.3'
